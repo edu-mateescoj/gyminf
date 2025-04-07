@@ -1,379 +1,111 @@
-<!DOCTYPE html>
-<html lang="fr">
-<head>
-    <meta charset="UTF-8">
-    <title>Exerciseur test Python</title>
-    <style>
-        .exercise-container {
-            margin: auto;
-            width: 50%;
-            border: 1px solid #ddd;
-            padding: 20px;
-            box-shadow: 0px 0px 10px rgba(0,0,0,0.1);
+function generateDynamicExercise() {
+    const variableNames = Object.keys(variableNamesWithTypes.anglais);
+    let selectedVariables = [];
+    while (selectedVariables.length < 3) {
+        const randomIndex = Math.floor(Math.random() * variableNames.length);
+        const variable = variableNames[randomIndex];
+        if (!selectedVariables.includes(variable)) {
+            selectedVariables.push(variable);
         }
-        .input-group {
-            display: flex;
-            align-items: center;
-            justify-content: space-between; /* Assure l'espacement entre les éléments */
-            margin-bottom: 10px;
+    }
+    // Définir des valeurs initiales aléatoires
+    let expressions = [];
+    currentCorrectAnswers = {}; // Réinitialiser les réponses correctes
+    /* méthode forEach ... explications ci-dessous
+    variable : chaque variable sélectionnée de selectedVariables.
+    index : indice de l'élément courant dans le tableau selectedVariables. Cet index sera utilisé pour accéder aux 
+    identifiants correspondants des champs de saisie (inputId) et des labels (labelId) qui sont stockés dans des 
+tableaux séparés. Ces tableaux sont indexés de la même manière que selectedVariables, donc l'index de chaque variable dans 
+selectedVariables correspond à l'index de son ID dans la liste des id d'input et dans celle des id de label.
+Il faut assigner dynamiquement les placeholders et les labels pour chaque champ d'input selon la variable traitée.*/
+    
+    // Réinitialiser les valeurs et la couleur des inputs avant de générer de nouveaux exercices
+    ['v1-answer', 'r-answer', 'v3-answer'].forEach(inputId => {
+        const inputElement = document.getElementById(inputId);
+        if (inputElement) {
+            inputElement.value = ""; // Réinitialisation : j'écrase la valeur
+            inputElement.style.backgroundColor = ""; // Réinitialisation de la couleur de fond
         }
-        .range-container {
-            display: flex;
-            align-items: center;
-            width: 100%;
-        }input[type="text"], input[type="range"] {
-            padding: 10px;
-            margin-right: 5px; /* Spacing between input and checkbox */
-            flex: 1; /* Permet aux inputs de prendre toute la largeur disponible */
-        }
-        input[type="range"] {
-            -webkit-appearance: none; /* Override default CSS styles */
-            appearance: none;
-            width: 100%;
-            height: 8px;
-            border-radius: 4px;
-            background: #ddd; /* Initial background */
-            outline: none;
-            transition: background 0.3s;
-        }
+    });
+    
+    selectedVariables.forEach((variable, index) => {
+        let value = Math.floor(Math.random() * 10) + 1; // Valeurs aléatoires pour l'exemple
+        expressions.push(`${variable} = ${value}`);
+        const inputId = ['v1-answer', 'r-answer', 'v3-answer'][index];
+        currentCorrectAnswers[inputId] = value.toString(); // Sauvegarde des réponses correctes
+       
+        // Mise à jour des placeholders et des labels
+       
+        const labelId = ['labelA', 'labelB', 'labelC'][index];
+        document.getElementById(inputId).placeholder = `Valeur de ${variable}`;
+        document.getElementById(labelId).textContent = `Valeur de ${variable} :`;
+    });
 
-        input[type="range"]::-webkit-slider-thumb {
-            -webkit-appearance: none;
-            appearance: none;
-            width: 20px;
-            height: 20px;
-            border-radius: 50%;
-            background: #fff;
-            cursor: pointer;
-        }
+    // Affichage des expressions générées
+    document.getElementById('code-display').textContent = expressions.join('\n');
+}
 
-        input[type="range"]::-moz-range-thumb {
-            width: 20px;
-            height: 20px;
-            border-radius: 50%;
-            background: #fff;
-            cursor: pointer;
-        }
+// Appel initial pour configurer un exercice par défaut
+generateDynamicExercise();
 
-        input[type="checkbox"] {
-            margin-right: 5px;
-        }
-        button {
-            padding: 15px 10px;
-            margin-right: 5px;
-            border: none;
-            cursor: pointer;
-        }
-        .button-new-exercise {
-            padding: 10px;
-            background-color: #007BFF; /* Blue for new exercise */
-            color: white;
-        }
 
-        .button-verify {
-            /* padding: 10px;*/
-            background-color: #28a745; /* Green for verify */
-            color: white;
-        }
-
-        .button-show-answers {
-            padding: 10px;
-            background-color: #6c757d; /* Gray for show answers */
-            color: white;
-        }
-
-        button:hover {
-            opacity: 0.7;
-        }
-        pre {
-            background-color: #f8f8f8;
-            border: 1px solid #ddd;
-            padding: 10px;
-            margin-bottom: 10px; /* Espacement en dessous du bloc de code */
-        }
-        label {
-            padding: 10px;
-            flex: 0 0 20%; /* Alloue 20% de la largeur du conteneur aux labels */
-            margin-right: 10px;
-        }
-        #variableCount {
-            padding: 10px;
-            min-width: 40px; /* faut une largeur suffisante pour le chiffre */
-            text-align: center;
-        }    </style>
-    <link rel="icon" href="favicon.ico" type="image/x-icon">
-</head>
-<body>
-    <div class="exercise-container">
-        <h2>Exercices automatiques d'assignation de variables</h2>
-        
-        <p>Que valent les variables à la fin de l'exécution du code Python ci-dessous ?</p>
-        
-        <label for="numVariables">Niveau de difficulté (1 à 6):</label>
-        <input type="range" id="numVariables" min="1" max="6" value="3" oninput="handleRangeChange(this.value);">
-        <span id="variableCount">3</span>
-        
-        <pre id="code-display">Exemple de code</pre>
-
-        <button id="verify-button" class="button-verify">Vérifier</button>
-        <button id="show-button" class="button-show-answers">Montrer les réponses</button>
-        <button id="generate-button" class="button-new-exercise">Nouvel exercice</button>
-    </div>
-    <script>
-    const variableNamesWithTypes = {
-        anglais: {
-            n: "integer", x: "integer", y: "integer", z: "integer", a: "integer", b: "integer", temp:"integer", item: "float", 
-            i:"integer", j:"integer", k: "integer", age: "integer", name: "string", user_id: "integer", count: "integer",
-            total: "float", sum: "float", product: "float", average: "float", mon_index: "integer", my_index: "integer", index: "integer", 
-            max: "float", min: "float", height: "float", width: "float", dividende: "integer", girth: "float", 
-            length: "float", size: "integer", position: "integer", status: "string", diviseur: "integer", 
-            color: "string", date: "string", flag: "boolean", is_active: "boolean", divisor: "integer", nb_users: "integer", 
-            has_items: "boolean", is_visible: "boolean",  nom: "string", user_score: "integer", nb_steps: "integer", 
-            score_utilisateur: "integer", compteur: "integer", total_count: "float", speed: "float", nb_msgs: "integer", 
-            somme: "float", produit: "float", moyenne: "float", maximum: "float", quotient: "float",
-            minimum: "float", hauteur: "float", largeur: "float", longueur: "float", taille: "integer",
-            position: "integer", statut: "string", couleur: "string", date: "string", data_points: "float",
-            drapeau: "boolean", est_actif: "boolean", a_des_objets: "boolean", est_visible: "boolean",
-            est_complet: "boolean", est_valide: "boolean", login_attempts: "integer", my_variable: "float", 
-            cell_number: "integer", is_verified: "boolean", price_per_unit: "float"
-                },
-        operators: {
-            cocktail: ["+", "-", "+", "*", "//", "%","==", "!=", "<", ">", "<=", ">="],
-            logique: ["and", "or", "not"],
-            comparaison: ["==", "!=", "<", ">", "<=", ">="],
-            arithmetique: ["+", "-", "*", "//", "%"]
-        }
+function verifyAnswers() {
+  //astuce débogage
+  console.log('Vérification des réponses...');
+    // Exemple simple de vérification des réponses
+    let answers = {
+        "v1-answer": document.getElementById('v1-answer').value,
+        "r-answer": document.getElementById('r-answer').value,
+        "v3-answer": document.getElementById('v3-answer').value
     };
 
-    let numVariables = 3; // Default number of variables
+    // Itération sur chaque réponse pour vérifier et appliquer la couleur appropriée
+    Object.keys(answers).forEach(id => {
+        const userAnswer = answers[id];
+        const correctAnswer = currentCorrectAnswers[id];
+        const inputElement = document.getElementById(id);
 
-    document.addEventListener('DOMContentLoaded', function() {
-    document.getElementById('generate-button').addEventListener('click', generateDynamicExercise);
+        if (userAnswer === "") {
+            inputElement.style.backgroundColor = ""; // Pas de coloration si pas de réponse
+        } else if (userAnswer === correctAnswer) {
+            inputElement.style.backgroundColor = 'lightgreen'; // Vert si correct
+        } else {
+            inputElement.style.backgroundColor = 'salmon'; // Rouge si incorrect
+        }
+    });
+}
+/*
+  // Vérification des réponses de l'utilisateur
+  Object.keys(correctAnswers).forEach(id => {
+    const userAnswer = document.getElementById(id).value;
+    const isCorrect = userAnswer === correctAnswers[id];
+    document.getElementById(id).style.backgroundColor = isCorrect ? 'lightgreen' : 'salmon';
+  });
+}
+*/
+/*
+  document.getElementById('v1-answer').value = '2';
+  document.getElementById('r-answer').value = '2';
+  document.getElementById('v3-answer').value = '4';
+  */
+function showAnswers() {
+  //astuce débogage
+  console.log('Appel de la fonction...');
+  // Utilise currentCorrectAnswers pour afficher les bonnes réponses
+    Object.keys(currentCorrectAnswers).forEach(id => {
+        const inputElement = document.getElementById(id);
+        inputElement.value = currentCorrectAnswers[id]; // Utiliser la valeur correcte stockée
+        inputElement.style.backgroundColor = 'lightgray'; // Réinitialiser la couleur de fond
+    });
+  // Réinitialiser la couleur de fond des réponses
+  document.querySelectorAll('input[type=text]').forEach(input => {
+    input.style.backgroundColor = 'lightgray';
+  });
+}
+
+document.addEventListener('DOMContentLoaded', function() {
     document.getElementById('verify-button').addEventListener('click', verifyAnswers);
     document.getElementById('show-button').addEventListener('click', showAnswers);
-    document.getElementById('numVariables').addEventListener('input', function() {
-        handleRangeChange(this.value);
-    });
-    generateDynamicExercise(); // Initial call to populate the exercise
+    document.getElementById('generate-button').addEventListener('click', generateDynamicExercise);
+    generateDynamicExercise(); // Générer un premier exercice au chargement
 });
-
-function updateVariableCount(value) {
-    document.getElementById('variableCount').textContent = value;
-    numVariables = parseInt(value);
-}
-
-function updateRangeColor(value) {
-    const range = document.getElementById('numVariables');
-    const max = parseInt(range.max);
-    const min = parseInt(range.min);
-    const fraction = (value - min) / (max - min);
-    const red = Math.round(250 * fraction);
-    const green = Math.round(250 * (1 - fraction));
-    const blue = 50;
-    range.style.background = `linear-gradient(to right, rgb(${red}, ${green}, ${blue}) ${fraction * 100}%, #ddd ${fraction * 100}%)`;
-}
-
-function handleRangeChange(value) {
-    updateVariableCount(value);
-    updateRangeColor(value);
-    updateOperatorAvailability(value);
-    generateDynamicExercise();
-}
-function updateOperatorAvailability(num) {
-    const maxOperators = 2*parseInt(num);  //numVariables de 1 à 6; maxOperators de 2 à 12... donc slice[#0;#12[
-    const cocktailOperators = variableNamesWithTypes.operators.cocktail.slice(0, Math.min(maxOperators, variableNamesWithTypes.operators.cocktail.length));
-    variableNamesWithTypes.currentOperators = cocktailOperators; 
-    console.log('Available Operators:', variableNamesWithTypes.currentOperators); // Debugging to see available operators
-}
-    function generateDynamicExercise() {
-        const container = document.querySelector('.exercise-container');
-        const display = document.getElementById('code-display');
-        container.querySelectorAll('.input-group').forEach(el => el.remove());
-
-        const variableNames = Object.keys(variableNamesWithTypes.anglais);
-        let selectedVariables = [];
-        let variables = {};
-        let expressions = [];
-        currentCorrectAnswers = {};
-
-        // Initialize variables with appropriate types and values
-        while (selectedVariables.length < numVariables) {
-            const randomIndex = Math.floor(Math.random() * variableNames.length);
-            const variable = variableNames[randomIndex];
-            if (!selectedVariables.includes(variable)) {
-                selectedVariables.push(variable);
-                variables[variable] = initializeVariable(variableNamesWithTypes.anglais[variable]);
-                expressions.push(`${variable} = ${formatValueForDisplay(variables[variable])}`);
-            }
-        }
-        //prise en cpompte niveau de difficulté
-        updateOperatorAvailability(numVariables);
-
-        // Generate expressions respecting variable types
-        selectedVariables.forEach((variable, index) => {
-            const inputId = `inputValue${index + 1}`;
-            const errorCheckboxId = `errorCheckbox${index + 1}`;
-
-            const inputGroup = document.createElement('div');
-            inputGroup.className = 'input-group';
-
-            const labelElement = document.createElement('label');
-            labelElement.htmlFor = inputId;
-            labelElement.textContent = `${variable}:`;
-
-            const inputElement = document.createElement('input');
-            inputElement.type = 'text';
-            inputElement.id = inputId;
-            inputElement.placeholder = `Valeur finale de ${variable}`;
-
-            const errorCheckbox = document.createElement('input');
-            errorCheckbox.type = 'checkbox';
-            errorCheckbox.id = errorCheckboxId;
-            const errorLabel = document.createElement('label');
-            errorLabel.htmlFor = errorCheckboxId;
-            errorLabel.textContent = "Erreur ?";
-
-            inputGroup.appendChild(labelElement);
-            inputGroup.appendChild(inputElement);
-            inputGroup.appendChild(errorCheckbox);
-            inputGroup.appendChild(errorLabel);
-
-            container.appendChild(inputGroup);
-
-            // Generate logical or arithmetic expressions based on variable type
-            const isBoolean = variableNamesWithTypes.anglais[variable] === "boolean";
-            const operatorSet = isBoolean ? variableNamesWithTypes.operators.logique : variableNamesWithTypes.currentOperators;
-            const operator = operatorSet[Math.floor(Math.random() * operatorSet.length)];
-            let otherVariable, expression, evalResult;
- 
-            if (isBoolean && operator === "not") {
-                expression = `${variable} = not ${variable}`;
-                evalResult = !variables[variable];
-            } else {
-                otherVariable = selectAppropriateVariable(selectedVariables, variables, variable, isBoolean);
-                const valueToUse = otherVariable ? variables[otherVariable] : (isBoolean ? getRandomBoolean() : getRandomNumber());
-                expression = `${variable} = ${variable} ${operator} ${formatValueForDisplay(valueToUse)}`;
-                evalResult = evaluateExpression(variables[variable], valueToUse, operator);
-            }
-
-            expressions.push(expression);
-            variables[variable] = evalResult;
-            currentCorrectAnswers[inputId] = typeof evalResult === 'boolean' ? formatValueForDisplay(evalResult) : evalResult.toString();
-        });
-        shuffle(expressions, numVariables);
-        display.textContent = expressions.join('\n');
-    }
-
-    // Utility function to shuffle an array
-    function shuffle(array, start) {
-        for (let i = array.length - 1; i > start-1; i--) {
-            const j = start + Math.floor(Math.random() * (i+1));
-            [array[i], array[j]] = [array[j], array[i]];
-        }
-    }
-
-
-    function initializeVariable(type) {
-        switch(type) {
-            case "integer":
-            case "float":
-            case "string": //on verra plus tard pour les op sur string
-                return Math.floor(Math.random() * 11) - 0;
-            case "boolean":
-                return Math.random() < 0.5;
-            default:
-                return null; // This should not happen
-        }
-    }
-
-    function formatValueForDisplay(value) {
-        if (typeof value === 'boolean') {
-            return value ? "True" : "False";
-        }
-        return value;
-    }
-
-    function selectAppropriateVariable(variables, values, currentVariable, isBoolean) {
-        return variables.filter(v => v !== currentVariable && typeof values[v] === (isBoolean ? 'boolean' : 'number'))[0];
-    }
-
-    function getRandomBoolean() {
-        return Math.random() < 0.5;
-    }
-
-    function getRandomCompar() {
-        return Math.floor(Math.random() *  variableNamesWithTypes.operators.comparaison.length);
-    }
-
-    function evaluateExpression(left, right, operator) {
-        try {
-            switch(operator) {
-            case "and":
-                return left && right;
-            case "or":
-                return left || right;
-            case "not":
-                return !left; // This should be handled outside since it's unary
-            case "+":
-            case "-":
-            case "*":
-                return eval(`${left} ${operator} ${right}`);
-            case "//":
-                if (right === 0) return "Error: Division by zero";
-                return Math.floor(left / right);
-            case "%":
-                if (right === 0) return "Error: Division by zero";
-                return left % right;
-            default:
-                return eval(`${left} ${operator} ${right}`);
-        }
-        } catch (e) {
-            console.error('oups...:', e.message);
-            return "Error: Invalid expression";
-        
-        }
-    }
-
-    function verifyAnswers() {
-    document.querySelectorAll('.input-group').forEach(group => {
-        const input = group.querySelector('input[type="text"]');
-        const errorCheckbox = group.querySelector('input[type="checkbox"]');
-        const userAnswer = input.value.trim();
-        const correctAnswer = currentCorrectAnswers[input.id];
-        
-        if (errorCheckbox.checked){
-            if (correctAnswer === "Error: Division by zero" && userAnswer === "") {
-                input.style.backgroundColor = 'lightgreen';  // Correctly predicted error
-            } else if (correctAnswer === "Error: Division by zero") {   //aurait pas dû rentrer valeur
-                input.style.backgroundColor = '';  // contradiction enter checkBox et valeur
-            } else {
-                input.style.backgroundColor = 'salmon';  // Incorrect answer or error not predicted
-            }}
-            else {
-                if (userAnswer === "") {
-                    input.style.backgroundColor = "";
-                } else if (userAnswer === correctAnswer) {
-                    input.style.backgroundColor = 'lightgreen';  // Correct answer
-                } else {
-                    input.style.backgroundColor = 'salmon';  // Incorrect answer
-                }
-            }
-        });
-    }
-    function showAnswers() {
-        document.querySelectorAll('.input-group').forEach(group => {
-            const input = group.querySelector('input[type="text"]');
-            const errorCheckbox = group.querySelector('input[type="checkbox"]');
-            if (currentCorrectAnswers[input.id].startsWith("Error")) {
-                errorCheckbox.checked = true;
-                input.value = "";  // Clear the input as it's an error
-                input.style.backgroundColor = 'lightgray';
-            } else {
-                input.value = currentCorrectAnswers[input.id];
-                input.style.backgroundColor = 'lightgray';
-            }
-        });
-    }
-    </script>
-</body>
-</html>
