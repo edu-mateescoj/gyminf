@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <title>Test Onglets</title>
+  <style>
+    .tabs {
+      display: flex;
+      margin-bottom: 1em;
+    }
+    .tab-button {
+      padding: 0.5em 1em;
+      cursor: pointer;
+      border: 1px solid #ccc;
+      background: #eee;
+      margin-right: 5px;
+    }
+    .tab-button.active {
+      background: #ddd;
+      font-weight: bold;
+    }
+    .tab-content {
+      display: none;
+      border: 1px solid #ccc;
+      padding: 1em;
+    }
+    .tab-content.active {
+      display: block;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="tabs">
+    <button class="tab-button active" data-tab="tab1">Onglet 1</button>
+    <button class="tab-button" data-tab="tab2">Onglet 2</button>
+    <button class="tab-button" data-tab="tab3">Onglet 3</button>
+  </div>
+
+  <div id="tab1" class="tab-content active">
+    <p>Contenu de l'onglet 1</p>
+  </div>
+  <div id="tab2" class="tab-content">
+    <p>Contenu de l'onglet 2</p>
+  </div>
+  <div id="tab3" class="tab-content">
+    <p>Contenu de l'onglet 3</p>
+  </div>
