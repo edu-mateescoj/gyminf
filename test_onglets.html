@@ -4,10 +4,13 @@
   <meta charset="UTF-8">
   <title>Test Onglets</title>
   <style>
+    /* Conteneur des boutons d’onglets */
     .tabs {
       display: flex;
       margin-bottom: 1em;
     }
+
+    /* Style de base des boutons d’onglets */
     .tab-button {
       padding: 0.5em 1em;
       cursor: pointer;
@@ -15,15 +18,22 @@
       background: #eee;
       margin-right: 5px;
     }
+
+    /* Style du bouton actif (l’onglet sélectionné) */
     .tab-button.active {
       background: #ddd;
       font-weight: bold;
     }
+
+    /* Par défaut, les contenus sont cachés */
     .tab-content {
       display: none;
       border: 1px solid #ccc;
       padding: 1em;
     }
+
+    /* Quand un contenu reçoit la classe 'active',
+    alors: il devient visible */
     .tab-content.active {
       display: block;
     }
@@ -31,18 +41,49 @@
 </head>
 <body>
 
+  <!-- Les Onglets (des boutons) -->
   <div class="tabs">
     <button class="tab-button active" data-tab="tab1">Onglet 1</button>
     <button class="tab-button" data-tab="tab2">Onglet 2</button>
     <button class="tab-button" data-tab="tab3">Onglet 3</button>
   </div>
 
+  <!-- Contenus associés à chaque onglet -->
   <div id="tab1" class="tab-content active">
     <p>Contenu de l'onglet 1</p>
   </div>
-  <div id="tab2" class="tab-content">
+  <div id="tab2" class="tab-content"> <!--pas actif de base-->
     <p>Contenu de l'onglet 2</p>
   </div>
   <div id="tab3" class="tab-content">
     <p>Contenu de l'onglet 3</p>
   </div>
+
+  <script>
+    // On récupère tous les boutons et tous les contenus
+    const buttons = document.querySelectorAll('.tab-button');
+    const contents = document.querySelectorAll('.tab-content');
+
+    // Pour chaque bouton...
+    buttons.forEach(button => {
+      // ...on ajoute un écouteur de clic
+      button.addEventListener('click', () => {
+
+        // 1. On retire la classe 'active' de tous les boutons
+        buttons.forEach(btn => btn.classList.remove('active'));
+        // 2. On retire aussi la classe 'active' de tous les contenus
+        contents.forEach(content => content.classList.remove('active'));
+
+        // 3. On ajoute la classe 'active' au bouton cliqué
+        button.classList.add('active');
+        // 4. On lit l’attribut data-tab du bouton cliqué
+        const tabId = button.dataset.tab;
+        // 5. On active le contenu correspondant (même id que data-tab)
+        document.getElementById(tabId).classList.add('active');
+
+      });
+    });
+  </script>
+
+</body>
+</html>
