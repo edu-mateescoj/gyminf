@@ -8,19 +8,21 @@
   <!-- prérequis pour "responsive design" ... aussi @media, max-width: 100%, unités flexibles...-->
   <meta name='viewport' content='width=device-width, initial-scale=1'> 
   <!-- liens CDN: version MAJ début 2025 -->
-  <link 
-  href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
+  <link
   rel="stylesheet"
-  integrity="sha384-wugWM2AaH1EYo6VdiTzTQYmpPZSB4V1F0VYwXzoze7gSn79PYHa7k4UKcS13lZ55"
-  crossorigin="anonymous" 
-  />
-<link
+  href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
+  integrity="sha384-B5m9cBnt6ABID8zr7AgOfsiTD+hZkAmOpSNTd6EF+z2QwRJ6u3etJFe/JIH/gk9o"
+  crossorigin="anonymous"
+/>
+
+<link 
   rel="stylesheet"
   href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.9/codemirror.min.css"
-  integrity="sha512-eC9rYBHUCF+IEWuH8yNi7QDw8s+TnQqzA/Sau/6QNUb9ETaU9si9/eTZQK2efrC/60bWQSqSmaHmplFcS4VQMA=="
+  integrity="sha512-9rAukU1ol0vGT5CDmG+2mnJZXr0DHqkMqRHAOOCEMXeN3f+4p+z1/n89GqzPHd3EU54fXiv66DGIaW4tpMeAiA=="
   crossorigin="anonymous"
   referrerpolicy="no-referrer"
 />
+
 <script
   src="https://cdn.jsdelivr.net/pyodide/v0.23.4/full/pyodide.js"
 ></script>
@@ -83,7 +85,7 @@
     <p>Contenu de l'onglet 2 ...</p>
     <section class="header text-center p-5"> 
       <h2 class="text-dark">Un éditor Python avec <a href="https://codemirror.net/" target="_blank">CodeMirror</a> 
-          and 
+          et... 
           <a href="https://pyodide.org/en/stable/index.html" target="_blank">pyodide</a> 
       </h2> <!-- target=":blank" pour ouvrir un nouvel onglet-->
   </section> 
@@ -171,14 +173,22 @@
 </div>
 
 
-  <!-- versions stables -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.63.3/codemirror.min.js"
-  integrity="sha512-XMlgZzPyVXf1I/wbGnofk1Hfdx+zAWyZjh6c21yGo/k1zNC4Ve6xcQnTDTCHrjFGsOrVicJsBURLYktVEu/8vQ=="
-  crossorigin="anonymous" referrerpolicy="no-referrer"></script> 
+  <!-- CodeMirror JS 5.65.9 depuis cdnjs -->
+  <script
+    src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.9/codemirror.min.js"
+    integrity="sha512-pghx08ZKGYPuIJeqlDvVSv8u4RdwZMx9N/QnCzg6KcZk5ZcYnIF+st5HeqFwUyQfoPp8cVeBXt82gOJiS1GhYA=="
+    crossorigin="anonymous"
+    referrerpolicy="no-referrer"
+  ></script>
+  <!-- Module Python pour CodeMirror -->
+  <script
+    src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.9/mode/python/python.min.js"
+    integrity="sha512-k5/5cOs6ttP7a0zGpdl8RehWm8pFqSrzZzI8VQLd7x1XkQOouXHyEuXgU8VGSYOIkVnlRIzlaBWY1SBaCj1Ugw=="
+    crossorigin="anonymous"
+    referrerpolicy="no-referrer"
+  ></script>
 
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.63.3/mode/python/python.min.js"
-  integrity="sha512-/mavDpedrvPG/0Grj2Ughxte/fsm42ZmZWWpHz1jCbzd5ECv8CB7PomGtw0NAnhHmE/lkDFkRMupjoohbKNA1Q=="
-  crossorigin="anonymous" referrerpolicy="no-referrer"></script> 
+  <script src='main.js'></script>
 
   </div>
 
