@@ -40,7 +40,7 @@ output.value = "Initialisation de Pyodide...\n";
  *  let pyodide = await loadPyodide();
  */
 async function main() {
-
+    // Pas de indexURL => Pyodide détecte l'URL du script
   let pyodide = await loadPyodide();
   // On pourrait charger les modules de base (turtle, numpy, matplotlib, etc.)
 
