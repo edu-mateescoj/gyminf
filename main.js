@@ -41,7 +41,7 @@ output.value = "Initialisation de Pyodide...\n";
  */
 async function main() {
 
-  let pyodide = await loadPyodide({indexURL: "https://cdn.jsdelivr.net/pyodide/v0.23.4/full/"});
+  let pyodide = await loadPyodide();
   // On pourrait charger les modules de base (turtle, numpy, matplotlib, etc.)
 
   output.value += "Pyodide est prêt !\n";
