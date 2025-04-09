@@ -36,10 +36,13 @@ output.value = "Initialisation de Pyodide...\n";
  *       indexURL: "https://cdn.jsdelivr.net/pyodide/v0.23.4/full/"
  *   });
  * 
- * - Sinon, loadPyodide() détectera automatiquement l'URL à partir du script chargé.
+ * - Autrement:
+ *  let pyodide = await loadPyodide();
  */
 async function main() {
-  let pyodide = await loadPyodide();
+
+  let pyodide = await loadPyodide({indexURL: "https://cdn.jsdelivr.net/pyodide/v0.23.4/full/"
+
   output.value += "Pyodide est prêt !\n";
   return pyodide;
 }
@@ -52,8 +55,8 @@ let pyodideReadyPromise = main();
  * Ajoute du texte au textarea de sortie (output)
  * Préfixe chaque ligne par ">>>" pour rappeler le prompt Python
  */
-function addToOutput(text) {
-  output.value += ">>> " + text + "\n";
+function addToOutput(stdout) {
+  output.value += ">>> " + stdout + "\n";
 }
 
 /**
@@ -66,7 +69,11 @@ async function evaluatePython() {
   // On attend que Pyodide soit chargé
   let pyodide = await pyodideReadyPromise;
   try {
+    console.log(editor.getValue())
+
     // Récupère le code dans l'éditeur
+    // getValue() renvoie le contenu du textarea
+    // (qui a été transformé en éditeur CodeMirror) 
     let userCode = editor.getValue();
 
     // Exécute le code Python avec Pyodide
