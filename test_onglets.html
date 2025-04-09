@@ -88,6 +88,89 @@
       </h2> <!-- target=":blank" pour ouvrir un nouvel onglet-->
   </section> 
   
+<!-- 
+  Conteneur principal : 
+  - Classes Bootstrap "d-flex flex-column" pour disposer
+    les enfants en flexbox, à la verticale.
+-->
+<div class="d-flex flex-column">
+
+  <!-- 
+    Section d'entrée (Input) : 
+    - Balise <section> servant à structurer logiquement la page.
+    - Classe "input" : libre à vous de la personnaliser dans votre CSS. 
+  -->
+  <section class="input">
+
+      <!-- 
+        Onglet Bootstrap (Input) : 
+        - <ul class="nav nav-tabs"> indique une liste d’onglets. 
+        - <li class="nav-item"> un onglet. 
+        - <a class="nav-link active"> indique l'onglet actif.
+      -->
+      <ul class="nav nav-tabs">
+          <li class="nav-item">
+              <a class="nav-link active" aria-current="page">
+                  <h4>Input</h4>
+              </a>
+          </li>
+      </ul>
+
+      <!-- 
+        Zone de texte pour entrer le code Python : 
+        - <textarea id="code" name="code"> : on y place
+          le code source qui sera édité par CodeMirror.
+      -->
+      <div>
+          <textarea id="code" name="code">
+          </textarea>
+      </div>
+  </section>
+
+  <!-- 
+    Bouton "Run" (exécuter le code) : 
+    - Classes Bootstrap "align-self-center m-3" 
+      pour centrer le bouton et lui donner une marge.
+    - <button type="button" class="btn btn-success" onclick="evaluatePython()">
+      pour exécuter la fonction JavaScript "evaluatePython()"
+      lorsque l'utilisateur clique dessus.
+  -->
+  <div class="align-self-center m-3">
+      <button type="button" class="btn btn-success" onclick="evaluatePython()">
+          <h5>Run</h5>
+      </button>
+  </div>
+
+  <!-- 
+    Section de sortie (Output) : 
+    - Comme pour l’Input, un <section> nommé "output".
+    - Un onglet "Output" défini de la même manière 
+      que pour l’onglet "Input".
+  -->
+  <section class="output">
+      <ul class="nav nav-tabs">
+          <li class="nav-item">
+              <a class="nav-link active" aria-current="page">
+                  <h4>Output</h4>
+              </a>
+          </li>
+      </ul>
+
+      <!-- 
+        Zone de texte pour afficher la sortie du code :
+        - <textarea id="output" name="output" class="w-100" rows="15">
+          reçoit le résultat de l'exécution Python (console / stdout).
+        - "w-100" (Bootstrap) pour la largeur à 100%, 
+          "rows=15" pour donner une hauteur par défaut.
+      -->
+      <div>
+          <textarea id="output" name="output" class="w-100" rows="15">
+          </textarea>
+      </div>
+  </section>
+</div>
+
+
   <!-- versions stables -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.63.3/codemirror.min.js"
   integrity="sha512-XMlgZzPyVXf1I/wbGnofk1Hfdx+zAWyZjh6c21yGo/k1zNC4Ve6xcQnTDTCHrjFGsOrVicJsBURLYktVEu/8vQ=="
