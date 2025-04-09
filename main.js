@@ -73,14 +73,14 @@ async function evaluatePython() {
 
     // Récupère le code dans l'éditeur
     // getValue() renvoie le contenu du textarea
-    // (qui a été transformé en éditeur CodeMirror) 
+    // (qui a été transformé en éditeur CodeMirror)  
     let userCode = editor.getValue();
 
     // Exécute le code Python avec Pyodide
-    let result = pyodide.runPython(userCode);
+    let output = pyodide.runPython(userCode);
 
     // Affiche le résultat
-    addToOutput(result);
+    addToOutput(output);
   } catch (err) {
     // Affiche l'erreur dans la zone de sortie
     addToOutput(err);
