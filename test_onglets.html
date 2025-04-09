@@ -10,22 +10,16 @@
   <!-- liens CDN: version MAJ début 2025 -->
   <link
   rel="stylesheet"
-  href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
-  integrity="sha384-B5m9cBnt6ABID8zr7AgOfsiTD+hZkAmOpSNTd6EF+z2QwRJ6u3etJFe/JIH/gk9o"
-  crossorigin="anonymous"
-/>
-
-<link 
+  href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" 
   rel="stylesheet"
-  href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.9/codemirror.min.css"
-  integrity="sha512-9rAukU1ol0vGT5CDmG+2mnJZXr0DHqkMqRHAOOCEMXeN3f+4p+z1/n89GqzPHd3EU54fXiv66DGIaW4tpMeAiA=="
-  crossorigin="anonymous"
-  referrerpolicy="no-referrer"
+	integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" 
+  crossorigin="anonymous"> 
 />
 
-<script
-  src="https://cdn.jsdelivr.net/pyodide/v0.23.4/full/pyodide.js"
-></script>
+<link rel="stylesheet" 
+href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.48.4/codemirror.min.css" /> 
+
+<script src="https://cdn.jsdelivr.net/pyodide/v0.18.1/full/pyodide.js"></script>
 
 
   <!-->
@@ -67,6 +61,7 @@
 
   </style>
 </head>
+
 <body>
 
   <!-- Les Onglets (des boutons) -->
@@ -82,27 +77,28 @@
   </div>
 
   <div id="tab2" class="tab-content"> <!--pas actif de base-->
-    <p>Contenu de l'onglet 2 ...</p>
+    <div class="container-fluid bg-light"> 
+    
     <section class="header text-center p-5"> 
       <h2 class="text-dark">Un éditor Python avec <a href="https://codemirror.net/" target="_blank">CodeMirror</a> 
           et... 
           <a href="https://pyodide.org/en/stable/index.html" target="_blank">pyodide</a> 
       </h2> <!-- target=":blank" pour ouvrir un nouvel onglet-->
-  </section> 
+    </section> 
   
 <!-- 
   Conteneur principal : 
   - Classes Bootstrap "d-flex flex-column" pour disposer
     les enfants en flexbox, à la verticale.
 -->
-<div class="d-flex flex-column">
+    <div class="d-flex flex-column">
 
   <!-- 
     Section d'entrée (Input) : 
     - Balise <section> servant à structurer logiquement la page.
     - Classe "input" : libre à vous de la personnaliser dans votre CSS. 
   -->
-  <section class="input">
+    <section class="input">
 
       <!-- 
         Onglet Bootstrap (Input) : 
@@ -127,15 +123,14 @@
           <textarea id="code" name="code">
           </textarea>
       </div>
-  </section>
+    </section>
 
   <!-- 
     Bouton "Run" (exécuter le code) : 
     - Classes Bootstrap "align-self-center m-3" 
       pour centrer le bouton et lui donner une marge.
     - <button type="button" class="btn btn-success" onclick="evaluatePython()">
-      pour exécuter la fonction JavaScript "evaluatePython()"
-      lorsque l'utilisateur clique dessus.
+      pour exécuter la fonction au clique.
   -->
   <div class="align-self-center m-3">
       <button type="button" class="btn btn-success" onclick="evaluatePython()">
@@ -170,8 +165,9 @@
           </textarea>
       </div>
   </section>
-</div>
+  </div> <!-- fin du conteneur principal -->
 
+</div> <!-- fin du tab 2 -->
 
   <!-- CodeMirror JS 5.65.9 depuis cdnjs -->
   <script
@@ -190,7 +186,6 @@
 
   <script src='main.js'></script>
 
-  </div>
 
   <div id="tab3" class="tab-content">
     <p>Contenu de l'onglet 3</p>
