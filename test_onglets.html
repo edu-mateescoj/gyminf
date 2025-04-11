@@ -70,7 +70,8 @@ href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.48.4/codemirror.min.cs
   </div>
 
   <!-- Contenus associés à chaque onglet -->
-  <div id="tab1" class="tab-content active">
+  <!-- début du tab 1 -->
+    <div id="tab1" class="tab-content active">
     <div class="exercise-container">
       <h2>Exerciseur d'assignation de variables et d'opérations (arithmétiques et logiques)</h2>
       
@@ -343,7 +344,9 @@ function updateOperatorAvailability(num) {
   }
   </script>
   </div>
+  <!-- fin du tab 1 -->
 
+  <!-- début du tab 2 -->
   <div id="tab2" class="tab-content"> <!--pas actif de base-->
     <div class="container-fluid bg-light"> 
     
@@ -435,8 +438,17 @@ function updateOperatorAvailability(num) {
   </section>
   </div> <!-- fin du conteneur principal -->
 
-</div> <!-- fin du tab 2 -->
+  </div> 
+  <!-- fin du tab 2 -->
 
+  <!-- début du tab 3 -->
+  <div id="tab3" class="tab-content">
+    <section>
+      <a href="layout.html">  Page "layout" </a>
+    </section> 
+  </div>
+
+  
   <!-- CodeMirror JS 5.65.9 depuis cdnjs -->
   <script 
     src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.63.3/codemirror.min.js"
@@ -450,14 +462,6 @@ function updateOperatorAvailability(num) {
     crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 
   <script src='main.js'></script>
-
-
-  <div id="tab3" class="tab-content">
-    <section>
-      <a href="layout.html">  Page "layout" </a>
-    </section> 
-    
-  </div>
 
   <script>
     // On récupère tous les boutons et tous les contenus
