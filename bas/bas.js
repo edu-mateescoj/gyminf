@@ -1,5 +1,7 @@
+let editor;
+
 // tentative de fix
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', async function() {
     mermaid.initialize({
         startOnLoad: true,
         theme: "default"
@@ -8,7 +10,8 @@ document.addEventListener('DOMContentLoaded', function() {
 // la variable JavaScript mermaidCode contient le texte Mermaid généré par Pyodide
 
     // CodeMirror editor
-    const editor = CodeMirror.fromTextArea(document.getElementById('code-input'), {
+    // const ...
+    editor = CodeMirror.fromTextArea(document.getElementById('code-input'), {
         mode: 'python',
         theme: 'dracula',
         lineNumbers: true,
@@ -18,16 +21,15 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // un code python par défaut
     editor.setValue(`x = 10
-    if x > 5:
-        print("grand")
-    else:
-        print("petit")`);
+if x > 5:
+    print("grand")
+else:
+    print("petit")`);
     
-        await main();
-    });
+    await main(); //(editor)
+});
 
-
-async function main() {
+async function main() { //(editor)
     
     // Charger Pyodide
     let pyodide = await loadPyodide();
@@ -41,7 +43,7 @@ import ast
 
 def ast_to_mermaid(code):
     tree = ast.parse(code)  # gnérer l'arbre AST
-    graph = ["graph TD"]    # # Initialiser le graphe Mermaid
+    graph = ["flowchart TD"]    # # Initialiser le graphe Mermaid
 
     def visit(node, parent=None):
         node_id = str(id(node))
@@ -71,13 +73,15 @@ def ast_to_mermaid(code):
 
 }
 
+// main();
+
 // Fonction pour injecter le graphe Mermaid dans le conteneur HTML existant
 async function afficherFlowchart(mermaidCode) {
     const container = document.getElementById('flowchart');
     // Injection du contenu Mermaid dans le conteneur
     container.innerHTML = `<pre class="mermaid">${mermaidCode}</pre>`;
-// Déclenchement du rendu Mermaid.js
-await mermaid.run({
-    nodes: [container.querySelector('.mermaid')],
-});
+    // Déclenchement du rendu Mermaid.js
+    await mermaid.run({
+        nodes: [container.querySelector('.mermaid')],
+    });
 }

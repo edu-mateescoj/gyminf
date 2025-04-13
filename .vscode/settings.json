@@ -1,3 +1,4 @@
 {
-    "git.useIntegratedAskPass": true
+    "git.useIntegratedAskPass": true,
+    "liveServer.settings.port": 5501
 }
