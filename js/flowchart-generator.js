@@ -1,18 +1,19 @@
-// Flowchart Generator JavaScript file for the Python Code Exercise Authoring Tool
-
-// Function to convert Python code to a Mermaid flowchart
+// Fonction pour convertir du code Python en diagramme Mermaid
 function generateFlowchart(pythonCode) {
-    // Start with an empty flowchart structure
+    // Débuter avec une structure de diagramme vide
     const nodes = [];
     const connections = [];
     let nodeCounter = 1;
     
-    // Get a unique node ID
+    // Récupérer un identifiant unique pour un nœud
     function getNodeId() {
-        return `node${nodeCounter++}`;
+        const id = `node${nodeCounter}`;
+        nodeCounter += 1;
+        return id;
     }
     
-    // Get indentation level (in number of spaces/4)
+    // Obtenir le niveau d'indentation (nombre entier
+    // nb de groupes de 4 espaces)
     function getIndentLevel(line) {
         let indent = 0;
         for (let i = 0; i < line.length; i++) {
@@ -23,7 +24,8 @@ function generateFlowchart(pythonCode) {
         return Math.floor(indent / 4);
     }
     
-    // Clean a line for display
+    // Clean line: trim() et remplace " par '
+    // pour éviter les conflits avec guillemets Mermaid"
     function cleanLine(line) {
         return line.trim().replace(/"/g, "'");
     }
@@ -46,17 +48,17 @@ function generateFlowchart(pythonCode) {
             
             if (cleanedLine.startsWith('if ') && cleanedLine.endsWith(':')) {
                 type = 'if';
-                content = cleanedLine.slice(3, -1); // Remove 'if ' and ':'
+                content = cleanedLine.slice(3, -1); // supprime 'if ' et ':'
             } 
             else if (cleanedLine.startsWith('elif ') && cleanedLine.endsWith(':')) {
                 type = 'elif';
-                content = cleanedLine.slice(5, -1); // Remove 'elif ' and ':'
+                content = cleanedLine.slice(5, -1); // supprime 'elif ' et ':'
             }
             else if (cleanedLine.startsWith('else:')) {
                 type = 'else-marker';
                 content = 'else';
                 
-                // Find the parent if/elif
+                // cherche le parent if ou elif
                 let parentIf = null;
                 for (let j = parsedLines.length - 1; j >= 0; j--) {
                     if (parsedLines[j].indentLevel < indentLevel && 
@@ -74,16 +76,16 @@ function generateFlowchart(pythonCode) {
                     });
                 }
                 
-                // Don't create an actual node for the else: line
+                // ne pas créer de node pour la ligne 'else:'
                 continue;
             }
             else if (cleanedLine.startsWith('for ') && cleanedLine.endsWith(':')) {
                 type = 'for';
-                content = cleanedLine.slice(4, -1); // Remove 'for ' and ':'
+                content = cleanedLine.slice(4, -1); // spprime 'for ' et ':'
             }
             else if (cleanedLine.startsWith('while ') && cleanedLine.endsWith(':')) {
                 type = 'while';
-                content = cleanedLine.slice(6, -1); // Remove 'while ' and ':'
+                content = cleanedLine.slice(6, -1); // supprime 'while ' et ':'
             }
             
             parsedLines.push({
@@ -91,22 +93,24 @@ function generateFlowchart(pythonCode) {
                 indentLevel: indentLevel,
                 content: content,
                 type: type,
-                nodeId: null, // Will be assigned in the next step
+                nodeId: null, // sera assigné ensuite
                 elseBlock: false
             });
         }
         
-        // Mark statements that are in else blocks
+        // marquer les instructions qui sont dans des blocs 'else'
         for (const marker of elseMarkers) {
             for (let i = 0; i < parsedLines.length; i++) {
                 const line = parsedLines[i];
                 
-                // If this line comes after the else: and is at a deeper indentation level, it's in the else block
+                //Si cette ligne vient après le 'else:' et est à un niveau d'indentation supérieur 
+                // (plus profond) alors elle fait partie du bloc 'else'
+                // et elle est marquée comme telle
                 if (line.lineIndex > marker.lineIndex && line.indentLevel > marker.indentLevel) {
                     line.elseBlock = true;
                     line.elseParent = marker.parentIf;
                 }
-                // If we've moved past the else block, stop marking
+                // on est passé hors du bloc 'else': arrêter le marquage
                 else if (line.lineIndex > marker.lineIndex && line.indentLevel <= marker.indentLevel) {
                     break;
                 }
@@ -116,12 +120,13 @@ function generateFlowchart(pythonCode) {
         return parsedLines;
     }
     
-    // Analyze the control flow between nodes
+    // Analyse le control flow entre les nodes
     function analyzeControlFlow(parsedLines) {
-        // Create the actual nodes and determine control flow
+        // créer les nodes et determiner le control flow
         const allNodes = [];
         
-        // Start node
+        // Le node de départ
+        //TODO : 'start' est un rond comme vu par les élèves
         const startId = getNodeId();
         nodes.push(`${startId}[Start]`);
         allNodes.push({
@@ -130,13 +135,14 @@ function generateFlowchart(pythonCode) {
             next: []
         });
         
-        // Create nodes for each line
+        // Créer les nodes à chaque ligne
         for (let i = 0; i < parsedLines.length; i++) {
             const line = parsedLines[i];
             const nodeId = getNodeId();
             line.nodeId = nodeId;
             
-            // Create the appropriate node based on type
+            // créer le node approprié selon type
+            // TODO les types 'for' et 'while'
             if (line.type === 'if' || line.type === 'elif') {
                 nodes.push(`${nodeId}{${line.content}}`);
             } 
@@ -147,7 +153,7 @@ function generateFlowchart(pythonCode) {
                 nodes.push(`${nodeId}[${line.content}]`);
             }
             
-            // Create node metadata
+            // créer les métadonnées du node
             allNodes.push({
                 nodeId: nodeId,
                 type: line.type,
@@ -155,14 +161,15 @@ function generateFlowchart(pythonCode) {
             });
         }
         
-        // Now determine sequential flow - which node follows which
+        // Déterminer la séquence - quel node suit lequel
         for (let i = 0; i < parsedLines.length; i++) {
             const currentLine = parsedLines[i];
             const currentNode = allNodes.find(n => n.nodeId === currentLine.nodeId);
             
-            // If this is a conditional
+            // Si c'est une condition ('if' ou 'elif')
             if (currentLine.type === 'if' || currentLine.type === 'elif') {
-                // Find the first statement in the "True" branch (statements indented under the if)
+                // trouver la première instruction de la branche "True" 
+                // parcourir les instructions indentées sous le if
                 let trueNode = null;
                 for (let j = i + 1; j < parsedLines.length; j++) {
                     if (parsedLines[j].indentLevel > currentLine.indentLevel) {
@@ -170,39 +177,44 @@ function generateFlowchart(pythonCode) {
                         break;
                     }
                     else if (parsedLines[j].indentLevel === currentLine.indentLevel) {
-                        // We've reached a node at the same level, no indented block
+                        // node au même niveau, on sort
                         break;
                     }
                 }
                 
-                // Find the next statement for the "False" branch
+                // trouver la prochaine instruction pour la branche "False"
                 let falseNode = null;
                 
-                // First try to find an 'else' or 'elif' at the same level
+                // d'abord chercher un 'else' ou 'elif' au même niveau d'indentation
                 let hasElseBlock = false;
                 for (let j = i + 1; j < parsedLines.length; j++) {
-                    // If we find an else block for this if
+                    // si on trouve un 'else' au même niveau
+                    // et qui appartient à notre if
                     if (parsedLines[j].elseBlock && parsedLines[j].elseParent === currentLine) {
                         falseNode = parsedLines[j];
                         hasElseBlock = true;
                         break;
                     }
-                    // If we find an elif at the same level
+                    // si on trouve un 'elif' au même niveau
+                    // et qui appartient à notre if
                     else if (parsedLines[j].indentLevel === currentLine.indentLevel && 
                             parsedLines[j].type === 'elif') {
                         falseNode = parsedLines[j];
                         hasElseBlock = true;
                         break;
                     }
-                    // Stop looking if we go up to a higher level
+                    // on sort si on trouve un node au même niveau
                     else if (parsedLines[j].indentLevel < currentLine.indentLevel) {
                         break;
                     }
                 }
                 
-                // If no else/elif was found, use the next statement after this entire if-block
+                // si aucun else/elif n'a été trouvé, on cherche la prochaine instruction
+                // qui n'est pas dans le bloc else/elif
                 if (!hasElseBlock) {
-                    // Find the next statement at the same or higher level
+                    // on cherche la prochaine instruction, au même niveau
+                    // ou un niveau supérieur
+                    // qui n'est pas un elif
                     for (let j = i + 1; j < parsedLines.length; j++) {
                         // If at same indentation level but not an elif 
                         // (already handled by else/elif check)
@@ -211,7 +223,7 @@ function generateFlowchart(pythonCode) {
                             falseNode = parsedLines[j];
                             break;
                         }
-                        // If at a level above the current indent - end of entire if-block
+                        // si on est à un niveau supérieur : fin de l'if 
                         else if (parsedLines[j].indentLevel < currentLine.indentLevel) {
                             falseNode = parsedLines[j];
                             break;
