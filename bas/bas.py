@@ -1,9 +1,13 @@
 import ast
 import astor
+import dis
+import meta
+import codegen
+
 
 def ast_to_mermaid(code):
     tree = ast.parse(code)  # gnérer l'arbre AST
-    graph = ["graph TD"]    # # Initialiser le graphe Mermaid
+    graph = ["flowchart TD"]    # # Initialiser le Mermaid
 
     def visit(node, parent=None):
         node_id = str(id(node))
@@ -17,5 +21,5 @@ def ast_to_mermaid(code):
     visit(tree)
     return "\\n".join(graph)
 
-code = "a = 3\nb = 4\nc = a + b\nd = c * 2"
-mermaid_code = ast_to_mermaid(code) # Convertir le Python en Mermaid
+code = "a = 3"
+print(ast_to_mermaid(code))
