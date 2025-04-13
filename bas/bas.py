@@ -2,7 +2,7 @@ import ast
 import astor
 import dis
 import meta
-import codegen
+#import codegen
 
 
 def ast_to_mermaid(code):
@@ -22,4 +22,4 @@ def ast_to_mermaid(code):
     return "\\n".join(graph)
 
 code = "a = 3"
-print(ast_to_mermaid(code))
+print(ast_to_mermaid(code).replace("\\n", "\n"))

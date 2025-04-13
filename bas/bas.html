@@ -16,6 +16,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
     <!-- Inclusion de Mermaid pour les diagrammes -->
+    <link rel="stylesheet" href="[https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.css">
     <script src="https://cdn.jsdelivr.net/npm/mermaid@10.2.4/dist/mermaid.min.js"></script>
     
     <!-- Inclusion du CSS personnalisé -->
@@ -34,17 +35,36 @@
             B -->|loop| A
     </pre>
     
-    Voici un mermaid :
+    Voici un ast :
     <pre class="mermaid">
         flowchart TD
-        1572440446080["Module"]
-        1572443633024["Assign"]
-        1572440446080 --> 1572443633024
-        
+        1892660981472["Module"]
+        1892660980512["Assign"]
+        1892660981472 --> 1892660980512
+        1892661802176["Name"]
+        1892660980512 --> 1892661802176
+        1892661146048["Store"]
+        1892661802176 --> 1892661146048
+        1892661802128["Constant"]
+        1892660980512 --> 1892661802128
         </pre>
 
-    <script src="bas.js"></script>
+    <div class="container">
 
+        <div id="flowchart" class="mermaid-container">
+            Le container pour recevoir le flowchart depuis js
+        </div>
+    
+        <div id="editor-container" style="margin-top: 20px;">
+            <textarea id="code-input" name="code"></textarea>
+        </div>
+
+    </div>
+
+    <script src="bas.js"></script>
+   <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/codemirror.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/mode/python/python.min.js"></script>
+    
     <script src="js/code-generator.js"></script>
     <script src="js/flowchart-generator.js"></script>
     <script src="js/validation.js"></script>
@@ -52,6 +72,7 @@
     
     <script src="js/mermaid.js"></script>
 
+<!--
     <script src="js/mermaid-init.js"></script>
     <script src="js/mermaid-parse.js"></script>
     <script src="js/mermaid-render.js"></script>
@@ -69,8 +90,10 @@
     <script src="js/mermaid-embed-zoom.js"></script>
     <script src="js/mermaid-embed-clipboard.js"></script>
     <script src="js/mermaid-embed-export.js"></script>
-    <script src="js/mermaid-embed-export.js"></script>
     <script src="js/mermaid-embed-embed.js"></script>
     <script src="js/mermaid-embed-embed-init.js"></script>
+
+-->
+</body>
 </html>
 

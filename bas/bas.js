@@ -1,22 +1,39 @@
+// tentative de fix
+document.addEventListener('DOMContentLoaded', function() {
+    mermaid.initialize({
+        startOnLoad: true,
+        theme: "default"
+    });
+
 // la variable JavaScript mermaidCode contient le texte Mermaid généré par Pyodide
 
-
-// Fonction pour injecter le graphe Mermaid dans le conteneur HTML existant
-async function afficherFlowchart(mermaidCode) {
-    const container = document.getElementById('flowchart');
-
-    // Injection du contenu Mermaid dans le conteneur
-    container.innerHTML = `<pre class="mermaid">${mermaidCode}</pre>`;
-
-    // Déclenchement du rendu Mermaid.js
-    await mermaid.run({
-        nodes: [container.querySelector('.mermaid')],
+    // CodeMirror editor
+    const editor = CodeMirror.fromTextArea(document.getElementById('code-input'), {
+        mode: 'python',
+        theme: 'dracula',
+        lineNumbers: true,
+        indentUnit: 4,
+        matchBrackets: true
     });
-}
 
-// Charger Pyodide
+    // un code python par défaut
+    editor.setValue(`x = 10
+    if x > 5:
+        print("grand")
+    else:
+        print("petit")`);
+    
+        await main();
+    });
+
+
 async function main() {
+    
+    // Charger Pyodide
     let pyodide = await loadPyodide();
+
+    //code python à recevoir depuis le textarea de codemirror
+    const codePython = editor.getValue();
 
     // Analyse du code Python et génération du graphe Mermaid
     await pyodide.runPythonAsync(`
@@ -39,12 +56,6 @@ def ast_to_mermaid(code):
     return "\\n".join(graph)
     `);
 
-    const codePython = `x = 10
-if x > 5:
-    print("grand")
-else:
-    print("petit")`;
-
     //alternative
     /* 
     let mermaidGraph = pyodide.globals.get("ast_to_mermaid")(codePython);
@@ -55,9 +66,18 @@ else:
     let ast_to_mermaid = pyodide.globals.get("ast_to_mermaid");
     let mermaidGraph = ast_to_mermaid(codePython);
 
-    // Injecter et afficher dans ton conteneur HTML actuel
+    // injecter le graphe Mermaid dans le conteneur HTML existant
     await afficherFlowchart(mermaidGraph);
 
 }
 
-main();
+// Fonction pour injecter le graphe Mermaid dans le conteneur HTML existant
+async function afficherFlowchart(mermaidCode) {
+    const container = document.getElementById('flowchart');
+    // Injection du contenu Mermaid dans le conteneur
+    container.innerHTML = `<pre class="mermaid">${mermaidCode}</pre>`;
+// Déclenchement du rendu Mermaid.js
+await mermaid.run({
+    nodes: [container.querySelector('.mermaid')],
+});
+}
