@@ -1,0 +1,21 @@
+import ast
+import astor
+
+def ast_to_mermaid(code):
+    tree = ast.parse(code)  # gnérer l'arbre AST
+    graph = ["graph TD"]    # # Initialiser le graphe Mermaid
+
+    def visit(node, parent=None):
+        node_id = str(id(node))
+        label = type(node).__name__ # Utiliser le nom du type de node comme label
+        graph.append(f'{node_id}["{label}"]')
+        if parent:
+            graph.append(f"{parent} --> {node_id}")
+        for child in ast.iter_child_nodes(node):
+            visit(child, node_id)
+
+    visit(tree)
+    return "\\n".join(graph)
+
+code = "a = 3\nb = 4\nc = a + b\nd = c * 2"
+mermaid_code = ast_to_mermaid(code) # Convertir le Python en Mermaid
