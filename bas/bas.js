@@ -46,15 +46,17 @@ def ast_to_mermaid(code):
     graph = ["flowchart TD"]    # # Initialiser le graphe Mermaid
 
     def visit(node, parent=None):
-        node_id = str(id(node))
-        label = type(node).__name__ # Utiliser le nom du type de node comme label
+        node_id = str(id(node)) # Utiliser l'id en mémoire comme identifiant unique
+        label = type(node).__name__ # Utiliser le nom du type comme étiquette
         graph.append(f'{node_id}["{label}"]')
-        if parent:
-            graph.append(f"{parent} --> {node_id}")
+
+        if parent: #on est pas à la racine:
+            graph.append(f"{parent} --> {node_id}") #on ajoute la relation parent-enfant
+
         for child in ast.iter_child_nodes(node):
             visit(child, node_id)
 
-    visit(tree)
+    visit(tree[1:]) #commence à Module
     return "\\n".join(graph)
     `);
 

@@ -19,7 +19,7 @@ def ast_to_mermaid(code):
             visit(child, node_id)
 
     visit(tree)
-    return "\\n".join(graph)
+    return "flowchart TD\\n"+"\\n".join(graph[2:])
 
 code = "a = 3"
 print(ast_to_mermaid(code).replace("\\n", "\n"))
