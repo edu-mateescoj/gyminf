@@ -7,7 +7,7 @@ import meta
 
 def ast_to_mermaid(code):
     tree = ast.parse(code)  # gnérer l'arbre AST
-    graph = ["flowchart TD"]    # # Initialiser le Mermaid
+    graph = []    # # Initialiser le Mermaid
 
     def visit(node, parent=None):
         node_id = str(id(node))

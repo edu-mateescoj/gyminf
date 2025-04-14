@@ -43,7 +43,7 @@ import ast
 
 def ast_to_mermaid(code):
     tree = ast.parse(code)  # gnérer l'arbre AST
-    graph = ["flowchart TD"]    # # Initialiser le graphe Mermaid
+    graph = []    # # Initialiser le graphe Mermaid vide
 
     def visit(node, parent=None):
         node_id = str(id(node)) # Utiliser l'id en mémoire comme identifiant unique
@@ -56,8 +56,8 @@ def ast_to_mermaid(code):
         for child in ast.iter_child_nodes(node):
             visit(child, node_id)
 
-    visit(tree[1:]) #commence à Module
-    return "\\n".join(graph)
+    visit(tree) #commence à Module
+    return "flowchart TD\\n"+"\\n".join(graph)
     `);
 
     //alternative
