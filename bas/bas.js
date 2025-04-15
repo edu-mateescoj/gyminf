@@ -57,7 +57,7 @@ def ast_to_mermaid(code):
             visit(child, node_id)
 
     visit(tree) #commence à Module
-    return "flowchart TD\\n"+"\\n".join(graph[2:])
+    return "flowchart TD\\n"+"\\n".join(graph[:])
     `);
 
     //alternative
