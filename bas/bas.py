@@ -8,11 +8,9 @@ import dis
 def ast_to_mermaid(code):
     tree = ast.parse(code)  # gnérer l'arbre AST
     graph = []    # # Initialiser le Mermaid
-    node_id = 0 ###
-
+    
     def visit(node, parent=None):
-        nonlocal node_id
-        node_id += 1 #node_id = str(id(node))
+        node_id = str(id(node))
         label = type(node).__name__ # Utiliser le nom du type de node comme label
         graph.append(f'{node_id}["{label}"]')
         if parent:
@@ -28,13 +26,15 @@ if x > 5:
     print("grand")
 else:
     print("petit")'''
-#print(ast_to_mermaid(code).replace("\\n", "\n"))
+print(ast_to_mermaid(code).replace("\\n", "\n"))
 
+'''
 tree = ast.parse(code)
 for node in ast.iter_child_nodes(tree):
     print(node)
     if isinstance(node, ast.Assign):
         print(type(node).__name__)
+'''
 
 ##### SOURCE
 '''https://docs.python.org/3/library/ast.html
