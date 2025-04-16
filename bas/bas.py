@@ -33,7 +33,7 @@ class mynode(object):
     def __init__(self, node, node_from = None, node_to = None):
         self.node_type = type(node).__name__
         
-    def __str__(self):
+    def get_node(self):
         if isinstance(node, ast.Assign):
             return "["+ node.targets[0].id + "=" + node.value.n + "]"
         elif isinstance(node, ast.If):
