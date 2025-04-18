@@ -37,11 +37,18 @@ async function main() { //(editor)
     //code python à recevoir depuis le textarea de codemirror
     const codePython = editor.getValue();
 
+    // Installer le package astor
+    await pyodide.loadPackage("micropip");
+    await pyodide.runPythonAsync(`
+        import micropip
+        await micropip.install('astor')
+    `);
+    
     // Analyse du code Python et génération du graphe Mermaid
     await pyodide.runPythonAsync(`
 import ast
 import astor
-import graphviz
+#import graphviz
 
 def ast_to_mermaid(codeinput):
     tree = ast.parse(codeinput)  # gnérer l'arbre AST
