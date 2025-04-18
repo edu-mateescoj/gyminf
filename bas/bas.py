@@ -54,11 +54,12 @@ for child in ast.iter_child_nodes(tree):
     if isinstance(child, ast.Assign):
         #print(type(child).__name__)
         #print(child.targets[0].id, "=", child.value.n)  # Affichage de la cible de l'assignation
-        print((str((astor.to_source(child)))).strip())
+        print("[",(str((astor.to_source(child)))).strip(),"]")
         #print(str(id(child)))
     elif isinstance(child, ast.If):
         #print(type(child).__name__)
-        print((str(astor.to_source(child))).strip().splitlines())
+        n = len(str(astor.to_source(child)).strip().splitlines()[0])
+        print("{",(str(astor.to_source(child))).strip().splitlines()[0][3:n-1],"}")
         #print("Condition:", ast.dump(child.test))
         #print("Corps: A CONSTRUIRE AVEC...", ast.dump(child))
     elif isinstance(child, ast.Expr):
