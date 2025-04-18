@@ -1,25 +1,8 @@
 import ast
 import astor
-import dis
+import graphviz
 #import meta
 #import codegen
-
-
-def ast_to_mermaid(code):
-    tree = ast.parse(code)  # gnérer l'arbre AST
-    graph = []    # # Initialiser le Mermaid
-    
-    def visit(node, parent=None):
-        node_id = str(id(node))
-        label = type(node).__name__ # Utiliser le nom du type de node comme label
-        graph.append(f'{node_id}["{label}"]')
-        if parent:
-            graph.append(f"{parent} --> {node_id}")
-        for child in ast.iter_child_nodes(node):
-            visit(child, node_id)
-
-    visit(tree)
-    return "flowchart TD\\n"+"\\n".join(graph)
 
 code = '''x = 10
 y = 12
@@ -27,28 +10,47 @@ if x > 5:
     print("grand")
 else:
     print("petit")'''
-#print(ast_to_mermaid(code).replace("\\n", "\n"))
 
-class mynode(object):
-    def __init__(self, node, node_from = None, node_to = None):
-        self.node_type = type(node).__name__
-        
-    def get_node(self):
+def ast_to_mermaid(codeinput):
+    tree = ast.parse(codeinput)  # gnérer l'arbre AST
+    graph = []    # # Initialiser le Mermaid
+    parents_dict = {}
+    
+    def visit(node, parent=None):
+        node_id = str(id(node))
+        label = type(node).__name__ # Utiliser le nom du type de node comme label
+
         if isinstance(node, ast.Assign):
-            return "["+ node.targets[0].id + "=" + node.value.n + "]"
-        elif isinstance(node, ast.If):
-            return "{" + node.targets[0].id + "}"
-        
+            label = (str((astor.to_source(node)))).strip()
+            graph.append(f'{node_id}["{label}"]')
+            if parent is not None:
+                parents_dict[node_id] = parent #[node] ou [node_id]
 
-    def set_to(self, id_to):
-        self.node_to = id_to
-    def set_from(self, id_from):
-        self.node_from = id_from
+        if isinstance(node, ast.If):
+            n = len(str(astor.to_source(node)).strip().splitlines()[0])
+            label = "{"+(str(astor.to_source(node))).strip().splitlines()[0][3:n-1]+"}"
+            graph.append(f'{node_id}{label}')
+            if parent is not None:
+                parents_dict[node_id] = parent #[node] ou [node_id]
+
+        #if parent:
+            #graph.append(f"{parent} --> {node_id}")
+
+        for child in ast.iter_child_nodes(node):
+            visit(child, node_id)
+
+    visit(tree)
+    print(parents_dict)
+
+    # for children, parent in parents_dict.items():
+    #     for child in children:
+    #         graph.append(f"{parent} --> {child}")
+
+    return "flowchart TD\\n"+"\\n".join(graph)
+
+print(ast_to_mermaid(code).replace("\\n", "\n"))
 
 tree = ast.parse(code)
-#print(ast.dump(tree, indent=2))  # Affichage + compact
-
-
 for child in ast.iter_child_nodes(tree):
     print("-----------------------------------")
     if isinstance(child, ast.Assign):
@@ -71,7 +73,27 @@ for child in ast.iter_child_nodes(tree):
     print('line',child.lineno, 'col',child.col_offset)  # pour info
 
 
-##### SOURCE
+
+class mynode(object):
+    def __init__(self, node, node_from = None, node_to = None):
+        self.node_type = type(node).__name__
+        
+    def get_node(self):
+        if isinstance(node, ast.Assign):
+            return "["+ node.targets[0].id + "=" + node.value.n + "]"
+        elif isinstance(node, ast.If):
+            return "{" + node.targets[0].id + "}"
+        
+
+    def set_to(self, id_to):
+        self.node_to = id_to
+    def set_from(self, id_from):
+        self.node_from = id_from
+
+
+#print(ast.dump(tree, indent=2))  # Affichage + compact
+# 
+# ##### SOURCE
 '''https://docs.python.org/3/library/ast.html
 ast.iter_fields(node)
 Yield a tuple of (fieldname, value) for each field in node._fields that is present on node.

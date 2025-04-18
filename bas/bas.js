@@ -40,23 +40,38 @@ async function main() { //(editor)
     // Analyse du code Python et génération du graphe Mermaid
     await pyodide.runPythonAsync(`
 import ast
+import astor
+import graphviz
 
-def ast_to_mermaid(code):
-    tree = ast.parse(code)  # gnérer l'arbre AST
-    graph = []    # # Initialiser le graphe Mermaid vide
-
+def ast_to_mermaid(codeinput):
+    tree = ast.parse(codeinput)  # gnérer l'arbre AST
+    graph = []    # # Initialiser le Mermaid
+    parents_dict = {}
+    
     def visit(node, parent=None):
-        node_id = str(id(node)) # Utiliser l'id en mémoire comme identifiant unique
-        label = type(node).__name__ # Utiliser le nom du type comme étiquette
-        graph.append(f'{node_id}["{label}"]')
+        node_id = str(id(node))
+        label = type(node).__name__ # Utiliser le nom du type de node comme label
 
-        if parent: #on est pas à la racine:
-            graph.append(f"{parent} --> {node_id}") #on ajoute la relation parent-enfant
+        if isinstance(node, ast.Assign):
+            label = (str((astor.to_source(node)))).strip()
+            graph.append(f'{node_id}["{label}"]')
+            if parent is not None:
+                parents_dict[node_id] = parent #[node] ou [node_id]
+
+        if isinstance(node, ast.If):
+            n = len(str(astor.to_source(node)).strip().splitlines()[0])
+            label = "{"+(str(astor.to_source(node))).strip().splitlines()[0][3:n-1]+"}"
+            graph.append(f'{node_id}{label}')
+            if parent is not None:
+                parents_dict[node_id] = parent #[node] ou [node_id]
+
+        #if parent:
+            #graph.append(f"{parent} --> {node_id}")
 
         for child in ast.iter_child_nodes(node):
             visit(child, node_id)
 
-    visit(tree) #commence à Module
+    visit(tree)
     return "flowchart TD\\n"+"\\n".join(graph[:])
     `);
 
