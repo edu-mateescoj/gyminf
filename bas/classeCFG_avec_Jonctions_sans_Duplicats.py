@@ -12,15 +12,18 @@ class ControlFlowGraph:
         self.node_labels: Dict[str, str] = {}
         # Dictionnaire pour stocker les informations sur les noeuds terminaux (Return, Break, Continue)
         self.terminal_nodes: Set[str] = set()
+        """Le fait d'ajouter Break/Continue à terminal_nodes permet au visiteur (visit_body ou à la fonction visit 
+        qui l'appelle) de savoir qu'il ne doit pas chercher à connecter ce nœud à l'instruction 
+        suivante dans le bloc source"""
 
     def get_node_id(self) -> str:
         self.node_counter += 1
         return f"node{self.node_counter}"
 
-    def add_node(self, label: str, node_type: str = "Process") -> str:
+    def add_node(self, label: str, node_type: str = "Process") -> str: 
         """Ajoute un noeud avec un label et un type (pour Mermaid)."""
         node_id = self.get_node_id()
-        # Stocke le type pour faciliter le rendu Mermaid plus tard si besoin
+        # Stocke le type pour faciliter le rendu Mermaid plus tard
         # Pour l'instant, on stocke juste l'ID et le label principal
         self.nodes.append((node_id, label))
         self.node_labels[node_id] = label # Ajout pour recherche facile
@@ -34,18 +37,23 @@ class ControlFlowGraph:
              return
         # Vérification pour ne pas ajouter d'arête depuis un noeud terminal connu
         if from_node in self.terminal_nodes:
-            # print(f"Debug: Ignored edge from terminal node {from_node} ({self.node_labels.get(from_node)}) to {to_node}")
+            print(f"Debug: Ignored edge from terminal node {from_node} ({self.node_labels.get(from_node)}) to {to_node}") #
             return
         # Vérification que les noeuds existent (optionnel mais bon pour debug)
-        # if from_node not in self.node_labels or to_node not in self.node_labels:
-        #     print(f"Warning: Tentative d'ajout d'arête entre noeuds non existants: {from_node} -> {to_node}")
-        #     return
+        if from_node not in self.node_labels or to_node not in self.node_labels:
+            print(f"Warning: Tentative d'ajout d'arête entre noeuds non existants: {from_node} -> {to_node}")
+            return
 
         self.edges.add((from_node, to_node, label))
 
     def _is_terminal(self, node: ast.AST) -> bool:
-        """Vérifie si un noeud AST est un terminal (Return, Break, Continue)."""
+        """
+        Vérifie si un noeud AST représente une instruction qui interrompt
+        le flux d'exécution séquentiel local (ne continue pas à l'instruction suivante).
+        Ceci inclut Return (termine la fonction) et Break/Continue (sautent ailleurs).
+        """
         return isinstance(node, (ast.Return, ast.Break, ast.Continue))
+    
 
     def visit_body(self, body: List[ast.AST], entry_node_ids: List[str]) -> List[str]:
         """
@@ -56,8 +64,10 @@ class ControlFlowGraph:
         current_node_ids = list(entry_node_ids) # Copie pour éviter de modifier l'original
 
         for i, stmt in enumerate(body):
-            next_node_ids = []
-            is_last_stmt = (i == len(body) - 1)
+            next_node_ids = [] # Liste pour stocker les noeuds de sortie de cette instruction
+            # Si c'est la dernière instruction du body, on peut marquer la sortie comme terminale
+            # (par exemple, un return dans une fonction ou un break dans une boucle)
+            is_last_stmt = (i == len(body) - 1) 
 
             # Pour chaque noeud parent possible de cette instruction
             for parent_id in current_node_ids:
@@ -87,24 +97,67 @@ class ControlFlowGraph:
 
     def visit(self, node: ast.AST, parent_id: str) -> List[str]:
         """
-        Visite un noeud AST. Prend l'ID du noeud parent *unique* qui mène à ce noeud.
-        Retourne une liste des ID des noeuds qui représentent les sorties séquentielles de ce noeud.
-        Une liste vide signifie que le chemin se termine ici (Return, Break, Continue).
+        Méthode centrale de visite d'un noeud AST.
+
+        Cette méthode délègue le traitement spécifique (création de noeud graphe,
+        ajout d'arête depuis parent_id) à une méthode `visit_NodeType`.
+
+        Elle gère ensuite la logique de continuation du flux :
+        - Si le noeud AST est un 'terminal' (Return, Break, Continue),
+          elle marque le noeud graphe correspondant comme tel et retourne une liste vide,
+          indiquant l'arrêt du flux séquentiel local.
+        - Sinon, elle retourne la liste des noeuds graphes de sortie fournis par le
+          visiteur spécifique, qui représentent les points de continuation possibles.
+
+        Args:
+            node: Le noeud AST à visiter.
+            parent_id: L'ID du noeud graphe parent *unique* qui mène séquentiellement
+                       à ce noeud AST.
+
+        Returns:
+            Une liste des ID des noeuds graphes qui représentent les sorties
+            séquentielles de ce noeud. Une liste vide signifie que le chemin
+            s'arrête ici (Return) ou saute ailleurs (Break, Continue) et ne
+            continue pas à l'instruction suivante du bloc source.
         """
-        method = f'visit_{type(node).__name__}'
-        visitor = getattr(self, method, self.generic_visit)
+        method = f'visit_{type(node).__name__}' #on construit le nom de la méthode à appeler
+        visitor = getattr(self, method, self.generic_visit) #on récupère la méthode, sinon generic_visit
 
         # Appel de la méthode de visite appropriée
-        exit_nodes = visitor(node, parent_id)
+        # Le visiteur spécifique est responsable de :
+        # 1. Créer le(s) noeud(s) graphe(s) pour représenter 'node'.
+        # 2. Ajouter la/les arêtes depuis 'parent_id' vers le(s) noeud(s) créé(s).
+        # 3. Retourner une liste des ID des noeuds graphes qui constituent les points
+        #    de sortie *séquentielle* de cette instruction/structure.
+        exit_nodes: List[str] = visitor(node, parent_id)
 
-        # Si le noeud visité est un terminal, on l'enregistre
+        ############## Gestion centralisée des noeuds qui stoppent le flux séquentiel
+        # Vérifie si le noeud AST original est de type Return, Break, ou Continue.
         if self._is_terminal(node):
-             # Le visiteur spécifique (visit_Return etc) doit retourner un seul ID, celui du noeud créé
-             # On s'assure qu'il est bien marqué comme terminal ici.
-             if exit_nodes:
-                 self.terminal_nodes.add(exit_nodes[0])
-             return [] # Les terminaux n'ont pas de sortie séquentielle naturelle
+            """
+            Convention: Pour ces noeuds (Return, Break, Continue), le visiteur spécifique 
+            (ex: visit_Return) doit avoir créé *un seul* noeud graphe et doit retourner 
+            une liste contenant uniquement l'ID de ce noeud (ex: [return_id]).
+            """
+            if exit_nodes: # Vérifie que le visiteur a bien retourné l'ID attendu.
+                created_node_id = exit_nodes[0]
+                # C'est ici, dans la méthode `visit` centrale, que nous ajoutons l'ID du noeud graphe
+                # (qui représente notre Return, Break, ou Continue) à l'ensemble `self.terminal_nodes`.
+                # Cela le marque comme un point d'arrêt pour le flux *séquentiel*, indiquant
+                # qu'il ne faut pas le connecter à l'instruction suivante dans le code source.
+                self.terminal_nodes.add(created_node_id)
+            else:
+                # Si exit_nodes est vide, c'est inattendu pour un noeud terminal, logguer un avertissement.
+                print(f"Warning: Visiteur pour noeud terminal {type(node).__name__} n'a pas retourné d'ID.")
 
+            # Indiquer à l'appelant (souvent `visit_body`) qu'il n'y a pas de sortie séquentielle
+            # depuis ce noeud terminal. Le flux s'arrête (Return) ou saute (Break/Continue).
+            return []
+
+        # Si le noeud AST n'est pas un terminal (ex: Assign, If, For, etc.),
+        # on retourne simplement la liste des noeuds de sortie séquentielle
+        # fournie par le visiteur spécifique. L'appelant (ex: `visit_body`) utilisera
+        # ces noeuds comme points de départ pour l'instruction suivante.
         return exit_nodes
 
 
@@ -115,8 +168,8 @@ class ControlFlowGraph:
         """
         # Noeuds qui sont sources d'une arête
         source_nodes = set(from_node for from_node, _, _ in self.edges)
-        # Noeuds qui sont des cibles d'une arête (utile ?)
-        # target_nodes = set(to_node for _, to_node, _ in self.edges)
+        # Noeuds qui sont des cibles d'une arête
+        target_nodes = set(to_node for _, to_node, _ in self.edges)
 
         for node_id, label in self.nodes:
             # Ne pas connecter 'End' à lui-même
@@ -124,7 +177,10 @@ class ControlFlowGraph:
                 continue
             # Ne pas connecter un noeud déjà marqué comme terminal (Return, Break, etc.)
             if node_id in self.terminal_nodes:
-                 continue
+                continue   
+            """ Sans cette vérification ci-dessus, connect_finals_to_end pourrait incorrectement 
+                 le connecter au End global, alors que son flux doit aller ailleurs (sortie de
+                  boucle ou début d'itération)"""
              # Si un noeud n'est la source d'aucune arête sortante...
             if node_id not in source_nodes:
                  # ...et qu'il n'est pas le noeud de fin lui-même, le connecter à la fin.
@@ -275,6 +331,10 @@ class ControlFlowGraph:
         all_true_terminal = all(n in self.terminal_nodes for n in true_exit_nodes) if node.body else True
         all_false_terminal = all(n in self.terminal_nodes for n in false_exit_nodes) if node.orelse else True
 
+       #######################
+        '''
+        option A
+        
         # Si toutes les branches se terminent ou sont vides, le join_id ne sera atteint par aucune exécution normale.
         # Mais on le retourne quand même car c'est le point structurel après le If.
         # Si au moins une branche peut atteindre la jonction, on la retourne.
@@ -284,10 +344,20 @@ class ControlFlowGraph:
              # Si on le supprime, il faut retourner une liste vide. Retournons-le pour l'instant.
              pass
 
-
         # Le noeud de jonction est la seule sortie séquentielle de la structure If/Else
         return [join_id]
-
+        '''
+        ###########################
+        '''
+        option B
+        '''
+        if all_true_terminal and all_false_terminal:
+            # Toutes les branches sont terminales, la jonction est inutile
+            return []
+        else:
+            # Au moins une branche peut continuer, la jonction est utile
+            return [join_id]
+    ########################### 
 
     def visit_For(self, node: ast.For, parent_id: str) -> List[str]:
         iterator = ast.unparse(node.target).replace('"', '"')
@@ -500,9 +570,9 @@ class ControlFlowGraph:
             elif label in ["Break", "Continue"]:
                  mermaid.append(f'    {node_id}(("{safe_label}"))') # Rond simple pour Break/Continue
             elif label.startswith("Fonction définie"):
-                 mermaid.append(f'    {node_id}[/{safe_label}/]') # Parallélogramme pour définition
+                 mermaid.append(f'    {node_id}[/"{safe_label}"/]') # Parallélogramme pour définition
             elif label.startswith("Appel:"):
-                 mermaid.append(f'    {node_id}[|{safe_label}|]') # Rectangle avec barre verticale pour appel
+                 mermaid.append(f'    {node_id}[\\"{safe_label}"\\]') # Rectangle avec barre verticale pour appel
             else:
                  # Rectangle standard pour les autres processus/assignations
                  mermaid.append(f'    {node_id}["{safe_label}"]')
@@ -550,14 +620,14 @@ a=1
 b=1
 c=2
 if a == b:
-    # First level check
-    if a == c: # Nested If 1
+    
+    if a == c:
         # a=b=c
-        if b == c: # Nested If 2 (actually redundant here)
-            result = "Equilateral"
+        if b == c: # redundant en fait
+            return "Equilateral"
         else:
-            # Should not happen if a=b and a=c
-            result = "Error state 1"
+            # devrait pas arriver ici, mais au cas où
+            return "Isoscele"
     else:
         # a=b, a!=c
         result = "Isoscele (a=b)"
@@ -577,32 +647,29 @@ else:
 print(result)
 """
 code4 = """
-def bissextile(annee):
-    # Vérifie si une année est bissextile
-    if annee % 4 == 0:
-        # Divisible par 4
-        if annee % 100 == 0:
-            # Divisible par 100
-            if annee % 400 == 0:
-                # Divisible par 400
-                return True # Bissextile
-            else:
-                # Divisible par 100 mais pas par 400
-                return False # Commune
-        else:
-            # Divisible par 4 mais pas par 100
-            return True # Bissextile
-    else:
-        # Non divisible par 4
-        return False # Commune
 
-b = bissextile(2000) # True
-b = bissextile(1900) # False
-b = bissextile(2024) # True
+# Vérifie si une année est bissextile
+if annee % 4 == 0:
+    # Divisible par 4
+    if annee % 100 == 0:
+        # Divisible par 100
+        if annee % 400 == 0:
+            # Divisible par 400
+            return True # Bissextile
+        else:
+            # Divisible par 100 mais pas par 400
+            return False # Commune
+    else:
+        # Divisible par 4 mais pas par 100
+        return True # Bissextile
+else:
+    # Non divisible par 4
+    return False # Commune
+
 """
 
 # Choisir le code à tester
-selected_code = code3
+selected_code = code4
 
 # --- Génération et Affichage ---
 print(f"--- Code Python analysé ---")
