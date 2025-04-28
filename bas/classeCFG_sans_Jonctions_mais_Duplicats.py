@@ -5,7 +5,7 @@ class ControlFlowGraph:
     def __init__(self, code: str):
         self.tree = ast.parse(code)
         self.nodes: List[str] = []
-        self.edges: List[tuple] = []
+        self.edges: Set[tuple] = set() #List[tuple] = []
         self.node_counter = 0
         self.loop_stack = []
         self.current_node = None
@@ -20,12 +20,34 @@ class ControlFlowGraph:
         return node_id
 
     def add_edge(self, from_node: str, to_node: str, label: str = ""):
-        self.edges.append((from_node, to_node, label))
+        """Ajoute une arête au graphe, évite les doublons exacts."""
+        self.edges.add((from_node, to_node, label))    
+        #self.edges.append((from_node, to_node, label))
 
-    def visit(self, node: ast.AST, parent_id: str = None) -> str:
-        method = f'visit_{type(node).__name__}'
-        visitor = getattr(self, method, self.generic_visit)
-        return visitor(node, parent_id)
+    def visit(self, node: ast.AST, parent_ids: list = None) -> List[str]:
+        """Visite un noeud AST de façon appropriée au type en délégant son traitement à la méthode de visite correspondante, 
+        et retourne la liste des noeuds de sortie possibles."""
+        method = f'visit_{type(node).__name__}' #on construit le nom de la méthode à appeler
+        visitor = getattr(self, method, self.generic_visit) #on récupère la méthode, sinon generic_visit
+        if parent_ids != None: #on appelle la méthode de visite appropriée
+            return visitor(node, parent_ids or []) #en lui passant le noeud et la liste des parents
+        else:
+            return visitor(node, []) 
+
+    def connect_finals_to_end(self, end_id: str):
+        """
+        Connecte tous les 'Return' et autres terminaux...
+         tous les noeuds qui n'ont pas d'arête sortante au 'End' terminal.
+        en évitant de connecter 'End' à lui-même."""
+        ## On récupère tous les noeuds qui sont des 'Return'
+        #return_nodes = [node_id for node_id, label in self.nodes if label.startswith("Return")]
+        # On récupère tous les noeuds qui sont source d'une arête (from_node)
+        from_nodes = set(from_node for from_node, _, _ in self.edges)
+        # Pour chaque noeud qui n'est pas source d'une arête sortante, on ajoute une arête vers 'End'
+        # sauf si c'est lui-même un 'End'
+        for n_id in [node_id for node_id, label in self.nodes]:
+            if n_id not in from_nodes and n_id != end_id:
+                self.add_edge(n_id, end_id)
 
     def visit_Module(self, node: ast.Module, parent_id: str = None) -> str:
         start_id = self.add_node("Start")
@@ -36,6 +58,8 @@ class ControlFlowGraph:
         
         end_id = self.add_node("End")
         self.add_edge(current_id, end_id)
+        # on connecte tous les 'terminaux' au noeud 'End'
+        self.connect_finals_to_end(end_id)
         return end_id
 
     def visit_FunctionDef(self, node: ast.FunctionDef, parent_id: str) -> str:
@@ -186,6 +210,30 @@ class ControlFlowGraph:
         self.add_edge(parent_id, assign_id)
         return assign_id
     
+    def filter_edges(self):
+        '''Objectif: garder qu'une seule arête entre deux noeuds
+        Si une arête existe avec et sans label, on garde celle avec label.
+        Si plusieurs arêtes existent avec des labels différents, on les garde toutes.
+        '''
+        edge_dict = {}
+        for from_node, to_node, label in self.edges:
+            key = (from_node, to_node)
+            # Si une arête existe déjà sans label et on en trouve une avec label, on garde celle avec label
+            if key not in edge_dict:
+                edge_dict[key] = label
+            else:
+                # On préfère garder un label s'il existe
+                if edge_dict[key] == "" and label != "":
+                    edge_dict[key] = label
+                # Si les deux ont un label différent, on garde les deux (voir plus bas)
+        # Pour gérer les cas où il y a plusieurs labels différents entre deux noeuds
+        filtered = set()
+        for from_node, to_node, label in self.edges:
+            key = (from_node, to_node)
+            if edge_dict[key] == label:
+                filtered.add((from_node, to_node, label))
+        return filtered
+
     def to_mermaid(self) -> str:
         mermaid = ["graph TD"]
         
@@ -203,7 +251,7 @@ class ControlFlowGraph:
                 mermaid.append(f"    {node_id}[\"{label}\"]")
         
         # Ajout des arêtes
-        for from_node, to_node, label in self.edges:
+        for from_node, to_node, label in self.filter_edges():
             if label:
                 mermaid.append(f"    {from_node} -->|{label}| {to_node}")
             else:
