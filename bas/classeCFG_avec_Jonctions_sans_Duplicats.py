@@ -528,7 +528,7 @@ class ControlFlowGraph:
         if len(args_str) > max_arg_len:
             args_str = args_str[:max_arg_len-3] + "..."
 
-        label = f"Appel: {func_name}({args_str})"
+        label = f"Appel: <br>{func_name}({args_str})"
         call_id = self.add_node(label, node_type="Process")
         self.add_edge(parent_id, call_id)
         return [call_id]
@@ -556,23 +556,23 @@ class ControlFlowGraph:
             safe_label = label.replace('"', '#quot;') # Remplacer par entité HTML ou autre chose sûr
 
             if label == "Start" or label.startswith("Start "):
-                mermaid.append(f'    {node_id}(("{safe_label}"))') # Cercle double pour Start
+                mermaid.append(f'    {node_id}((("{safe_label}")))') # Cercle double pour Start
             elif label == "End" or label.startswith("End "):
-                mermaid.append(f'    {node_id}(("{safe_label}"))') # Cercle double pour End
+                mermaid.append(f'    {node_id}((("{safe_label}")))') # Cercle double pour End
             elif label.startswith("If ") or label.startswith("While ") or label.startswith("For "):
                  mermaid.append(f'    {node_id}{{{safe_label}}}') # Losange pour Décision/Boucle
             elif label in ["jonction", "Sortie de boucle For", "Sortie de boucle While"]:
                  # Utiliser un cercle simple pour les jonctions/sorties de boucle
                  # Mermaid ne supporte pas directement un petit cercle vide, utilisons un cercle standard
-                 mermaid.append(f'    {node_id}(({label}))') # Petit cercle (ou autre forme discrète)
+                 mermaid.append(f'    {node_id}[\{label}/]') # forme de pilule (ou autre forme discrète)
             elif label.startswith("Return"):
-                 mermaid.append(f'    {node_id}[/"{safe_label}"\\]') # Forme spécifique pour Return (parallélogramme incliné)
+                 mermaid.append(f'    {node_id}(("{safe_label}"))') # Forme spécifique pour Return (rond?)
             elif label in ["Break", "Continue"]:
-                 mermaid.append(f'    {node_id}(("{safe_label}"))') # Rond simple pour Break/Continue
+                 mermaid.append(f'    {node_id}[("{safe_label}")]') # Rond simple pour Break/Continue
             elif label.startswith("Fonction définie"):
                  mermaid.append(f'    {node_id}[/"{safe_label}"/]') # Parallélogramme pour définition
             elif label.startswith("Appel:"):
-                 mermaid.append(f'    {node_id}[\\"{safe_label}"\\]') # Rectangle avec barre verticale pour appel
+                 mermaid.append(f'    {node_id}[\\"{safe_label}"\\]') # Parallélogramme pour appel
             else:
                  # Rectangle standard pour les autres processus/assignations
                  mermaid.append(f'    {node_id}["{safe_label}"]')
@@ -588,16 +588,18 @@ class ControlFlowGraph:
         return "\n".join(mermaid)
 
 # --- Exemples d'utilisation ---
-code = '''a = 5
+ifelif = '''a = 5
 b = 10
 if a > b:
     print("a > b")
+elif a == b:
+    print("C'est égal")
 else:
-    print("a <= b")
+    print("a < b")
 c = a + b
 print(c)
 '''
-code2 = """
+defif = """
 x = 3
 def factorial(x):
     # Calcule la factorielle
@@ -615,22 +617,22 @@ def factorial(x):
 y = factorial(x)
 print(y)
 """
-code3 = """
-a=1
-b=1
-c=2
-if a == b:
-    
+NestedIf = """
+a = input("Qlq chose")
+b = input("Qlq chose")
+c = input("Qlq chose")
+
+if a == b:    
     if a == c:
-        # a=b=c
-        if b == c: # redundant en fait
+        # alors a=b=c
+        if b == c: # redondant en fait
             return "Equilateral"
-        else:
-            # devrait pas arriver ici, mais au cas où
-            return "Isoscele"
+        #else:
+            #devrait pas arriver ici
+            #return "Isoscele"
     else:
-        # a=b, a!=c
-        result = "Isoscele (a=b)"
+        # a=b, mais a!=c
+        result = "Isoscele (par a=b)"
 else:
     # a!=b
     if b != c: # Nested If 3
@@ -646,8 +648,7 @@ else:
         result = "Isoscele (b=c)"
 print(result)
 """
-code4 = """
-
+bissextile = """
 # Vérifie si une année est bissextile
 if annee % 4 == 0:
     # Divisible par 4
@@ -669,7 +670,7 @@ else:
 """
 
 # Choisir le code à tester
-selected_code = code4
+selected_code = bissextile
 
 # --- Génération et Affichage ---
 print(f"--- Code Python analysé ---")
