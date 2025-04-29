@@ -615,7 +615,8 @@ import exemples
 LISTE_EXEMPLES = [
 ifelif, defif, NestedIf, bissextile, defcall
 cgi_decode, gcd, compute_gcd, fib, quadsolver, 
-defcall, for1, while1, tryeef, boucleinfinie, bouclecontinue, whilebreak
+defcall, for1, while1, boucleinfinie, 
+tryeef, bouclecontinue, whilebreak, if_is_raise
 ]
 '''
 ############### Choisir le code à tester ###############

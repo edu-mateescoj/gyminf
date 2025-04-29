@@ -251,3 +251,11 @@ if zero_is_found:
     # N'oubliez pas que les indices commencent à zéro
     print(f"Arrêt à ({line}, {column}) : un zéro a été trouvé.")
 """
+
+if_is_raise = """
+x = "hello"
+if not type(x) is int:
+  raise TypeError("Only integers are allowed")
+"""
+
+  
