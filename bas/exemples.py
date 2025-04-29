@@ -194,3 +194,24 @@ while element < n:
     print("Element = ", element)
 """
 
+tryef = """
+try:
+    x = 1 / 0
+except ZeroDivisionError:
+    print("Division par zéro")
+finally:
+    print("Bloc finally exécuté")
+"""
+
+boucleinfinie = """
+while True:
+    print("Boucle infinie")
+    break
+"""
+
+bouclecontinue = """
+for i in range(5):
+    if i == 2:
+        continue
+    print(i)
+"""
