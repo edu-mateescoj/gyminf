@@ -60,6 +60,7 @@ else:
         result = "Isoscele (b=c)"
 print(result)
 """
+
 bissextile = """
 # Vérifie si une année est bissextile
 if annee % 4 == 0:
@@ -80,6 +81,7 @@ else:
     return False # Commune
 
 """
+
 cgi_decode = """
 def cgi_decode(s):
     hex_values = {
@@ -194,19 +196,23 @@ while element < n:
     print("Element = ", element)
 """
 
-tryef = """
+tryeef = """
+num = 1
+denom = 0
 try:
-    x = 1 / 0
+    frac = num / denom
 except ZeroDivisionError:
     print("Division par zéro")
+else:
+    print("Divsion OK, ratio = ", frac)
 finally:
-    print("Bloc finally exécuté")
+    print("Bloc 'finally' exécuté")
 """
 
 boucleinfinie = """
 while True:
     print("Boucle infinie")
-    break
+    
 """
 
 bouclecontinue = """
@@ -214,4 +220,34 @@ for i in range(5):
     if i == 2:
         continue
     print(i)
+"""
+
+whilebreak = """
+matrix = [
+    [1, 2, 3, 4, 5],
+    [6, 7, 8, 9, 10],
+    [11, 12, 13, 0, 15],
+    [16, 17, 18, 19, 20],
+    [21, 22, 23, 24, 25]
+]
+
+line = 0
+zero_is_found = False
+
+while line < 5:
+    column = 0
+    while column < 5:
+        if matrix[line][column] == 0:
+            zero_is_found = True
+            break         # On casse la boucle interne
+        else:
+            print(matrix[line][column])
+            column += 1
+    if zero_is_found:
+        break             # On casse la boucle externe
+    line += 1
+
+if zero_is_found:
+    # N'oubliez pas que les indices commencent à zéro
+    print(f"Arrêt à ({line}, {column}) : un zéro a été trouvé.")
 """

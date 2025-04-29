@@ -140,7 +140,7 @@ class ControlFlowGraph:
             """
             if exit_nodes: # Vérifie que le visiteur a bien retourné l'ID attendu.
                 created_node_id = exit_nodes[0]
-                # C'est ici, dans la méthode `visit` centrale, que nous ajoutons l'ID du noeud graphe
+                # C'est ici, dans la méthode `visit` centrale, que nous ajoutons l'ID du noeud 
                 # (qui représente notre Return, Break, ou Continue) à l'ensemble `self.terminal_nodes`.
                 # Cela le marque comme un point d'arrêt pour le flux *séquentiel*, indiquant
                 # qu'il ne faut pas le connecter à l'instruction suivante dans le code source.
@@ -174,7 +174,8 @@ class ControlFlowGraph:
             # Ne pas connecter 'End' à lui-même
             if node_id == end_id:
                 continue
-            # Ne pas connecter un noeud déjà marqué comme terminal (Return, Break, etc.)
+            # Ne pas connecter un noeud déjà marqué comme terminal 
+            # (pour le moment: Return, Break, Continue)
             if node_id in self.terminal_nodes:
                 continue   
             """ Sans cette vérification ci-dessus, connect_finals_to_end pourrait incorrectement 
@@ -402,7 +403,7 @@ class ControlFlowGraph:
                 self.add_edge(exit_node, loop_id, "itération suivante")
 
         # Gérer la branche 'else' de la boucle (exécutée si la boucle termine sans 'break')
-        # TODO: Ajouter la gestion de node.orelse pour les boucles For/While
+        # TODO: Ajouter la gestion des rbeak et continue pour les boucles For/While
 
         self.loop_stack.pop()
 
@@ -614,11 +615,11 @@ import exemples
 LISTE_EXEMPLES = [
 ifelif, defif, NestedIf, bissextile, defcall
 cgi_decode, gcd, compute_gcd, fib, quadsolver, 
-defcall, for1, while1, tryef, boucleinfinie, bouclecontinue
+defcall, for1, while1, tryeef, boucleinfinie, bouclecontinue, whilebreak
 ]
 '''
 ############### Choisir le code à tester ###############
-selected_code = exemples.tryef
+selected_code = exemples.bouclecontinue
 ########################################################
 
 # --- Génération et Affichage ---
