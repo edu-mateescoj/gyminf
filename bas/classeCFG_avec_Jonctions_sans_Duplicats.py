@@ -208,7 +208,7 @@ class ControlFlowGraph:
         # Un noeud pour la définition elle-même (pas vraiment dans le flux d'exécution de l'appelant)
         # On pourrait choisir de ne pas le connecter au flux principal ou de le représenter différemment.
         # Ici, on le connecte pour montrer où la fonction est définie.
-        func_def_id = self.add_node(f"Fonction définie: <br> {node.name}(...)", node_type="Subroutine")
+        func_def_id = self.add_node(f"Définition de Fonction<br> {node.name}(...)", node_type="Subroutine")
         self.add_edge(parent_id, func_def_id)
 
         # Créer un graphe séparé pour le corps de la fonction ? Non, intégrons-le.
@@ -560,7 +560,7 @@ class ControlFlowGraph:
             elif label == "End" or label.startswith("End "):
                 mermaid.append(f'    {node_id}((("{safe_label}")))') # Cercle double pour End
             elif label.startswith("If ") or label.startswith("While ") or label.startswith("For "):
-                 mermaid.append(f'    {node_id}{{{safe_label}}}') # Losange pour Décision/Boucle
+                 mermaid.append(f'    {node_id}{{"{safe_label}"}}') # Losange pour Décision/Boucle
             elif label in ["jonction", "Sortie de boucle For", "Sortie de boucle While"]:
                  # Utiliser un cercle simple pour les jonctions/sorties de boucle
                  # Mermaid ne supporte pas directement un petit cercle vide, utilisons un cercle standard
@@ -569,10 +569,10 @@ class ControlFlowGraph:
                  mermaid.append(f'    {node_id}(("{safe_label}"))') # Forme spécifique pour Return (rond?)
             elif label in ["Break", "Continue"]:
                  mermaid.append(f'    {node_id}[("{safe_label}")]') # Rond simple pour Break/Continue
-            elif label.startswith("Fonction définie"):
-                 mermaid.append(f'    {node_id}[/"{safe_label}"/]') # Parallélogramme pour définition
+            elif label.startswith("Définition"):
+                 mermaid.append(f'    {node_id}[/"{safe_label}"/]') # Parallélogramme // pour définition
             elif label.startswith("Appel:"):
-                 mermaid.append(f'    {node_id}[\\"{safe_label}"\\]') # Parallélogramme pour appel
+                 mermaid.append(f'    {node_id}[\\"{safe_label}"\\]') # Parallélogramme \\ pour appel
             else:
                  # Rectangle standard pour les autres processus/assignations
                  mermaid.append(f'    {node_id}["{safe_label}"]')
@@ -587,90 +587,18 @@ class ControlFlowGraph:
 
         return "\n".join(mermaid)
 
-# --- Exemples d'utilisation ---
-ifelif = '''a = 5
-b = 10
-if a > b:
-    print("a > b")
-elif a == b:
-    print("C'est égal")
-else:
-    print("a < b")
-c = a + b
-print(c)
+############### Exemples d'utilisation ###############
+import exemples
 '''
-defif = """
-x = 3
-def factorial(x):
-    # Calcule la factorielle
-    if x <= 1:
-        print("x <= 1")
-        return 1
-    else:
-        print("x > 1")
-        result = 1
-        i = 2
-        while i <= x:
-            result = result * i
-            i = i + 1
-        return result
-y = factorial(x)
-print(y)
-"""
-NestedIf = """
-a = input("Qlq chose")
-b = input("Qlq chose")
-c = input("Qlq chose")
-
-if a == b:    
-    if a == c:
-        # alors a=b=c
-        if b == c: # redondant en fait
-            return "Equilateral"
-        #else:
-            #devrait pas arriver ici
-            #return "Isoscele"
-    else:
-        # a=b, mais a!=c
-        result = "Isoscele (par a=b)"
-else:
-    # a!=b
-    if b != c: # Nested If 3
-        # a!=b, b!=c
-        if a == c: # Nested If 4
-            # a!=b, b!=c, a==c
-            result = "Isoscele (a=c)"
-        else:
-            # a!=b, b!=c, a!=c
-            result = "Scalene"
-    else:
-        # a!=b, b==c
-        result = "Isoscele (b=c)"
-print(result)
-"""
-bissextile = """
-# Vérifie si une année est bissextile
-if annee % 4 == 0:
-    # Divisible par 4
-    if annee % 100 == 0:
-        # Divisible par 100
-        if annee % 400 == 0:
-            # Divisible par 400
-            return True # Bissextile
-        else:
-            # Divisible par 100 mais pas par 400
-            return False # Commune
-    else:
-        # Divisible par 4 mais pas par 100
-        return True # Bissextile
-else:
-    # Non divisible par 4
-    return False # Commune
-
-"""
-
-# Choisir le code à tester
-selected_code = bissextile
+LISTE_EXEMPLES = [
+ifelif, defif, NestedIf, bissextile, defcall
+cgi_decode, gcd, compute_gcd, fib, quadsolver, 
+for1, while1
+]
+'''
+############### Choisir le code à tester ###############
+selected_code = exemples.while1
+########################################################
 
 # --- Génération et Affichage ---
 print(f"--- Code Python analysé ---")
