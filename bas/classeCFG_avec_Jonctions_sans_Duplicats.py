@@ -327,9 +327,21 @@ class ControlFlowGraph:
         # il peut être considéré comme terminal aussi, mais laissons le pour la structure.
         # On vérifie si join_id a des parents *autres* que if_id via les branches
         join_parents = {f for f, t, l in self.edges if t == join_id}
-        # Si les seuls parents sont if_id (via True et/ou False direct) OU si toutes les branches finissaient en terminal
-        all_true_terminal = all(n in self.terminal_nodes for n in true_exit_nodes) if node.body else True
-        all_false_terminal = all(n in self.terminal_nodes for n in false_exit_nodes) if node.orelse else True
+        
+        # Objectif ici:
+        # Savoir si tous les chemins de la branche d’un 'if' se terminent par un nœud terminal (Return, Break, ou Continue)
+        # Si all_true_terminal et all_false_terminal sont tous deux True alors :
+        # toutes les branches du if se terminent (aucun chemin ne continue après le if) alors :
+        # On peut alors ne pas créer de nœud de jonction inutile après le if.        
+        if node.body:
+            all_true_terminal = all(n in self.terminal_nodes for n in true_exit_nodes)
+        else: 
+            all_true_terminal = True #la branche n'existe pas: faut initialiser explicitement à True
+        #idem branche Flase
+        if node.orelse:
+            all_false_terminal = all(n in self.terminal_nodes for n in false_exit_nodes)
+        else:
+            all_false_terminal = True
 
        #######################
         '''
@@ -597,7 +609,7 @@ for1, while1
 ]
 '''
 ############### Choisir le code à tester ###############
-selected_code = exemples.while1
+selected_code = exemples.quadsolver
 ########################################################
 
 # --- Génération et Affichage ---
