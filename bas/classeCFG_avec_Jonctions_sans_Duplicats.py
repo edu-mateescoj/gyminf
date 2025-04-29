@@ -13,8 +13,8 @@ class ControlFlowGraph:
         # Dictionnaire pour stocker les informations sur les noeuds terminaux (Return, Break, Continue)
         self.terminal_nodes: Set[str] = set()
         """Le fait d'ajouter Break/Continue à terminal_nodes permet au visiteur (visit_body ou à la fonction visit 
-        qui l'appelle) de savoir qu'il ne doit pas chercher à connecter ce nœud à l'instruction 
-        suivante dans le bloc source"""
+        qui l'appelle) de savoir qu'il ne doit pas chercher à connecter ce nœud à l'instruction suivante dans le 
+        bloc source"""
 
     def get_node_id(self) -> str:
         self.node_counter += 1
@@ -111,8 +111,7 @@ class ControlFlowGraph:
 
         Args:
             node: Le noeud AST à visiter.
-            parent_id: L'ID du noeud graphe parent *unique* qui mène séquentiellement
-                       à ce noeud AST.
+            parent_id: L'ID du noeud parent *unique* qui mène séquentiellement à ce noeud AST.
 
         Returns:
             Une liste des ID des noeuds graphes qui représentent les sorties
@@ -204,10 +203,19 @@ class ControlFlowGraph:
         # Pour un Module, la "sortie" n'a pas vraiment de sens, on retourne l'ID de fin.
         return [end_id] # On pourrait retourner une liste vide aussi.
 
+
     def visit_FunctionDef(self, node: ast.FunctionDef, parent_id: str) -> List[str]:
-        # Un noeud pour la définition elle-même (pas vraiment dans le flux d'exécution de l'appelant)
-        # On pourrait choisir de ne pas le connecter au flux principal ou de le représenter différemment.
-        # Ici, on le connecte pour montrer où la fonction est définie.
+        # Un noeud pour la définition elle-même (séparé du flux d'exécution de l'appelant)
+        # On pourrait choisir de le connecter au flux principal ou de le représenter différemment??
+        # POUR LE MOMENT: PAS 100% SATISFAISANT
+        # si la défintion de fonction fait jsute partie du script sans être le script
+        # alors el flux qui définit la fonction n'est pas inséré dans le flux principal mais on rend visible 
+        # un élément "définition de fonction" et chaque élément qui appelle pourra être syntaxé différemment 
+        # Si le script := 'FunctionDef' alors on rajoute un mini-flux avec son 'start--end' connecté par la fin 
+        # pour montrer où la fonction retourne.
+        # TO DO: corriger bug de l'arête terminale ajoutée par défaut
+        # TO DO : ajouter affichage appels récursifs ??
+
         func_def_id = self.add_node(f"Définition de Fonction<br> {node.name}(...)", node_type="Subroutine")
         self.add_edge(parent_id, func_def_id)
 
@@ -231,6 +239,7 @@ class ControlFlowGraph:
 
         # La définition de fonction elle-même continue le flux principal.
         return [func_def_id]
+
 
     def visit_If(self, node: ast.If, parent_id: str) -> List[str]:
         """
@@ -547,14 +556,14 @@ class ControlFlowGraph:
 
     def filter_edges(self):
         """
-        Filtre les arêtes pour Mermaid. Actuellement, le Set gère les doublons exacts.
+        Filtrer les arêtes pour Mermaid?? Actuellement, le Set gère les doublons exacts.
         Cette fonction pourrait être utilisée pour des logiques plus complexes si nécessaire
         (par ex. supprimer une arête A->B si une arête A->B|Label existe),
-        mais la gestion actuelle des labels dans visit_If/While tente déjà de faire cela.
+        mais la gestion actuelle des labels dans visit_If/While tente déjà de faire ça.
         Pour l'instant, on retourne juste les arêtes stockées.
         """
         # La logique de priorisation label vs non-label est implicitement gérée
-        # par le remove/add dans visit_If et visit_While.
+        # par le remove/add dans visit_If et visit_While... on laisse tomber filtrage des arêtes?
         return self.edges
 
 
@@ -589,9 +598,9 @@ class ControlFlowGraph:
                  # Rectangle standard pour les autres processus/assignations
                  mermaid.append(f'    {node_id}["{safe_label}"]')
 
-        # Ajout des arêtes filtrées
+        # Ajout des arêtes (filtrées?)
         for from_node, to_node, label in self.filter_edges():
-            safe_edge_label = label.replace('"', '#quot;')
+            safe_edge_label = label.replace('"', '#quot;') #safe au sens éviter bug Mermaid
             if safe_edge_label:
                 mermaid.append(f"    {from_node} -->|{safe_edge_label}| {to_node}")
             else:
@@ -605,11 +614,11 @@ import exemples
 LISTE_EXEMPLES = [
 ifelif, defif, NestedIf, bissextile, defcall
 cgi_decode, gcd, compute_gcd, fib, quadsolver, 
-for1, while1
+defcall, for1, while1, tryef, boucleinfinie, bouclecontinue
 ]
 '''
 ############### Choisir le code à tester ###############
-selected_code = exemples.quadsolver
+selected_code = exemples.tryef
 ########################################################
 
 # --- Génération et Affichage ---
