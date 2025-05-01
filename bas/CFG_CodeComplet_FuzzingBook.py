@@ -514,7 +514,7 @@ def to_graph(cache, arcs=[]):
             plineno = pn.lineno()
             if hasattr(pn, 'calllink') and pn.calllink > 0 and not hasattr(
                     cnode, 'calleelink'):
-                graph.edge(pn.i(), cnode.i(), style='dotted', weight=100)
+                graph.edge(pn.i(), cnode.i(), style='dotted', weight=str(100)) #solution pour autoriser mes chaines
                 continue
 
             if arcs:
@@ -547,9 +547,12 @@ def unhack(v):
         v = re.sub(r'^_%s:' % i, '%s:' % i, v)
     return v
 
+import exemples
 #### EXEMPLES
 #from ControlFlow import gen_cfg, to_graph
-#cfg = gen_cfg(inspect.getsource(my_existing_function))
 
-my_graph = to_graph(gen_cfg('for i in range(19): \n    a += i'))
+#fonction Python (ou module? ou classe/method...) créée ou non? 2 alternatives:
+#my_graph = to_graph(gen_cfg(inspect.getsource(fonction_existente)))
+my_graph = to_graph(gen_cfg(exemples.bissextile))
+
 my_graph.view()
