@@ -29,6 +29,25 @@ y = factorial(x)
 print(y)
 """
 
+defif2 = """
+x = 3
+y = factorial(x)
+def factorial(x):
+    # Calcule la factorielle
+    if x <= 1:
+        print("x <= 1")
+        return 1
+    else:
+        print("x > 1")
+        result = 1
+        i = 2
+        while i <= x:
+            result = result * i
+            i = i + 1
+        return result
+print(y)
+"""
+
 NestedIf = """
 a = input("Qlq chose")
 b = input("Qlq chose")
@@ -79,6 +98,27 @@ if annee % 4 == 0:
 else:
     # Non divisible par 4
     return False # Commune
+
+"""
+
+bissextile2 = """
+def bissextile(annee): # Vérifie si une année est bissextile
+    if annee % 4 == 0:
+    # Divisible par 4
+        if annee % 100 == 0:
+            # Divisible par 100
+            if annee % 400 == 0:
+                # Divisible par 400
+                return True # Bissextile
+            else:
+                # Divisible par 100 mais pas par 400
+                return False # Commune
+        else:
+            # Divisible par 4 mais pas par 100
+            return True # Bissextile
+    else:
+    # Non divisible par 4
+        return False # Commune
 
 """
 
@@ -258,4 +298,15 @@ if not type(x) is int:
   raise TypeError("Only integers are allowed")
 """
 
+boolean = """
+a = True
+b = not a
+c = False
+d = a and b
+e = a or c
+if e == False:
+    print("e est faux")
+else:
+    print("e est vrai")
+"""
   

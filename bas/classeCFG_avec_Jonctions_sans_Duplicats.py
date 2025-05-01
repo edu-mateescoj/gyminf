@@ -620,7 +620,7 @@ tryeef, bouclecontinue, whilebreak, if_is_raise
 ]
 '''
 ############### Choisir le code à tester ###############
-selected_code = exemples.bouclecontinue
+selected_code = exemples.NestedIf
 ########################################################
 
 # --- Génération et Affichage ---

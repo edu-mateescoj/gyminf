@@ -1,42 +1,19 @@
 // Control Flow Graph
 digraph {
-	1 [label="2: enter: cgi_decode(s)" peripheries=2 shape=oval]
-	2 [label="2: exit: cgi_decode(s)" peripheries=2 shape=oval]
-	18 -> 2
-	3 [label="3: hex_values = {'0': 0, '1': 1, '2': 2, '3': 3, '4': 4, '5': 5, '6': 6, '7': 7, '8': 8, '9': 9, 'a': 10, 'b': 11, 'c': 12, 'd': 13, 'e': 14, 'f': 15, 'A': 10, 'B': 11, 'C': 12, 'D': 13, 'E': 14, 'F': 15}" peripheries=1 shape=rectangle]
-	1 -> 3
-	4 [label="10: t = ''" peripheries=1 shape=rectangle]
+	1 [label="2: a = True" peripheries=1 shape=rectangle]
+	0 -> 1
+	2 [label="3: b = not a" peripheries=1 shape=rectangle]
+	1 -> 2
+	3 [label="4: c = False" peripheries=1 shape=rectangle]
+	2 -> 3
+	4 [label="5: d = a and b" peripheries=1 shape=rectangle]
 	3 -> 4
-	5 [label="11: i = 0" peripheries=1 shape=rectangle]
+	5 [label="6: e = a or c" peripheries=1 shape=rectangle]
 	4 -> 5
-	6 [label="12: while: i < len(s)" peripheries=1 shape=diamond]
+	6 [label="7: if: e == False" peripheries=1 shape=diamond]
 	5 -> 6
-	17 -> 6
-	7 [label="13: c = s[i]" peripheries=1 shape=rectangle]
+	7 [label="8: print('e est faux')" peripheries=1 shape=rectangle]
 	6 -> 7 [label=T color=blue]
-	8 [label="14: if: c == '+'" peripheries=1 shape=diamond]
-	7 -> 8
-	9 [label="15: t += ' '" peripheries=1 shape=rectangle]
-	8 -> 9 [label=T color=blue]
-	10 [label="16: if: c == '%'" peripheries=1 shape=diamond]
-	8 -> 10 [label=F color=red]
-	11 [label="17: digit_high, digit_low = (s[i + 1], s[i + 2])" peripheries=1 shape=rectangle]
-	10 -> 11 [label=T color=blue]
-	12 [label="18: i += 2" peripheries=1 shape=rectangle]
-	11 -> 12
-	13 [label="19: if: digit_high in hex_values and digit_low in hex_values" peripheries=1 shape=diamond]
-	12 -> 13
-	14 [label="20: v = hex_values[digit_high] * 16 + hex_values[digit_low]" peripheries=1 shape=rectangle]
-	13 -> 14 [label=T color=blue]
-	15 [label="21: t += chr(v)" peripheries=1 shape=rectangle]
-	14 -> 15
-	16 [label="25: t += c" peripheries=1 shape=rectangle]
-	10 -> 16 [label=F color=red]
-	17 [label="26: i += 1" peripheries=1 shape=rectangle]
-	9 -> 17
-	15 -> 17
-	13 -> 17 [label=F color=red]
-	16 -> 17
-	18 [label="27: return t" peripheries=1 shape=rectangle]
-	6 -> 18 [label=F color=red]
+	8 [label="10: print('e est vrai')" peripheries=1 shape=rectangle]
+	6 -> 8 [label=F color=red]
 }
