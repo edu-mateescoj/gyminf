@@ -1,12 +1,11 @@
-from ControlFlow import gen_cfg, to_graph
-cfg = gen_cfg(inspect.getsource(my_function))
-to_graph(cfg)
 import bookutils.setup
 from bookutils import print_content
 import ast
 import re
+import inspect
 from graphviz import Source, Digraph
-Registry
+
+### Registry
 REGISTRY_IDX = 0
 REGISTRY = {}
 def get_registry_idx():
@@ -24,8 +23,11 @@ def register_node(node):
     REGISTRY[node.rid] = node
 def get_registry():
     return dict(REGISTRY)
-CFGNode
-We start with the CFGNode representing each node in the control flow graph. \todo{Augmented and annotated assignments (a += 1), (a:int = 1)}.
+
+#### CFGNode
+
+#We start with the CFGNode representing each node in the control flow graph. 
+# \todo{Augmented and annotated assignments (a += 1), (a:int = 1)}.
 
 class CFGNode(dict):
     def __init__(self, parents=[], ast=None):
@@ -91,8 +93,8 @@ class CFGNode(dict):
             'at': self.lineno(),
             'ast': self.source()
         }
-PyCFG
-Next, the PyCFG class which is responsible for parsing, and holding the graph.
+#PyCFG
+#Next, the PyCFG class which is responsible for parsing, and holding the graph.
 
 class PyCFG:
     def __init__(self):
@@ -430,7 +432,8 @@ class PyCFG(PyCFG):
         self.update_children()
         self.update_functions()
         self.link_functions()
-Supporting Functions
+
+#### Supporting Functions
 def compute_dominator(cfg, start=0, key='parents'):
     dominator = {}
     dominator[start] = {start}
@@ -543,3 +546,10 @@ def unhack(v):
     for i in ['if', 'while', 'for', 'elif']:
         v = re.sub(r'^_%s:' % i, '%s:' % i, v)
     return v
+
+#### EXEMPLES
+#from ControlFlow import gen_cfg, to_graph
+#cfg = gen_cfg(inspect.getsource(my_existing_function))
+
+my_graph = to_graph(gen_cfg('for i in range(19): \n    a += i'))
+my_graph.view()

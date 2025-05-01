@@ -1,0 +1,12 @@
+// Control Flow Graph
+digraph {
+	1 [label="1: __iv = iter(range(19))" peripheries=1 shape=rectangle]
+	0 -> 1
+	2 [label="1: for: __iv.__length__hint__() > 0" peripheries=1 shape=diamond]
+	1 -> 2
+	4 -> 2
+	3 [label="1: i = next(__iv)" peripheries=1 shape=rectangle]
+	2 -> 3 [label=T color=blue]
+	4 [label="2: a += i" peripheries=1 shape=rectangle]
+	3 -> 4
+}
