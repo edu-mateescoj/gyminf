@@ -553,6 +553,6 @@ import exemples
 
 #fonction Python (ou module? ou classe/method...) créée ou non? 2 alternatives:
 #my_graph = to_graph(gen_cfg(inspect.getsource(fonction_existente)))
-my_graph = to_graph(gen_cfg(exemples.NestedIf))
+my_graph = to_graph(gen_cfg(exemples.fib))
 
 my_graph.view()

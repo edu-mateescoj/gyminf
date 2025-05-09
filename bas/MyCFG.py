@@ -382,8 +382,10 @@ class ControlFlowGraph:
     ########################### 
 
     def visit_For(self, node: ast.For, parent_id: str) -> List[str]:
-        iterator = ast.unparse(node.target).replace('"', '"')
-        iterable = ast.unparse(node.iter).replace('"', '"')
+        iterator = ast.unparse(node.target).replace('"', '"') # la variable de boucle
+        iterable = ast.unparse(node.iter).replace('"', '"') # l'objet itérable:range ou pas??
+        #si range : identifier cas range(b) ou range(a, b) ou range(a, b, c) ... => identifer step, nb_iter
+        #nb_paramètres = 1 ou 2 ou 3
         loop_id = self.add_node(f"For {iterator} in {iterable}", node_type="Decision") # Considéré comme un point de décision/entrée
         self.add_edge(parent_id, loop_id)
 
@@ -396,6 +398,7 @@ class ControlFlowGraph:
 
         # Visiter le corps de la boucle, en partant de l'entrée de boucle (loop_id)
         body_exit_nodes = self.visit_body(node.body, [loop_id])
+        #rajouter mœud incrément
 
         # Connecter les sorties normales du corps de boucle au début de la boucle pour la prochaine itération
         for exit_node in body_exit_nodes:
@@ -581,12 +584,14 @@ class ControlFlowGraph:
                 mermaid.append(f'    {node_id}((("{safe_label}")))') # Cercle double pour Start
             elif label == "End" or label.startswith("End "):
                 mermaid.append(f'    {node_id}((("{safe_label}")))') # Cercle double pour End
-            elif label.startswith("If ") or label.startswith("While ") or label.startswith("For "):
+            elif label.startswith("If ") or label.startswith("While ") or label.startswith("For "): #marche pas pour For
                  mermaid.append(f'    {node_id}{{"{safe_label}"}}') # Losange pour Décision/Boucle
             elif label in ["jonction", "Sortie de boucle For", "Sortie de boucle While"]:
                  # Utiliser un cercle simple pour les jonctions/sorties de boucle
                  # Mermaid ne supporte pas directement un petit cercle vide, utilisons un cercle standard
                  mermaid.append(f'    {node_id}[\{label}/]') # forme de pilule (ou autre forme discrète)
+            #elif label.startswith("For") #initialiser variable de boucle
+                ######
             elif label.startswith("Return"):
                  mermaid.append(f'    {node_id}(("{safe_label}"))') # Forme spécifique pour Return (rond?)
             elif label in ["Break", "Continue"]:
@@ -620,7 +625,7 @@ tryeef, bouclecontinue, whilebreak, if_is_raise
 ]
 '''
 ############### Choisir le code à tester ###############
-selected_code = exemples.NestedIf
+selected_code = exemples.forabc
 ########################################################
 
 # --- Génération et Affichage ---
@@ -631,7 +636,7 @@ print("\n--- Mermaid Généré ---")
 cfg = ControlFlowGraph(selected_code)
 # Lancer la visite à partir de la racine de l'AST (le module)
 cfg.visit(cfg.tree, None) # Le parent initial est None
-
+print(ast.dump(cfg.tree))
 print(cfg.to_mermaid())
 
 # Optionnel : Afficher les noeuds et arêtes pour le débogage

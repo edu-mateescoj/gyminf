@@ -229,6 +229,14 @@ for element in range(n):
     print("Element = ", element)
 """
 
+forabc = """
+a = input("Donnez a")
+b = input("Donnez b")
+c = input("Donnez c")
+for element in range(a,b,c):
+    print("Element = ", element)
+"""
+
 while1 = """
 n = input("Donnez n")
 element = 0
@@ -309,4 +317,3 @@ if e == False:
 else:
     print("e est vrai")
 """
-  
