@@ -228,12 +228,22 @@ n = input("Donnez n")
 for element in range(n):
     print("Element = ", element)
 """
-
+for2 = """
+n = input("Donnez n")
+for element in range(n,p):
+    print("Element = ", element)
+"""
 forabc = """
-a = input("Donnez a")
-b = input("Donnez b")
-c = input("Donnez c")
-for element in range(a,b,c):
+for element in range(10,20,3):
+    print("Element = ", element)
+    if element != 'toto':
+        print("pas toto")
+    else:
+        print("toto")
+print("element = ", element, " donc sortie de la boucle")
+"""
+forstring = """
+for element in 'abcdefghijklmnopqrstuvwxyz':
     print("Element = ", element)
 """
 

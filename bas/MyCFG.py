@@ -15,7 +15,8 @@ class ControlFlowGraph:
         """Le fait d'ajouter Break/Continue à terminal_nodes permet au visiteur (visit_body ou à la fonction visit 
         qui l'appelle) de savoir qu'il ne doit pas chercher à connecter ce nœud à l'instruction suivante dans le 
         bloc source"""
-
+        self.node_types: Dict[str, str] = {}
+    
     def get_node_id(self) -> str:
         self.node_counter += 1
         return f"node{self.node_counter}"
@@ -23,10 +24,11 @@ class ControlFlowGraph:
     def add_node(self, label: str, node_type: str = "Process") -> str: 
         """Ajoute un noeud avec un label et un type (pour Mermaid)."""
         node_id = self.get_node_id()
-        # Stocke le type pour faciliter le rendu Mermaid plus tard
-        # Pour l'instant, on stocke juste l'ID et le label principal
         self.nodes.append((node_id, label))
         self.node_labels[node_id] = label # Ajout pour recherche facile
+        # Stocke le type pour faciliter le rendu Mermaid selon SEMANTIQUE déterminée lors de l'analyse AST, 
+        # et pas selon contenu textuel
+        self.node_types[node_id] = node_type # Stocker le type
         return node_id
 
     def add_edge(self, from_node: str, to_node: str, label: str = ""):
@@ -68,9 +70,12 @@ class ControlFlowGraph:
             # Si c'est la dernière instruction du body, on peut marquer la sortie comme terminale
             # (par exemple, un return dans une fonction ou un break dans une boucle)
             is_last_stmt = (i == len(body) - 1) 
+            parents_to_process = list(current_node_ids)
+            current_node_ids = [] # Réinitialiser pour collecter les sorties de cette étape
 
+            for parent_id in parents_to_process:
             # Pour chaque noeud parent possible de cette instruction
-            for parent_id in current_node_ids:
+
                  # Si le parent est déjà un terminal, on ne continue pas depuis lui
                 if parent_id in self.terminal_nodes:
                     continue
@@ -192,17 +197,15 @@ class ControlFlowGraph:
         start_id = self.add_node("Start", node_type="StartEnd")
         # La visite du corps commence à partir du noeud Start
         exit_nodes = self.visit_body(node.body, [start_id])
-
         end_id = self.add_node("End", node_type="StartEnd")
         # Connecter toutes les sorties normales du corps principal au noeud End
         for node_id in exit_nodes:
             if node_id not in self.terminal_nodes: # Double sécurité
                 self.add_edge(node_id, end_id)
-
         # Connecter les retours implicites ou non connectés à End
         self.connect_finals_to_end(end_id)
         # Pour un Module, la "sortie" n'a pas vraiment de sens, on retourne l'ID de fin.
-        return [end_id] # On pourrait retourner une liste vide aussi.
+        return [end_id] # On pourrait retourner une liste vide aussi?
 
 
     def visit_FunctionDef(self, node: ast.FunctionDef, parent_id: str) -> List[str]:
@@ -217,9 +220,13 @@ class ControlFlowGraph:
         # TO DO: corriger bug de l'arête terminale ajoutée par défaut
         # TO DO : ajouter affichage appels récursifs ??
 
-        func_def_id = self.add_node(f"Définition de Fonction<br> {node.name}(...)", node_type="Subroutine")
-        self.add_edge(parent_id, func_def_id)
-
+        func_def_id = self.add_node(f"Définition de Fonction<br> {node.name}(...)", node_type="SubroutineDefinition")
+        '''MOD
+        self.add_edge(parent_id, func_def_id)'''
+        if parent_id:
+            # Connecter la définition de la fonction au parent
+            self.add_edge(parent_id, func_def_id)
+        
         # Créer un graphe séparé pour le corps de la fonction ? Non, intégrons-le.
         # Créer un noeud "Start" spécifique à la fonction pour clarté
         func_start_id = self.add_node(f"Start {node.name}", node_type="StartEnd")
@@ -232,14 +239,9 @@ class ControlFlowGraph:
 
         # Connecter les sorties normales du corps de la fonction à son noeud End
         for node_id in exit_nodes:
-             if node_id not in self.terminal_nodes:
-                self.add_edge(node_id, func_end_id)
-
-        # Connecter les retours non connectés (implicites ou autres) au End de la fonction
-        self.connect_finals_to_end(func_end_id) # Utilise les noeuds générés pour cette fonction
-
-        # La définition de fonction elle-même continue le flux principal.
-        return [func_def_id]
+            self.add_edge(node_id, func_end_id)
+        self.connect_finals_to_end(func_end_id) # Connecter les retours non connectés
+        return [func_def_id] # WARNING La définition de fonction elle-même continue le flux principal.
 
 
     def visit_If(self, node: ast.If, parent_id: str) -> List[str]:
@@ -382,36 +384,205 @@ class ControlFlowGraph:
     ########################### 
 
     def visit_For(self, node: ast.For, parent_id: str) -> List[str]:
-        iterator = ast.unparse(node.target).replace('"', '"') # la variable de boucle
-        iterable = ast.unparse(node.iter).replace('"', '"') # l'objet itérable:range ou pas??
-        #si range : identifier cas range(b) ou range(a, b) ou range(a, b, c) ... => identifer step, nb_iter
-        #nb_paramètres = 1 ou 2 ou 3
-        loop_id = self.add_node(f"For {iterator} in {iterable}", node_type="Decision") # Considéré comme un point de décision/entrée
-        self.add_edge(parent_id, loop_id)
+        iterator_str = ast.unparse(node.target).replace('"', '"') # la variable de boucle
+        iterable = ast.unparse(node.iter).replace('"', '"') # PAS l'objet itérable !!!!!
+        iterable_node = node.iter
+        # CAS DU FOR IN RANGE range : identifier cas range(b) ou range(a, b) ou range(a, b, c) ... => identifer step, nb_iter
+        # nb_paramètres = 1 ou 2 ou 3
+        
+        # --- Cas spécifique: for {iterator} in range(...) ---
+        # ATTENTION ast.unparse(node.iter) convertit en STRING l'objet node.iter (eg. un ast.Call)
+        # donc isinstance(iterable, ast.Call) JAMAIS VRAI
+        if isinstance(iterable_node, ast.Call) and isinstance(iterable_node.func, ast.Name) and \
+           iterable_node.func.id == 'range':
 
-        # Noeud de sortie de boucle (après terminaison normale)
-        exit_node_id = self.add_node("Sortie de boucle For", node_type="Junction")
-        self.add_edge(loop_id, exit_node_id, "Terminée") # Arête pour sortie normale
+            # Extraire les arguments de range()
+            range_args = iterable_node.args
+            start_val_str = "0" # Valeur par défaut si 1 seul argument := range(stop)
+            stop_val_str = ""   # sera remplacée poru sûr
+            step_val_str = "1"  # Valeur par défaut du step
 
-        # Empiler les informations de la boucle pour Break/Continue
-        self.loop_stack.append((loop_id, exit_node_id))
+            if len(range_args) == 1: # range(stop)
+                stop_val_str = ast.unparse(range_args[0])
+            elif len(range_args) >= 2: # range(start, stop, [step])
+                start_val_str = ast.unparse(range_args[0])
+                stop_val_str = ast.unparse(range_args[1])
+                if len(range_args) == 3:
+                    step_val_str = ast.unparse(range_args[2])
+            else:
+                # Cas de range() invalide, fallback vers la méthode générique
+                print(f"Warning: Appel à range() avec un nombre d'arguments inattendu: {len(range_args)}. Fallback.")
+                return self._generic_visit(node, parent_id)
+            
+            #gestion du nœud graphe d'initialisation de l'itérateur
+            init_label = f"{iterator_str} = {start_val_str}"
+            init_node_id = self.add_node(init_label, node_type="Process")
+            self.add_edge(parent_id, init_node_id)
 
-        # Visiter le corps de la boucle, en partant de l'entrée de boucle (loop_id)
-        body_exit_nodes = self.visit_body(node.body, [loop_id])
-        #rajouter mœud incrément
+            #gestion du nœud graphe dela condition de boucle
+            # en fait l'écriture de al condition dépend de si 'step' est <0 ou >0 ...
+            # PROBLEME : si 'stop' est stockée dans une variable !!!
+            # heuristique: si step >0 alors on utilise {i} < {stop} sinon {i} > {stop}
+            condition_op = "<"
+            try:
+                # Tenter d'évaluer step si c'est une constante numérique
+                # Note: step_val_str vient de ast.unparse, il faut être prudent avec literal_eval
+                # Si step_val_str est "var_step" alors literal_eval échoue!!
+                # On ne peut évaluer que si c'est un littéral
+                temp_step_for_eval = step_val_str.replace('"', '') # Enlever l'échappement pour literal_eval
+                step_numeric = ast.literal_eval(temp_step_for_eval)
+                if isinstance(step_numeric, (int, float)) and step_numeric < 0:
+                    condition_op = ">" # Ou plutôt, la condition de continuation serait i > stop et la condition d'arrêt i <= stop.
+                                       # Gardons < pour le label du losange, c'est la condition de *continuation* la plus courante à visualiser.
+            except (ValueError, SyntaxError, TypeError):
+                pass # Impossible d'évaluer step, on garde "<"
+
+            loop_cond_label = f"{iterator_str} {condition_op} {stop_val_str}"
+            loop_cond_id = self.add_node(loop_cond_label, node_type="Decision")
+            self.add_edge(init_node_id, loop_cond_id)
+
+            '''MOD
+            loop_id = self.add_node(f"For {iterator} in {iterable}", node_type="Decision") # Considéré comme un point de décision/entrée
+            self.add_edge(parent_id, loop_id)'''
+
+            # Noeud de sortie de boucle (après terminaison normale)
+            exit_node_label = f"Sortie de boucle For <br> {iterator_str}"
+            exit_node_id = self.add_node(exit_node_label, node_type="Junction")
+            self.add_edge(loop_cond_id, exit_node_id, "False/Terminée") # Arête pour sortie normale
+
+            #gestion du nœud d'incrémentation de l'itérateur
+            increment_label = f"{iterator_str} = {iterator_str} + {step_val_str}"
+            increment_node_id = self.add_node(increment_label, node_type="Process")
+            
+            # Empiler les informations de la boucle pour Break/Continue
+            '''MOD
+            self.loop_stack.append((loop_id, exit_node_id))'''
+            # 'Continue' doit sauter au noeud d'incrémentation.
+            # 'Break' doit sauter à exit_node_id.
+            # Le point de retour après incrémentation est loop_cond_id.
+            self.loop_stack.append((increment_node_id, exit_node_id, loop_cond_id))
+
+            # Visiter le corps de la boucle, en partant de l'entrée de boucle (loop_id)
+            '''MOD
+            body_exit_nodes = self.visit_body(node.body, [loop_id])'''
+
+            # Visiter le corps de la boucle
+            # Le corps commence si la condition (loop_cond_id) est "True".
+            body_exit_nodes = self.visit_body(node.body, [loop_cond_id])
+            # Attacher le label "True" à la première arête sortant de loop_cond_id vers le corps
+            if node.body:
+                self._label_first_edge_from_decision(loop_cond_id, exit_node_id, "True")
+
+            # Connecter les sorties normales du corps de boucle au début de la boucle pour la prochaine itération
+            #MAINTENANT CONNECTÉE A L'INCREMENTATION
+            for exit_node in body_exit_nodes:
+                if exit_node not in self.terminal_nodes: # Ne pas reconnecter depuis Return, Break, Continue
+                    '''MOD
+                    self.add_edge(exit_node, loop_id, "itération suivante")'''
+                    self.add_edge(exit_node, increment_node_id) # Connecter au noeud d'incrémentation
+            self.add_edge(increment_node_id, loop_cond_id, "itération suivante")
+
+            # Gérer la branche 'else' de la boucle (exécutée si la boucle termine sans 'break')
+            # TODO
+            if node.orelse:
+                    # La branche 'else' est exécutée après la sortie normale de la boucle (pas après un break)
+                    # Donc, elle part de 'exit_node_id' si on considère que 'exit_node_id' est la sortie *avant* le 'else'.
+                    # Ou, plus simplement, elle part de l'arête "Terminée" (False) du loop_cond_id,
+                    # mais avant le 'exit_node_id' final.
+                    # Pour l'instant, connectons-la après le 'exit_node_id' si elle existe.
+                    # Cela nécessite de repenser 'exit_node_id' comme la sortie *après* le 'else'.
+                    # Solution plus simple:
+                    #   LoopCond -- False --> ElseBodyStart
+                    #   ElseBodyEnd --> FinalLoopExit
+                    #   LoopCond -- (si pas de else) False --> FinalLoopExit
+                    #   Break --> FinalLoopExit
+                    # Pour l'instant, on ignore le 'orelse' pour For, car sa sémantique est un peu complexe à visualiser simplement.
+                    # print(f"Warning: La branche 'orelse' des boucles 'for' n'est pas encore gérée visuellement.")
+                    pass
+            
+            self.loop_stack.pop()
+            # La sortie séquentielle après la boucle est le noeud de sortie de boucle
+            return [exit_node_id]
+            
+        else:
+            # --- Cas générique: for {target} in {iterable} ---
+            # Si l'itérable n'est pas un range, on le traite comme un itérable générique.
+            return self._visit_for_generic_iterable(node, parent_id, iterator_str)
+
+    def _visit_for_generic_iterable(self, node: ast.For, parent_id: str, iterator_str: str) -> List[str]:
+        """
+        Gère les boucles 'for' avec des itérables non-'range' (listes, etc.).
+        Représentation simplifiée.
+        """
+        iterable_str = ast.unparse(node.iter).replace('"', '"')
+        loop_decision_label = f"For {iterator_str} in {iterable_str}"
+        loop_decision_id = self.add_node(loop_decision_label, node_type="Decision")
+        self.add_edge(parent_id, loop_decision_id)
+
+        exit_node_id = self.add_node(f"Sortie de boucle For <br>{iterator_str}", node_type="Junction")
+        # Pour un itérable générique, la condition "Terminée" est quand l'itérable est vide.
+        self.add_edge(loop_decision_id, exit_node_id, "Terminée / Vide")
+
+        # Pour 'continue' dans un for générique, on revient au test de la boucle.
+        # Pour 'break', on va à la sortie.
+        self.loop_stack.append((loop_decision_id, exit_node_id, loop_decision_id)) # (continue_target, break_target, retest_target)
+
+        # Le corps de la boucle est exécuté pour chaque élément.
+        body_exit_nodes = self.visit_body(node.body, [loop_decision_id])
+        if node.body:
+            self._label_first_edge_from_decision(loop_decision_id, exit_node_id, "itération")
+
 
         # Connecter les sorties normales du corps de boucle au début de la boucle pour la prochaine itération
         for exit_node in body_exit_nodes:
-            if exit_node not in self.terminal_nodes: # Ne pas reconnecter depuis Return, Break, Continue
-                self.add_edge(exit_node, loop_id, "itération suivante")
+            self.add_edge(exit_node, loop_decision_id) # Pas de label "itération suivante" explicite ici, implicite
 
-        # Gérer la branche 'else' de la boucle (exécutée si la boucle termine sans 'break')
-        # TODO: Ajouter la gestion des rbeak et continue pour les boucles For/While
+        # Gérer 'orelse' (ignoré pour l'instant pour simplicité)
+        # if node.orelse:
+        #     print(f"Warning: La branche 'orelse' des boucles 'for' génériques n'est pas encore gérée visuellement.")
 
         self.loop_stack.pop()
-
-        # La sortie séquentielle après la boucle est le noeud de sortie de boucle
         return [exit_node_id]
+    
+
+    def _label_first_edge_from_decision(self, decision_node_id: str, other_exit_node_id: Optional[str], label_to_add: str):
+        """
+        Helper pour trouver la première arête sortant d'un noeud de décision
+        vers le corps (et non vers une autre sortie comme la sortie de boucle ou la branche else)
+        retire l'arête existante (supposée sans label) et en ajoute une nouvelle avec le label désiré ("True", "Suivant").
+        heuristique : la "première" est basée sur le plus petit ID numérique du nœud cible"""
+        first_body_edge_target = None
+        # Trouver toutes les arêtes sortant du noeud de décision
+        candidate_edges = [(f, t, lbl) for f, t, lbl in self.edges if f == decision_node_id]
+
+        # Filtrer celles qui ne vont pas vers une sortie déjà connue (comme exit_node_id pour False/Terminée)
+        # et qui n'ont pas déjà un label (ou un label différent de celui qu'on veut ajouter)
+        potential_body_starts = []
+        for f, t, lbl in candidate_edges:
+            if t != other_exit_node_id: # Ne pas prendre l'arête vers la sortie "False" ou "Terminée"
+                # Si l'arête n'a pas de label ou un label différent, c'est un candidat
+                if not lbl or lbl != label_to_add:
+                    potential_body_starts.append(t)
+
+        if potential_body_starts:
+            # Heuristique: prendre le noeud avec le plus petit ID numérique comme "premier"
+            first_body_edge_target = min(potential_body_starts, key=lambda x: int(x.replace("node", "")))
+
+        if first_body_edge_target:
+            edge_to_modify = (decision_node_id, first_body_edge_target, "") # Chercher l'arête sans label
+            if edge_to_modify in self.edges:
+                self.edges.remove(edge_to_modify)
+                self.add_edge(decision_node_id, first_body_edge_target, label_to_add)
+            else:
+                # Si l'arête sans label n'existe pas (peut-être déjà labellisée par une autre logique),
+                # on vérifie si une arête avec un label différent existe, ou on ajoute la nouvelle.
+                # Pour simplifier, on ajoute juste la nouvelle si l'arête sans label n'est pas trouvée.
+                # Cela pourrait créer des arêtes multiples si une arête déjà labellisée existe.
+                # Une logique plus robuste vérifierait si une arête (decision_node_id, first_body_edge_target, ANY_LABEL) existe.
+                # Pour l'instant, on assume qu'on labellise une arête initialement sans label.
+                # Si l'arête (decision_node_id, first_body_edge_target, label_to_add) n'existe pas déjà:
+                if not (decision_node_id, first_body_edge_target, label_to_add) in self.edges:
+                    self.add_edge(decision_node_id, first_body_edge_target, label_to_add)
 
     def visit_While(self, node: ast.While, parent_id: str) -> List[str]:
         condition = ast.unparse(node.test).replace('"', '"')
@@ -419,67 +590,45 @@ class ControlFlowGraph:
         self.add_edge(parent_id, while_id)
 
         # Noeud de sortie quand la condition est fausse
-        exit_node_id = self.add_node("Sortie de boucle While", node_type="Junction")
+        exit_node_id = self.add_node("Sortie de boucle While ({condition})", node_type="Junction")
         self.add_edge(while_id, exit_node_id, "False") # Condition fausse -> sortie
 
         # Empiler pour Break/Continue
-        self.loop_stack.append((while_id, exit_node_id))
+        self.loop_stack.append((while_id, exit_node_id, while_id))
 
-        # Visiter le corps de la boucle, qui commence si la condition est Vraie.
-        # Il faut un moyen d'indiquer que le corps ne commence que si 'True'.
-        # On peut insérer un noeud intermédiaire ou juste savoir que le corps part de `while_id`.
-        # L'arête while_id -> premier noeud du corps devrait idéalement porter le label "True".
-        body_exit_nodes = self.visit_body(node.body, [while_id])
-
-        # Attacher le label "True" à la première arête sortant de while_id vers le corps
+        body_exit_nodes = []
         if node.body:
-            first_body_node_id = None
-            # Trouve la première arête sortant de while_id qui n'est pas vers exit_node_id
-            for f, t, lbl in self.edges:
-                if f == while_id and t != exit_node_id:
-                    potential_first = t
-                    if first_body_node_id is None or int(potential_first[4:]) < int(first_body_node_id[4:]):
-                        first_body_node_id = potential_first
+            body_exit_nodes = self.visit_body(node.body, [while_id])
+            self._label_first_edge_from_decision(while_id, exit_node_id, "True")
 
-            if first_body_node_id:
-                 edge_to_modify = (while_id, first_body_node_id, "")
-                 if edge_to_modify in self.edges:
-                     self.edges.remove(edge_to_modify)
-                     self.add_edge(while_id, first_body_node_id, "True")
-                 else:
-                     # Ajouter si elle n'existait pas sans label (peu probable avec visit_body)
-                     self.add_edge(while_id, first_body_node_id, "True")
+            for exit_node in body_exit_nodes:
+                self.add_edge(exit_node, while_id) # Retour pour la prochaine itération (pas de label "itération suivante" ici)
 
-
-        # Connecter les sorties normales du corps de boucle au test de la boucle pour la prochaine itération
-        for exit_node in body_exit_nodes:
-             if exit_node not in self.terminal_nodes:
-                self.add_edge(exit_node, while_id, "itération suivante")
-
-        # TODO: Ajouter la gestion de node.orelse pour les boucles While
+        # Gérer 'orelse' (ignoré pour l'instant pour simplicité)
+        # if node.orelse:
+        #     print(f"Warning: La branche 'orelse' des boucles 'while' n'est pas encore gérée visuellement.")
 
         self.loop_stack.pop()
-
-        # La sortie séquentielle est le noeud de sortie de boucle
         return [exit_node_id]
 
     def visit_Return(self, node: ast.Return, parent_id: str) -> List[str]:
         value = ast.unparse(node.value).replace('"', '"') if node.value else ""
         return_id = self.add_node(f"Return {value}", node_type="Return")
         self.add_edge(parent_id, return_id)
-        self.terminal_nodes.add(return_id) # Marquer comme terminal
+        '''MOD
+        self.terminal_nodes.add(return_id) # Marquer comme terminal''' #déplacé dans visit()
         # Retourne l'ID du noeud créé, mais la visite globale le traitera comme terminal (retournera [])
         return [return_id]
 
     def visit_Break(self, node: ast.Break, parent_id: str) -> List[str]:
         break_id = self.add_node("Break", node_type="Jump")
         self.add_edge(parent_id, break_id)
-        self.terminal_nodes.add(break_id) # Marquer comme terminal pour son chemin
+        ''' MOD
+        self.terminal_nodes.add(break_id) # Marquer comme terminal pour son chemin''' #déplacé dans visit()
 
         if self.loop_stack:
-            # Connecter le Break au noeud de sortie de la boucle la plus interne
-            _, loop_exit_id = self.loop_stack[-1]
-            self.add_edge(break_id, loop_exit_id)
+            _, loop_exit_target, _ = self.loop_stack[-1] # (continue_target, break_target, retest_target)
+            self.add_edge(break_id, loop_exit_target)
         else:
             # Break en dehors d'une boucle - erreur Python, mais on peut le gérer
              print("Warning: 'break' outside loop detected.")
@@ -490,12 +639,12 @@ class ControlFlowGraph:
     def visit_Continue(self, node: ast.Continue, parent_id: str) -> List[str]:
         continue_id = self.add_node("Continue", node_type="Jump")
         self.add_edge(parent_id, continue_id)
-        self.terminal_nodes.add(continue_id) # Marquer comme terminal pour son chemin
+        '''MOD
+        self.terminal_nodes.add(continue_id) # Marquer comme terminal pour son chemin''' #déplacé dans visit()
 
         if self.loop_stack:
-            # Connecter Continue au début (test) de la boucle la plus interne
-            loop_start_id, _ = self.loop_stack[-1]
-            self.add_edge(continue_id, loop_start_id)
+            loop_continue_target, _, _ = self.loop_stack[-1] # (continue_target, break_target, retest_target)
+            self.add_edge(continue_id, loop_continue_target)
         else:
             # Continue en dehors d'une boucle - erreur Python
              print("Warning: 'continue' outside loop detected.")
@@ -506,6 +655,11 @@ class ControlFlowGraph:
         # Pour les noeuds simples (expressions, etc.)
         try:
             label = ast.unparse(node).replace('"', '"')
+            node_type = "Process" # Type par défaut
+            if isinstance(node, ast.Pass):
+                label = "Pass" # Label plus propre pour Pass
+            # ... (autres cas spécifiques si nécessaire) ...
+            
             # Limiter la longueur pour éviter des noeuds énormes
             max_len = 60
             if len(label) > max_len:
@@ -527,15 +681,27 @@ class ControlFlowGraph:
         targets = ", ".join([ast.unparse(t).replace('"', '"') for t in node.targets])
         value = ast.unparse(node.value).replace('"', '"')
         label = f"{targets} = {value}"
+        node_type = "Process" # Par défaut
+        
+        # --- Logique de détection de type d'appel (à réintégrer/adapter de votre version précédente) ---
+        if isinstance(node.value, ast.Call):
+            func_node = node.value.func
+            func_name = None
+            if isinstance(func_node, ast.Name): func_name = func_node.id
+            elif isinstance(func_node, ast.Attribute): func_name = func_node.attr
+
+            # Exemple simplifié (vous avez des listes BUILTIN_FUNCTIONS, IO_FUNCTIONS, user_defined_functions)
+            # if func_name in self.IO_FUNCTIONS: node_type = "IoOperation"
+            # elif func_name in self.user_defined_functions: node_type = "UserFunctionCallAssign"
+            pass # Laisser "Process" pour l'instant pour ce focus
+
         max_len = 60
         if len(label) > max_len:
-             # Essayer de raccourcir la valeur si possible
-             value_short = value[:max_len - len(targets) - 6] + "..." if len(value) > max_len - len(targets) - 6 else value
+             value_short = value_str[:max_len - len(targets) - 6] + "..." if len(value_str) > max_len - len(targets) - 6 else value_str
              label = f"{targets} = {value_short}"
-             if len(label) > max_len: # Si même ça c'est trop long
-                 label = label[:max_len-3] + "..."
+             if len(label) > max_len: label = label[:max_len-3] + "..."
 
-        assign_id = self.add_node(f"{label}", node_type="Process") # Utiliser f-string propre
+        assign_id = self.add_node(label, node_type=node_type)
         self.add_edge(parent_id, assign_id)
         return [assign_id]
 
@@ -554,7 +720,14 @@ class ControlFlowGraph:
             args_str = args_str[:max_arg_len-3] + "..."
 
         label = f"Appel: <br>{func_name}({args_str})"
-        call_id = self.add_node(label, node_type="Process")
+        node_type = "Process" # Par défaut
+
+        # --- Logique de détection de type d'appel (pour plu stard) ---
+        # if func_name in self.IO_FUNCTIONS: node_type = "IoOperation"
+        # elif func_name in self.user_defined_functions: node_type = "UserFunctionCall"
+        pass # Laisser "Process" pour l'instant
+
+        call_id = self.add_node(label, node_type=node_type)
         self.add_edge(parent_id, call_id)
         return [call_id]
 
@@ -573,45 +746,48 @@ class ControlFlowGraph:
 
     def to_mermaid(self) -> str:
         mermaid = ["graph TD"]
+        node_definitions = []
+        edge_definitions = []
 
         # Ajout des noeuds avec syntaxe Mermaid basée sur le label/type
         # (Note: on n'utilise pas le 'node_type' stocké pour l'instant, on se base sur le label)
         for node_id, label in self.nodes:
             # Nettoyer le label pour Mermaid (guillemets doubles)
             safe_label = label.replace('"', '#quot;') # Remplacer par entité HTML ou autre chose sûr
+            node_type = self.node_types.get(node_id, "Process")
 
-            if label == "Start" or label.startswith("Start "):
-                mermaid.append(f'    {node_id}((("{safe_label}")))') # Cercle double pour Start
-            elif label == "End" or label.startswith("End "):
-                mermaid.append(f'    {node_id}((("{safe_label}")))') # Cercle double pour End
-            elif label.startswith("If ") or label.startswith("While ") or label.startswith("For "): #marche pas pour For
-                 mermaid.append(f'    {node_id}{{"{safe_label}"}}') # Losange pour Décision/Boucle
-            elif label in ["jonction", "Sortie de boucle For", "Sortie de boucle While"]:
-                 # Utiliser un cercle simple pour les jonctions/sorties de boucle
-                 # Mermaid ne supporte pas directement un petit cercle vide, utilisons un cercle standard
-                 mermaid.append(f'    {node_id}[\{label}/]') # forme de pilule (ou autre forme discrète)
-            #elif label.startswith("For") #initialiser variable de boucle
-                ######
-            elif label.startswith("Return"):
-                 mermaid.append(f'    {node_id}(("{safe_label}"))') # Forme spécifique pour Return (rond?)
-            elif label in ["Break", "Continue"]:
-                 mermaid.append(f'    {node_id}[("{safe_label}")]') # Rond simple pour Break/Continue
-            elif label.startswith("Définition"):
-                 mermaid.append(f'    {node_id}[/"{safe_label}"/]') # Parallélogramme // pour définition
-            elif label.startswith("Appel:"):
-                 mermaid.append(f'    {node_id}[\\"{safe_label}"\\]') # Parallélogramme \\ pour appel
-            else:
-                 # Rectangle standard pour les autres processus/assignations
-                 mermaid.append(f'    {node_id}["{safe_label}"]')
+            if node_type == "StartEnd":
+                node_definitions.append(f'    {node_id}((("{safe_label}")))')
+            elif node_type == "Decision":
+                 node_definitions.append(f'    {node_id}{{"{safe_label}"}}')
+            elif node_type == "Junction":
+                 node_definitions.append(f'    {node_id}([{safe_label}])') # Pilule
+            elif node_type == "Return":
+                node_definitions.append(f'    {node_id}[\\"{safe_label}"\\]') # Parallélogramme \
+            elif node_type == "Jump":
+                 node_definitions.append(f'    {node_id}(("{safe_label}"))') # Cercle
+            elif node_type == "SubroutineDefinition": # Nouveau type pour clarté
+                 node_definitions.append(f'    {node_id}[/"{safe_label}"/]') # Parallélogramme /
+            # --- Types pour appels (à réactiver avec la logique dans visit_Assign/visit_Call) ---
+            # elif node_type == "IoOperation":
+            #      node_definitions.append(f'    {node_id}[/"{safe_label}"/]')
+            # elif node_type == "UserFunctionCallAssign" or node_type == "UserFunctionCall":
+            #      node_definitions.append(f'    {node_id}[("{safe_label}")]') # Cylindre
+            elif node_type == "Process": # Cas pour les assignations simples, Pass, etc.
+                 node_definitions.append(f'    {node_id}["{safe_label}"]')
+            else: # Fallback pour tout type inconnu, utiliser un rectangle
+                 print(f"Warning: Type de noeud inconnu '{node_type}' pour node_id '{node_id}'. Utilisation d'un rectangle.")
+                 node_definitions.append(f'    {node_id}["{safe_label}"]')
 
-        # Ajout des arêtes (filtrées?)
         for from_node, to_node, label in self.filter_edges():
-            safe_edge_label = label.replace('"', '#quot;') #safe au sens éviter bug Mermaid
+            safe_edge_label = label.replace('"', '#quot;')
             if safe_edge_label:
-                mermaid.append(f"    {from_node} -->|{safe_edge_label}| {to_node}")
+                edge_definitions.append(f"    {from_node} -->|{safe_edge_label}| {to_node}")
             else:
-                mermaid.append(f"    {from_node} --> {to_node}")
+                edge_definitions.append(f"    {from_node} --> {to_node}")
 
+        mermaid.extend(sorted(node_definitions))
+        mermaid.extend(sorted(edge_definitions))
         return "\n".join(mermaid)
 
 ############### Exemples d'utilisation ###############
@@ -625,7 +801,7 @@ tryeef, bouclecontinue, whilebreak, if_is_raise
 ]
 '''
 ############### Choisir le code à tester ###############
-selected_code = exemples.forabc
+selected_code = exemples.for2
 ########################################################
 
 # --- Génération et Affichage ---
