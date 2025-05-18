@@ -19,7 +19,7 @@ class ControlFlowGraph:
     
     def get_node_id(self) -> str:
         self.node_counter += 1
-        return f"node{self.node_counter}"
+        return f"node{self.node_counter:02d}" #f"node{i:02d}" formatage à deux chiffres pour mermaid.sort()
 
     def add_node(self, label: str, node_type: str = "Process") -> str: 
         """Ajoute un noeud avec un label et un type (pour Mermaid)."""
@@ -590,7 +590,7 @@ class ControlFlowGraph:
         self.add_edge(parent_id, while_id)
 
         # Noeud de sortie quand la condition est fausse
-        exit_node_id = self.add_node("Sortie de boucle While ({condition})", node_type="Junction")
+        exit_node_id = self.add_node("Sortie de boucle While " + condition, node_type="Junction")
         self.add_edge(while_id, exit_node_id, "False") # Condition fausse -> sortie
 
         # Empiler pour Break/Continue
@@ -746,11 +746,15 @@ class ControlFlowGraph:
 
     def to_mermaid(self) -> str:
         mermaid = ["graph TD"]
+        mermaid.extend(["classDef RedFalse stroke:red,stroke-width:3px;"])
+        mermaid.extend(["classDef GreenTrue stroke:green,stroke-width:3px;"])
+        mermaid.extend(["classDef Dashed stroke:green,stroke-width:3px,stroke-dasharray:4,2"])
+        mermaid.extend(["classDef Decision fill:#bbf,stroke:#333,stroke-width:3px;"])
         node_definitions = []
         edge_definitions = []
 
-        # Ajout des noeuds avec syntaxe Mermaid basée sur le label/type
-        # (Note: on n'utilise pas le 'node_type' stocké pour l'instant, on se base sur le label)
+        # Ajout des noeuds avec syntaxe Mermaid basée sur le type
+        # (dans les versions avant mai2025 on utilisait pas le 'node_type' mais le label)
         for node_id, label in self.nodes:
             # Nettoyer le label pour Mermaid (guillemets doubles)
             safe_label = label.replace('"', '#quot;') # Remplacer par entité HTML ou autre chose sûr
@@ -801,7 +805,7 @@ tryeef, bouclecontinue, whilebreak, if_is_raise
 ]
 '''
 ############### Choisir le code à tester ###############
-selected_code = exemples.for2
+selected_code = exemples.defif2
 ########################################################
 
 # --- Génération et Affichage ---
