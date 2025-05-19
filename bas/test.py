@@ -193,7 +193,7 @@ class ControlFlowGraph:
 
     def visit_If(self, node: ast.If, parent_id: str) -> List[str]:
         condition = ast.unparse(node.test).replace('"', '"')
-        if_id = self.add_node(f"If {condition}", node_type="Decision")
+        if_id = self.add_node(f"{condition}", node_type="Decision")
         self.add_edge(parent_id, if_id)
 
         final_exit_nodes_after_if: List[str] = []
@@ -550,11 +550,11 @@ class ControlFlowGraph:
 
     def to_mermaid(self) -> str: # Version simplifiée pour afficher toutes les arêtes
         mermaid = ["graph TD"]
-        mermaid.extend(["classDef RedFalse stroke:red,stroke-width:3px;",
+        '''mermaid.extend(["classDef RedFalse stroke:red,stroke-width:3px;",
                         "classDef GreenTrue stroke:green,stroke-width:3px;",
                         "classDef Dashed stroke:green,stroke-width:3px,stroke-dasharray:4,2",
                         "classDef Decision fill:#bbf,stroke:#333,stroke-width:3px;"])
-
+'''
         node_definitions = []
         edge_definitions = []
 
@@ -588,7 +588,7 @@ class ControlFlowGraph:
 
 ############### Choisir le code à tester ###############
 import exemples
-selected_code = exemples.bissextile2
+selected_code = exemples.ifelif
 ########################################################
 
 # --- Génération et Affichage ---

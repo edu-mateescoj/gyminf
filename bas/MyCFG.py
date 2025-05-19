@@ -631,7 +631,7 @@ tryeef, bouclecontinue, whilebreak, if_is_raise
 ]
 '''
 ############### Choisir le code à tester ###############
-selected_code = exemples.bissextile2
+selected_code = exemples.ifelif
 ########################################################
 
 # --- Génération et Affichage ---
