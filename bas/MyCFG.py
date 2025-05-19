@@ -637,12 +637,12 @@ selected_code = exemples.bissextile2
 # --- Génération et Affichage ---
 print(f"--- Code Python analysé ---")
 print(selected_code)
-print("\n--- Mermaid Généré ---")
 
 cfg = ControlFlowGraph(selected_code)
 # Lancer la visite à partir de la racine de l'AST (le module)
 cfg.visit(cfg.tree, None) # Le parent initial est None
 print(ast.dump(cfg.tree))
+print("\n--- Mermaid Généré ---")
 print(cfg.to_mermaid())
 
 # Optionnel : Afficher les noeuds et arêtes pour le débogage

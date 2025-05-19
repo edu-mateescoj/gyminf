@@ -223,6 +223,19 @@ res2 = ma_fonction(l)
 print("Fini")
 """
 
+nestedDef = """
+def outer_function(x):
+    print("outer x = ", x)
+
+    def inner_function(y):
+        print("inner y = ", y)
+        return x + y
+
+    return inner_function
+result = outer_function(10)
+print(result(5))  # Affiche 15
+"""
+
 for1 = """
 n = input("Donnez n")
 for element in range(n):
