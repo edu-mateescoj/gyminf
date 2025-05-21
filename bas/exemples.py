@@ -245,12 +245,12 @@ for2 = """
 n = input("Donnez n")
 for element in range(n,p):
     print("Element = ", element)
-    if element != 'toto':
-        print("pas toto")
+    if element == 'toto':
+        print("c'est toto")
     elif element == 'tata':
         print("c'est tata")
     else:
-        print("toto")
+        print("ni toto ni tata")
 print("encore qlql chose ici")
 """
 forabc = """

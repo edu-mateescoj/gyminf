@@ -4,591 +4,801 @@ from typing import List, Dict, Set, Tuple, Optional
 class ControlFlowGraph:
     def __init__(self, code: str):
         self.tree = ast.parse(code)
-        self.nodes: List[Tuple[str, str]] = []
-        self.edges: Set[Tuple[str, str, str]] = set()
-        self.node_counter = 0
-        self.loop_stack: List[Tuple[str, str, str]] = [] # (continue_target, break_target_is_loop_exit_cond_node, retest_target)
-        self.node_labels: Dict[str, str] = {}
-        self.terminal_nodes: Set[str] = set()
-        self.node_types: Dict[str, str] = {}
+        self.nodes: List[Tuple[str, str]] = [] # Liste des tuples (node_id, label)
+        self.edges: Set[Tuple[str, str, str]] = set() # Ensemble des tuples (from_node, to_node, label)
+        self.node_counter = 0 # Compteur pour générer des ID de nœuds uniques
         
-        # Pile pour gérer les portées des fonctions imbriquées
-        # Chaque élément est un Set d'IDs de noeuds pour cette portée de fonction
+        # Pile pour gérer les cibles de 'continue', 'break' et de re-test pour les boucles imbriquées
+        # Chaque élément est un tuple: (continue_target, break_target_is_loop_exit_cond_node, retest_target)
+        self.loop_stack: List[Tuple[str, str, str]] = [] 
+        
+        self.node_labels: Dict[str, str] = {} # Dictionnaire: node_id -> label
+        self.terminal_nodes: Set[str] = set() # Ensemble des ID de nœuds qui terminent un flux (Return, Break, Continue)
+        self.node_types: Dict[str, str] = {} # Dictionnaire: node_id -> type de nœud (Process, Decision, etc.)
+        
+        # Pile pour gérer les portées des fonctions imbriquées.
+        # Chaque élément est un Set d'IDs de nœuds pour cette portée de fonction.
         self._function_scope_stack: List[Set[str]] = []
         
-        ## Pour aider à définir la portée des noeuds pour connect_finals_to_end dans une fonction
-        #self._current_function_node_ids: Optional[Set[str]] = None
+        # Stockage des ID de nœuds pour chaque fonction définie, utilisé pour les sous-graphes Mermaid.
+        # Dictionnaire: function_name -> Set[node_id]
+        self.function_subgraph_nodes: Dict[str, Set[str]] = {}
+        # Stockage des ID de nœuds pour le flux principal (module), utilisé pour le sous-graphe Mermaid.
+        self.main_flow_nodes: Set[str] = set()
+
 
     def get_node_id(self) -> str:
+        """Génère un nouvel ID de nœud unique et l'ajoute à la portée de fonction actuelle si applicable."""
         self.node_counter += 1
         new_id = f"node{self.node_counter:02d}"
-         # Si on est dans une portée de fonction, ajouter le nouvel ID à la portée actuelle
-        if self._function_scope_stack:
-            self._function_scope_stack[-1].add(new_id)
-        return new_id
         
-        #if self._current_function_node_ids is not None:
-        #    self._current_function_node_ids.add(new_id)
-        #return new_id
+        if self._function_scope_stack:
+            # Si nous sommes dans la portée d'une fonction, ajouter ce nœud à cette portée.
+            self._function_scope_stack[-1].add(new_id)
+        else:
+            # Sinon, ce nœud appartient au flux principal (module).
+            self.main_flow_nodes.add(new_id)
+        return new_id
 
     def add_node(self, label: str, node_type: str = "Process") -> str:
-        node_id = self.get_node_id() # get_node_id va l'ajouter à _current_function_node_ids si actif
+        """Ajoute un nouveau nœud au graphe."""
+        node_id = self.get_node_id() # get_node_id gère l'ajout aux ensembles pour les sous-graphes
         self.nodes.append((node_id, label))
         self.node_labels[node_id] = label
         self.node_types[node_id] = node_type
         return node_id
 
     def add_edge(self, from_node: str, to_node: str, label: str = ""):
+        """Ajoute une arête au graphe, avec vérifications."""
         if not from_node or not to_node:
-            # print(f"Warning: Tentative d'ajout d'arête avec noeud None: {from_node} -> {to_node}")
+            # Éviter les arêtes avec des nœuds non définis.
             return
         if from_node == to_node and not label:
+            # Éviter les auto-boucles non labellisées (souvent issues de branches vides).
             return
-        # Permettre aux Jumps (Break/Continue) d'avoir une arête sortante même s'ils sont terminaux
-        if from_node in self.terminal_nodes and self.node_types.get(from_node) != "Jump":
+            
+        # Permettre aux nœuds de saut (Break/Continue) et de Retour d'avoir des arêtes sortantes
+        # si elles sont explicitement ajoutées par leurs visiteurs respectifs.
+        # Les autres nœuds terminaux ne devraient pas avoir de nouvelles arêtes génériques sortantes.
+        if from_node in self.terminal_nodes and \
+           self.node_types.get(from_node) not in ("Jump", "Return"):
             return
+            
         if from_node not in self.node_labels or to_node not in self.node_labels:
-            # print(f"Warning: Tentative d'ajout d'arête entre noeuds non existants: {from_node} -> {to_node}")
+            # Éviter les arêtes entre des nœuds non (encore) existants.
             return
         self.edges.add((from_node, to_node, label))
 
     def _is_terminal_ast_node(self, node: ast.AST) -> bool:
+        """Vérifie si un nœud AST est un nœud qui termine le flux normal (Return, Break, Continue)."""
         return isinstance(node, (ast.Return, ast.Break, ast.Continue))
 
-
     def visit_body(self, body: List[ast.AST], entry_node_ids: List[str]) -> List[str]:
-        active_parent_ids = list(set(entry_node_ids)) 
+        """
+        Visite une séquence d'instructions (un "corps").
+        Gère la création de jonctions si nécessaire entre les instructions.
+        Retourne une liste d'ID de nœuds qui sont les points de sortie de ce corps.
+        """
+        active_ids_for_current_statement = list(set(entry_node_ids))
 
-        for stmt in body:
-            if not active_parent_ids: 
+        for i, stmt in enumerate(body):
+            if not active_ids_for_current_statement: 
+                # Plus de chemins actifs à traiter dans ce corps.
                 break
             
-            current_stmt_entry_points = [pid for pid in active_parent_ids if pid not in self.terminal_nodes]
+            # Points d'entrée pour l'instruction courante (filtrer les nœuds déjà terminaux).
+            current_stmt_entry_points = [pid for pid in active_ids_for_current_statement 
+                                         if pid not in self.terminal_nodes]
             
             if not current_stmt_entry_points:
-                 active_parent_ids = [] 
+                 # Tous les chemins menant à cette instruction étaient terminaux.
+                 active_ids_for_current_statement = [] 
                  break
 
-            next_active_parent_ids = []
+            # Collecter les points de sortie de l'instruction courante, pour tous les chemins d'entrée.
+            exits_from_current_stmt_all_paths: List[str] = []
             for parent_id in current_stmt_entry_points:
-                exit_nodes_from_stmt = self.visit(stmt, parent_id) # current_function_end_id n'est plus passé ici
-                next_active_parent_ids.extend(exit_nodes_from_stmt)
+                # visit() retourne les ID des nœuds de sortie de stmt pour ce parent_id.
+                exit_nodes_from_stmt_path = self.visit(stmt, parent_id)
+                exits_from_current_stmt_all_paths.extend(exit_nodes_from_stmt_path)
             
-            active_parent_ids = list(set(next_active_parent_ids))
+            # Les points de sortie de l'instruction courante deviennent les points d'entrée potentiels pour la suivante.
+            active_ids_for_current_statement = list(set(exits_from_current_stmt_all_paths))
 
-        return [pid for pid in active_parent_ids if pid not in self.terminal_nodes]
+            # Logique de Jonction:
+            # Si ce n'est PAS la dernière instruction et que l'instruction courante a produit
+            # PLUSIEURS points de sortie non-terminaux, nous les fusionnons avec un nœud de jonction.
+            is_last_statement = (i == len(body) - 1)
+            non_terminal_active_ids = [pid for pid in active_ids_for_current_statement 
+                                       if pid not in self.terminal_nodes]
 
-    def visit(self, node: ast.AST, parent_id: Optional[str]) -> List[str]: # parent_id peut être None pour Module
+            if not is_last_statement and len(non_terminal_active_ids) > 1:
+                # Créer un seul nœud de jonction.
+                junction_id = self.add_node(".", node_type="Junction")
+                for pid in non_terminal_active_ids:
+                    self.add_edge(pid, junction_id)
+                
+                # Le nœud de jonction devient le seul point d'entrée non-terminal pour la prochaine instruction.
+                # On conserve les points terminaux s'il y en avait.
+                terminal_active_ids = [pid for pid in active_ids_for_current_statement if pid in self.terminal_nodes]
+                active_ids_for_current_statement = [junction_id] + terminal_active_ids
+        
+        # Retourne tous les points de sortie actifs (terminaux ou non) du corps.
+        return active_ids_for_current_statement
+
+
+    def visit(self, node: ast.AST, parent_id: Optional[str]) -> List[str]:
+        """Méthode de visite générique qui appelle le visiteur spécifique au type de nœud AST."""
         method_name = f'visit_{type(node).__name__}'
         visitor = getattr(self, method_name, self.generic_visit)
         
-        # Pour le Module, parent_id est None, géré par visit_Module
-        # Pour les autres, parent_id doit exister.
+        # parent_id est None pour le Module ou les FunctionDef de haut niveau.
         if parent_id is None and not isinstance(node, (ast.Module, ast.FunctionDef)):
-            print(f"Critical Warning: visit() appelé avec parent_id=None pour noeud {type(node).__name__}")
+            # print(f"Critical Warning: visit() appelé avec parent_id=None pour noeud {type(node).__name__}")
             return []
 
-        # Les visiteurs spécifiques n'ont plus besoin de current_function_end_id
-        # car la portée est gérée par _function_scope_stack
         exit_nodes: List[str] = visitor(node, parent_id)
 
+        # Si le nœud AST lui-même est terminal (Return, Break, Continue),
+        # alors les nœuds CFG qu'il a créés sont marqués comme terminaux.
         if self._is_terminal_ast_node(node): 
-            if exit_nodes: 
-                created_node_id = exit_nodes[0]
-                self.terminal_nodes.add(created_node_id)
-            else:
-                print(f"Warning: Visiteur pour noeud terminal {type(node).__name__} n'a pas retourné d'ID.")
-            return [] 
-        return exit_nodes
+            for node_id in exit_nodes: # Normalement un seul nœud créé par R/B/C.
+                self.terminal_nodes.add(node_id)
+            return [] # Pas de continuation de flux normale depuis un nœud terminal AST.
+        
+        return exit_nodes # Retourne les points de sortie pour le flux normal.
 
     def connect_finals_to_end(self, target_end_id: str, scope_node_ids: Optional[Set[str]] = None):
-        source_nodes = set(from_node for from_node, _, _ in self.edges)
+        """
+        Connecte les nœuds sans arête sortante (dans la portée donnée) au target_end_id.
+        Utilisé pour les fins de chemin implicites et les nœuds Return.
+        """
+        source_nodes_with_outgoing_edges = set(from_node for from_node, _, _ in self.edges)
         
-        nodes_to_check_ids = scope_node_ids
-        if nodes_to_check_ids is None: # Si pas de portée, vérifier tous les noeuds
-            nodes_to_check_ids = set(self.node_labels.keys())
+        # Si scope_node_ids n'est pas fourni, considérer tous les nœuds.
+        nodes_to_check = scope_node_ids if scope_node_ids is not None else set(self.node_labels.keys())
 
-        for node_id in list(nodes_to_check_ids): # Itérer sur une copie si on modifie self.edges
-            if node_id not in self.node_labels: # Le noeud a pu être supprimé (logique future)
-                continue
+        for node_id in list(nodes_to_check): # Itérer sur une copie car self.edges peut être modifié.
+            if node_id not in self.node_labels: continue # Nœud potentiellement supprimé (logique future).
+            if node_id == target_end_id: continue # Ne pas connecter un nœud à lui-même de cette façon.
 
-            if node_id == target_end_id:
-                continue
-            
             is_return_node = self.node_types.get(node_id) == "Return"
             
-            # Un Return doit toujours être connecté s'il n'a pas de sortie, même s'il est dans terminal_nodes.
-            # Les autres terminaux (Break/Continue) ont déjà leurs sauts gérés.
+            # Si un nœud est un 'Return', il DOIT être connecté au 'End' de sa fonction/module.
+            # S'il est dans terminal_nodes mais n'est PAS un 'Return' (ex: Break, Continue),
+            # ses sauts sont déjà gérés, donc on ne le connecte pas au 'End' général ici.
             if node_id in self.terminal_nodes and not is_return_node:
                 continue
             
-            if node_id not in source_nodes: # S'il n'a pas d'arête sortante
+            # Si le nœud n'a pas d'arête sortante, OU s'il est un 'Return', alors on le connecte.
+            if node_id not in source_nodes_with_outgoing_edges or is_return_node:
                 self.add_edge(node_id, target_end_id)
 
 
     def visit_Module(self, node: ast.Module, parent_id: Optional[str] = None) -> List[str]:
-        # parent_id est None ici, et _current_function_end_id n'est pas pertinent pour le module lui-même
-        start_id = self.add_node("Start", node_type="StartEnd")
+        """Visite le nœud racine du module AST."""
+        # Le nœud Start du module. parent_id est None ici.
+        # get_node_id ajoutera start_id à self.main_flow_nodes.
+        start_id = self.add_node("Start", node_type="StartEnd") 
         
         function_defs = [n for n in node.body if isinstance(n, ast.FunctionDef)]
         other_statements = [n for n in node.body if not isinstance(n, ast.FunctionDef)]
 
-        # Visiter les définitions de fonctions d'abord. Elles construisent leur propre sous-graphe.
-        # Elles ne retournent rien au flux du module.
+        # 1. Visiter les définitions de fonctions.
+        #    Elles créent leurs propres sous-graphes et ne sont pas dans le flux principal du module.
         for func_def_node in function_defs:
-            self.visit(func_def_node, None) # parent_id est None pour les func defs top-level
+            self.visit(func_def_node, None) # parent_id est None pour les func defs top-level.
 
-        # Visiter les autres statements pour le flux principal du module
-        current_module_flow_exits = self.visit_body(other_statements, [start_id])
+        # 2. Visiter les autres instructions pour le flux principal du module.
+        #    Commence à partir du nœud 'Start' du module.
+        module_flow_exits = self.visit_body(other_statements, [start_id])
         
+        # Le nœud End du module. get_node_id l'ajoutera à self.main_flow_nodes.
         module_end_id = self.add_node("End", node_type="StartEnd")
-        for node_id in current_module_flow_exits:
-            self.add_edge(node_id, module_end_id)
-        
-        # Connecter les fins du module (celles qui ne sont pas dans une fonction)
-        # On ne passe pas de scope_node_ids ici, pour connecter les fins globales du module.
-        # Les fins de fonction auront déjà été connectées à leur propre End de fonction.
-        self.connect_finals_to_end(module_end_id) 
 
-        return []
+        # 3. Connecter les sorties normales du flux principal au nœud 'End' du module.
+        for node_id in module_flow_exits:
+            if node_id not in self.terminal_nodes: # Ne pas connecter si c'est déjà un break/continue global.
+                self.add_edge(node_id, module_end_id)
+        
+        # 4. Connecter les fins implicites et les 'Return' globaux (rare) au 'End' du module.
+        #    On utilise self.main_flow_nodes qui a été rempli par get_node_id pour les nœuds du module.
+        self.connect_finals_to_end(module_end_id, scope_node_ids=self.main_flow_nodes) 
+
+        return [] # Le module lui-même n'a pas de "sortie" vers un parent.
 
     def visit_FunctionDef(self, node: ast.FunctionDef, parent_id: Optional[str]) -> List[str]:
-        # 1. Créer un noeud de "Déclaration" pour cette fonction dans le flux parent (si parent_id existe)
-        # Ce noeud est juste pour montrer où la fonction est définie.
-        func_decl_label = f"Déclaration: {node.name}(...)"
-        func_decl_id = self.add_node(func_decl_label, node_type="SubroutineDeclaration") # Nouveau type
-
-        current_flow_continuation = []
-        if parent_id:
-            self.add_edge(parent_id, func_decl_id)
-            current_flow_continuation = [func_decl_id] # Le flux du parent continue après la déclaration
-
-        # 2. Gérer la portée pour les noeuds internes à cette fonction
-        self._function_scope_stack.append(set()) # Nouvelle portée pour cette fonction
+        """Visite une définition de fonction AST."""
+        # 1. Gérer la portée pour les nœuds internes à cette fonction.
+        #    Crée un nouvel ensemble vide pour les ID de nœuds de cette fonction.
+        self._function_scope_stack.append(set()) 
         
-        # 3. Créer les noeuds Start et End pour le *corps* de cette fonction
-        func_start_id = self.add_node(f"Start {node.name}", node_type="StartEnd")
-        func_end_id = self.add_node(f"End {node.name}", node_type="StartEnd")
+        # 2. Créer Start et End pour le *corps* de la fonction (sous-graphe).
+        #    Ces nœuds seront automatiquement ajoutés à la portée de la fonction actuelle
+        #    (et donc à self._function_scope_stack[-1]) par get_node_id.
+        func_body_start_id = self.add_node(f"Start {node.name}", node_type="StartEnd")
+        func_body_end_id = self.add_node(f"End {node.name}", node_type="StartEnd")
 
-        # 4. Visiter le corps de la fonction
-        body_normal_exit_nodes = self.visit_body(node.body, [func_start_id])
+        # 3. Visiter le corps de la fonction.
+        #    Les points d'entrée sont le nœud Start de cette fonction.
+        body_normal_exit_nodes = self.visit_body(node.body, [func_body_start_id])
 
-        # 5. Connecter les sorties normales du corps (non-Return) au noeud End de la fonction
+        # 4. Connecter les sorties normales du corps (non-Return) au nœud End de la fonction.
         for node_id in body_normal_exit_nodes:
-            self.add_edge(node_id, func_end_id)
+            if node_id not in self.terminal_nodes: # Ne pas connecter si c'est un break/continue dans la fonction.
+                self.add_edge(node_id, func_body_end_id)
 
+        # 5. Récupérer tous les ID de nœuds de cette fonction et les stocker pour les sous-graphes Mermaid.
+        #    Puis, dépiler la portée.
+        current_function_node_ids = self._function_scope_stack.pop()
+        self.function_subgraph_nodes[node.name] = current_function_node_ids
+        
         # 6. Connecter tous les 'Return' et fins de chemin implicites DANS CETTE FONCTION
-        #    à son propre func_end_id.
-        #    On utilise le SCOPE ACTUEL.
-        current_scope_ids = self._function_scope_stack[-1] # Obtenir la portée actuelle
-        self.connect_finals_to_end(func_end_id, scope_node_ids=current_scope_ids)
-
-        # 7. Restaurer la portée de fonction précédente (pour les fonctions imbriquées)
-        self._function_scope_stack.pop()
-
-        # 8. Retourner le noeud de déclaration pour que le flux parent continue,
-        #    ou [] si c'est une fonction top-level (parent_id is None).
-        return current_flow_continuation
-
-
+        #    à son propre func_body_end_id. Utiliser les ID de nœuds collectés pour cette fonction.
+        self.connect_finals_to_end(func_body_end_id, scope_node_ids=current_function_node_ids)
+        
+        # La fonction ne s'insère plus dans le flux parent, donc retourne [].
+        return []
+    
     def visit_If(self, node: ast.If, parent_id: str) -> List[str]:
-        condition = ast.unparse(node.test).replace('"', '"')
-        if_id = self.add_node(f"{condition}", node_type="Decision")
-        self.add_edge(parent_id, if_id)
+        """Visite une instruction 'if' AST."""
+        condition_text = ast.unparse(node.test).replace('"', '"') # Remplacer les guillemets pour Mermaid.
+        if_decision_id = self.add_node(f"{condition_text}", node_type="Decision")
+        self.add_edge(parent_id, if_decision_id)
 
+        # Points de sortie finaux de la structure If globale.
         final_exit_nodes_after_if: List[str] = []
         
-        # Pour stocker le premier noeud créé par visit_body pour chaque branche
-        true_branch_start_node: Optional[str] = None
-        false_branch_start_node: Optional[str] = None
+        true_branch_first_node_id: Optional[str] = None
+        false_branch_first_node_id: Optional[str] = None
 
-        # --- Branche True ---
+        # --- Branche True (node.body) ---
         if node.body:
-            nodes_before_true = {nid for nid,_ in self.nodes}
-            true_branch_exits = self.visit_body(node.body, [if_id])
-            nodes_after_true = {nid for nid,_ in self.nodes}
-            new_nodes_in_true = sorted(list(nodes_after_true - nodes_before_true), key=lambda x: int(x.replace("node","")))
-            if new_nodes_in_true:
-                true_branch_start_node = new_nodes_in_true[0]
+            # Pour identifier le premier nœud de la branche, on capture l'état avant/après.
+            nodes_before_true_branch = set(n_id for n_id, _ in self.nodes)
+            true_branch_exits = self.visit_body(node.body, [if_decision_id])
+            nodes_after_true_branch = set(n_id for n_id, _ in self.nodes)
+            
+            # Trouver les nouveaux nœuds ajoutés dans cette branche.
+            new_nodes_in_true_branch = sorted(
+                list(nodes_after_true_branch - nodes_before_true_branch), 
+                key=lambda x: int(x.replace("node","")) # Trier par numéro de nœud pour la stabilité.
+            )
+            if new_nodes_in_true_branch:
+                true_branch_first_node_id = new_nodes_in_true_branch[0]
+            
             final_exit_nodes_after_if.extend(true_branch_exits)
-        else: # Branche True vide
-            final_exit_nodes_after_if.append(if_id) # if_id est une sortie directe pour la condition True
+        else: 
+            # Branche True vide: le flux continue depuis if_decision_id avec la condition True.
+            final_exit_nodes_after_if.append(if_decision_id) 
 
-        # --- Branche False ---
-        if node.orelse:
-            nodes_before_false = {nid for nid,_ in self.nodes}
-            false_branch_exits = self.visit_body(node.orelse, [if_id])
-            nodes_after_false = {nid for nid,_ in self.nodes}
-            new_nodes_in_false = sorted(list(nodes_after_false - nodes_before_false), key=lambda x: int(x.replace("node","")))
-            if new_nodes_in_false:
-                false_branch_start_node = new_nodes_in_false[0]
+        # --- Branche False (node.orelse) ---
+        if node.orelse: # Peut être un 'else' ou un 'elif' (qui est un autre If).
+            nodes_before_false_branch = set(n_id for n_id, _ in self.nodes)
+            false_branch_exits = self.visit_body(node.orelse, [if_decision_id])
+            nodes_after_false_branch = set(n_id for n_id, _ in self.nodes)
+
+            new_nodes_in_false_branch = sorted(
+                list(nodes_after_false_branch - nodes_before_false_branch),
+                key=lambda x: int(x.replace("node",""))
+            )
+            if new_nodes_in_false_branch:
+                false_branch_first_node_id = new_nodes_in_false_branch[0]
+
             final_exit_nodes_after_if.extend(false_branch_exits)
-        else: # Branche False vide
-            final_exit_nodes_after_if.append(if_id) # if_id est une sortie directe pour la condition False
+        else: 
+            # Branche False vide: le flux continue depuis if_decision_id avec la condition False.
+            final_exit_nodes_after_if.append(if_decision_id)
 
-        # Labellisation des arêtes
-        # Supprimer les arêtes non labellisées de if_id vers les débuts de branche si elles existent
-        # (créées par le premier appel à self.visit(stmt, if_id) dans visit_body)
-        if true_branch_start_node:
-            if (if_id, true_branch_start_node, "") in self.edges:
-                self.edges.remove((if_id, true_branch_start_node, ""))
-            self.add_edge(if_id, true_branch_start_node, "True")
-        elif not node.body and false_branch_start_node: # True vide, False non vide
-            # L'arête if_id -> (suite) doit être "True"
-            # On ne peut pas le faire ici directement sans jonction.
-            # On pourrait marquer if_id pour que la prochaine arête sortante (non False) soit True.
-            # Pour l'instant, on ajoute une arête vers la cible de la branche False avec label True
-            # ce qui est incorrect. Il faut une meilleure solution pour les branches vides.
-            # Temporairement, on ne labellise pas si la branche est vide et l'autre existe.
-            pass
-        elif not node.body and not node.orelse: # Les deux branches vides
-             # On pourrait avoir if_id --True--> suite ET if_id --False--> suite
-             # C'est ambigu. Pour l'instant, pas de labels spécifiques.
-             pass
-    
-        if false_branch_start_node:
-            if (if_id, false_branch_start_node, "") in self.edges:
-                self.edges.remove((if_id, false_branch_start_node, ""))
-            self.add_edge(if_id, false_branch_start_node, "False")
-        elif not node.orelse and true_branch_start_node: # False vide, True non vide
-            pass # Idem, label "False" difficile à placer
-    
-        unique_exits = list(set(final_exit_nodes_after_if))
+        # Labellisation des arêtes sortantes du nœud de décision 'if_decision_id'.
+        if true_branch_first_node_id: 
+            # L'arête (if_decision_id, true_branch_first_node_id, "") a été créée par le premier appel
+            # à visit() dans visit_body. Nous la supprimons pour la recréer avec le label "True".
+            if (if_decision_id, true_branch_first_node_id, "") in self.edges:
+                self.edges.remove((if_decision_id, true_branch_first_node_id, ""))
+            self.add_edge(if_decision_id, true_branch_first_node_id, "True")
+        # else: Si la branche True est vide, if_decision_id est une sortie. Le label "True"
+        #       sera sur l'arête if_decision_id -> (jonction ou instruction suivante).
+        #       Ceci est géré par le fait que if_decision_id est dans final_exit_nodes_after_if.
+
+        if false_branch_first_node_id: 
+            if (if_decision_id, false_branch_first_node_id, "") in self.edges:
+                self.edges.remove((if_decision_id, false_branch_first_node_id, ""))
+            self.add_edge(if_decision_id, false_branch_first_node_id, "False")
+        # else: Idem pour la branche False vide.
         
-        ## Si if_id est une sortie (branche vide) et que l'autre branche est terminale, if_id n'est pas terminal.
-        ## Si les deux branches ont des sorties et que ces sorties sont toutes terminales (et ne sont pas if_id), alors []
-        non_if_id_exits = [n for n in unique_exits if n != if_id]
-        if non_if_id_exits and all(n in self.terminal_nodes for n in non_if_id_exits):
-            # Si if_id est la seule sortie non terminale (parce que les branches étaient vides),
-            # alors le if n'est pas terminal en soi.
-            if if_id in unique_exits and len(non_if_id_exits) == 0 : # if_id est la seule sortie
-                return [if_id]
-            return [] 
+        # Retourner les points de sortie uniques. visit_body s'occupera de les fusionner si nécessaire.
+        return list(set(final_exit_nodes_after_if))
 
-        return unique_exits
-
-    # ... visit_For, _visit_for_generic_iterable, visit_While ...
-    def visit_For(self, node: ast.For, parent_id: str, current_function_end_id: Optional[str] = None) -> List[str]:
-        iterator_str = ast.unparse(node.target).replace('"', '"')
+    def visit_For(self, node: ast.For, parent_id: str) -> List[str]: 
+        """Visite une boucle 'for' AST."""
+        iterator_variable_str = ast.unparse(node.target).replace('"', '"')
         iterable_node = node.iter
         
-        # Points de sortie de la boucle For (ceux qui mènent à l'instruction *après* la boucle)
+        # Points de sortie de la boucle For (ceux qui mènent à l'instruction *après* la boucle).
         loop_overall_exit_points: List[str] = []
 
+        # Cas spécial pour for i in range(...) pour une représentation plus détaillée.
         if isinstance(iterable_node, ast.Call) and \
            isinstance(iterable_node.func, ast.Name) and \
            iterable_node.func.id == 'range':
 
             range_args = iterable_node.args
-            start_val_str = "0"; stop_val_str = ""; step_val_str = "1"
-            if len(range_args) == 1: stop_val_str = ast.unparse(range_args[0]).replace('"', '#quot;')
+            start_val_str = "0"; stop_val_str = ""; step_val_str = "1" # Valeurs par défaut pour range.
+            if len(range_args) == 1: 
+                stop_val_str = ast.unparse(range_args[0]).replace('"', '#quot;')
             elif len(range_args) >= 2:
                 start_val_str = ast.unparse(range_args[0]).replace('"', '#quot;')
                 stop_val_str = ast.unparse(range_args[1]).replace('"', '#quot;')
-                if len(range_args) == 3: step_val_str = ast.unparse(range_args[2]).replace('"', '#quot;')
-            else: # Fallback
-                return self._visit_for_generic_iterable(node, parent_id, iterator_str)
+                if len(range_args) == 3: 
+                    step_val_str = ast.unparse(range_args[2]).replace('"', '#quot;')
+            else: # Fallback si range() a un nombre inattendu d'arguments.
+                return self._visit_for_generic_iterable(node, parent_id, iterator_variable_str)
 
-            init_label = f"{iterator_str} = {start_val_str}"
+            # Nœud d'initialisation.
+            init_label = f"{iterator_variable_str} = {start_val_str}"
             init_node_id = self.add_node(init_label, node_type="Process")
             self.add_edge(parent_id, init_node_id)
 
-            condition_op = "<"
-            try:
-                temp_step_for_eval = step_val_str.replace('"', '')
-                if temp_step_for_eval:
-                    step_numeric = ast.literal_eval(temp_step_for_eval)
-                    if isinstance(step_numeric, (int, float)) and step_numeric < 0: condition_op = ">"
-            except: pass
+            # Nœud de condition.
+            condition_op = "<" # Opérateur par défaut.
+            try: # Essayer de déterminer si le pas est négatif.
+                temp_step_for_eval = step_val_str.replace('#quot;', '') 
+                if temp_step_for_eval: 
+                    evaluated_step = ast.literal_eval(temp_step_for_eval) # Évaluation sûre.
+                    if isinstance(evaluated_step, (int, float)) and evaluated_step < 0:
+                        condition_op = ">" 
+            except (ValueError, SyntaxError):
+                pass # Garder "<" par défaut si l'évaluation échoue.
 
-            loop_cond_label = f"{iterator_str} {condition_op} {stop_val_str}"
-            loop_cond_id = self.add_node(loop_cond_label, node_type="Decision")
-            self.add_edge(init_node_id, loop_cond_id)
+            loop_condition_label = f"{iterator_variable_str} {condition_op} {stop_val_str}"
+            loop_condition_id = self.add_node(loop_condition_label, node_type="Decision")
+            self.add_edge(init_node_id, loop_condition_id)
 
-            ## La branche "False" (terminaison normale) du losange est un point de sortie global
-            loop_overall_exit_points.append(loop_cond_id) # L'arête "False" partira de là vers la suite
+            # La branche "False" (terminaison normale) du losange est un point de sortie global.
+            loop_overall_exit_points.append(loop_condition_id) 
 
-            increment_label = f"{iterator_str} = {iterator_str} + {step_val_str}"
+            # Nœud d'incrémentation.
+            increment_label = f"{iterator_variable_str} = {iterator_variable_str} + {step_val_str}"
             increment_node_id = self.add_node(increment_label, node_type="Process")
             
-            self.loop_stack.append((increment_node_id, loop_cond_id, loop_cond_id)) 
-            # # continue_target_id, break_target_id, retest_target_id := dans l'ordre: 
-            # 'vers qui fait sauter le flux' pour les 'continue', les 'break', et 'test' de continuation de boucle
+            # Mettre à jour la pile des boucles pour 'break' et 'continue'.
+            # break_target: loop_condition_id (la sortie "False" de la condition).
+            # continue_target: increment_node_id.
+            # retest_target: loop_condition_id (après l'incrément).
+            self.loop_stack.append((increment_node_id, loop_condition_id, loop_condition_id)) 
 
-            true_branch_start_node: Optional[str] = None
-            if node.body:# Visiter le corps
+            # Visiter le corps de la boucle (branche "True").
+            true_branch_first_node_id: Optional[str] = None
+            if node.body:
                 nodes_before_body = {n_id for n_id, _ in self.nodes}
-                body_exit_nodes = self.visit_body(node.body, [loop_cond_id])
+                body_exit_nodes = self.visit_body(node.body, [loop_condition_id])
                 nodes_after_body = {nid for nid,_ in self.nodes}
                 new_nodes_in_body = sorted(list(nodes_after_body - nodes_before_body), key=lambda x: int(x.replace("node","")))
                 if new_nodes_in_body:
-                    true_branch_start_node = new_nodes_in_body[0]
+                    true_branch_first_node_id = new_nodes_in_body[0]
+                
+                # Les sorties normales du corps mènent à l'incrémentation.
                 for exit_node in body_exit_nodes:
-                    self.add_edge(exit_node, increment_node_id)
+                    if exit_node not in self.terminal_nodes: 
+                        self.add_edge(exit_node, increment_node_id)
 
+            if true_branch_first_node_id: 
+                if (loop_condition_id, true_branch_first_node_id, "") in self.edges: 
+                    self.edges.remove((loop_condition_id, true_branch_first_node_id, ""))
+                self.add_edge(loop_condition_id, true_branch_first_node_id, "True")
+            elif not node.body: # Corps vide, la branche "True" va directement à l'incrément.
+                self.add_edge(loop_condition_id, increment_node_id, "True")
 
-            if true_branch_start_node: # Labelliser après avoir connecté le corps à l'incrément
-                if (loop_cond_id, true_branch_start_node, "") in self.edges: self.edges.remove((loop_cond_id, true_branch_start_node, ""))
-                self.add_edge(loop_cond_id, true_branch_start_node, "True")
+            # L'incrément retourne à la condition.
+            self.add_edge(increment_node_id, loop_condition_id) 
             
-            self.add_edge(increment_node_id, loop_cond_id)
-            
-            # Gérer orelse
-            false_branch_start_node: Optional[str] = None
+            # Gérer la clause 'orelse' de la boucle.
+            # Elle s'exécute si la boucle se termine normalement (pas par un 'break').
+            false_branch_first_node_id: Optional[str] = None 
             if node.orelse:
+                # Si orelse existe, loop_condition_id (sortie False) ne va pas directement à la suite,
+                # mais au début de orelse.
+                if loop_condition_id in loop_overall_exit_points:
+                    loop_overall_exit_points.remove(loop_condition_id)
+
                 nodes_before_orelse = {nid for nid,_ in self.nodes}
-                orelse_exit_nodes = self.visit_body(node.orelse, [loop_cond_id]) 
+                orelse_exit_nodes = self.visit_body(node.orelse, [loop_condition_id]) 
                 nodes_after_orelse = {nid for nid,_ in self.nodes}
                 new_nodes_in_orelse = sorted(list(nodes_after_orelse - nodes_before_orelse), key=lambda x: int(x.replace("node","")))
                 if new_nodes_in_orelse:
-                    false_branch_start_node = new_nodes_in_orelse[0]
-                loop_overall_exit_points.extend(orelse_exit_nodes)
-                if loop_cond_id in loop_overall_exit_points: 
-                    loop_overall_exit_points.remove(loop_cond_id)
-            
-            if false_branch_start_node: # Labelliser la branche orelse (qui est la sortie "False" de la condition de boucle)
-                if (loop_cond_id, false_branch_start_node, "") in self.edges: self.edges.remove((loop_cond_id, false_branch_start_node, ""))
-                self.add_edge(loop_cond_id, false_branch_start_node, "False")
-            elif not node.orelse : # Pas de orelse, l'arête "False" part de loop_cond_id vers la suite
-                 # Le label "False" sera sur l'arête loop_cond_id -> (instruction suivante)
-                 # Géré par visit_body si loop_cond_id est retourné.
-                 # On a besoin de marquer que cette sortie est "False".
-                 pass # Pour l'instant, pas de label explicite pour la sortie directe.
+                    false_branch_first_node_id = new_nodes_in_orelse[0]
                 
-            self.loop_stack.pop()
+                loop_overall_exit_points.extend(orelse_exit_nodes) # Les sorties de orelse sont des sorties globales.
+            
+            if false_branch_first_node_id: 
+                if (loop_condition_id, false_branch_first_node_id, "") in self.edges: 
+                    self.edges.remove((loop_condition_id, false_branch_first_node_id, ""))
+                self.add_edge(loop_condition_id, false_branch_first_node_id, "False")
+            # elif not node.orelse : Pas de orelse, l'arête "False" part de loop_condition_id vers la suite.
+                
+            self.loop_stack.pop() # Fin de la gestion de cette boucle.
             return list(set(loop_overall_exit_points))   
-        else: # Itérable générique
-            return self._visit_for_generic_iterable(node, parent_id, iterator_str)
+        else: # Itérable générique (non-range).
+            return self._visit_for_generic_iterable(node, parent_id, iterator_variable_str)
 
-    def _visit_for_generic_iterable(self, node: ast.For, parent_id: str, iterator_str: str) -> List[str]:
-        iterable_label = ast.unparse(node.iter).replace('"', '"')
-        loop_decision_label = f"For {iterator_str} in {iterable_label}"
+    def _visit_for_generic_iterable(self, node: ast.For, parent_id: str, iterator_variable_str: str) -> List[str]:
+        """Visite une boucle 'for' avec un itérable générique."""
+        iterable_text = ast.unparse(node.iter).replace('"', '"')
+        loop_decision_label = f"For {iterator_variable_str} in {iterable_text}"
         loop_decision_id = self.add_node(loop_decision_label, node_type="Decision")
         self.add_edge(parent_id, loop_decision_id)
-        loop_overall_exit_points: List[str] = [loop_decision_id] # Sortie "Terminée/Vide"
+        
+        # La sortie "Terminée/Vide" de la boucle.
+        loop_overall_exit_points: List[str] = [loop_decision_id] 
 
+        # Pour un 'for' générique: 'continue' et re-test vont au nœud de décision.
+        # 'break' va aussi à la sortie "Terminée/Vide" de ce nœud.
         self.loop_stack.append((loop_decision_id, loop_decision_id, loop_decision_id))
 
-        iteration_branch_start_node: Optional[str] = None
+        # Visiter le corps (branche "itération").
+        iteration_branch_first_node_id: Optional[str] = None
         if node.body:
             nodes_before_body = {nid for nid,_ in self.nodes}
             body_exit_nodes = self.visit_body(node.body, [loop_decision_id])
             nodes_after_body = {nid for nid,_ in self.nodes}
             new_nodes_in_body = sorted(list(nodes_after_body - nodes_before_body), key=lambda x: int(x.replace("node","")))
             if new_nodes_in_body:
-                iteration_branch_start_node = new_nodes_in_body[0]
+                iteration_branch_first_node_id = new_nodes_in_body[0]
+            
+            # Les sorties normales du corps retournent au test de la boucle.
             for exit_node in body_exit_nodes:
-                self.add_edge(exit_node, loop_decision_id)
+                if exit_node not in self.terminal_nodes:
+                    self.add_edge(exit_node, loop_decision_id) 
         
-        if iteration_branch_start_node:
-            if (loop_decision_id, iteration_branch_start_node, "") in self.edges: self.edges.remove((loop_decision_id, iteration_branch_start_node, ""))
-            self.add_edge(loop_decision_id, iteration_branch_start_node, "itération")
+        if iteration_branch_first_node_id:
+            if (loop_decision_id, iteration_branch_first_node_id, "") in self.edges: 
+                self.edges.remove((loop_decision_id, iteration_branch_first_node_id, ""))
+            self.add_edge(loop_decision_id, iteration_branch_first_node_id, "itération")
+        elif not node.body: # Corps vide, la branche "itération" revient directement au test.
+             self.add_edge(loop_decision_id, loop_decision_id, "itération")
 
-        # Gestion orelse (sortie "Terminée/Vide")
-        terminated_branch_start_node: Optional[str] = None
+
+        # Gérer 'orelse' (sortie "Terminée/Vide").
+        terminated_branch_first_node_id: Optional[str] = None
         if node.orelse:
+            if loop_decision_id in loop_overall_exit_points:
+                loop_overall_exit_points.remove(loop_decision_id) # orelse remplace la sortie directe.
+            
             nodes_before_orelse = {nid for nid,_ in self.nodes}
             orelse_exit_nodes = self.visit_body(node.orelse, [loop_decision_id])
             nodes_after_orelse = {nid for nid,_ in self.nodes}
             new_nodes_in_orelse = sorted(list(nodes_after_orelse - nodes_before_orelse), key=lambda x: int(x.replace("node","")))
             if new_nodes_in_orelse:
-                terminated_branch_start_node = new_nodes_in_orelse[0]
+                terminated_branch_first_node_id = new_nodes_in_orelse[0]
             loop_overall_exit_points.extend(orelse_exit_nodes)
-            if loop_decision_id in loop_overall_exit_points:
-                loop_overall_exit_points.remove(loop_decision_id)
         
-        if terminated_branch_start_node:
-            if (loop_decision_id, terminated_branch_start_node, "") in self.edges: self.edges.remove((loop_decision_id, terminated_branch_start_node, ""))
-            self.add_edge(loop_decision_id, terminated_branch_start_node, "Terminée / Vide")
-        elif not node.orelse: # Pas de orelse, l'arête "Terminée / Vide" part de loop_decision_id vers la suite
-            pass
+        if terminated_branch_first_node_id:
+            if (loop_decision_id, terminated_branch_first_node_id, "") in self.edges: 
+                self.edges.remove((loop_decision_id, terminated_branch_first_node_id, ""))
+            self.add_edge(loop_decision_id, terminated_branch_first_node_id, "Terminée / Vide")
+        # elif not node.orelse: L'arête "Terminée / Vide" sera implicite via loop_overall_exit_points.
 
         self.loop_stack.pop()
         return list(set(loop_overall_exit_points))
     
-    def visit_While(self, node: ast.While, parent_id: str) -> List[str]:
-        condition = ast.unparse(node.test).replace('"', '"')
-        while_id = self.add_node(f"While {condition}", node_type="Decision")
-        self.add_edge(parent_id, while_id)
-        loop_overall_exit_points: List[str] = [while_id] # La branche "False" part de while_id
+    def visit_While(self, node: ast.While, parent_id: str) -> List[str]: 
+        """Visite une boucle 'while' AST."""
+        condition_text = ast.unparse(node.test).replace('"', '"')
+        while_decision_id = self.add_node(f"While {condition_text}", node_type="Decision")
+        self.add_edge(parent_id, while_decision_id)
+        
+        # La branche "False" (terminaison normale) part de while_decision_id.
+        loop_overall_exit_points: List[str] = [while_decision_id] 
 
-        self.loop_stack.append((while_id, while_id, while_id)) # (continue_target, break_target_is_loop_exit, retest_target)
+        # break_target: while_decision_id (sortie "False").
+        # continue_target et retest_target: while_decision_id (re-tester la condition).
+        self.loop_stack.append((while_decision_id, while_decision_id, while_decision_id))
 
-        true_branch_start_node: Optional[str] = None
+        # Visiter le corps (branche "True").
+        true_branch_first_node_id: Optional[str] = None
         if node.body:
             nodes_before_body = {nid for nid,_ in self.nodes}
-            body_exit_nodes = self.visit_body(node.body, [while_id])
+            body_exit_nodes = self.visit_body(node.body, [while_decision_id]) 
             nodes_after_body = {nid for nid,_ in self.nodes}
             new_nodes_in_body = sorted(list(nodes_after_body - nodes_before_body), key=lambda x: int(x.replace("node","")))
             if new_nodes_in_body:
-                true_branch_start_node = new_nodes_in_body[0]
+                true_branch_first_node_id = new_nodes_in_body[0]
+            
+            # Les sorties normales du corps retournent au test.
             for exit_node in body_exit_nodes:
-                self.add_edge(exit_node, while_id)
+                if exit_node not in self.terminal_nodes:
+                    self.add_edge(exit_node, while_decision_id) 
         
-        if true_branch_start_node:
-            if (while_id, true_branch_start_node, "") in self.edges: self.edges.remove((while_id, true_branch_start_node, ""))
-            self.add_edge(while_id, true_branch_start_node, "True")
+        if true_branch_first_node_id:
+            if (while_decision_id, true_branch_first_node_id, "") in self.edges: 
+                self.edges.remove((while_decision_id, true_branch_first_node_id, ""))
+            self.add_edge(while_decision_id, true_branch_first_node_id, "True")
+        elif not node.body: # Corps vide, "True" revient directement au test.
+            self.add_edge(while_decision_id, while_decision_id, "True")
 
-        # Gestion orelse (sortie "False")
-        false_branch_start_node: Optional[str] = None
+        # Gérer 'orelse' (sortie "False").
+        false_branch_first_node_id: Optional[str] = None
         if node.orelse:
+            if while_decision_id in loop_overall_exit_points:
+                loop_overall_exit_points.remove(while_decision_id) # orelse remplace la sortie directe.
+            
             nodes_before_orelse = {nid for nid,_ in self.nodes}
-            orelse_exit_nodes = self.visit_body(node.orelse, [while_id])
+            orelse_exit_nodes = self.visit_body(node.orelse, [while_decision_id]) 
             nodes_after_orelse = {nid for nid,_ in self.nodes}
             new_nodes_in_orelse = sorted(list(nodes_after_orelse - nodes_before_orelse), key=lambda x: int(x.replace("node","")))
             if new_nodes_in_orelse:
-                false_branch_start_node = new_nodes_in_orelse[0]
+                false_branch_first_node_id = new_nodes_in_orelse[0]
             loop_overall_exit_points.extend(orelse_exit_nodes)
-            if while_id in loop_overall_exit_points:
-                loop_overall_exit_points.remove(while_id)
         
-        if false_branch_start_node:
-            if (while_id, false_branch_start_node, "") in self.edges: self.edges.remove((while_id, false_branch_start_node, ""))
-            self.add_edge(while_id, false_branch_start_node, "False")
-        elif not node.orelse: # Pas de orelse, l'arête "False" part de while_id vers la suite
-            pass
+        if false_branch_first_node_id:
+            if (while_decision_id, false_branch_first_node_id, "") in self.edges: 
+                self.edges.remove((while_decision_id, false_branch_first_node_id, ""))
+            self.add_edge(while_decision_id, false_branch_first_node_id, "False")
+        # elif not node.orelse: L'arête "False" sera implicite via loop_overall_exit_points.
             
         self.loop_stack.pop()
         return list(set(loop_overall_exit_points))
 
-
     def visit_Return(self, node: ast.Return, parent_id: str) -> List[str]:
-        value = ast.unparse(node.value).replace('"', '"') if node.value else ""
-        return_id = self.add_node(f"Return {value}", node_type="Return")
-        self.add_edge(parent_id, return_id)
-        return [return_id] # visit() le marquera comme terminal et retournera []
+        """Visite une instruction 'return' AST."""
+        value_text = ast.unparse(node.value).replace('"', '"') if node.value else ""
+        return_node_id = self.add_node(f"Return {value_text}", node_type="Return")
+        self.add_edge(parent_id, return_node_id)
+        # visit() marquera return_node_id comme terminal et retournera [].
+        return [return_node_id] 
 
-    # ... visit_Break, visit_Continue, generic_visit, visit_Assign, visit_Expr, visit_Call ...
-    def visit_Break(self, node: ast.Break, parent_id: str, _current_function_end_id: Optional[str] = None) -> List[str]:
-        break_id = self.add_node("Break", node_type="Jump")
-        self.add_edge(parent_id, break_id)
-        if self.loop_stack:
-            _, loop_exit_condition_node, _ = self.loop_stack[-1]
-            # Le break saute à la sortie "False" / "Terminée" de la condition de boucle.
-            # Cette connexion est implicite car le chemin s'arrête et le flux reprendra
-            # à partir des `loop_overall_exit_points` retournés par visit_For/While.
-            # Pour une visualisation plus explicite, on pourrait connecter break_id à loop_exit_condition_node
-            # avec un label "break", mais cela peut surcharger le graphe.
-            # Pour l'instant, on le laisse comme un terminal simple.
-            pass
-        else:
-            print("Warning: 'break' outside loop detected.")
-        return [break_id]
+    def visit_Break(self, node: ast.Break, parent_id: str) -> List[str]: 
+        """Visite une instruction 'break' AST."""
+        break_node_id = self.add_node("Break", node_type="Jump")
+        self.add_edge(parent_id, break_node_id)
+        # Le 'break' saute à la sortie de la boucle.
+        # Aucune arête explicite n'est ajoutée ici pour le saut lui-même;
+        # le fait que le nœud soit terminal et que la boucle ait des points de sortie définis gère cela.
+        # if self.loop_stack:
+        #     _, loop_exit_target, _ = self.loop_stack[-1]
+        #     # self.add_edge(break_node_id, loop_exit_target, "break") # Optionnel pour visualiser le saut
+        return [break_node_id] # visit() le marquera comme terminal.
 
-    def visit_Continue(self, node: ast.Continue, parent_id: str) -> List[str]:
-        continue_id = self.add_node("Continue", node_type="Jump")
-        self.add_edge(parent_id, continue_id)
+    def visit_Continue(self, node: ast.Continue, parent_id: str) -> List[str]: 
+        """Visite une instruction 'continue' AST."""
+        continue_node_id = self.add_node("Continue", node_type="Jump")
+        self.add_edge(parent_id, continue_node_id)
         if self.loop_stack:
             loop_continue_target, _, _ = self.loop_stack[-1]
-            self.add_edge(continue_id, loop_continue_target)
-        else:
-            print("Warning: 'continue' outside loop detected.")
-        return [continue_id] ## visit() le marquera comme terminal
+            self.add_edge(continue_node_id, loop_continue_target) # Explicitement connecter à la cible du continue.
+        # else: # 'continue' en dehors d'une boucle (erreur Python).
+        return [continue_node_id] # visit() le marquera comme terminal.
 
     def generic_visit(self, node: ast.AST, parent_id: str) -> List[str]:
+        """Visiteur par défaut pour les nœuds AST non gérés spécifiquement."""
         try:
-            label = ast.unparse(node).replace('"', '"')
-            node_type = "Process"
-            if isinstance(node, ast.Pass):
-                label = "Pass"
-            max_len = 60
-            if len(label) > max_len: label = label[:max_len-3] + "..."
-            node_id = self.add_node(label, node_type=node_type)
-            if parent_id: self.add_edge(parent_id, node_id) # Vérifier parent_id
-            return [node_id]
-        except Exception as e:
-            label = f"Noeud AST: {type(node).__name__}"
-            print(f"Warning: Impossible de 'unparse' le noeud {label}. Erreur: {e}")
-            node_id = self.add_node(label, node_type="Process")
-            if parent_id: self.add_edge(parent_id, node_id)
-            return [node_id]
+            # Essayer de générer une étiquette à partir du code source du nœud.
+            label_text = ast.unparse(node).replace('"', '"')
+            node_type = "Process" # Type par défaut.
+            if isinstance(node, ast.Pass): # Cas spécial pour 'pass'.
+                label_text = "Pass"
+            
+            # Tronquer les étiquettes trop longues.
+            max_label_length = 60 
+            if len(label_text) > max_label_length: 
+                label_text = label_text[:max_label_length-3] + "..."
+            
+            new_node_id = self.add_node(label_text, node_type=node_type)
+            if parent_id: # Connecter au parent si un parent existe.
+                self.add_edge(parent_id, new_node_id)
+            return [new_node_id]
+        except Exception: # Si unparse échoue.
+            label_text = f"Noeud AST: {type(node).__name__}"
+            # print(f"Warning: Impossible de 'unparse' le noeud {label_text}. Erreur: {e}")
+            new_node_id = self.add_node(label_text, node_type="Process")
+            if parent_id: 
+                self.add_edge(parent_id, new_node_id)
+            return [new_node_id]
 
     def visit_Assign(self, node: ast.Assign, parent_id: str) -> List[str]:
-        targets = ", ".join([ast.unparse(t).replace('"', '"') for t in node.targets])
+        """Visite une instruction d'assignation AST."""
+        targets_str = ", ".join([ast.unparse(t).replace('"', '"') for t in node.targets])
         value_str = ast.unparse(node.value).replace('"', '"')
-        label = f"{targets} = {value_str}"
+        
+        label_text = f"{targets_str} = {value_str}"
         node_type = "Process"
-        # TODO: Réintégrer la logique de détection de type d'appel pour node_type
 
-        max_len = 60
-        if len(label) > max_len:
-             short_value = value_str[:max_len - len(targets) - 6] + "..." if len(value_str) > max_len - len(targets) - 6 else value_str
-             label = f"{targets} = {short_value}"
-             if len(label) > max_len: label = label[:max_len-3] + "..."
-        assign_id = self.add_node(label, node_type=node_type)
-        self.add_edge(parent_id, assign_id)
-        return [assign_id]
+        max_label_length = 60
+        if len(label_text) > max_label_length:
+             # Tenter de raccourcir la partie droite (valeur) en premier.
+             available_len_for_value = max_label_length - len(targets_str) - 6 # Pour " = ..."
+             if available_len_for_value > 10 : # Assez de place pour une valeur raccourcie significative.
+                 short_value = value_str[:available_len_for_value] + "..." if len(value_str) > available_len_for_value else value_str
+                 label_text = f"{targets_str} = {short_value}"
+             else: # Sinon, raccourcir le tout.
+                 label_text = label_text[:max_label_length-3] + "..."
+        
+        assign_node_id = self.add_node(label_text, node_type=node_type)
+        self.add_edge(parent_id, assign_node_id)
+        return [assign_node_id]
 
     def visit_Expr(self, node: ast.Expr, parent_id: str) -> List[str]:
-        # MOD: appeler visit avec 2 arguments positionnels
+        """Visite une instruction d'expression AST (souvent un appel de fonction autonome)."""
+        # Une instruction Expr contient une valeur qui est évaluée (ex: print(), une fonction personnalisée).
+        # On visite la valeur interne.
         return self.visit(node.value, parent_id)
 
     def visit_Call(self, node: ast.Call, parent_id: str) -> List[str]:
-        func_name_str = ast.unparse(node.func).replace('"', '"')
-        args_str_val = ", ".join([ast.unparse(a).replace('"', '"') for a in node.args])
-        max_arg_len = 30
-        if len(args_str_val) > max_arg_len: args_str_val = args_str_val[:max_arg_len-3] + "..."
+        """Visite un appel de fonction AST."""
+        func_name_str = ast.unparse(node.func).replace('"', '#quot;') # Sécuriser le nom de la fonction.
         
-        label_prefix = "Appel: "
-        node_type = "Process" # Par défaut
-
-        # TODO: Logique de détection de type d'appel
-        # if func_name_str in getattr(self, 'IO_FUNCTIONS', {}):
-        #     node_type = "IoOperation"
-        #     label_prefix = "" # Pas de "Appel:" pour print/input
-        # elif func_name_str in getattr(self, 'user_defined_functions', {}):
-        #     node_type = "UserFunctionCall"
+        # Arguments positionnels.
+        args_list_str = [ast.unparse(a).replace('"', '#quot;') for a in node.args]
         
-        label = f"{label_prefix}{func_name_str}({args_str_val})"
-        if "<br>" not in label_prefix and node_type != "IoOperation": # Eviter double <br>
-             label = f"Appel: <br>{func_name_str}({args_str_val})"
+        # Arguments nommés (keywords).
+        double_quote_char = '"' # Pour éviter les problèmes de backslash dans les f-strings.
+        kwargs_list_str = [
+            f'{k.arg}={ast.unparse(k.value).replace(double_quote_char, "#quot;")}'
+            for k in node.keywords
+        ]
+        
+        all_args_concatenated_str = ", ".join(args_list_str + kwargs_list_str)
+        
+        # Tronquer la chaîne des arguments si elle est trop longue.
+        max_args_display_length = 30 
+        if len(all_args_concatenated_str) > max_args_display_length: 
+            all_args_concatenated_str = all_args_concatenated_str[:max_args_display_length-3] + "..."
+        
+        node_type = "Process" # Type par défaut.
+        label_text = f"{func_name_str}({all_args_concatenated_str})" # Étiquette de base.
 
+        # Style spécifique pour les opérations d'I/O.
+        if func_name_str in ["print", "input"]:
+            node_type = "IoOperation"
+        else: # Pour les autres appels, on peut ajouter "Appel:" pour les distinguer.
+            label_text = f"Appel: {label_text}"
 
-        call_id = self.add_node(label, node_type=node_type)
-        self.add_edge(parent_id, call_id)
-        return [call_id]
+        call_node_id = self.add_node(label_text, node_type=node_type)
+        self.add_edge(parent_id, call_node_id)
+        return [call_node_id]
 
-    def to_mermaid(self) -> str: # Version simplifiée pour afficher toutes les arêtes
-        mermaid = ["graph TD"]
-        '''mermaid.extend(["classDef RedFalse stroke:red,stroke-width:3px;",
-                        "classDef GreenTrue stroke:green,stroke-width:3px;",
-                        "classDef Dashed stroke:green,stroke-width:3px,stroke-dasharray:4,2",
-                        "classDef Decision fill:#bbf,stroke:#333,stroke-width:3px;"])
-'''
-        node_definitions = []
-        edge_definitions = []
+    def _simplify_junctions(self) -> Tuple[List[Tuple[str, str]], Set[Tuple[str, str, str]]]:
+        """
+        Tente de simplifier les jonctions triviales (1 entrée, 1 sortie).
+        NOTE: Actuellement, visit_body ne crée pas de jonctions 1-entrée/1-sortie,
+              donc cette fonction n'aura probablement pas d'effet.
+              Elle est conservée pour une utilisation future potentielle.
+        """
+        simplified_nodes_tuples: List[Tuple[str,str]] = [] # Pour garder l'ordre des nœuds.
+        simplified_edges = set()
+        
+        junction_to_successor_map: Dict[str, str] = {} # Mappe: junction_id_simplifiée -> son unique successeur.
+        nodes_to_keep_ids = set(n_id for n_id, _ in self.nodes) # Commencer avec tous les nœuds.
 
+        # Première passe: identifier les jonctions triviales à simplifier.
+        for junction_candidate_id, _ in self.nodes:
+            if self.node_types.get(junction_candidate_id) == "Junction":
+                incoming_edges = [edge for edge in self.edges if edge[1] == junction_candidate_id]
+                outgoing_edges = [edge for edge in self.edges if edge[0] == junction_candidate_id]
+
+                if len(incoming_edges) == 1 and len(outgoing_edges) == 1:
+                    predecessor_node = incoming_edges[0][0]
+                    successor_node = outgoing_edges[0][1]
+                    
+                    # Éviter de simplifier si cela crée une auto-boucle sur la jonction elle-même.
+                    if predecessor_node != junction_candidate_id and successor_node != junction_candidate_id : 
+                        junction_to_successor_map[junction_candidate_id] = successor_node 
+                        if junction_candidate_id in nodes_to_keep_ids:
+                            nodes_to_keep_ids.remove(junction_candidate_id) # Marquer pour suppression.
+
+        # Deuxième passe: construire les listes de nœuds et d'arêtes simplifiées.
         for node_id, label in self.nodes:
-            safe_label = label.replace('"', '#quot;')
+            if node_id in nodes_to_keep_ids: # N'ajouter que les nœuds conservés.
+                simplified_nodes_tuples.append((node_id, label))
+
+        for from_node, to_node, edge_label in self.edges:
+            current_from_node = from_node
+            current_to_node = to_node
+
+            # Rediriger la destination si elle pointe vers une jonction simplifiée.
+            # Répéter au cas où plusieurs jonctions triviales se suivent.
+            while current_to_node in junction_to_successor_map:
+                current_to_node = junction_to_successor_map[current_to_node]
+            
+            # Si la source et la destination (après redirection) sont des nœuds conservés.
+            if current_from_node in nodes_to_keep_ids and current_to_node in nodes_to_keep_ids:
+                # Éviter les auto-boucles créées par la simplification, sauf si elles sont labellisées.
+                if current_from_node == current_to_node and not edge_label:
+                    continue
+                simplified_edges.add((current_from_node, current_to_node, edge_label))
+        
+        return simplified_nodes_tuples, simplified_edges
+
+    def to_mermaid(self) -> str:
+        """Génère la représentation du graphe en syntaxe Mermaid, avec sous-graphes."""
+        
+        # Utiliser les nœuds et arêtes originaux. La simplification n'est pas activée par défaut.
+        # Pour activer la simplification (si des jonctions 1-1 étaient créées) :
+        # display_nodes_tuples, display_edges = self._simplify_junctions()
+        display_nodes_tuples = self.nodes
+        display_edges = self.edges
+        
+        mermaid_lines = ["graph TD"] # Orientation de haut en bas.
+        
+        # Définitions de style pour les types de nœuds.
+        mermaid_lines.extend([
+            "    classDef StartEnd fill:#000,stroke:#fff,stroke-width:2px;",
+            "    classDef Decision fill:#000,stroke:#fff,stroke-width:2px;",
+            "    classDef Process fill:#000,stroke:#fff,stroke-width:2px;",
+            "    classDef IoOperation fill:#000,stroke:#fff,stroke-width:2px;",
+            "    classDef Junction fill:#000,stroke:#fff,stroke-width:1px;", # Cercle pour jonction.
+            "    classDef Return fill:#000,stroke:#fff,stroke-width:2px;",
+            "    classDef Jump fill:#000,stroke:#fff,stroke-width:2px;"
+        ])
+
+        # --- Sous-graphe pour le Flux Principal ---
+        if self.main_flow_nodes: # S'il y a des nœuds dans le flux principal.
+            mermaid_lines.append("    subgraph Flux Principal")
+            for node_id, label_text in display_nodes_tuples:
+                if node_id in self.main_flow_nodes:
+                    safe_label = label_text.replace('"', '#quot;').replace('\n', '<br/>')
+                    node_type = self.node_types.get(node_id, "Process")
+                    shape_open, shape_close = self._get_mermaid_node_shape(node_type, safe_label)
+                    mermaid_lines.append(f'        {node_id}{shape_open}"{safe_label}"{shape_close}')
+            mermaid_lines.append("    end")
+
+        # --- Sous-graphes pour chaque Fonction Définie ---
+        for func_name, node_ids_in_func in self.function_subgraph_nodes.items():
+            if node_ids_in_func: # S'il y a des nœuds dans cette fonction.
+                mermaid_lines.append(f'    subgraph Fonction {func_name}')
+                for node_id, label_text in display_nodes_tuples:
+                    if node_id in node_ids_in_func:
+                        safe_label = label_text.replace('"', '#quot;').replace('\n', '<br/>')
+                        node_type = self.node_types.get(node_id, "Process")
+                        shape_open, shape_close = self._get_mermaid_node_shape(node_type, safe_label)
+                        mermaid_lines.append(f'        {node_id}{shape_open}"{safe_label}"{shape_close}')
+                mermaid_lines.append("    end")
+        
+        # --- Application des styles aux nœuds (en dehors des sous-graphes) ---
+        node_style_lines = []
+        for node_id, _ in display_nodes_tuples:
             node_type = self.node_types.get(node_id, "Process")
+            node_style_lines.append(f'    class {node_id} {node_type};')
+        mermaid_lines.extend(sorted(list(set(node_style_lines)))) # set pour dédupliquer.
 
-            if node_type == "StartEnd": node_definitions.append(f'    {node_id}(("{safe_label}"))')
-            elif node_type == "Decision": node_definitions.append(f'    {node_id}{{"{safe_label}"}}')
-            elif node_type == "Junction": node_definitions.append(f'    {node_id}(["{safe_label}"])') # Au cas où
-            elif node_type == "Return": node_definitions.append(f'    {node_id}[\\"{safe_label}"\\]')
-            elif node_type == "Jump": node_definitions.append(f'    {node_id}(("{safe_label}"))')
-            elif node_type == "SubroutineDeclaration": node_definitions.append(f'    {node_id}(["{safe_label}"])')
-            elif node_type == "SubroutineDefinition": node_definitions.append(f'    {node_id}[/"{safe_label}"/]')
-            elif node_type == "Process": node_definitions.append(f'    {node_id}["{safe_label}"]')
-            else:
-                print(f"Warning: Type de noeud inconnu '{node_type}' pour node_id '{node_id}'.")
-                node_definitions.append(f'    {node_id}["{safe_label}"]')
-        
-        mermaid.extend(sorted(node_definitions))
-
-        for from_node, to_node, label in self.edges: # Utiliser self.edges directement
-            safe_edge_label = label.replace('"', '#quot;')
-            if from_node not in self.node_labels or to_node not in self.node_labels:
+        # --- Définition des Arêtes ---
+        edge_definitions = []
+        for from_node, to_node, edge_label_text in display_edges:
+            safe_edge_label = edge_label_text.replace('"', '#quot;')
+            # Vérifier que les nœuds existent toujours (surtout si la simplification était activée).
+            if not any(n[0] == from_node for n in display_nodes_tuples) or \
+               not any(n[0] == to_node for n in display_nodes_tuples):
                 continue
-            if safe_edge_label: edge_definitions.append(f"    {from_node} -->|{safe_edge_label}| {to_node}")
-            else: edge_definitions.append(f"    {from_node} --> {to_node}")
+
+            if safe_edge_label: 
+                edge_definitions.append(f"    {from_node} -->|{safe_edge_label}| {to_node}")
+            else: 
+                edge_definitions.append(f"    {from_node} --> {to_node}")
         
-        mermaid.extend(sorted(edge_definitions))
-        return "\n".join(mermaid)
+        mermaid_lines.extend(sorted(list(set(edge_definitions)))) # set pour dédupliquer.
+        return "\n".join(mermaid_lines)
+
+    def _get_mermaid_node_shape(self, node_type: str, label: str) -> Tuple[str, str]:
+        """Helper pour obtenir les délimiteurs de forme Mermaid en fonction du type de nœud."""
+        shape_open = "[" ; shape_close = "]" # Forme par défaut (rectangle).
+        if node_type == "StartEnd": shape_open, shape_close = "((", "))" # Stade.
+        elif node_type == "Decision": shape_open, shape_close = "{", "}" # Losange.
+        elif node_type == "Junction": 
+            # Si la jonction n'a pas de label ou un label générique "Junction", la rendre petite (cercle).
+            if not label or label == "Junction" or label == "#quot;Junction#quot;": 
+                shape_open, shape_close = "((", "))" # Petit cercle.
+                # safe_label = "" # Rendre la jonction sans texte (déjà géré par le label vide).
+            else: # Jonction avec un label spécifique (rare).
+                shape_open, shape_close = "(", ")" # Ovale.
+        elif node_type == "Return": shape_open, shape_close = "[/", "\\]" # Parallélogramme incliné.
+        elif node_type == "Jump": shape_open, shape_close = "((", "))" # Stade (comme StartEnd).
+        elif node_type == "IoOperation": shape_open, shape_close = "[/", "\\]" # Parallélogramme pour I/O.
+        return shape_open, shape_close
 
 ############### Choisir le code à tester ###############
 import exemples
-selected_code = exemples.ifelif
+selected_code = exemples.whilebreak
 ########################################################
 
 # --- Génération et Affichage ---
