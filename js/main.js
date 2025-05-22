@@ -69,7 +69,7 @@ document.addEventListener('DOMContentLoaded', function() {
         codeEditor.setValue(generatedCode);
         
         // Generate and display the flowchart
-        const flowchartCode = generateFlowchart(generatedCode);
+        const flowchartCode = updateFlowchart(generatedCode);
         displayFlowchart(flowchartCode);
         
         // Reset variable values and UI
@@ -263,7 +263,7 @@ print(f"Found {len(user_vars)} variables")
             console.log("Variables found:", varNames);
             
             // Generate and display the flowchart
-            const flowchartCode = generateFlowchart(code);
+            const flowchartCode = updateFlowchart(code);
             displayFlowchart(flowchartCode);
             
             // Populate variable inputs for the student challenge

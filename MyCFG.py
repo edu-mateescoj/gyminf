@@ -796,6 +796,7 @@ class ControlFlowGraph:
         elif node_type == "IoOperation": shape_open, shape_close = "[/", "\\]" # Parallélogramme pour I/O.
         return shape_open, shape_close
 
+'''
 ############### Choisir le code à tester ###############
 import exemples
 selected_code = exemples.defif
@@ -821,3 +822,4 @@ for e in sorted(list(cfg.edges)): # Trié pour la lisibilité
      print(e)
 print("\n--- Noeuds Terminaux ---")
 print(cfg.terminal_nodes)
+'''

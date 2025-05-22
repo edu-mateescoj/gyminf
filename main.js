@@ -13,7 +13,8 @@ const editor = CodeMirror.fromTextArea(document.getElementById("code"), {
   mode: {
     name: "python",
     version: 3,
-    singleLineStringErrors: false
+    singleLineStringErrors: false,
+    theme: "dracula",
   },
   lineNumbers: true,
   indentUnit: 4,
@@ -25,6 +26,18 @@ editor.setValue(`sum([1, 2, 3, 4, 5])`);
 
 // Message de démarrage
 output.value = "Initialisation de Pyodide...\n";
+
+// Mettre à jour le diagramme lors d'un changement dans l'éditeur (avec un délai pour ne pas surcharger)
+var debounceTimer;
+editor.on("change", function() {
+    clearTimeout(debounceTimer);
+    debounceTimer = setTimeout(function() {
+        var currentCode = editor.getValue();
+        if (typeof updateFlowchart === 'function') { // Vérifier que la fonction est définie
+            updateFlowchart(currentCode);
+        }
+    }, 1000); // Délai de 1 seconde après la dernière frappe
+});
 
 /**
  * Fonction principale : 
