@@ -820,7 +820,7 @@ class ControlFlowGraph:
         return "\n".join(mermaid)
 
 ############### Choisir le code à tester ###############
-import exemples
+import bas.exemples as exemples
 selected_code = exemples.defif2
 ########################################################
 

@@ -547,7 +547,7 @@ def unhack(v):
         v = re.sub(r'^_%s:' % i, '%s:' % i, v)
     return v
 
-import exemples
+import bas.exemples as exemples
 #### EXEMPLES
 #from ControlFlow import gen_cfg, to_graph
 

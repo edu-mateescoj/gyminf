@@ -621,7 +621,7 @@ class ControlFlowGraph:
         return "\n".join(mermaid)
 
 ############### Exemples d'utilisation ###############
-import exemples
+import bas.exemples as exemples
 '''
 LISTE_EXEMPLES = [
 ifelif, defif, NestedIf, bissextile, defcall

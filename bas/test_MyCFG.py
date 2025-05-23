@@ -723,13 +723,13 @@ class ControlFlowGraph:
         
         # Définitions de style pour les types de nœuds.
         mermaid_lines.extend([
-            "    classDef StartEnd fill:#000,stroke:#fff,stroke-width:2px;",
-            "    classDef Decision fill:#000,stroke:#fff,stroke-width:2px;",
-            "    classDef Process fill:#000,stroke:#fff,stroke-width:2px;",
-            "    classDef IoOperation fill:#000,stroke:#fff,stroke-width:2px;",
-            "    classDef Junction fill:#000,stroke:#fff,stroke-width:1px;", # Cercle pour jonction.
-            "    classDef Return fill:#000,stroke:#fff,stroke-width:2px;",
-            "    classDef Jump fill:#000,stroke:#fff,stroke-width:2px;"
+            "    classDef StartEnd fill:#999,stroke:#fff,stroke-width:2px;",
+            "    classDef Decision fill:#999,stroke:#fff,stroke-width:2px;",
+            "    classDef Process fill:#999,stroke:#fff,stroke-width:2px;",
+            "    classDef IoOperation fill:#999,stroke:#fff,stroke-width:2px;",
+            "    classDef Junction fill:#999,stroke:#fff,stroke-width:1px;", # Cercle pour jonction.
+            "    classDef Return fill:#999,stroke:#fff,stroke-width:2px;",
+            "    classDef Jump fill:#999,stroke:#fff,stroke-width:2px;"
         ])
 
         # --- Sous-graphe pour le Flux Principal ---
@@ -791,15 +791,15 @@ class ControlFlowGraph:
                 # safe_label = "" # Rendre la jonction sans texte (déjà géré par le label vide).
             else: # Jonction avec un label spécifique (rare).
                 shape_open, shape_close = "(", ")" # Ovale.
-        elif node_type == "Return": shape_open, shape_close = "[/", "\\]" # Parallélogramme incliné.
+        elif node_type == "Return": shape_open, shape_close = "[(", ")]" # Parallélogramme incliné.
         elif node_type == "Jump": shape_open, shape_close = "((", "))" # Stade (comme StartEnd).
-        elif node_type == "IoOperation": shape_open, shape_close = "[/", "\\]" # Parallélogramme pour I/O.
+        elif node_type == "IoOperation": shape_open, shape_close = "[/", "/]" # Parallélogramme pour I/O.
         return shape_open, shape_close
 
-'''
+
 ############### Choisir le code à tester ###############
 import exemples
-selected_code = exemples.defif
+selected_code = exemples.NestedIf
 ########################################################
 
 # --- Génération et Affichage ---
@@ -807,13 +807,15 @@ print(f"--- Code Python analysé ---")
 print(selected_code)
 
 cfg = ControlFlowGraph(selected_code)
-# Lancer la visite à partir de la racine de l'AST (le module)
+# Lance la visite à partir de la racine de l'AST (le module)
 cfg.visit(cfg.tree, None) # Le parent initial est None
-print(ast.dump(cfg.tree))
-print("\n--- Mermaid Généré ---")
-print(cfg.to_mermaid())
 
-# Optionnel : Afficher les noeuds et arêtes pour le débogage
+print(ast.dump(cfg.tree))
+
+print(cfg.to_mermaid())
+print("\n--- Mermaid Généré ---")
+
+# Affiche les noeuds et arêtes pour le débogage
 print("\n--- Noeuds (ID, Label) ---")
 for n in cfg.nodes:
      print(n)
@@ -822,4 +824,6 @@ for e in sorted(list(cfg.edges)): # Trié pour la lisibilité
      print(e)
 print("\n--- Noeuds Terminaux ---")
 print(cfg.terminal_nodes)
-'''
+
+# Test la version Python 3.9+ avec ast.unparse
+print(ast.unparse(ast.parse(selected_code)))
