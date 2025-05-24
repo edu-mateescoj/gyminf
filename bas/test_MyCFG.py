@@ -411,14 +411,33 @@ class ControlFlowGraph:
                 
                 loop_overall_exit_points.extend(orelse_exit_nodes) # Les sorties de orelse sont des sorties globales.
             
+            if not node.orelse:
+                # Chercher la première arête sortante de loop_condition_id qui n'est pas "True"
+                # c'est l'arête sortante du losange '{condition}', correspondante à la sortie de boucle
+                for from_node, to_node, label in list(self.edges):
+                    if from_node == loop_condition_id and label == "":
+                        print(f"Relabel DEBUG: {from_node} -> {to_node} ('' -> 'False')")
+                        # On relabelise cette arête en "False": on la supprime pour la recréer labellisée
+                        self.edges.remove((from_node, to_node, label))
+                        self.add_edge(from_node, to_node, "False")
+                        break  # Il ne doit y en avoir qu'une!!
+
             if false_branch_first_node_id: 
                 if (loop_condition_id, false_branch_first_node_id, "") in self.edges: 
                     self.edges.remove((loop_condition_id, false_branch_first_node_id, ""))
                 self.add_edge(loop_condition_id, false_branch_first_node_id, "False")
             # elif not node.orelse : Pas de orelse, l'arête "False" part de loop_condition_id vers la suite.
-                
+
+            # forcer qu'aucune arête sortante du losange ne soit sans label
+            for from_node, to_node, label in list(self.edges):
+                if from_node == loop_condition_id and label == "":
+                    self.edges.remove((from_node, to_node, label))
+                    self.add_edge(from_node, to_node, "False")
+
             self.loop_stack.pop() # Fin de la gestion de cette boucle.
+
             return list(set(loop_overall_exit_points))   
+        
         else: # Itérable générique (non-range).
             return self._visit_for_generic_iterable(node, parent_id, iterator_variable_str)
 
@@ -717,19 +736,20 @@ class ControlFlowGraph:
         # Pour activer la simplification (si des jonctions 1-1 étaient créées) :
         # display_nodes_tuples, display_edges = self._simplify_junctions()
         display_nodes_tuples = self.nodes
-        display_edges = self.edges
-        
+        display_edges = set(self.edges)  # Copie pour modification
+
+        ###################
         mermaid_lines = ["graph TD"] # Orientation de haut en bas.
         
         # Définitions de style pour les types de nœuds.
         mermaid_lines.extend([
-            "    classDef StartEnd fill:#999,stroke:#fff,stroke-width:2px;",
-            "    classDef Decision fill:#999,stroke:#fff,stroke-width:2px;",
-            "    classDef Process fill:#999,stroke:#fff,stroke-width:2px;",
-            "    classDef IoOperation fill:#999,stroke:#fff,stroke-width:2px;",
-            "    classDef Junction fill:#999,stroke:#fff,stroke-width:1px;", # Cercle pour jonction.
-            "    classDef Return fill:#999,stroke:#fff,stroke-width:2px;",
-            "    classDef Jump fill:#999,stroke:#fff,stroke-width:2px;"
+            "    classDef StartEnd fill:#555,stroke:#fff,stroke-width:2px;",
+            "    classDef Decision fill:#555,stroke:#fff,stroke-width:2px;",
+            "    classDef Process fill:#555,stroke:#fff,stroke-width:2px;",
+            "    classDef IoOperation fill:#555,stroke:#fff,stroke-width:2px;",
+            "    classDef Junction fill:#555,stroke:#fff,stroke-width:1px;", # Cercle pour jonction.
+            "    classDef Return fill:#555,stroke:#fff,stroke-width:2px;",
+            "    classDef Jump fill:#555,stroke:#fff,stroke-width:2px;"
         ])
 
         # --- Sous-graphe pour le Flux Principal ---
@@ -762,6 +782,21 @@ class ControlFlowGraph:
             node_style_lines.append(f'    class {node_id} {node_type};')
         mermaid_lines.extend(sorted(list(set(node_style_lines)))) # set pour dédupliquer.
 
+##############
+# --- correction finale des labels d'arêtes sortantes des décisions ---
+        # pas réussi à m'assurer que les arêtes sortantes des décisions aient un label "False"
+        # Si une décision a une arête sortante sans label, on la relabelise en "False".
+        decision_nodes = {nid for nid, typ in self.node_types.items() if typ == "Decision"}
+        relabeled_edges = set()
+        for from_node, to_node, label in list(display_edges):
+            if from_node in decision_nodes and label == "":
+                # Relabel en "False"
+                display_edges.remove((from_node, to_node, label))
+                relabeled_edges.add((from_node, to_node, "False"))
+        display_edges = display_edges | relabeled_edges
+# --- fin de la correction des labels d'arêtes sortantes des décisions ---      
+        
+
         # --- Définition des Arêtes ---
         edge_definitions = []
         for from_node, to_node, edge_label_text in display_edges:
@@ -777,20 +812,23 @@ class ControlFlowGraph:
                 edge_definitions.append(f"    {from_node} --> {to_node}")
         
         mermaid_lines.extend(sorted(list(set(edge_definitions)))) # set pour dédupliquer.
+        print("\n--- DEBUG: Arêtes envoyées à Mermaid ---")
+        for e in display_edges:
+            print(e)
         return "\n".join(mermaid_lines)
 
     def _get_mermaid_node_shape(self, node_type: str, label: str) -> Tuple[str, str]:
         """Helper pour obtenir les délimiteurs de forme Mermaid en fonction du type de nœud."""
         shape_open = "[" ; shape_close = "]" # Forme par défaut (rectangle).
-        if node_type == "StartEnd": shape_open, shape_close = "((", "))" # Stade.
+        if node_type == "StartEnd": shape_open, shape_close = "(((", ")))" # cercle doublé
         elif node_type == "Decision": shape_open, shape_close = "{", "}" # Losange.
         elif node_type == "Junction": 
             # Si la jonction n'a pas de label ou un label générique "Junction", la rendre petite (cercle).
             if not label or label == "Junction" or label == "#quot;Junction#quot;": 
                 shape_open, shape_close = "((", "))" # Petit cercle.
                 # safe_label = "" # Rendre la jonction sans texte (déjà géré par le label vide).
-            else: # Jonction avec un label spécifique (rare).
-                shape_open, shape_close = "(", ")" # Ovale.
+            else: # Jonction avec un label spécifique.
+                shape_open, shape_close = "((", "))"
         elif node_type == "Return": shape_open, shape_close = "[(", ")]" # Parallélogramme incliné.
         elif node_type == "Jump": shape_open, shape_close = "((", "))" # Stade (comme StartEnd).
         elif node_type == "IoOperation": shape_open, shape_close = "[/", "/]" # Parallélogramme pour I/O.
@@ -799,7 +837,7 @@ class ControlFlowGraph:
 
 ############### Choisir le code à tester ###############
 import exemples
-selected_code = exemples.NestedIf
+selected_code = exemples.for2
 ########################################################
 
 # --- Génération et Affichage ---
@@ -824,6 +862,6 @@ for e in sorted(list(cfg.edges)): # Trié pour la lisibilité
      print(e)
 print("\n--- Noeuds Terminaux ---")
 print(cfg.terminal_nodes)
-
+print("\n--- Fin des impressions CFG ---")
 # Test la version Python 3.9+ avec ast.unparse
 print(ast.unparse(ast.parse(selected_code)))

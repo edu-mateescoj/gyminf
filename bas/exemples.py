@@ -240,6 +240,7 @@ for1 = """
 n = input("Donnez n")
 for element in range(n):
     print("Element = ", element)
+print("Fini")
 """
 for2 = """
 n = input("Donnez n")
@@ -347,3 +348,39 @@ if e == False:
 else:
     print("e est vrai")
 """
+troismoyennes = '''
+def moyenne1(L: List[float]) -> float:
+    """
+    Calcule la moyenne d'une liste de nombres.
+    :param L: Liste de nombres
+    :return: Moyenne des nombres
+    """
+    total = 0.0
+    compteur = 0
+    for number in L:
+        total += number
+        compteur += 1
+    return total / compteur
+def moyenne2(L: List[float]) -> float:
+    """
+    Calcule la moyenne d'une liste de nombres.
+    :param L: Liste de nombres
+    :return: Moyenne des nombres
+    """
+    if not L:
+        return 0.0  # Évite la division par zéro si la liste est vide
+    return sum(L) / len(L)
+def moyenne3(L: List[float]) -> float:
+    """
+    Calcule la moyenne d'une liste de nombres. 
+    :param L: Liste de nombres
+    :return: Moyenne des nombres
+    """
+    if not L:
+        return 0.0  # Évite la division par zéro si la liste est vide
+    total = sum(L)
+    compteur = len(L)
+    return total / compteur
+def moyenne4(L: List[float]) -> float:
+    return average(L) if L else 0.0  # Utilise une fonction externe pour la moyenne, si disponible
+'''
