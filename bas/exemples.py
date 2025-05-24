@@ -254,7 +254,7 @@ for element in range(n,p):
         print("ni toto ni tata")
 print("encore qlql chose ici")
 """
-forabc = """
+forinrange_abc = """
 for element in range(10,20,3):
     print("Element = ", element)
     if element != 'toto':
@@ -265,6 +265,11 @@ print("element = ", element, " donc sortie de la boucle")
 """
 forstring = """
 for element in 'abcdefghijklmnopqrstuvwxyz':
+    print("Element = ", element)
+"""
+
+forlist = """
+for element in [1, 2, 3, 4, 5]: 
     print("Element = ", element)
 """
 
@@ -291,7 +296,14 @@ finally:
 boucleinfinie = """
 while True:
     print("Boucle infinie")
-    
+print("Ne sera jamais exécuté!")
+"""
+
+fonctioninfinie = """
+def fonction_infinie():
+    while True:
+        print("Fonction infinie")
+    print("Ne sera jamais exécuté!")
 """
 
 bouclecontinue = """

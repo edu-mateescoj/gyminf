@@ -837,7 +837,7 @@ class ControlFlowGraph:
 
 ############### Choisir le code à tester ###############
 import exemples
-selected_code = exemples.for2
+selected_code = exemples.forstring
 ########################################################
 
 # --- Génération et Affichage ---
