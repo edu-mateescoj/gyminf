@@ -47,6 +47,13 @@ class ControlFlowGraph:
     def add_node(self, label: str, node_type: str = "Process") -> str:
         """Ajoute un nouveau nœud au graphe."""
         node_id = self.get_node_id() # get_node_id gère l'ajout aux ensembles pour les sous-graphes
+        
+        # --- DEBUG ---
+        #import inspect
+        #caller_name = inspect.stack()[1].function
+        #print(f"DEBUG add_node: ID={node_id}, Label='{label}', Type='{node_type}', Called by='{caller_name}'")
+        # --- FIN DEBUG ---
+
         self.nodes.append((node_id, label))
         self.node_labels[node_id] = label
         self.node_types[node_id] = node_type
@@ -315,6 +322,7 @@ class ControlFlowGraph:
         return list(set(final_exit_nodes_after_if))
 
     def visit_For(self, node: ast.For, parent_id: str) -> List[str]: 
+        #print(f"DEBUG: visit_For pour {ast.unparse(node.target)} in ..., parent: {parent_id}")
         """Visite une boucle 'for' AST en distinguant les cas for .. in range(...)"""
         iterator_variable_str = ast.unparse(node.target).replace('"', '"')
         iterable_node = node.iter
@@ -322,11 +330,16 @@ class ControlFlowGraph:
         # Points de sortie de la boucle For (ceux qui mènent à l'instruction *après* la boucle).
         loop_overall_exit_points: List[str] = []
 
+        #print(f"DEBUG: visit_For - Juste avant le IF. iterator_variable_str = '{iterator_variable_str}'")
+        #print(f"DEBUG: visit_For - Juste avant le IF. type(iterable_node) = {type(iterable_node)}")
+        #if isinstance(iterable_node, ast.Constant):
+        #    print(f"DEBUG: visit_For - iterable_node.value = '{iterable_node.value}'")
+
         # Cas spécial pour for i in range(...) pour une représentation plus détaillée.
         if isinstance(iterable_node, ast.Call) and \
            isinstance(iterable_node.func, ast.Name) and \
            iterable_node.func.id == 'range':
-
+            #print(f"DEBUG: visit_For - Cas RANGE")
             range_args = iterable_node.args
             start_val_str = "0"; stop_val_str = ""; step_val_str = "1" # Valeurs par défaut pour range.
             if len(range_args) == 1: 
@@ -337,7 +350,10 @@ class ControlFlowGraph:
                 if len(range_args) == 3: 
                     step_val_str = ast.unparse(range_args[2]).replace('"', '#quot;')
             else: # Fallback si range() a un nombre inattendu d'arguments.
-                return self._visit_for_generic_iterable(node, parent_id, iterator_variable_str)
+                #print(f"DEBUG: visit_For - Cas FALLBACK GENERIC ITERABLE")
+                exits = self._visit_for_generic_iterable(node, parent_id, iterator_variable_str)
+                #print(f"DEBUG: visit_For - Cas FALLBACK GENERIC ITERABLE - return {exits}")
+                return exits
 
             # Nœud d'initialisation.
             init_label = f"{iterator_variable_str} = {start_val_str}"
@@ -420,7 +436,7 @@ class ControlFlowGraph:
                 # c'est l'arête sortante du losange '{condition}', correspondante à la sortie de boucle
                 for from_node, to_node, label in list(self.edges):
                     if from_node == loop_condition_id and label == "":
-                        print(f"Relabel DEBUG: {from_node} -> {to_node} ('' -> 'False')")
+                        #print(f"Relabel DEBUG: {from_node} -> {to_node} ('' -> 'False')")
                         # On relabelise cette arête en "False": on la supprime pour la recréer labellisée
                         self.edges.remove((from_node, to_node, label))
                         self.add_edge(from_node, to_node, "False")
@@ -440,27 +456,107 @@ class ControlFlowGraph:
 
             self.loop_stack.pop() # Fin de la gestion de cette boucle.
 
+            #print(f"DEBUG: visit_For - Cas RANGE - return {loop_overall_exit_points}")
             return list(set(loop_overall_exit_points))   
         
         else: # Itérable générique (non-range).
+            #print(f"DEBUG: visit_For - Cas GENERIC ITERABLE")
             return self._visit_for_generic_iterable(node, parent_id, iterator_variable_str)
+    
+        # Si on arrive ici, c'est qu'il manque un return dans une des branches du if/else !!!
+        #print(f"CRITICAL DEBUG: visit_For - Fin atteinte sans return explicite !")
+        return [] # Fallback pour éviter TypeError, mais indique un bug logique
+    
 
     def _visit_for_generic_iterable(self, node: ast.For, parent_id: str, iterator_variable_str: str) -> List[str]:
-        """Visite une boucle 'for' avec un itérable générique."""
-        iterable_text = ast.unparse(node.iter).replace('"', '"')
-        loop_decision_label = f"For {iterator_variable_str} in {iterable_text}"
-        loop_decision_id = self.add_node(loop_decision_label, node_type="Decision")
-        self.add_edge(parent_id, loop_decision_id)
-        
-        # La sortie "Terminée/Vide" de la boucle.
-        loop_overall_exit_points: List[str] = [loop_decision_id] 
+        """Visite une boucle 'for' avec un itérable générique : PAS un range() explicite.
+        Détaille la structure itérable & itérateur pour une description pédagogique.
+        Formulations à discuter..."""
 
-        # Pour un 'for' générique: 'continue' et re-test vont au nœud de décision.
-        # 'break' va aussi à la sortie "Terminée/Vide" de ce nœud.
-        self.loop_stack.append((loop_decision_id, loop_decision_id, loop_decision_id))
+        iterable_type_desc, elements_type_desc, iterable_display_name = \
+            self._get_iterable_description(node.iter)
 
+        # --- Nœuds de la structure de boucle ---
+        # 1. Première Décision: Y a-t-il des éléments ?
+        entry_decision_label = f"{iterable_type_desc} {iterable_display_name}<br>a des {elements_type_desc} à traiter ?"
+        entry_decision_id = self.add_node(entry_decision_label, node_type="Decision")
+        self.add_edge(parent_id, entry_decision_id)
+
+        # 2. Initialisation de la variable locale au premier élément (si True à la première décision de rentrée dans l'itérable)
+        init_var_label = f"{iterator_variable_str} ← premier {elements_type_desc}<br>de la {iterable_type_desc} {iterable_display_name}"
+        init_var_id = self.add_node(init_var_label, node_type="Process")
+        # L'arête entry_decision_id --True--> init_var_id sera ajoutée après avoir identifié init_var_id
+
+        # Deux types de nœuds pour la suite de la structure
+        # test: on itère ? 
+        retest_decision_label = f"Encore un {elements_type_desc} à traiter<br>dans la {iterable_type_desc} {iterable_display_name} ?"
+        retest_decision_id = self.add_node(retest_decision_label, node_type="Decision")
+        # au cas où on itère:
+        next_var_label = f"{iterator_variable_str} ← {elements_type_desc} suivant<br>de la {iterable_type_desc} {iterable_display_name}"
+        next_var_id = self.add_node(next_var_label, node_type="Process")
+
+        # --- Connexions ---
+        loop_overall_exit_points: List[str] = []        
+        # Connexion de la première décision (entry_decision_id)
+        self.add_edge(entry_decision_id, init_var_id, "True") # Si éléments existent, initialiser
+        loop_overall_exit_points.append(entry_decision_id)   # La branche "False" de entry_decision_id est une sortie
+
+        # Mettre à jour la pile des boucles
+        #1. continue_target: retest_decision_id (on re-teste s'il y a un suivant AVANT de prendre le suivant)
+        #2. break_target: retest_decision_id (la sortie "False" de ce test est la sortie de boucle)
+        #3. retest_target (après le corps): retest_decision_id
+        self.loop_stack.append((retest_decision_id, retest_decision_id, retest_decision_id))
+
+        # 3. VISITER LE CORPS DE LA BOUCLE
+        # Le corps commence APRÈS l'initialisation de la variable avec le premier élément (init_var_id).
+        body_exit_nodes: List[str] = []
+        first_node_of_body: Optional[str] = None
+
+        if node.body:
+            nodes_before_body = {nid for nid, _ in self.nodes}
+            # Le corps est visité en partant de init_var_id
+            body_exit_nodes = self.visit_body(node.body, [init_var_id])
+            nodes_after_body = {nid for nid, _ in self.nodes}
+            new_nodes_in_body = sorted(
+                list(nodes_after_body - nodes_before_body),
+                key=lambda x: int(x.replace("node", ""))
+            )
+            if new_nodes_in_body:
+                first_node_of_body = new_nodes_in_body[0]
+                # S'assurer que l'arête init_var_id -> first_node_of_body n'a pas de label (ou le bon)
+                # visit_body crée cette arête via son premier appel à self.visit.
+                # On ne met pas de label "True" ici, c'est un flux direct après init_var_id.
+                if (init_var_id, first_node_of_body, "True") in self.edges: # Au cas où une logique l'aurait mis
+                    self.edges.remove((init_var_id, first_node_of_body, "True"))
+                    self.add_edge(init_var_id, first_node_of_body, "") # Flux direct
+
+            # Les sorties normales du corps mènent au nœud de re-test (retest_decision_id)
+            for exit_node in body_exit_nodes:
+                if exit_node not in self.terminal_nodes:
+                    self.add_edge(exit_node, retest_decision_id)
+        else: 
+            # Corps vide : init_var_id mène directement au retest_decision_id
+            self.add_edge(init_var_id, retest_decision_id)
+            body_exit_nodes = [init_var_id] # Pour la logique de retour de boucle
+
+        # Connexion de la deuxième décision (retest_decision_id)
+        self.add_edge(retest_decision_id, next_var_id, "True") # Si encore des éléments, prendre le suivant
+        loop_overall_exit_points.append(retest_decision_id) # La branche "False" de retest_decision_id est une sortie
+
+        # L'élément suivant (next_var_id) retourne au début du traitement du corps.
+        if first_node_of_body: # Si le corps n'était pas vide et qu'on a identifié son début
+            self.add_edge(next_var_id, first_node_of_body)
+        elif node.body : # Corps non vide, mais first_node_of_body non trouvé (ne devrait pas arriver)
+            print(f"Warning: Impossible de connecter next_var_id au début du corps de la boucle for {iterator_variable_str}")
+            self.add_edge(next_var_id, retest_decision_id) # Fallback moins précis
+        else: # Corps vide, next_var_id retourne directement au retest
+            self.add_edge(next_var_id, retest_decision_id)
+
+# AVANT 
+        '''
         # Visiter le corps (branche "itération").
         iteration_branch_first_node_id: Optional[str] = None
+
         if node.body:
             nodes_before_body = {nid for nid,_ in self.nodes}
             body_exit_nodes = self.visit_body(node.body, [loop_decision_id])
@@ -473,36 +569,52 @@ class ControlFlowGraph:
             for exit_node in body_exit_nodes:
                 if exit_node not in self.terminal_nodes:
                     self.add_edge(exit_node, loop_decision_id) 
-        
+
+
         if iteration_branch_first_node_id:
             if (loop_decision_id, iteration_branch_first_node_id, "") in self.edges: 
                 self.edges.remove((loop_decision_id, iteration_branch_first_node_id, ""))
             self.add_edge(loop_decision_id, iteration_branch_first_node_id, "itération")
         elif not node.body: # Corps vide, la branche "itération" revient directement au test.
              self.add_edge(loop_decision_id, loop_decision_id, "itération")
-
+        '''
 
         # Gérer 'orelse' (sortie "Terminée/Vide").
-        terminated_branch_first_node_id: Optional[str] = None
+        ## terminated_branch_first_node_id: Optional[str] = None
+        
         if node.orelse:
-            if loop_decision_id in loop_overall_exit_points:
-                loop_overall_exit_points.remove(loop_decision_id) # orelse remplace la sortie directe.
+            # orelse est exécuté après que retest_decision_id est False.
+            # Donc, la branche "False" de retest_decision_id mène à orelse.
+            if retest_decision_id  in loop_overall_exit_points:
+                loop_overall_exit_points.remove(retest_decision_id ) # orelse remplace la sortie directe.
             
+            # Labelliser l'arête retest_decision_id -> début de orelse avec "False"
             nodes_before_orelse = {nid for nid,_ in self.nodes}
-            orelse_exit_nodes = self.visit_body(node.orelse, [loop_decision_id])
+            orelse_exit_nodes = self.visit_body(node.orelse, [retest_decision_id])
             nodes_after_orelse = {nid for nid,_ in self.nodes}
             new_nodes_in_orelse = sorted(list(nodes_after_orelse - nodes_before_orelse), key=lambda x: int(x.replace("node","")))
+            
             if new_nodes_in_orelse:
-                terminated_branch_first_node_id = new_nodes_in_orelse[0]
+                first_node_orelse  = new_nodes_in_orelse[0]
+                if (retest_decision_id, first_node_orelse, "") in self.edges:
+                    self.edges.remove((retest_decision_id, first_node_orelse, ""))
+                self.add_edge(retest_decision_id, first_node_orelse, "False")
+            elif not orelse_exit_nodes : # orelse est vide mais existe
+                 # L'arête False de retest_decision_id pointe vers la suite
+                 # On doit s'assurer que retest_decision_id est une sortie si orelse est vide
+                 loop_overall_exit_points.append(retest_decision_id) 
+            # else: Si pas de orelse, la branche "False" de retest_decision_id est déjà une sortie via loop_overall_exit_points.
+
+            # Les sorties de orelse sont des sorties globales.
             loop_overall_exit_points.extend(orelse_exit_nodes)
         
-        if terminated_branch_first_node_id:
+        '''if terminated_branch_first_node_id:
             if (loop_decision_id, terminated_branch_first_node_id, "") in self.edges: 
                 self.edges.remove((loop_decision_id, terminated_branch_first_node_id, ""))
             self.add_edge(loop_decision_id, terminated_branch_first_node_id, "Terminée / Vide")
         # elif not node.orelse: L'arête "Terminée / Vide" sera implicite via loop_overall_exit_points.
-
-        self.loop_stack.pop()
+'''
+        self.loop_stack.pop() # Fin de la gestion de cette boucle.
         return list(set(loop_overall_exit_points))
     
     def visit_While(self, node: ast.While, parent_id: str) -> List[str]: 
@@ -594,6 +706,7 @@ class ControlFlowGraph:
         return [continue_node_id] # visit() le marquera comme terminal.
 
     def generic_visit(self, node: ast.AST, parent_id: str) -> List[str]:
+        print(f"DEBUG: generic_visit appelée pour {type(node).__name__} (parent: {parent_id})")
         """Visiteur par défaut pour les nœuds AST non gérés spécifiquement."""
         try:
             # Essayer de générer une étiquette à partir du code source du nœud.
@@ -713,7 +826,7 @@ class ControlFlowGraph:
         all_args_concatenated_str = ", ".join(args_list_str + kwargs_list_str)
         
         # Tronquer la chaîne des arguments si elle est trop longue.
-        max_args_display_length = 30 
+        max_args_display_length = 60 
         if len(all_args_concatenated_str) > max_args_display_length: 
             all_args_concatenated_str = all_args_concatenated_str[:max_args_display_length-3] + "..."
         
@@ -1005,7 +1118,7 @@ class ControlFlowGraph:
 
 ############### Choisir le code à tester ###############
 import exemples
-selected_code = exemples.defcall
+selected_code = exemples.forstring
 ########################################################
 
 # --- Génération et Affichage ---
