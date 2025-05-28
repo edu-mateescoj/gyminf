@@ -26,6 +26,10 @@ class ControlFlowGraph:
         # Stockage des ID de nœuds pour le flux principal (module), utilisé pour le sous-graphe Mermaid.
         self.main_flow_nodes: Set[str] = set()
 
+        # Dictionnaire pour stocker des informations sur les variables affectées à des littéraux
+        # Clef:= nom de la variable (str) - Valeur:= tuple (type_ast_node, valeur_reelle_ou_description_type)
+        # Ex: "my_string" -> (ast.Constant, "chaîne")
+        self.variable_assignments: Dict[str, Tuple[type, Any]] = {}
 
     def get_node_id(self) -> str:
         """Génère un nouvel ID de nœud unique et l'ajoute à la portée de fonction actuelle si applicable."""
@@ -623,6 +627,30 @@ class ControlFlowGraph:
         label_text = f"{targets_str} = {value_str}"
         node_type = "Process"
 
+        value_node = node.value
+        value_str_for_label = ast.unparse(value_node).replace('"', '"') if value_node else ""
+        
+        # Tenter de stocker des informations sur l'affectation pour une inférence de type ultérieure
+        for target_node in node.targets:
+            if isinstance(target_node, ast.Name): # Cible d'affectation simple (variable).
+                var_name = target_node.id
+                assigned_value_type_ast = type(value_node) # Le type du noeud AST (ast.Constant, ast.List, etc.)
+                # On stocke le type du noeud AST et une représentation de la valeur
+                # Pour les constantes, on peut stocker la valeur réelle
+                # Pour les listes/tuples, on pourrait stocker une description ou les types des éléments
+                if isinstance(value_node, ast.Constant):
+                    self.variable_assignments[var_name] = (assigned_value_type_ast, value_node.value)
+                elif isinstance(value_node, (ast.List, ast.Tuple, ast.Set)):
+                    # Pour les collections, on pourrait analyser les éléments ici ou simplement stocker le type de collection.
+                    # Pour l'instant, stockons juste le type AST
+                    self.variable_assignments[var_name] = (assigned_value_type_ast, type(value_node).__name__)
+                
+        # --- Création du noeud pour l'instruction d'assignation elle-même ---
+        targets_str_for_label = ", ".join([ast.unparse(t).replace('"', '"') for t in node.targets])
+        label_text = f"{targets_str_for_label} = {value_str_for_label}"
+        node_type_for_assign_node = "Process" # Type par défaut pour les assignations.
+
+
         max_label_length = 60
         if len(label_text) > max_label_length:
              # Tenter de raccourcir la partie droite (valeur) en premier.
@@ -633,7 +661,7 @@ class ControlFlowGraph:
              else: # Sinon, raccourcir le tout.
                  label_text = label_text[:max_label_length-3] + "..."
         
-        assign_node_id = self.add_node(label_text, node_type=node_type)
+        assign_node_id = self.add_node(label_text, node_type=node_type_for_assign_node)
         self.add_edge(parent_id, assign_node_id)
         return [assign_node_id]
 
@@ -837,7 +865,7 @@ class ControlFlowGraph:
 
 ############### Choisir le code à tester ###############
 import exemples
-selected_code = exemples.forstring
+selected_code = exemples.ifelif
 ########################################################
 
 # --- Génération et Affichage ---
@@ -853,7 +881,7 @@ print(ast.dump(cfg.tree))
 print(cfg.to_mermaid())
 print("\n--- Mermaid Généré ---")
 
-# Affiche les noeuds et arêtes pour le débogage
+'''# Affiche les noeuds et arêtes pour le débogage
 print("\n--- Noeuds (ID, Label) ---")
 for n in cfg.nodes:
      print(n)
@@ -862,6 +890,8 @@ for e in sorted(list(cfg.edges)): # Trié pour la lisibilité
      print(e)
 print("\n--- Noeuds Terminaux ---")
 print(cfg.terminal_nodes)
-print("\n--- Fin des impressions CFG ---")
+print("\n--- Fin des impressions CFG ---")'''
 # Test la version Python 3.9+ avec ast.unparse
 print(ast.unparse(ast.parse(selected_code)))
+
+print(cfg.variable_assignments)
