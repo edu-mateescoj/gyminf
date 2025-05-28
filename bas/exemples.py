@@ -441,5 +441,10 @@ for l in 'abcd':
 
     print("fin du traitement")
 
+for n in [1, 2, 3]:
+    print("nombre depuis liste= ", n)
+
+for l in ['a', 'b', 'c']:
+    print("lettre depuis liste= ", l)
 
 """

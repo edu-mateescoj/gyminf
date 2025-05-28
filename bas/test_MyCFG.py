@@ -478,21 +478,21 @@ class ControlFlowGraph:
 
         # --- Nœuds de la structure de boucle ---
         # 1. Première Décision: Y a-t-il des éléments ?
-        entry_decision_label = f"{iterable_type_desc} {iterable_display_name}<br>a des {elements_type_desc}s à traiter ?"
+        entry_decision_label = f"{iterable_type_desc} '{iterable_display_name}'<br>a des {elements_type_desc}s à traiter ?"
         entry_decision_id = self.add_node(entry_decision_label, node_type="Decision")
         self.add_edge(parent_id, entry_decision_id)
 
         # 2. Initialisation de la variable locale au premier élément (si True à la première décision de rentrée dans l'itérable)
-        init_var_label = f"{iterator_variable_str} ← premier {elements_type_desc}<br>de la {iterable_type_desc} {iterable_display_name}"
+        init_var_label = f"{iterator_variable_str} ← premier {elements_type_desc}<br>de la {iterable_type_desc} '{iterable_display_name}'"
         init_var_id = self.add_node(init_var_label, node_type="Process")
         # L'arête entry_decision_id --True--> init_var_id sera ajoutée après avoir identifié init_var_id
 
         # Deux types de nœuds pour la suite de la structure
         # test: on itère ? 
-        retest_decision_label = f"Encore un {elements_type_desc} à traiter<br>dans la {iterable_type_desc} {iterable_display_name} ?"
+        retest_decision_label = f"Encore un {elements_type_desc} à traiter<br>dans la {iterable_type_desc} '{iterable_display_name}' ?"
         retest_decision_id = self.add_node(retest_decision_label, node_type="Decision")
         # au cas où on itère:
-        next_var_label = f"{iterator_variable_str} ← {elements_type_desc} suivant<br>de la {iterable_type_desc} {iterable_display_name}"
+        next_var_label = f"{iterator_variable_str} ← {elements_type_desc} suivant<br>de la {iterable_type_desc} '{iterable_display_name}'"
         next_var_id = self.add_node(next_var_label, node_type="Process")
 
         # --- Connexions ---
@@ -1118,7 +1118,7 @@ class ControlFlowGraph:
 
 ############### Choisir le code à tester ###############
 import exemples
-selected_code = exemples.foriterables
+selected_code = exemples.focus
 ########################################################
 
 # --- Génération et Affichage ---
