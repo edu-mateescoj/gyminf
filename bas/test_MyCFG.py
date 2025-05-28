@@ -730,7 +730,7 @@ class ControlFlowGraph:
         self.add_edge(parent_id, call_node_id)
         return [call_node_id]
 
-
+    
 
     def _simplify_junctions(self) -> Tuple[List[Tuple[str, str]], Set[Tuple[str, str, str]]]:
         """
