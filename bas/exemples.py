@@ -396,3 +396,50 @@ def moyenne3(L: List[float]) -> float:
 def moyenne4(L: List[float]) -> float:
     return average(L) if L else 0.0  # Utilise une fonction externe pour la moyenne, si disponible
 '''
+foriterables = """
+for n in [1, 2, 3]:
+    print("Littéral = ", n)
+
+my_list = [4, 5, 6]
+for n in my_list:
+    print("Valeur = ", n)
+
+my_tuple = (7, 8, 9)
+for x in my_tuple:
+    print("Valeur = ", x)
+
+my_set = {10, 11, 12}
+for y in my_set:
+    print("Valeur = ", y)
+
+my_dict = {'a': 13, 'b': 14, 'c': 15}
+for key, value in my_dict.items():
+    print("Clé = ", key, ", Valeur = ", value)
+
+    
+for l in 'abcd':
+    if l.upper() == l:
+        print("majuscule")
+
+    print("fin du traitement")
+    
+"""
+
+focus = """
+my_str = "Hello"
+for char in my_str:
+    if char.upper() == char:
+        print("majuscule")
+    else:
+        print("minuscule")
+    print("fin du traitement")
+print("Je suis ici sortie de la boucle")
+
+for l in 'abcd':
+    if l.upper() == l:
+        print("majuscule")
+
+    print("fin du traitement")
+
+
+"""

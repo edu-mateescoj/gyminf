@@ -478,7 +478,7 @@ class ControlFlowGraph:
 
         # --- Nœuds de la structure de boucle ---
         # 1. Première Décision: Y a-t-il des éléments ?
-        entry_decision_label = f"{iterable_type_desc} {iterable_display_name}<br>a des {elements_type_desc} à traiter ?"
+        entry_decision_label = f"{iterable_type_desc} {iterable_display_name}<br>a des {elements_type_desc}s à traiter ?"
         entry_decision_id = self.add_node(entry_decision_label, node_type="Decision")
         self.add_edge(parent_id, entry_decision_id)
 
@@ -868,11 +868,11 @@ class ControlFlowGraph:
                     if isinstance(assigned_value_or_desc, str):
                         # On traite la variable comme si elle contenait cette chaîne littérale
                         actual_node_to_inspect = ast.Constant(value=assigned_value_or_desc)
-                        iterable_type_desc = f"la chaîne (via var {iterable_name_or_literal})" # Plus précis
+                        iterable_type_desc = f"chaîne" #  (via var {iterable_name_or_literal}) # Plus précis
                     # Ajouter d'autres types de constantes si stockés (int, float, bool)
                     # Cependant, itérer sur un int/float/bool n'est pas typique pour un 'for in'.
                 elif assigned_ast_type == ast.List:
-                    iterable_type_desc = f"la liste (via var {iterable_name_or_literal})"
+                    iterable_type_desc = f"liste" # (via var {iterable_name_or_literal})
                     # Si assigned_value_or_desc contenait les types des éléments, on pourrait les utiliser.
                     # Pour l'instant, on ne peut pas reconstruire les elts pour actual_node_to_inspect.
                     # On va donc se baser sur le fait que c'est une "liste" et garder elements_type_desc par défaut.
@@ -886,13 +886,13 @@ class ControlFlowGraph:
                          elements_type_desc = "élément"
                     # On ne change pas actual_node_to_inspect ici si on n'a pas les elts.
                 elif assigned_ast_type == ast.Tuple:
-                    iterable_type_desc = f"le tuple (via var {iterable_name_or_literal})"
+                    iterable_type_desc = f"le tuple" #  (via var {iterable_name_or_literal})
                     elements_type_desc = "élément"
                 elif assigned_ast_type == ast.Set:
-                    iterable_type_desc = f"l'ensemble (via var {iterable_name_or_literal})"
+                    iterable_type_desc = f"l'ensemble" # (via var {iterable_name_or_literal})
                     elements_type_desc = "élément"
                 elif assigned_ast_type == ast.Dict:
-                    iterable_type_desc = f"le dictionnaire (via var {iterable_name_or_literal})"
+                    iterable_type_desc = f"le dictionnaire" # (via var {iterable_name_or_literal})
                     elements_type_desc = "clé"
                 elif assigned_ast_type == ast.Call: # La variable vient d'un appel de fonction
                     iterable_type_desc = f"{assigned_value_or_desc} (via var {iterable_name_or_literal})"
@@ -904,10 +904,10 @@ class ControlFlowGraph:
         if isinstance(actual_node_to_inspect, ast.Constant):
             if isinstance(actual_node_to_inspect.value, str):
                 # Si ce n'est pas déjà mis par la logique de variable ci-dessus
-                if iterable_type_desc == "itérable": iterable_type_desc = "la chaîne"
+                if iterable_type_desc == "itérable": iterable_type_desc = "chaîne"
                 if elements_type_desc == "élément": elements_type_desc = "caractère"
         elif isinstance(actual_node_to_inspect, ast.List):
-            if iterable_type_desc == "itérable": iterable_type_desc = "la liste"
+            if iterable_type_desc == "itérable": iterable_type_desc = "liste"
             if hasattr(actual_node_to_inspect, 'elts') and actual_node_to_inspect.elts:
                 element_types_seen = set()
                 # ... (votre logique existante pour analyser les elts d'une liste littérale) ...
@@ -941,7 +941,7 @@ class ControlFlowGraph:
             if iterable_type_desc == "itérable": iterable_type_desc = "le dictionnaire"
             if elements_type_desc == "élément": elements_type_desc = "clé"
         elif isinstance(actual_node_to_inspect, ast.Name) and original_iterable_name_if_any is None: # C'était un Name dès le début
-            iterable_type_desc = f"la variable {iterable_name_or_literal}"
+            iterable_type_desc = f"variable {iterable_name_or_literal}"
             # elements_type_desc reste "élément"
         elif isinstance(actual_node_to_inspect, ast.Call):
             # Si ce n'est pas déjà mis par la logique de variable
@@ -952,7 +952,7 @@ class ControlFlowGraph:
         
         # Si on a un nom original et que la description est encore générique, utiliser le nom.
         if original_iterable_name_if_any and iterable_type_desc == "itérable":
-            iterable_type_desc = f"la variable {iterable_name_or_literal}"
+            iterable_type_desc = f"variable {iterable_name_or_literal}"
 
         # Pour l'affichage final, on utilise iterable_name_or_literal qui est soit le nom de la variable
         # soit la représentation textuelle du littéral.
@@ -1118,7 +1118,7 @@ class ControlFlowGraph:
 
 ############### Choisir le code à tester ###############
 import exemples
-selected_code = exemples.forstring
+selected_code = exemples.foriterables
 ########################################################
 
 # --- Génération et Affichage ---
