@@ -644,7 +644,32 @@ class ControlFlowGraph:
                     # Pour les collections, on pourrait analyser les éléments ici ou simplement stocker le type de collection.
                     # Pour l'instant, stockons juste le type AST
                     self.variable_assignments[var_name] = (assigned_value_type_ast, type(value_node).__name__)
-                
+                elif isinstance(value_node, ast.Name):
+                    source_var_name = value_node.id
+                    if source_var_name in self.variable_assignments:
+                        # Propager l'information de la variable source
+                        self.variable_assignments[var_name] = self.variable_assignments[source_var_name]
+                    else:
+                        # On ne connaît pas le type de la variable source, donc on ne stocke rien de précis pour var_name
+                        self.variable_assignments[var_name] = (ast.Name, "variable (type inconnu)") # Ou autre??
+                elif isinstance(value_node, ast.Call):
+                    # Tenter d'inférer le type de retour si c'est une fonction connue
+                    func_name_str = ast.unparse(value_node.func) # Peut être complexe (ex: obj.method)
+                    # Heuristique simple pour les builtins courants
+                    if isinstance(value_node.func, ast.Name):
+                        called_func_name = value_node.func.id
+                        if called_func_name in ['len','int']:
+                            self.variable_assignments[var_name] = (ast.Call, "nombre (entier)") # len retourne un int
+                        elif called_func_name in ['str', 'upper', 'lower', 'chr', 'type']:
+                            self.variable_assignments[var_name] = (ast.Call, "chaîne")
+                        elif called_func_name in ['sum', 'min', 'max', 'abs', 'ord', 'float', 'pow']:
+                            self.variable_assignments[var_name] = (ast.Call, "nombre")
+                        else:
+                            self.variable_assignments[var_name] = (ast.Call, f"résultat de {called_func_name}()")
+                    else:
+                        self.variable_assignments[var_name] = (ast.Call, f"résultat d'appel de fonction")
+
+
         # --- Création du noeud pour l'instruction d'assignation elle-même ---
         targets_str_for_label = ", ".join([ast.unparse(t).replace('"', '"') for t in node.targets])
         label_text = f"{targets_str_for_label} = {value_str_for_label}"
@@ -704,6 +729,8 @@ class ControlFlowGraph:
         call_node_id = self.add_node(label_text, node_type=node_type)
         self.add_edge(parent_id, call_node_id)
         return [call_node_id]
+
+
 
     def _simplify_junctions(self) -> Tuple[List[Tuple[str, str]], Set[Tuple[str, str, str]]]:
         """
@@ -865,7 +892,7 @@ class ControlFlowGraph:
 
 ############### Choisir le code à tester ###############
 import exemples
-selected_code = exemples.ifelif
+selected_code = exemples.defcall
 ########################################################
 
 # --- Génération et Affichage ---
