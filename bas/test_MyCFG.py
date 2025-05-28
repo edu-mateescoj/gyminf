@@ -730,7 +730,120 @@ class ControlFlowGraph:
         self.add_edge(parent_id, call_node_id)
         return [call_node_id]
 
-    
+    def _get_iterable_description(self, iterable_node: ast.AST) -> Tuple[str, str, str]:
+        iterable_type_desc = "itérable" 
+        elements_type_desc = "élément"
+        # iterable_name_or_literal est le texte qui sera affiché pour l'itérable
+        # Si c'est une variable, ce sera 'nom_var'. Si c'est un littéral, ce sera sa représentation textuelle.
+        iterable_name_or_literal = ast.unparse(iterable_node).replace('"', '#quot;') 
+
+        actual_node_to_inspect = iterable_node # Le noeud AST qu'on va réellement analyser pour son type
+        original_iterable_name_if_any = None # pour garder une trace si l'itérable d'origine était une variable (la variable est un ast.Name)
+
+        if isinstance(iterable_node, ast.Name):
+            original_iterable_name_if_any = iterable_node.id
+            # Pour l'affichage, on veut le nom de la variable, pas sa valeur potentielle
+            iterable_name_or_literal = f"'{iterable_node.id}'" 
+            
+            if iterable_node.id in self.variable_assignments:
+                assigned_ast_type, assigned_value_or_desc = self.variable_assignments[iterable_node.id]
+                
+                # Maintenant, on essaie de "reconstituer" un noeud AST ou une description
+                # basée sur ce qui a été stocké pour cette variable.
+                if assigned_ast_type == ast.Constant:
+                    # La variable a été affectée à une constante
+                    if isinstance(assigned_value_or_desc, str):
+                        # On traite la variable comme si elle contenait cette chaîne littérale
+                        actual_node_to_inspect = ast.Constant(value=assigned_value_or_desc)
+                        iterable_type_desc = f"la chaîne (via var {iterable_name_or_literal})" # Plus précis
+                    # Ajouter d'autres types de constantes si stockés (int, float, bool)
+                    # Cependant, itérer sur un int/float/bool n'est pas typique pour un 'for in'.
+                elif assigned_ast_type == ast.List:
+                    iterable_type_desc = f"la liste (via var {iterable_name_or_literal})"
+                    # Si assigned_value_or_desc contenait les types des éléments, on pourrait les utiliser.
+                    # Pour l'instant, on ne peut pas reconstruire les elts pour actual_node_to_inspect.
+                    # On va donc se baser sur le fait que c'est une "liste" et garder elements_type_desc par défaut.
+                    # On pourrait avoir stocké une description comme "liste de nombres"
+                    if isinstance(assigned_value_or_desc, str) and "liste de" in assigned_value_or_desc:
+                        # Ex: "liste de nombres" -> elements_type_desc = "nombre"
+                        if "nombres" in assigned_value_or_desc: elements_type_desc = "nombre"
+                        elif "chaînes" in assigned_value_or_desc: elements_type_desc = "chaîne"
+                        # etc.
+                    else: # Fallback si c'est juste le type de collection
+                         elements_type_desc = "élément"
+                    # On ne change pas actual_node_to_inspect ici si on n'a pas les elts.
+                elif assigned_ast_type == ast.Tuple:
+                    iterable_type_desc = f"le tuple (via var {iterable_name_or_literal})"
+                    elements_type_desc = "élément"
+                elif assigned_ast_type == ast.Set:
+                    iterable_type_desc = f"l'ensemble (via var {iterable_name_or_literal})"
+                    elements_type_desc = "élément"
+                elif assigned_ast_type == ast.Dict:
+                    iterable_type_desc = f"le dictionnaire (via var {iterable_name_or_literal})"
+                    elements_type_desc = "clé"
+                elif assigned_ast_type == ast.Call: # La variable vient d'un appel de fonction
+                    iterable_type_desc = f"{assigned_value_or_desc} (via var {iterable_name_or_literal})"
+                    elements_type_desc = "élément" # On ne sait pas plus
+                # Si assigned_ast_type est ast.Name (b = a), on a propagé. actual_node_to_inspect reste le Name.
+                # La description sera "la variable 'nom_var'".
+
+        # --- Analyse de actual_node_to_inspect (qui peut être l'original ou un reconstitué) ---
+        if isinstance(actual_node_to_inspect, ast.Constant):
+            if isinstance(actual_node_to_inspect.value, str):
+                # Si ce n'est pas déjà mis par la logique de variable ci-dessus
+                if iterable_type_desc == "itérable": iterable_type_desc = "la chaîne"
+                if elements_type_desc == "élément": elements_type_desc = "caractère"
+        elif isinstance(actual_node_to_inspect, ast.List):
+            if iterable_type_desc == "itérable": iterable_type_desc = "la liste"
+            if hasattr(actual_node_to_inspect, 'elts') and actual_node_to_inspect.elts:
+                element_types_seen = set()
+                # ... (votre logique existante pour analyser les elts d'une liste littérale) ...
+                # (Assurez-vous qu'elle fonctionne bien avec les elts potentiellement vides si actual_node_to_inspect
+                # a été simulé à partir de variable_assignments sans les elts détaillés)
+                first_el_type_str = None
+                all_same = True
+                for elt_node in actual_node_to_inspect.elts:
+                    current_el_type_str = "mixte"
+                    if isinstance(elt_node, ast.Constant):
+                        if isinstance(elt_node.value, int): current_el_type_str = "nombre"
+                        elif isinstance(elt_node.value, float): current_el_type_str = "nombre"
+                        elif isinstance(elt_node.value, str): current_el_type_str = "chaîne"
+                        elif isinstance(elt_node.value, bool): current_el_type_str = "booléen"
+                    elif isinstance(elt_node, ast.Name): current_el_type_str = "variable" # Un élément est une autre variable
+                    element_types_seen.add(current_el_type_str)
+                
+                if len(element_types_seen) == 1:
+                    elements_type_desc = element_types_seen.pop()
+                elif element_types_seen: # Au moins un type a été vu
+                    elements_type_desc = "élément mixte"
+                # else: elements_type_desc reste "élément" (liste vide ou types non identifiables)
+
+        elif isinstance(actual_node_to_inspect, ast.Tuple):
+            if iterable_type_desc == "itérable": iterable_type_desc = "le tuple"
+            if elements_type_desc == "élément": elements_type_desc = "élément de tuple"
+        elif isinstance(actual_node_to_inspect, ast.Set):
+            if iterable_type_desc == "itérable": iterable_type_desc = "l'ensemble"
+            if elements_type_desc == "élément": elements_type_desc = "élément d'ensemble"
+        elif isinstance(actual_node_to_inspect, ast.Dict):
+            if iterable_type_desc == "itérable": iterable_type_desc = "le dictionnaire"
+            if elements_type_desc == "élément": elements_type_desc = "clé"
+        elif isinstance(actual_node_to_inspect, ast.Name) and original_iterable_name_if_any is None: # C'était un Name dès le début
+            iterable_type_desc = f"la variable {iterable_name_or_literal}"
+            # elements_type_desc reste "élément"
+        elif isinstance(actual_node_to_inspect, ast.Call):
+            # Si ce n'est pas déjà mis par la logique de variable
+            if iterable_type_desc == "itérable":
+                func_name = ast.unparse(actual_node_to_inspect.func).replace('"', '#quot;')
+                iterable_type_desc = f"le résultat de {func_name}()"
+            # elements_type_desc reste "élément"
+        
+        # Si on a un nom original et que la description est encore générique, utiliser le nom.
+        if original_iterable_name_if_any and iterable_type_desc == "itérable":
+            iterable_type_desc = f"la variable {iterable_name_or_literal}"
+
+        # Pour l'affichage final, on utilise iterable_name_or_literal qui est soit le nom de la variable
+        # soit la représentation textuelle du littéral.
+        return iterable_type_desc, elements_type_desc, iterable_name_or_literal.strip("'") # Enlever les ' ajoutés pour les noms
 
     def _simplify_junctions(self) -> Tuple[List[Tuple[str, str]], Set[Tuple[str, str, str]]]:
         """
