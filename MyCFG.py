@@ -796,6 +796,9 @@ class ControlFlowGraph:
         elif node_type == "IoOperation": shape_open, shape_close = "[/", "\\]" # Parallélogramme pour I/O.
         return shape_open, shape_close
 
+# FIN DU FICHIER EN MODE MODULE
+
+
 '''
 ############### Choisir le code à tester ###############
 import exemples

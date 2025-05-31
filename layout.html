@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Outil de Création d'Exercices Python</title>
     
-    <!-- Inclusion de Pyodide -->
+    <!-- Inclusion de Pyodide EN PREMIER -->
     <script src="https://cdn.jsdelivr.net/pyodide/v0.23.4/full/pyodide.js"></script>
 
     <!-- Inclusion de Bootstrap - thèem Replit - pour le style -->
@@ -25,8 +25,39 @@
     <link rel="stylesheet" href="css/styles.css">
      
     <!-- Favicon à insérer ici -->
+    <style>
+        /* Style pour le bandeau de chargement */
+        #loading-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.7);
+            z-index: 1050; /* Au-dessus de la plupart des éléments */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: white;
+            font-size: 1.2rem;
+        }
+        #loading-overlay .spinner-border {
+            width: 3rem;
+            height: 3rem;
+            margin-right: 15px;
+        }
+    </style>
 </head>
 <body class="d-flex flex-column min-vh-100">
+    
+    <!-- Bandeau de chargement Pyodide -->
+    <div id="loading-overlay">
+        <div class="spinner-border text-primary" role="status">
+            <span class="visually-hidden">Chargement...</span>
+        </div>
+        <span>Chargement du moteur Python et des outils... Veuillez patienter.</span>
+    </div>
+
     <!-- Début de l'en-tête -->
     <header class="bg-dark py-3">
         <div class="container">
@@ -281,7 +312,7 @@
                 </div>
                 <!-- Texte de droite -->
                 <div class="col-md-6 text-center text-md-end">
-                    <p class="mb-0 text-white-50">© 2023 - Outil Éducatif</p>
+                    <p class="mb-0 text-white-50">© 2025 - Outil Éducatif</p>
                 </div>
             </div>
         </div>
