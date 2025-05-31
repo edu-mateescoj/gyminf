@@ -128,28 +128,48 @@ output_dict # C'est le dict retourné à JS
 `;
         // Exécuter le script runner
         var resultProxy = await pyodide.runPythonAsync(pythonRunnerScript);
-        var output = resultProxy.toJs(); // Convertir le dictionnaire Python en objet JS
+        // Convertir le résultat en objet JS. Si c'est un Map, il faut le traiter comme tel.
+        var outputData;
+        if (typeof resultProxy.toJs === 'function') {
+            // La méthode standard pour convertir un PyProxy en objet JS.
+            // Elle devrait retourner un objet simple si le Python retourne un dict.
+            // ... Mais si elle retourne un Map, nous devons le gérer!
+            let potentialMap = resultProxy.toJs(); 
+            if (potentialMap instanceof Map) {
+                console.log("Pyodide a retourné un Map, conversion en objet...");
+                outputData = Object.fromEntries(potentialMap); // Convertit Map en objet simple
+            } else {
+                outputData = potentialMap; // C'était déjà un objet simple
+            }
+        } else {
+            // Fallback si toJs n'est pas une fonction (ne devrait pas arriver avec PyProxy)
+            console.warn("resultProxy.toJs n'est pas une fonction. Tentative d'accès direct.");
+            outputData = resultProxy; // Peut être risqué
+        }
         resultProxy.destroy(); // Libérer la mémoire du proxy
         setLoadingState(false); // Masquer le chargement après la génération
-        console.log("Résultat de la génération du diagramme:", output); // DEBUG
+        console.log("Résultat de la génération du diagramme:", outputData); // DEBUG
+        
         // Vérifier si une erreur a été capturée dans le script Python
-        if (output.error) {
-            console.error("Erreur Python détaillée:", output.error);
-            // Afficher l'erreur dans le div du flowchart
-            var flowchartDivDisplay  = document.getElementById('flowchart'); // Renommé pour éviter conflit
+        var pythonError = outputData.error; // Accès comme propriété d'objet
+        var mermaidStringFromPython = outputData.mermaid; // Accès comme propriété d'objet
+
+        if (pythonError) { // Vérifier s'il y a une erreur Python
+            console.error("Erreur Python détaillée:", pythonError);
+            var flowchartDivDisplay = document.getElementById('flowchart');
             if (flowchartDivDisplay) {
-                var preFormattedError = output.error.replace(/\\n/g, '<br>'); // Remplacer les sauts de ligne Python
-                flowchartDiv.innerHTML = '<div class="alert alert-warning" role="alert"><strong>Erreur lors de la génération du diagramme :</strong><br><pre style="white-space: pre-wrap; word-break: break-all;">' + preFormattedError + '</pre></div>';
+                var preFormattedError = pythonError.replace(/\\n/g, '<br>');
+                flowchartDivDisplay.innerHTML = '<div class="alert alert-warning" role="alert"><strong>Erreur Python lors de la génération du diagramme :</strong><br><pre style="white-space: pre-wrap; word-break: break-all;">' + preFormattedError + '</pre></div>';
             }
             return null; // Indiquer une erreur
         }
 
         //DEBUG messages erreur avec retours undefined
-        console.log("Chaîne Mermaid générée par Python:", output.mermaid); // LOG 1
-        console.log("Type de output.mermaid:", typeof output.mermaid); // LOG 2
+        console.log("Chaîne Mermaid générée par Python:", mermaidStringFromPython); // LOG 1
+        console.log("Type de output.mermaid:", typeof mermaidStringFromPython); // LOG 2
         
         // S'assurer que output.mermaid est une chaîne. Si Python retourne None, output.mermaid sera null.
-        var returnValue = typeof output.mermaid === 'string' ? output.mermaid : "graph TD\n    py_ret_not_str[Erreur: Python n'a pas retourné une chaîne pour Mermaid]";
+        var returnValue = typeof mermaidStringFromPython === 'string' ? mermaidStringFromPython : "graph TD\n    py_ret_not_str[Erreur: Python n'a pas retourné une chaîne pour Mermaid]";
         console.log("Valeur retournée par generateFlowchartFromCode:", returnValue); // LOG 3
         console.log("Type de la valeur retournée:", typeof returnValue); // LOG 4
         return returnValue;
@@ -173,7 +193,7 @@ output_dict # C'est le dict retourné à JS
 async function displayFlowchart(mermaidCode, targetDivId) {
 
     console.log("displayFlowchart appelée avec mermaidCode de type:", typeof mermaidCode);
-    // console.log("Contenu mermaidCode:", mermaidCode); // Décommenter pour voir la chaîne exacte
+    console.log("Contenu mermaidCode:", mermaidCode); // DEBUG
     // 
     var flowchartContainer = document.getElementById(targetDivId);
     if (!flowchartContainer) {
@@ -181,9 +201,11 @@ async function displayFlowchart(mermaidCode, targetDivId) {
         return;
     }
 
-    if (mermaidCode === null) { 
-        // Une erreur a déjà été affichée par generateFlowchartFromCode
-        return;
+    if (mermaidCode === null || typeof mermaidCode === 'undefined') { 
+         if (typeof mermaidCode === 'undefined') { console.warn("mermaidCode de type undefined"); }
+        else { // C'était null, donc une erreur a déjà été affichée
+            return; // La fonction displayFlowchart s'arrête ici.
+        }
     }
     // Si mermaidCode est undefined (ne devrait plus arriver avec les garde-fous dans generateFlowchartFromCode)
     // ou une chaîne vide.
