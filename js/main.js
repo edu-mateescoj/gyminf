@@ -344,28 +344,45 @@ z = x + y`;
 async function runAndTraceCodeForChallenge(code, pyodide) {
     console.log("Exécution du code pour le défi...");
     let tracedVariables = {};
-    
+    const escapedCodeForPythonTripleQuotes = code
+    .replace(/\\/g, '\\\\') // 1. Échapper les \ en \\
+    .replace(/"""/g, '\\"\\"\\"'); // 2. Échapper """ en \"\"\" (peu probable mais plus sûr)
+    // Note: On n'a PAS besoin d'échapper les " simples ou ' simples ici pour """
     try {
-    const validationScript = `
-import ast
+    const syntaxValidationScript = `
+error_detail = ""
+parsed_code_string = """${escapedCodeForPythonTripleQuotes}""" # Injection ici
 try:
-    ast.parse("""${code.replace(/"/g, '\\"').replace(/\\/g, '\\\\')}""")
+    ast.parse(parsed_code_string)
 except Exception as e:
-    # Propager l'erreur pour qu'elle soit attrapée par le catch JS
-    raise e 
+    import traceback
+    error_detail = f"{type(e).__name__}: {str(e)}\\n{traceback.format_exc()}"
+    # Pour débogage, voir ce que ast.parse a réellement reçu :
+    # print(f"Code passé à ast.parse:\\n{parsed_code_string}") 
+    raise
+    
+"Syntax OK"    
 `;
-    await pyodide.runPythonAsync(validationScript);
-    console.log("Validation syntaxique pour le défi réussie.");
+// console.log("Script de validation syntaxique pour le défi:", syntaxValidationScript);
+await pyodide.runPythonAsync(syntaxValidationScript);
 } catch (syntaxValidationError) {
     console.error("Erreur de syntaxe DANS LE CODE UTILISATEUR avant exécution du défi:", syntaxValidationError);
     // Gérer cette erreur (par exemple, afficher une modale à l'utilisateur)
     // et ne pas procéder à l'exécution de tracingWrapper.
     throw syntaxValidationError; // Ou retourner un indicateur d'erreur
 }
-        // Code pour tracer les variables (similaire à votre `tracingCode` précédent)
-        const tracingWrapper = `
+        // Code pour tracer les variables
+        const escapedCodeForPythonExecution = code
+    .replace(/\\/g, '\\\\')
+    .replace(/"""/g, '\\"\\"\\"'); // Ou tout autre échappement nécessaire
+
+    const tracingWrapper = `
 _vars_before = list(globals().keys())
-${code}
+
+# --- Début du code utilisateur ---
+${escapedCodeForPythonExecution}
+# --- Fin du code utilisateur ---
+
 _vars_after = list(globals().keys())
 
 _final_vars = {}
