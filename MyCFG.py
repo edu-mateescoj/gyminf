@@ -786,7 +786,7 @@ class ControlFlowGraph:
         elif node_type == "Decision": shape_open, shape_close = "{", "}" # Losange.
         elif node_type == "Junction": 
             # Si la jonction n'a pas de label ou un label générique "Junction", la rendre petite (cercle).
-            if not label or label == "Junction" or label == "#quot;Junction#quot;": 
+            if not label or label in {"Junction", "#quot;Junction#quot;", "."}: 
                 shape_open, shape_close = "((", "))" # Petit cercle.
                 # safe_label = "" # Rendre la jonction sans texte (déjà géré par le label vide).
             else: # Jonction avec un label spécifique (rare).
