@@ -387,7 +387,9 @@ _vars_after = list(globals().keys())
 
 _final_vars = {}
 for _var_name in _vars_after:
-    if _var_name not in _vars_before and not _var_name.startswith('_') and _var_name not in ['pyodide', 'sys', 'micropip']:
+    # Vérifier si la variable a été créée par le code utilisateur
+    # + ajout de filtres pour éviter les variables internes ou non pertinentes
+    if _var_name not in _vars_before and not _var_name.startswith('_') and _var_name not in ['pyodide', 'sys', 'micropip', 'json', 'types', 'ast', 'traceback', 'error_detail', 'tracingWrapper', 'tracedVariables']:
         _val = globals()[_var_name]
         # Gérer les types non sérialisables simplement pour l'affichage
         if callable(_val) or type(_val).__name__ == 'module':
