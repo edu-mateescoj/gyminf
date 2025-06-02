@@ -385,32 +385,31 @@ await pyodide.runPythonAsync(syntaxValidationScript);
 import types    # à importer globalement pour isinstance
 import json     # déjà importé par Pyodide ? pour être sûr
 
-_vars_before_execution = list(globals().keys())
-
-# --- Début du code utilisateur ---
-${escapedCodeForPythonExecution}
-# --- Fin du code utilisateur ---
-
-_vars_after_execution = set(globals().keys())
+user_ns = {}    # Dictionnaire pour le namespace utilisateur
+try:
+    exec("""${escapedCodeForPythonExecution}""", user_ns)
+except Exception as e:
+    import traceback
+    error_detail = f"{type(e).__name__}: {str(e)}\\n{traceback.format_exc()}"
+    raise
 
 _final_vars = {}
+
 # On s'intéresse aux variables qui existent APRES l'exécution du code.
-for _var_name in _vars_after_execution:
+for _var_name, _val in user_ns.items(): 
+
     # Filtre 1: Exclure les variables purement internes au wrapper
-    if _var_name in ['_vars_before_execution', '_vars_after_execution', '_val', '_final_vars', '_var_name_loop_variable']: # Renommer _var_name pour éviter conflit
+    if _var_name.startswith('__') and _var_name.endswith('__'):
         continue
 
-    # Filtre 2: Exclure les noms commençant par '_' (convention pour usage interne)
-    # et les modules/fonctions standards que vous ne voulez pas tracer.
-    if _var_name.startswith('_') or \
-       _var_name in ['pyodide', 'sys', 'micropip', 'json', 'types', 'ast', 'traceback', 'error_detail',
+    # Filtre 2: Exclure les modules/fonctions standards et les variables spécifiques
+    # (On peut ajuster cette liste selon les besoins, mais on veut éviter les variables internes de Pyodide)
+    if _var_name in ['pyodide', 'sys', 'micropip', 'json', 'types', 'ast', 'traceback', 'error_detail',
                      'current_code', 'user_python_code', # Variables passées par JS au script runner
                      'cfg_instance', 'mermaid_output', 'error_message', 'output_dict', # Variables du runner de flowchart
                      'parsed_code_string', 'List', 'Dict', 'Set', 'Tuple', 'Optional'
                      ]:
         continue
-
-    _val = globals()[_var_name] 
 
     # Filtre 3: Exclure les modules et fonctions/types (sauf si vous voulez les lister)
     # La vérification isinstance est plus robuste que type(_val).__name__
@@ -431,14 +430,6 @@ for _var_name in _vars_after_execution:
             _final_vars[_var_name] = repr(_val) 
         except:
             _final_vars[_var_name] = "<valeur non sérialisable>"
-
-import json
-# Pour débogage, voir ce qui est capturé avant le filtrage par _vars_before_execution
-# print(f"Variables candidates avant filtrage 'nouveau': { {k:globals()[k] for k in _vars_after_execution if k not in ['_vars_before_execution', '_vars_after_execution']} }")
-# print(f"Vars before: {_vars_before_execution}")
-
-# Maintenant, on peut raffiner en ne gardant que celles qui sont "nouvelles" ou dont la valeur a changé
-# C'est plus complexe... Pour l'instant, on prend tout ce qui passe les filtres de nom/type.
 
 json.dumps(_final_vars)
 `;
