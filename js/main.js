@@ -343,6 +343,8 @@ z = x + y`;
  */
 async function runAndTraceCodeForChallenge(code, pyodide) {
     console.log("Exécution du code pour le défi...");
+    //But: préparer et valider le code Python saisi par l’utilisateur, en l’échappant correctement 
+    // et en vérifiant sa syntaxe dans Pyodide avant toute exécution ou traçage des variables.
     let tracedVariables = {};
     const escapedCodeForPythonTripleQuotes = code
     .replace(/\\/g, '\\\\') // 1. Échapper les \ en \\
@@ -353,6 +355,9 @@ async function runAndTraceCodeForChallenge(code, pyodide) {
 error_detail = ""
 parsed_code_string = """${escapedCodeForPythonTripleQuotes}""" # Injection ici
 try:
+    print(f"--- Contenu de parsed_code_string pour ast.parse ---") # LOG PYTHON REDIRIGÉ PAR PYODIDE DANS LA CONSOLE
+    print(parsed_code_string)                                    # LOG PYTHON
+    print(f"--- Fin du contenu ---")                              # LOG PYTHON
     ast.parse(parsed_code_string)
 except Exception as e:
     import traceback
@@ -363,7 +368,7 @@ except Exception as e:
     
 "Syntax OK"    
 `;
-// console.log("Script de validation syntaxique pour le défi:", syntaxValidationScript);
+console.log("Script de validation syntaxique pour le défi:", syntaxValidationScript); // LOG JS
 await pyodide.runPythonAsync(syntaxValidationScript);
 } catch (syntaxValidationError) {
     console.error("Erreur de syntaxe DANS LE CODE UTILISATEUR avant exécution du défi:", syntaxValidationError);
@@ -371,48 +376,77 @@ await pyodide.runPythonAsync(syntaxValidationScript);
     // et ne pas procéder à l'exécution de tracingWrapper.
     throw syntaxValidationError; // Ou retourner un indicateur d'erreur
 }
-        // Code pour tracer les variables
+        // Code pour tracer les variables: maintenant redondance avec escapedCodeForPythonTripleQuotes
         const escapedCodeForPythonExecution = code
     .replace(/\\/g, '\\\\')
-    .replace(/"""/g, '\\"\\"\\"'); // Ou tout autre échappement nécessaire
+    .replace(/"""/g, '\\"\\"\\"'); // Ou tout autre échappement nécessaire... à voir
 
     const tracingWrapper = `
-_vars_before = list(globals().keys())
+import types    # à importer globalement pour isinstance
+import json     # déjà importé par Pyodide ? pour être sûr
+
+_vars_before_execution = list(globals().keys())
 
 # --- Début du code utilisateur ---
 ${escapedCodeForPythonExecution}
 # --- Fin du code utilisateur ---
 
-_vars_after = list(globals().keys())
+_vars_after_execution = set(globals().keys())
 
 _final_vars = {}
-for _var_name in _vars_after:
-    # Vérifier si la variable a été créée par le code utilisateur
-    # + ajout de filtres pour éviter les variables internes ou non pertinentes
-    if _var_name not in _vars_before and not _var_name.startswith('_') and _var_name not in ['pyodide', 'sys', 'micropip', 'json', 'types', 'ast', 'traceback', 'error_detail', 'tracingWrapper', 'tracedVariables']:
-        _val = globals()[_var_name]
-        # Gérer les types non sérialisables simplement pour l'affichage
-        if callable(_val) or type(_val).__name__ == 'module':
-            _final_vars[_var_name] = f"<type {type(_val).__name__}>"
-        else:
-            try:
-                # Essayer de convertir en une représentation simple
-                if isinstance(_val, (str, int, float, bool, list, dict, tuple, set)):
-                     _final_vars[_var_name] = _val
-                else:
-                     _final_vars[_var_name] = repr(_val)
-            except:
-                _final_vars[_var_name] = "<valeur non représentable>"
+# On s'intéresse aux variables qui existent APRES l'exécution du code.
+for _var_name in _vars_after_execution:
+    # Filtre 1: Exclure les variables purement internes au wrapper
+    if _var_name in ['_vars_before_execution', '_vars_after_execution', '_val', '_final_vars', '_var_name_loop_variable']: # Renommer _var_name pour éviter conflit
+        continue
 
+    # Filtre 2: Exclure les noms commençant par '_' (convention pour usage interne)
+    # et les modules/fonctions standards que vous ne voulez pas tracer.
+    if _var_name.startswith('_') or \
+       _var_name in ['pyodide', 'sys', 'micropip', 'json', 'types', 'ast', 'traceback', 'error_detail',
+                     'current_code', 'user_python_code', # Variables passées par JS au script runner
+                     'cfg_instance', 'mermaid_output', 'error_message', 'output_dict', # Variables du runner de flowchart
+                     'parsed_code_string', 'List', 'Dict', 'Set', 'Tuple', 'Optional'
+                     ]:
+        continue
+
+    _val = globals()[_var_name] 
+
+    # Filtre 3: Exclure les modules et fonctions/types (sauf si vous voulez les lister)
+    # La vérification isinstance est plus robuste que type(_val).__name__
+    if isinstance(_val, (types.ModuleType, types.FunctionType, type, types.BuiltinFunctionType, types.BuiltinMethodType)):
+        # On pourrait choisir de les lister comme "<type module>" etc. ou simplement les ignorer.
+        # Pour le défi élève, on veut généralement les valeurs des variables de données.
+        continue
+    
+    # À ce stade, _var_name est probablement une variable définie par l'utilisateur.
+    # Elle peut avoir été créée par le code utilisateur, ou existait avant et a été modifiée,
+    # ou existait avant et n'a pas été modifiée mais passe les filtres.
+
+    # Logique de sérialisation (votre code existant est bon ici)
+    if isinstance(_val, (str, int, float, bool, list, dict, tuple, set)) or _val is None:
+        _final_vars[_var_name] = _val
+    else:
+        try:
+            _final_vars[_var_name] = repr(_val) 
+        except:
+            _final_vars[_var_name] = "<valeur non sérialisable>"
 
 import json
+# Pour débogage, voir ce qui est capturé avant le filtrage par _vars_before_execution
+# print(f"Variables candidates avant filtrage 'nouveau': { {k:globals()[k] for k in _vars_after_execution if k not in ['_vars_before_execution', '_vars_after_execution']} }")
+# print(f"Vars before: {_vars_before_execution}")
+
+# Maintenant, on peut raffiner en ne gardant que celles qui sont "nouvelles" ou dont la valeur a changé
+# C'est plus complexe... Pour l'instant, on prend tout ce qui passe les filtres de nom/type.
+
 json.dumps(_final_vars)
 `;
         // Attention: la sérialisation JSON directe de tous les types Python peut échouer.
         // repr() est plus sûr pour l'affichage mais plus difficile à parser en retour.
         // La version avec `_final_vars[_var_name] = _val` et `json.dumps` est plus robuste si les types sont simples.
 
-console.log("Code complet passé à Pyodide pour le défi:", tracingWrapper);
+console.log("tracingWrapper passé à Pyodide pour le défi:", tracingWrapper);
 try {
     // Validation syntaxique :
     // console.log("Code pour validation syntaxe défi:", `import ast; ast.parse("""${code.replace(/"/g, '\\"').replace(/\\/g, '\\\\')}""")`);
