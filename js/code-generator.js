@@ -1,9 +1,30 @@
 // Code Generator JavaScript file for the Python Code Exercise Authoring Tool
 
+// Fonction de récupération des options utilisateur depuis le formulaire
+const generationOptions = {
+    
+    variableTypes: {
+        int: true, // forcément activé
+        float: document.getElementById('var-float').checked,
+        str: document.getElementById('var-str').checked,
+        list: document.getElementById('var-list').checked,
+        bool: document.getElementById('var-bool').checked,
+    },
+    operationTypes: {
+        plusMinus: true, // Toujours activé
+        multDivPow: document.getElementById('op-mult-div-pow').checked,
+        moduloFloor: document.getElementById('op-modulo-floor').checked,
+    },
+    // ... autres options ...
+};
+
+
+
 // Function to generate random Python code based on user options
 function generateRandomPythonCode(options) {
     const {
-        variables,
+        variableTypes,
+        operationTypes,
         arithmetic,
         conditionals,
         loops,

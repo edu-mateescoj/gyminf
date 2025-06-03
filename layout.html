@@ -79,54 +79,225 @@
         <div class="row mb-4">
             <div class="col-12">
                 <div class="card">
+
                     <!-- En-tête de la carte du générateur de code -->
                     <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
                         <!-- Titre de la carte -->
-                        <h2 class="h5 mb-0">Générateur de Code Python</h2>
+                        <h2 class="h5 mb-1">Générateur de Code Python</h2>
                         <!-- Badge de configuration -->
                         <span class="badge bg-light text-dark d-none d-sm-inline">Configuration</span>
                     </div>
-                    <div class="card-body">
-                        <!-- Section : Choix des éléments de syntaxe -->
-                        <div class="mb-4">
-                            <h3 class="h6 mb-3">
-                                <i class="fas fa-code me-2"></i>
-                                Éléments de Syntaxe à Inclure
-                            </h3>
-                            <!-- Options de syntaxe -->
-                            <div class="d-flex flex-wrap gap-3">
-                                <!-- Option : Variables -->
-                                <div class="form-check form-check-inline">
-                                    <input class="form-check-input" type="checkbox" id="checkbox-variables" checked>
-                                    <label class="form-check-label" for="checkbox-variables">Variables</label>
+                    
+                    <!-- Section : Choix des éléments de syntaxe -->
+                    <div class="mb-1">
+                        <h3 class="h6 mb-1">
+                            <i class="fas fa-code me-2"></i>
+                            Éléments de Syntaxe à Inclure
+                        </h3>
+                    </div>
+
+                    <div class="card-body py-0 px-0">
+
+                    <!-- Cadres thématiques côte à côte en responsive -->
+                    <div class="row g-2 flex-wrap align-items-start mb-3">
+
+                        <!-- Cadre Variables -->
+                        <div class="col-12 col-md-auto mb-1 mb-md-0">
+                            <div class="border rounded bg-dark-subtle p-2 d-flex flex-column align-items-start">
+                                <div class="form-check form-switch mb-2">
+                                    <input class="form-check-input" type="checkbox" id="frame-variables" checked disabled>
+                                    <label class="form-check-label fw-bold" for="frame-variables">
+                                        <i class="fas fa-cube me-1"></i> Vars
+                                    </label>
                                 </div>
-                                <!-- Option : Arithmétique -->
-                                <div class="form-check form-check-inline">
-                                    <input class="form-check-input" type="checkbox" id="checkbox-arithmetic" checked>
-                                    <label class="form-check-label" for="checkbox-arithmetic">Arithmétique</label>
-                                </div>
-                                <!-- Option : Conditionnelles -->
-                                <div class="form-check form-check-inline">
-                                    <input class="form-check-input" type="checkbox" id="checkbox-conditionals">
-                                    <label class="form-check-label" for="checkbox-conditionals">Conditionnelles</label>
-                                </div>
-                                <!-- Option : Boucles -->
-                                <div class="form-check form-check-inline">
-                                    <input class="form-check-input" type="checkbox" id="checkbox-loops">
-                                    <label class="form-check-label" for="checkbox-loops">Boucles</label>
-                                </div>
-                                <!-- Option : Listes -->
-                                <div class="form-check form-check-inline">
-                                    <input class="form-check-input" type="checkbox" id="checkbox-lists">
-                                    <label class="form-check-label" for="checkbox-lists">Listes</label>
-                                </div>
-                                <!-- Option : Chaînes -->
-                                <div class="form-check form-check-inline">
-                                    <input class="form-check-input" type="checkbox" id="checkbox-strings">
-                                    <label class="form-check-label" for="checkbox-strings">Chaînes</label>
+                                <div id="variables-options" class="d-flex flex-column gap-1 ms-2">
+                                    <div class="form-check form-check-inline">
+                                        <input class="form-check-input" type="checkbox" id="var-int" checked disabled>
+                                        <label class="form-check-label small" for="var-int">int</label>
+                                    </div>
+                                    <div class="form-check form-check-inline">
+                                        <input class="form-check-input" type="checkbox" id="var-float">
+                                        <label class="form-check-label small" for="var-float">float</label>
+                                    </div>
+                                    <div class="form-check form-check-inline">
+                                        <input class="form-check-input" type="checkbox" id="var-str">
+                                        <label class="form-check-label small" for="var-str">str</label>
+                                    </div>
+                                    <div class="form-check form-check-inline">
+                                        <input class="form-check-input" type="checkbox" id="var-list">
+                                        <label class="form-check-label small" for="var-list">list</label>
+                                    </div>
+                                    <div class="form-check form-check-inline">
+                                        <input class="form-check-input" type="checkbox" id="var-bool">
+                                        <label class="form-check-label small" for="var-bool">bool</label>
+                                    </div>
                                 </div>
                             </div>
                         </div>
+
+                        <!-- Cadre Opérations -->
+                        <div class="col-12 col-md-auto mb-1 mb-md-0">
+                            <div class="border rounded bg-dark-subtle p-2 d-flex flex-column align-items-start">
+                                <div class="form-check form-switch mb-2">
+                                    <input class="form-check-input" type="checkbox" id="frame-operations" checked disabled>
+                                    <label class="form-check-label fw-bold" for="frame-operations">
+                                        <i class="fas fa-calculator me-1"></i> Op
+                                    </label>
+                                </div>
+                                <div id="operations-options" class="d-flex flex-column gap-1 ms-2">
+                                    <div class="form-check form-check-inline">
+                                        <input class="form-check-input" type="checkbox" id="op-plus-minus" checked disabled>
+                                        <label class="form-check-label small" for="op-plus-minus">+ -</label>
+                                    </div>
+                                    <div class="form-check form-check-inline">
+                                        <input class="form-check-input" type="checkbox" id="op-mult-div-pow">
+                                        <label class="form-check-label small" for="op-mult-div-pow">* / **</label>
+                                    </div>
+                                    <div class="form-check form-check-inline">
+                                        <input class="form-check-input" type="checkbox" id="op-modulo-floor">
+                                        <label class="form-check-label small" for="op-modulo-floor">% //</label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Cadre Conditions -->
+                        <div class="col-12 col-md-auto mb-2 mb-md-0">
+                            <div class="border rounded bg-dark-subtle p-2 d-flex flex-column align-items-start">
+                                <div class="form-check form-switch mb-2">
+                                    <input class="form-check-input" type="checkbox" id="frame-conditions">
+                                    <label class="form-check-label fw-bold" for="frame-conditions">
+                                        <i class="fas fa-code-branch me-1"></i> Conditions
+                                    </label>
+                                </div>
+                                <div id="conditions-options" class="d-flex flex-column gap-1 ms-2" style="display:none;">
+                                    <div class="form-check form-check-inline">
+                                        <input class="form-check-input" type="checkbox" id="cond-if">
+                                        <label class="form-check-label small" for="cond-if">if:</label>
+                                    </div>
+                                    <div class="form-check form-check-inline">
+                                        <input class="form-check-input" type="checkbox" id="cond-if-else">
+                                        <label class="form-check-label small" for="cond-if-else">if: ... else:</label>
+                                    </div>
+                                    <div class="form-check form-check-inline">
+                                        <input class="form-check-input" type="checkbox" id="cond-if-elif">
+                                        <label class="form-check-label small" for="cond-if-elif">if: ... elif:</label>
+                                    </div>
+                                    <div class="form-check form-check-inline">
+                                        <input class="form-check-input" type="checkbox" id="cond-if-elif-else">
+                                        <label class="form-check-label small" for="cond-if-elif-else">if: ... elif: ... else:</label>
+                                    </div>
+                                    <div class="form-check form-check-inline">
+                                        <input class="form-check-input" type="checkbox" id="cond-if-if">
+                                        <label class="form-check-label small" for="cond-if-if">if: ... if:</label>
+                                    </div>
+                                    <div class="form-check form-check-inline">
+                                        <input class="form-check-input" type="checkbox" id="cond-if-if-if">
+                                        <label class="form-check-label small" for="cond-if-if-if">if: ... if: ... if:</label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Cadre Boucles -->
+                        <div class="col-12 col-md-auto mb-0 mb-md-0">
+                            <div class="border rounded bg-dark-subtle p-2 d-flex flex-column align-items-start">
+                                <div class="form-check form-switch mb-0">
+                                    <input class="form-check-input" type="checkbox" id="frame-loops">
+                                    <label class="form-check-label fw-bold" for="frame-loops">
+                                        <i class="fas fa-sync-alt me-1"></i> Boucles
+                                    </label>
+                                </div>
+                                <div id="loops-options" class="d-flex flex-column gap-1 ms-2" style="display:none;">
+                                    <div class="form-check form-check-inline">
+                                        <input class="form-check-input" type="checkbox" id="loop-for-range">
+                                        <label class="form-check-label small" for="loop-for-range">for ... in range</label>
+                                    </div>
+                                    <div class="form-check form-check-inline">
+                                        <input class="form-check-input" type="checkbox" id="loop-for-list">
+                                        <label class="form-check-label small" for="loop-for-list">for ... in List</label>
+                                    </div>
+                                    <div class="form-check form-check-inline">
+                                        <input class="form-check-input" type="checkbox" id="loop-for-str">
+                                        <label class="form-check-label small" for="loop-for-str">for ... in Str</label>
+                                    </div>
+                                    <div class="form-check form-check-inline">
+                                        <input class="form-check-input" type="checkbox" id="loop-while">
+                                        <label class="form-check-label small" for="loop-while">while ...</label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    </div> <!-- fermeture du card-body -->
+                    
+                    <div class="card-footer py-0 bg-dark-subtle d-flex align-items-center justify-content-between">
+                        <div>
+                            <input type="checkbox" class="form-check-input me-1" id="advanced-mode">
+                            <label class="form-check-label fw-bold small" for="advanced-mode">
+                                <i class="fas fa-cogs me-1"></i> Mode avancé
+                            </label>
+                        </div>
+                        <span class="text-muted small">Plus d’options</span>
+                    </div>
+
+                        <!-- Options de syntaxe COCHE/DECOCHE -->
+                        <!-- Cadre Variables (non décochable) -->
+                        <div class="mb-3 border rounded p-3 bg-dark-subtle">
+                            <div class="form-check form-switch mb-2">
+                                <input class="form-check-input" type="checkbox" id="frame-variables" checked disabled>
+                                <label class="form-check-label fw-bold" for="frame-variables">
+                                    <i class="fas fa-cube me-1"></i> Variables
+                                </label>
+                            </div>
+                            <div class="ms-4" id="variables-options">
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="var-int" checked disabled>
+                                    <label class="form-check-label" for="var-int">Entier (int)</label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="var-float">
+                                    <label class="form-check-label" for="var-float">Décimal (float)</label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="var-str">
+                                    <label class="form-check-label" for="var-str">Chaîne (str)</label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="var-list">
+                                    <label class="form-check-label" for="var-list">Liste (list)</label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="var-bool">
+                                    <label class="form-check-label" for="var-bool">Booléen (bool)</label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Cadre Opérations (non décochable) -->
+                        <div class="mb-3 border rounded p-3 bg-dark-subtle">
+                            <div class="form-check form-switch mb-2">
+                                <input class="form-check-input" type="checkbox" id="frame-operations" checked disabled>
+                                <label class="form-check-label fw-bold" for="frame-operations">
+                                    <i class="fas fa-calculator me-1"></i> Opérations
+                                </label>
+                            </div>
+                            <div class="ms-4" id="operations-options">
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="op-plus-minus" checked disabled>
+                                    <label class="form-check-label" for="op-plus-minus">Addition / Soustraction (+, -)</label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="op-mult-div-pow">
+                                    <label class="form-check-label" for="op-mult-div-pow">Multiplication, Division entière, Puissance (*, /, **)</label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="op-modulo-floor">
+                                    <label class="form-check-label" for="op-modulo-floor">Modulo, Division plancher (%, //)</label>
+                                </div>
+                            </div>
+                        </div> 
+                        
                         <!-- Fin section des éléments de syntaxe -->
 
                         <!-- Section des options de configuration -->
@@ -168,6 +339,7 @@
                             <i class="fas fa-random me-2"></i> Générer un Code Aléatoire
                         </button>
                     </div>
+                    <!-- </div> -->
                 </div>
             </div>
         </div>

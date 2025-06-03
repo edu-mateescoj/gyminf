@@ -29,6 +29,107 @@ document.addEventListener('DOMContentLoaded', function() {
     // via initPyodideAndLoadScript() et mermaid.initialize() respectivement.
     // Il n'est pas nécessaire de les réinitialiser ici.
 
+    // Vérifie la présence des IDs au démarrage
+    const condSection = document.getElementById('frame-conditions');
+    const condOptions = document.getElementById('conditions-options');
+    const loopSection = document.getElementById('frame-loops');
+    const loopOptions = document.getElementById('loops-options');
+
+    console.log('condSection:', condSection);
+    console.log('condOptions:', condOptions);
+    console.log('loopSection:', loopSection);
+    console.log('loopOptions:', loopOptions);
+
+    // Gestion de l'affichage dynamique des cadres d'options
+
+    /**
+     * Affiche ou masque les options internes des conditions selon la coche principale.
+     */
+    function updateConditionsOptionsDisplay() {
+        if(!condSection || !condOptions) {
+            console.error('Conditions : IDs non trouvés!');
+            return;
+        }
+        condOptions.style.display = condSection.checked ? 'flex' : 'none';
+        console.log('Affichage Conditions:', condOptions.style.display);
+    }
+
+    /**
+     * Affiche ou masque les options internes des boucles selon la coche principale.
+     */
+    function updateLoopsOptionsDisplay() {
+        if(!loopSection || !loopOptions) {
+            console.error('Boucles : IDs non trouvés!');
+            return;
+        }
+        loopOptions.style.display = loopSection.checked ? 'flex' : 'none';
+        console.log('Affichage Boucles:', loopOptions.style.display);
+    }
+
+    // --- Initialisation de l'état au chargement ---
+    updateConditionsOptionsDisplay();
+    updateLoopsOptionsDisplay();
+
+    // --- Gestionnaires d'événements pour cases principales ---
+    // Event listeners
+    if(condSection)
+        condSection.addEventListener('change', updateConditionsOptionsDisplay);
+    if(loopSection)
+        loopSection.addEventListener('change', updateLoopsOptionsDisplay);
+
+    // --- Gestionnaire pour le bouton "Options Avancées" ---
+    document.getElementById('advanced-mode').addEventListener('change', function() {
+        const isAdvanced = this.checked;
+        // Gestion options avancées pour Opérations
+        let opDiv = document.getElementById('operations-options');
+        if (isAdvanced && !document.getElementById('op-and')) {
+            opDiv.insertAdjacentHTML('beforeend', `
+                <div class="form-check form-check-inline">
+                    <input class="form-check-input" type="checkbox" id="op-and">
+                    <label class="form-check-label small" for="op-and">and</label>
+                </div>
+                <div class="form-check form-check-inline">
+                    <input class="form-check-input" type="checkbox" id="op-or">
+                    <label class="form-check-label small" for="op-or">or</label>
+                </div>
+                <div class="form-check form-check-inline">
+                    <input class="form-check-input" type="checkbox" id="op-not">
+                    <label class="form-check-label small" for="op-not">not</label>
+                </div>
+            `);
+        } else if (!isAdvanced) {
+            // Supprimer uniquement les coches avancées (si présentes)
+            ['op-and', 'op-or', 'op-not'].forEach(id => {
+                let el = document.getElementById(id);
+                if (el) el.parentNode.remove();
+            });
+        }
+        // Gestion options avancées pour Boucles
+        let loopDiv = document.getElementById('loops-options');
+        if (isAdvanced && !document.getElementById('loop-for-tuple')) {
+            loopDiv.insertAdjacentHTML('beforeend', `
+                <div class="form-check form-check-inline">
+                    <input class="form-check-input" type="checkbox" id="loop-for-tuple">
+                    <label class="form-check-label small" for="loop-for-tuple">for ... Tuple</label>
+                </div>
+                <div class="form-check form-check-inline">
+                    <input class="form-check-input" type="checkbox" id="loop-continue">
+                    <label class="form-check-label small" for="loop-continue">continue</label>
+                </div>
+                <div class="form-check form-check-inline">
+                    <input class="form-check-input" type="checkbox" id="loop-while-op">
+                    <label class="form-check-label small" for="loop-while-op">while ... op.</label>
+                </div>
+            `);
+        } else if (!isAdvanced) {
+            ['loop-for-tuple','loop-continue','loop-while-op'].forEach(id => {
+                let el = document.getElementById(id);
+                if (el) el.parentNode.remove();
+            });
+        }
+    });
+    //  Fin de l'affichage dynamique des cadres d'options
+
     // --- Gestionnaires d'événements pour les boutons ---
 
     // Gestionnaire pour le bouton "Générer un Code Aléatoire" (#generate-code-btn).
