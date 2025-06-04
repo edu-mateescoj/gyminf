@@ -168,36 +168,13 @@
                                     <div class="form-check form-switch mb-2">
                                         <input class="form-check-input" type="checkbox" id="frame-conditions">
                                         <label class="form-check-label fw-bold" for="frame-conditions">
-                                            <i class="fas fa-code-branch me-1"></i> Conditions
+                                            <i class="fas fa-code-branch me-1"></i> Ctrl
                                         </label>
                                     </div>
-                                    <!-- Les options sont masquées par défaut via JS/CSS, et 'flex' sera appliqué si coché -->
-                                    <div id="conditions-options" class="d-flex flex-column gap-1 ms-2" style="display:none;">
-                                        <div class="form-check form-check-inline">
-                                            <input class="form-check-input" type="checkbox" id="cond-if">
-                                            <label class="form-check-label small" for="cond-if">if:</label>
-                                        </div>
-                                        <div class="form-check form-check-inline">
-                                            <input class="form-check-input" type="checkbox" id="cond-if-else">
-                                            <label class="form-check-label small" for="cond-if-else">if: ... else:</label>
-                                        </div>
-                                        <div class="form-check form-check-inline">
-                                            <input class="form-check-input" type="checkbox" id="cond-if-elif">
-                                            <label class="form-check-label small" for="cond-if-elif">if: ... elif:</label>
-                                        </div>
-                                        <div class="form-check form-check-inline">
-                                            <input class="form-check-input" type="checkbox" id="cond-if-elif-else">
-                                            <label class="form-check-label small" for="cond-if-elif-else">if: ... elif: ... else:</label>
-                                        </div>
-                                        <div class="form-check form-check-inline">
-                                            <input class="form-check-input" type="checkbox" id="cond-if-if">
-                                            <label class="form-check-label small" for="cond-if-if">if: ... if:</label>
-                                        </div>
-                                        <div class="form-check form-check-inline">
-                                            <input class="form-check-input" type="checkbox" id="cond-if-if-if">
-                                            <label class="form-check-label small" for="cond-if-if-if">if: ... if: ... if:</label>
-                                        </div>
-                                    </div>
+                                    <!-- Le conteneur pour les options, initialement vide -->
+                                    <div id="conditions-options-container" class="mt-2 ms-2">
+                                        <!-- Les options seront injectées ici par JS -->
+                                    </div> 
                                 </div>
                             </div>
 
@@ -207,30 +184,33 @@
                                     <div class="form-check form-switch mb-2"> <!-- mb-0 original, changé pour mb-2 pour cohérence -->
                                         <input class="form-check-input" type="checkbox" id="frame-loops">
                                         <label class="form-check-label fw-bold" for="frame-loops">
-                                            <i class="fas fa-sync-alt me-1"></i> Boucles
+                                            <i class="fas fa-sync-alt me-1"></i> Loop
                                         </label>
                                     </div>
-                                    <!-- Les options sont masquées par défaut via JS/CSS, et 'flex' sera appliqué si coché -->
-                                    <div id="loops-options" class="d-flex flex-column gap-1 ms-2" style="display:none;">
-                                        <div class="form-check form-check-inline">
-                                            <input class="form-check-input" type="checkbox" id="loop-for-range">
-                                            <label class="form-check-label small" for="loop-for-range">for ... in range</label>
-                                        </div>
-                                        <div class="form-check form-check-inline">
-                                            <input class="form-check-input" type="checkbox" id="loop-for-list">
-                                            <label class="form-check-label small" for="loop-for-list">for ... in List</label>
-                                        </div>
-                                        <div class="form-check form-check-inline">
-                                            <input class="form-check-input" type="checkbox" id="loop-for-str">
-                                            <label class="form-check-label small" for="loop-for-str">for ... in Str</label>
-                                        </div>
-                                        <div class="form-check form-check-inline">
-                                            <input class="form-check-input" type="checkbox" id="loop-while">
-                                            <label class="form-check-label small" for="loop-while">while ...</label>
-                                        </div>
+                                    <!-- Le conteneur des boucles, initialement vide -->
+                                    <div id="loops-options-container" class="mt-2 ms-2">
+                                        <!-- Ce div doit être vide ou avoir un commentaire -->
                                     </div>
                                 </div>
                             </div>
+
+                            <!-- Cadre Fonctions (Func) -->
+                            <div class="col-12 col-md-auto mb-1 mb-md-0">
+                                <div class="border rounded bg-dark-subtle p-2 d-flex flex-column align-items-start">
+                                    <div class="form-check form-switch mb-2">
+                                        <input class="form-check-input" type="checkbox" id="frame-functions"> <!-- Nouvel ID pour la section principale -->
+                                        <label class="form-check-label fw-bold" for="frame-functions">
+                                            <i class="fas fa-gears me-1"></i> Func <!-- Icône pour fonctions/méthodes, ou fa-cogs, fa-code, fa-sitemap -->
+                                        </label>
+                                    </div>
+                                    <!-- Le conteneur où les options des fonctions seront injectées -->
+                                    <div id="functions-options-container" class="mt-2 ms-2">
+                                        <!-- Les options seront injectées ici par JS -->
+                                    </div>
+                                </div>
+                            </div>
+
+                            
                         </div> <!-- Fin .row g-2 (Cadres thématiques) -->
                     </div> <!-- Fin du premier card-body -->
                     

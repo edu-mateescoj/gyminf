@@ -27,69 +27,106 @@ document.addEventListener('DOMContentLoaded', function() {
     // --- Gestion de l'affichage dynamique des cadres d'options ---
         // Fonction d'initialisation pour les options dynamiques
     function initializeDynamicOptions() {
-        console.log("Tentative d'initialisation des options dynamiques...");// Récupération des éléments DOM pour les sections Conditions et Boucles.
+        console.log("Tentative d'initialisation des options dynamiques DOM...");// Récupération des éléments DOM pour les sections Conditions et Boucles.
 
         const condSectionCheckbox = document.getElementById('frame-conditions');
-        const condOptionsContainer = document.getElementById('conditions-options');
-        const loopSectionCheckbox = document.getElementById('frame-loops');
-        const loopOptionsContainer = document.getElementById('loops-options');
-
-    // Log initial pour vérifier si les éléments sont bien trouvés.
-        // Log amélioré pour voir si les éléments sont trouvés à ce stade
-        console.log('ELEMENT CHECK - Checkbox Conditions (frame-conditions):', condSectionCheckbox ? 'Trouvé' : 'NON TROUVÉ');
-        console.log('ELEMENT CHECK - Conteneur Options Conditions (conditions-options):', condOptionsContainer ? 'Trouvé' : 'NON TROUVÉ');
-        console.log('ELEMENT CHECK - Checkbox Boucles (frame-loops):', loopSectionCheckbox ? 'Trouvé' : 'NON TROUVÉ');
-        console.log('ELEMENT CHECK - Conteneur Options Boucles (loops-options):', loopOptionsContainer ? 'Trouvé' : 'NON TROUVÉ');
-
-    /**
-     * Affiche ou masque les options internes des conditions selon l'état de la case à cocher principale.
-     */
-    function updateConditionsOptionsDisplay() {
-        // La vérification des éléments est maintenant déjà faite dans initializeDynamicOptions
-    
-        // Si la case principale "Conditions" est cochée, affiche les options spécifiques (display: 'flex').
-        // Sinon, les masque (display: 'none').
-        // 'flex' est utilisé car le conteneur d'options est stylé avec `d-flex`.
-        condOptionsContainer.style.display = condSectionCheckbox.checked ? 'flex' : 'none';
-        console.log('État affichage options Conditions changé pour:', condOptionsContainer.style.display, '(Checkbox cochée:', condSectionCheckbox.checked, ')');
+        // Le conteneur où les options seront injectées
+        const condOptionsTargetContainer = document.getElementById('conditions-options-container'); 
         
-        // BORDURE DEBOGAGE
-        /*if (condSectionCheckbox.checked) {
-            condOptionsContainer.style.border = "2px solid red"; 
-            condOptionsContainer.style.padding = "5px"; // Ajout d'un padding pour le rendre plus visible
-        } else {
-            condOptionsContainer.style.border = "none";
-            condOptionsContainer.style.padding = "0";
-        }*/
-    }
+        const loopSectionCheckbox = document.getElementById('frame-loops');
+        // Le conteneur où les options des boucles seront injectées
+        const loopOptionsTargetContainer = document.getElementById('loops-options-container');
 
-    /**
-     * Affiche ou masque les options internes des boucles selon l'état de la case à cocher principale.
-     */
-    function updateLoopsOptionsDisplay() {
-         // La vérification des éléments est maintenant déjà faite dans initializeDynamicOptions
+        const funcSectionCheckbox = document.getElementById('frame-functions');
+        // Le conteneur où les options des boucles seront injectées
+        const funcOptionsTargetContainer = document.getElementById('functions-options-container');
 
-        // Si la case principale "Boucles" est cochée, affiche les options spécifiques (display: 'flex').
-        // Sinon, les masque (display: 'none').
-        loopOptionsContainer.style.display = loopSectionCheckbox.checked ? 'flex' : 'none';
-        console.log('État affichage options Boucles changé pour:', loopOptionsContainer.style.display, '(Checkbox cochée:', loopSectionCheckbox.checked, ')');
-    }
+        if (!condSectionCheckbox || !condOptionsTargetContainer || !loopSectionCheckbox || 
+            !loopOptionsTargetContainer) {
+            console.error("Un ou plusieurs éléments DOM cibles pour les options dynamiques sont introuvables.");
+            return;
+        }
 
-    // On peut enlever les anciens listeners avant d'ajouter les nouveaux, par précaution,
-    // bien qu'avec DOMContentLoaded, cela ne devrait pas être nécessaire s'il ne s'exécute qu'une fois.
-    
-    // Pour éviter les attachements multiples si cette fonction était appelée plusieurs fois (peu probable ici)
-    condSectionCheckbox.removeEventListener('change', updateConditionsOptionsDisplay);
-    condSectionCheckbox.addEventListener('change', updateConditionsOptionsDisplay);
-    
-    loopSectionCheckbox.removeEventListener('change', updateLoopsOptionsDisplay);
-    loopSectionCheckbox.addEventListener('change', updateLoopsOptionsDisplay);
+        // HTML pour les options de conditions (BASE - SANS les if imbriqués)
+        const conditionsOptionsHTML_Base = `
+            <div class="d-flex flex-column gap-1">
+                <div class="form-check form-check-inline"><input class="form-check-input" type="checkbox" id="cond-if"><label class="form-check-label small" for="cond-if">if:</label></div>
+                <div class="form-check form-check-inline"><input class="form-check-input" type="checkbox" id="cond-if-else"><label class="form-check-label small" for="cond-if-else">if:_else:</label></div>
+                <div class="form-check form-check-inline"><input class="form-check-input" type="checkbox" id="cond-if-elif"><label class="form-check-label small" for="cond-if-elif">if:_elif:</label></div>
+                <div class="form-check form-check-inline"><input class="form-check-input" type="checkbox" id="cond-if-elif-else"><label class="form-check-label small" for="cond-if-elif-else">elif:_else:</label></div>
+                <!-- Les if...if et if...if...if sont maintenant en mode avancé -->
+            </div>`;
+        
+        // HTML pour les options de boucles (BASE - SANS les boucles imbriquées)
+        const loopsOptionsHTML_Base = `
+            <div class="d-flex flex-column gap-1">
+                <div class="form-check form-check-inline"><input class="form-check-input" type="checkbox" id="loop-for-range"><label class="form-check-label small" for="loop-for-range">for_range</label></div>
+                <div class="form-check form-check-inline"><input class="form-check-input" type="checkbox" id="loop-for-list"><label class="form-check-label small" for="loop-for-list">for_List</label></div>
+                <div class="form-check form-check-inline"><input class="form-check-input" type="checkbox" id="loop-for-str"><label class="form-check-label small" for="loop-for-str">for_Str</label></div>
+                <div class="form-check form-check-inline"><input class="form-check-input" type="checkbox" id="loop-while"><label class="form-check-label small" for="loop-while">while_</label></div>
+            </div>`;
 
-    // --- Initialisation de l'état d'affichage au chargement de la page ---
-    // Appelle les fonctions une fois au début pour s'assurer que l'état initial (masqué par défaut si non coché) est correct.
-    updateConditionsOptionsDisplay();
-    updateLoopsOptionsDisplay();
-    console.log("Options dynamiques initialisées et listeners attachés.");
+        // HTML pour les options de fonctions (BASE)
+        const functionsOptionsHTML_Base = `
+            <div class="d-flex flex-column gap-1">
+                <div class="form-check form-check-inline"><input class="form-check-input" type="checkbox" id="func-def-a"><label class="form-check-label small" for="func-def-a">def f(a)</label></div>
+                <div class="form-check form-check-inline"><input class="form-check-input" type="checkbox" id="func-builtins"><label class="form-check-label small" for="func-builtins">builtins</label></div>
+                <div class="form-check form-check-inline"><input class="form-check-input" type="checkbox" id="func-return"><label class="form-check-label small" for="func-return">return</label></div>
+                <!-- Les autres options seront en mode avancé ou ajoutées ici si de base -->
+            </div>`;
+
+
+        function updateConditionsOptionsDOM() {
+            if (condSectionCheckbox.checked) {
+                condOptionsTargetContainer.innerHTML = conditionsOptionsHTML_Base;
+                console.log('Options (de base) pour Conditions INJECTÉES dans le DOM.');
+                const internalContainer = condOptionsTargetContainer.querySelector('.d-flex.flex-column.gap-1');
+                if (internalContainer) addAdvancedConditionOptionsIfNeeded(internalContainer);
+            } else {
+                condOptionsTargetContainer.innerHTML = ''; // Retire les options du DOM
+                console.log('Options Conditions RETIRÉES du DOM.');
+            }
+        }
+
+        function updateLoopsOptionsDOM() {
+            if (loopSectionCheckbox.checked) {
+                loopOptionsTargetContainer.innerHTML = loopsOptionsHTML_Base;
+                console.log('Options Boucles INJECTÉES dans le DOM.');
+                const internalContainer = loopOptionsTargetContainer.querySelector('.d-flex.flex-column.gap-1');
+                if (internalContainer) addAdvancedLoopOptionsIfNeeded(internalContainer);
+            } else {
+                loopOptionsTargetContainer.innerHTML = ''; // Retire les options du DOM
+                console.log('Options Boucles RETIRÉES du DOM.');
+            }
+        }
+
+        function updateFunctionsOptionsDOM() {
+            if (funcSectionCheckbox.checked) {
+                funcOptionsTargetContainer.innerHTML = functionsOptionsHTML_Base;
+                console.log('Options Fonctions (base) INJECTÉES.');
+                const internalContainer = funcOptionsTargetContainer.querySelector('.d-flex.flex-column.gap-1');
+                if (internalContainer) addAdvancedFunctionOptionsIfNeeded(internalContainer);
+            } else {
+                funcOptionsTargetContainer.innerHTML = '';
+                console.log('Options Fonctions RETIRÉES.');
+            }
+        }
+
+        // Attacher listener pour func + Appel initial 
+
+        condSectionCheckbox.removeEventListener('change', updateConditionsOptionsDOM);
+        condSectionCheckbox.addEventListener('change', updateConditionsOptionsDOM);
+        
+        loopSectionCheckbox.removeEventListener('change', updateLoopsOptionsDOM);
+        loopSectionCheckbox.addEventListener('change', updateLoopsOptionsDOM);
+
+        funcSectionCheckbox.addEventListener('change', updateFunctionsOptionsDOM);
+        updateFunctionsOptionsDOM();
+
+        // État initial
+        updateConditionsOptionsDOM();
+        updateLoopsOptionsDOM();
+        console.log("Options dynamiques (DOM manipulation) initialisées.");
     }
 
     // Appeler la fonction d'initialisation
@@ -101,10 +138,9 @@ document.addEventListener('DOMContentLoaded', function() {
     if (advancedModeCheckbox) {
         advancedModeCheckbox.addEventListener('change', function() {
             const isAdvanced = this.checked;
-            const opOptionsDiv = document.getElementById('operations-options'); // Cible le bon conteneur d'options
-            const loopOptionsDiv = document.getElementById('loops-options');
 
-            // Gestion options avancées pour Opérations
+            // Gestion pour Opérations (reste pareil, car #operations-options est toujours dans le DOM)
+            const opOptionsDiv = document.getElementById('operations-options'); // Cible le bon conteneur d'options
             if (opOptionsDiv) { // Vérifier que le conteneur existe
                 if (isAdvanced) {
                     // Ajouter les options avancées si elles n'existent pas déjà
@@ -139,45 +175,147 @@ document.addEventListener('DOMContentLoaded', function() {
                 console.warn("Conteneur 'operations-options' non trouvé pour le mode avancé.");
             }
 
-            // Gestion options avancées pour Boucles
-            if (loopOptionsDiv) { // Vérifier que le conteneur existe
-                if (isAdvanced) {
-                    // Ajouter les options avancées si elles n'existent pas déjà
-                     if (!document.getElementById('loop-for-tuple')) {
-                        loopOptionsDiv.insertAdjacentHTML('beforeend', `
-                            <div class="form-check form-check-inline">
-                                <input class="form-check-input" type="checkbox" id="loop-for-tuple">
-                                <label class="form-check-label small" for="loop-for-tuple">for ... Tuple</label>
-                            </div>`);
-                    }
-                    if (!document.getElementById('loop-continue')) {
-                        loopOptionsDiv.insertAdjacentHTML('beforeend', `
-                            <div class="form-check form-check-inline">
-                                <input class="form-check-input" type="checkbox" id="loop-continue">
-                                <label class="form-check-label small" for="loop-continue">continue</label>
-                            </div>`);
-                    }
-                    if (!document.getElementById('loop-while-op')) {
-                        loopOptionsDiv.insertAdjacentHTML('beforeend', `
-                            <div class="form-check form-check-inline">
-                                <input class="form-check-input" type="checkbox" id="loop-while-op">
-                                <label class="form-check-label small" for="loop-while-op">while ... op.</label>
-                            </div>`);
-                    }
-                } else {
-                     // Supprimer les options avancées si elles existent
-                    ['loop-for-tuple','loop-continue','loop-while-op'].forEach(id => {
-                        let el = document.getElementById(id);
-                         if (el && el.parentNode) el.parentNode.remove(); });
-                }
-            } else {
-                console.warn("Conteneur 'loops-options' non trouvé pour le mode avancé.");
+            // Gestion options avancées pour Boucles (doit maintenant cibler le conteneur interne s'il existe)
+            const loopOptionsInternalContainer = document.querySelector('#loops-options-container > .d-flex.flex-column.gap-1');
+            if (loopOptionsInternalContainer) { // Vérifier que le conteneur existe: les options de boucles sont actuellement affichées
+                addAdvancedLoopOptionsIfNeeded(loopOptionsInternalContainer, isAdvanced);
+            } else if (!isAdvanced) {
+                // Si on désactive le mode avancé et que les options de boucles ne sont pas affichées,
+                // il n'y a rien à faire directement sur les options avancées de boucles puisqu'elles ne sont pas dans le DOM.
+                // Elles ne seront pas ajoutées la prochaine fois que les boucles seront affichées.
+                // Si loopOptionsInternalContainer est null (parce que les boucles ne sont pas cochées),
+            // addAdvancedLoopOptionsIfNeeded sera appelé correctement par updateLoopsOptionsDOM quand les boucles seront cochées.
             }
+
+            // idem pour Conditions et Fonctions
+            const condOptionsInternalContainer = document.querySelector('#conditions-options-container > .d-flex.flex-column.gap-1');
+            if (condOptionsInternalContainer) addAdvancedConditionOptionsIfNeeded(condOptionsInternalContainer, isAdvanced);
+            const funcOptionsInternalContainer = document.querySelector('#functions-options-container > .d-flex.flex-column.gap-1');
+            if (funcOptionsInternalContainer) addAdvancedFunctionOptionsIfNeeded(funcOptionsInternalContainer, isAdvanced);
+
+
         });
-    } else {
-        console.warn("Checkbox 'advanced-mode' non trouvée.");
     }
-    //  Fin de l'affichage dynamique des cadres d'options
+    // Fonction utilitaire pour ajouter/supprimer les options avancées des boucles
+    // Prend en paramètre le conteneur où injecter et l'état du mode avancé
+    function addAdvancedLoopOptionsIfNeeded(container, isAdvancedModeActiveOverride = null) {
+        if (!container) return;
+
+        // Détermine si le mode avancé est actif. Si un override est fourni, l'utilise, sinon vérifie la checkbox.
+        const isAdvanced = isAdvancedModeActiveOverride !== null ? isAdvancedModeActiveOverride :
+                           (document.getElementById('advanced-mode') ? document.getElementById('advanced-mode').checked : false);
+
+        // options avancées pour les boucles ACTUELLEMENT
+        const advancedLoopOptions = [
+            { id: 'loop-nested-for2', label: 'for^2' },
+            { id: 'loop-nested-for3', label: 'for^3' },
+            { id: 'loop-while-op', label: 'while<op>' } // ça on garde
+        ];
+
+        // IDs des anciennes options à trasher (si on les rencontre)
+        const oldAdvancedLoopOptionIDs = ['loop-for-tuple', 'loop-continue'];
+
+        if (isAdvanced) {
+            console.log("Mode avancé activé pour les boucles. Ajout des options.");
+            advancedLoopOptions.forEach(opt => {
+                if (!container.querySelector(`#${opt.id}`)) {
+                    container.insertAdjacentHTML('beforeend', 
+                        `<div class="form-check form-check-inline">
+                            <input class="form-check-input" type="checkbox" id="${opt.id}">
+                            <label class="form-check-label small" for="${opt.id}">${opt.label}</label>
+                         </div>`
+                    );
+                }
+            });
+            // S'assurer que les anciennes sont bien supprimées
+            oldAdvancedLoopOptionIDs.forEach(idSuffix => {
+                let el = container.querySelector(`#${idSuffix}`);
+                if (el && el.parentNode && el.parentNode.classList.contains('form-check')) {
+                     el.parentNode.remove();
+                }
+            });
+        } else {
+            console.log("Mode avancé désactivé pour les boucles. Suppression des options.");
+            // Supprimer toutes les options avancées définies (nouvelles et anciennes pour être sûr)
+            const allPossibleAdvancedLoopIDs = advancedLoopOptions.map(o => o.id).concat(oldAdvancedLoopOptionIDs);
+            allPossibleAdvancedLoopIDs.forEach(idSuffix => {
+                let el = container.querySelector(`#${idSuffix}`);
+                if (el && el.parentNode && el.parentNode.classList.contains('form-check')) {
+                     el.parentNode.remove();
+                }
+            });
+        }
+    }
+
+    function addAdvancedConditionOptionsIfNeeded(container, isAdvancedModeActiveOverride = null) {
+        if (!container) return;
+        const isAdvanced = isAdvancedModeActiveOverride !== null ? isAdvancedModeActiveOverride :
+                           (document.getElementById('advanced-mode') ? document.getElementById('advanced-mode').checked : false);
+
+        const advancedConditionOptions = [
+            { id: 'cond-if-if', label: 'if:_if:' },
+            { id: 'cond-if-if-if', label: 'if:_if:_if:' }
+        ];
+
+        if (isAdvanced) {
+            console.log("Mode avancé activé pour les Conditions. Ajout des options.");
+            advancedConditionOptions.forEach(opt => {
+                if (!container.querySelector(`#${opt.id}`)) {
+                    container.insertAdjacentHTML('beforeend', 
+                        `<div class="form-check form-check-inline">
+                            <input class="form-check-input" type="checkbox" id="${opt.id}">
+                            <label class="form-check-label small" for="${opt.id}">${opt.label}</label>
+                         </div>`
+                    );
+                }
+            });
+        } else {
+            console.log("Mode avancé désactivé pour les Conditions. Suppression des options.");
+            advancedConditionOptions.forEach(opt => {
+                let el = container.querySelector(`#${opt.id}`);
+                if (el && el.parentNode && el.parentNode.classList.contains('form-check')) {
+                     el.parentNode.remove();
+                }
+            });
+        }
+    }
+
+    function addAdvancedFunctionOptionsIfNeeded(container, isAdvancedModeActiveOverride = null) {
+        if (!container) return;
+        const isAdvanced = isAdvancedModeActiveOverride !== null ? isAdvancedModeActiveOverride :
+                           (document.getElementById('advanced-mode') ? document.getElementById('advanced-mode').checked : false);
+
+        const advancedFunctionOptions = [
+            { id: 'func-def-ab', label: 'def f(a,b)' },
+            { id: 'func-op-list', label: 'opList' }, // Opérations sur listes (ex: .append, len())
+            { id: 'func-op-str', label: 'opStr' }   // Opérations sur chaînes (ex: +, slicing, len())
+        ];
+        // Les options de base sont: func-def-a, func-builtins, func-return
+
+        if (isAdvanced) {
+            console.log("Mode avancé activé pour les Fonctions. Ajout des options.");
+            advancedFunctionOptions.forEach(opt => {
+                if (!container.querySelector(`#${opt.id}`)) {
+                    container.insertAdjacentHTML('beforeend', 
+                        `<div class="form-check form-check-inline">
+                            <input class="form-check-input" type="checkbox" id="${opt.id}">
+                            <label class="form-check-label small" for="${opt.id}">${opt.label}</label>
+                         </div>`
+                    );
+                }
+            });
+        } else {
+            console.log("Mode avancé désactivé pour les Fonctions. Suppression des options.");
+            advancedFunctionOptions.forEach(opt => {
+                let el = container.querySelector(`#${opt.id}`);
+                if (el && el.parentNode && el.parentNode.classList.contains('form-check')) {
+                     el.parentNode.remove();
+                }
+            });
+        }
+    }
+//  Fin de l'affichage dynamique des cadres d'options
+
 
     // --- Gestionnaires d'événements pour les boutons ---
 
@@ -185,51 +323,63 @@ document.addEventListener('DOMContentLoaded', function() {
     const generateCodeButton = document.getElementById('generate-code-btn');
     if (generateCodeButton) {
         generateCodeButton.addEventListener('click', function() {
+            
+            // Pour récupérer l'état de #cond-if, il faut vérifier s'il existe :
+            // const condIfCheckbox = document.getElementById('cond-if');
+            // const isCondIfChecked = condIfCheckbox ? condIfCheckbox.checked : false;
+            // ... faire de même pour toutes les options injectées dynamiquement.
             console.log("Bouton 'Générer un Code Aléatoire' cliqué.");
             
-            // Récupération dynamique des options AU MOMENT du clic
+            // 1. Récupérer les options de génération depuis le DOM.
+            const getCheckedStatus = (id) => {
+                const el = document.getElementById(id);
+                return el ? el.checked : false;
+            };
+            
             const generationOptions = {
-                // Variables: 'frame-variables' est désactivé et coché, donc on se base sur les sous-options.
-                var_int: document.getElementById('var-int') ? document.getElementById('var-int').checked : false, // Toujours true car disabled & checked
-                var_float: document.getElementById('var-float') ? document.getElementById('var-float').checked : false,
-                var_str: document.getElementById('var-str') ? document.getElementById('var-str').checked : false,
-                var_list: document.getElementById('var-list') ? document.getElementById('var-list').checked : false,
-                var_bool: document.getElementById('var-bool') ? document.getElementById('var-bool').checked : false,
+                var_int: getCheckedStatus('var-int'), // Toujours true car disabled & checked
+                var_float: getCheckedStatus('var-float'),
+                var_str: getCheckedStatus('var-str'),
+                var_list: getCheckedStatus('var-list'),
+                var_bool: getCheckedStatus('var-bool'),
                 
-                // Opérations: 'frame-operations' est désactivé et coché.
-                op_plus_minus: document.getElementById('op-plus-minus') ? document.getElementById('op-plus-minus').checked : false, // Toujours true
-                op_mult_div_pow: document.getElementById('op-mult-div-pow') ? document.getElementById('op-mult-div-pow').checked : false,
-                op_modulo_floor: document.getElementById('op-modulo-floor') ? document.getElementById('op-modulo-floor').checked : false,
-                op_and: document.getElementById('op-and') ? document.getElementById('op-and').checked : false, // Mode avancé
-                op_or: document.getElementById('op-or') ? document.getElementById('op-or').checked : false,   // Mode avancé
-                op_not: document.getElementById('op-not') ? document.getElementById('op-not').checked : false,   // Mode avancé
+                op_plus_minus: getCheckedStatus('op-plus-minus'), // Toujours true
+                op_mult_div_pow: getCheckedStatus('op-mult-div-pow'),
+                op_modulo_floor: getCheckedStatus('op-modulo-floor'),
+                op_and: getCheckedStatus('op-and'),
+                op_or: getCheckedStatus('op-or'),
+                op_not: getCheckedStatus('op-not'),
 
-                // Conditions: principal + sous-options
-                main_conditions: document.getElementById('frame-conditions') ? document.getElementById('frame-conditions').checked : false,
-                cond_if: document.getElementById('cond-if') ? document.getElementById('cond-if').checked : false,
-                cond_if_else: document.getElementById('cond-if-else') ? document.getElementById('cond-if-else').checked : false,
-                cond_if_elif: document.getElementById('cond-if-elif') ? document.getElementById('cond-if-elif').checked : false,
-                cond_if_elif_else: document.getElementById('cond-if-elif-else') ? document.getElementById('cond-if-elif-else').checked : false,
-                cond_if_if: document.getElementById('cond-if-if') ? document.getElementById('cond-if-if').checked : false,
-                cond_if_if_if: document.getElementById('cond-if-if-if') ? document.getElementById('cond-if-if-if').checked : false,
+                main_conditions: getCheckedStatus('frame-conditions'),
+                cond_if: getCheckedStatus('cond-if'), // Sera false si non injecté
+                cond_if_else: getCheckedStatus('cond-if-else'),
+                cond_if_elif: getCheckedStatus('cond-if-elif'),
+                cond_if_elif_else: getCheckedStatus('cond-if-elif-else'),
+                cond_if_if: getCheckedStatus('cond-if-if'),         // mode Avancé
+                cond_if_if_if: getCheckedStatus('cond-if-if-if'),   // mode Avancé
                 
-                // Boucles: principal + sous-options
-                main_loops: document.getElementById('frame-loops') ? document.getElementById('frame-loops').checked : false,
-                loop_for_range: document.getElementById('loop-for-range') ? document.getElementById('loop-for-range').checked : false,
-                loop_for_list: document.getElementById('loop-for-list') ? document.getElementById('loop-for-list').checked : false,
-                loop_for_str: document.getElementById('loop-for-str') ? document.getElementById('loop-for-str').checked : false,
-                loop_while: document.getElementById('loop-while') ? document.getElementById('loop-while').checked : false,
-                loop_for_tuple: document.getElementById('loop-for-tuple') ? document.getElementById('loop-for-tuple').checked : false, // Mode avancé
-                loop_continue: document.getElementById('loop-continue') ? document.getElementById('loop-continue').checked : false, // Mode avancé
-                loop_while_op: document.getElementById('loop-while-op') ? document.getElementById('loop-while-op').checked : false, // Mode avancé
+                main_loops: getCheckedStatus('frame-loops'),
+                loop_for_range: getCheckedStatus('loop-for-range'), // Sera false si non injecté
+                loop_for_list: getCheckedStatus('loop-for-list'),
+                loop_for_str: getCheckedStatus('loop-for-str'),
+                loop_while: getCheckedStatus('loop-while'),
+                loop_nested_for2: getCheckedStatus('loop-nested-for2'), // Avancé
+                loop_nested_for3: getCheckedStatus('loop-nested-for3'), // Avancé
+                loop_while_op: getCheckedStatus('loop-while-op'),       // Avancé
                                 
+                main_functions: getCheckedStatus('frame-functions'),
+                func_def_a: getCheckedStatus('func-def-a'),
+                func_builtins: getCheckedStatus('func-builtins'),
+                func_return: getCheckedStatus('func-return'),
+                func_def_ab: getCheckedStatus('func-def-ab'),       // Avancé
+                func_op_list: getCheckedStatus('func-op-list'),     // Avancé
+                func_op_str: getCheckedStatus('func-op-str'),       // Avancé
+
                 complexityLevel: parseInt(document.getElementById('complexity-level').value),
-                numLines: parseInt(document.getElementById('num-lines').value),
+                numLines: parseInt(document.getElementById('num-lines').value), // à abandonner ??
                 numVariables: parseInt(document.getElementById('num-variables').value)
             };
-            // Pour débogage, vérifiez que les options sont correctement récupérées
-            console.log("Options de génération pour code-generator.js:", generationOptions);
-
+            console.log("Options de génération pour code-generator.js (DOM manipulation):", generationOptions);
 
             // 2. Appeler la fonction de génération de code (doit être définie dans code-generator.js).
             var newGeneratedCode = "";
