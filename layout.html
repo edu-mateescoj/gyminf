@@ -229,40 +229,47 @@
 
                     <!-- Deuxième card-body pour les options de configuration et le bouton Générer -->
                     <div class="card-body">
-                        <!-- Section des options de configuration -->
-                        <div class="row g-3 mb-4">
-                            <!-- Option : Complexité -->
-                            <div class="col-md-4 col-sm-6">
-                                <div class="form-group">
-                                    <label for="complexity-level" class="form-label">
-                                        <i class="fas fa-sliders-h me-1"></i> Difficulté
-                                    </label>
-                                    <select class="form-select" id="complexity-level">
-                                        <option value="1">Basique (1)</option>
-                                        <option value="2" selected>Intermédiaire (2)</option>
-                                        <option value="3">Avancé (3)</option>
-                                    </select>
-                                </div>
-                            </div>
-                            <!-- Option : Longueur du code -->
-                            <div class="col-md-4 col-sm-6">
-                                <div class="form-group">
-                                    <label for="num-lines" class="form-label">
-                                        <i class="fas fa-list-ol me-1"></i> Longueur du Code
-                                    </label>
-                                    <input type="number" class="form-control" id="num-lines" min="3" max="20" value="8">
-                                </div>
-                            </div>
-                            <!-- Option : Nombre de variables -->
-                            <div class="col-md-4 col-sm-6">
-                                <div class="form-group">
-                                    <label for="num-variables" class="form-label">
-                                        <i class="fas fa-cube me-1"></i> Variables
-                                    </label>
-                                    <input type="number" class="form-control" id="num-variables" min="1" max="10" value="3">
-                                </div>
+                    <!-- Section des options de configuration -->
+                    <div class="row g-3 mb-4">
+                        <!-- Option : Difficulté -->
+                        <div class="col-md-4 col-sm-6">
+                            <div class="form-group">
+                                <label for="difficulty-level" class="form-label"> <!-- Changé l'ID pour la cohérence -->
+                                    <i class="fas fa-sliders-h me-1"></i> Difficulté
+                                </label>
+                                <select class="form-select" id="difficulty-level">
+                                    <option value="1">Très Facile (1)</option>
+                                    <option value="2">Facile (2)</option>
+                                    <option value="3" selected>Moyen (3)</option>
+                                    <option value="4">Difficile (4)</option>
+                                    <option value="5">Très Difficile (5)</option>
+                                    <option value="6">Expert (6)</option>
+                                </select>
                             </div>
                         </div>
+                        <!-- Option : Longueur du code -->
+                        <div class="col-md-4 col-sm-6">
+                            <div class="form-group">
+                                <label for="num-lines-select" class="form-label"> <!-- Changé l'ID -->
+                                    <i class="fas fa-list-ol me-1"></i> Longueur du Code
+                                </label>
+                                <select class="form-select" id="num-lines-select">
+                                    <!-- Les options seront peuplées par JavaScript -->
+                                </select>
+                            </div>
+                        </div>
+                        <!-- Option : Nombre de variables -->
+                        <div class="col-md-4 col-sm-6">
+                            <div class="form-group">
+                                <label for="num-variables-select" class="form-label"> <!-- Changé l'ID -->
+                                    <i class="fas fa-cube me-1"></i> Variables
+                                </label>
+                                <select class="form-select" id="num-variables-select">
+                                    <!-- Les options seront peuplées par JavaScript -->
+                                </select>
+                            </div>
+                        </div>
+                    </div>
                         <!-- Bouton pour générer un code aléatoire -->
                         <button id="generate-code-btn" class="btn btn-primary d-flex align-items-center">
                             <i class="fas fa-random me-2"></i> Générer un Code Aléatoire

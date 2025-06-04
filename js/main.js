@@ -1,6 +1,11 @@
 // js/main.js
 // Fichier JavaScript principal pour l'Outil de Création d'Exercices Python
 
+const MAX_CODE_LINES = 30; // valeurs arbitraires... à voir
+const MAX_VARIABLES = 10;
+const MIN_POSSIBLE_CODE_LINES = 3; // Un minimum absolu
+const MIN_POSSIBLE_VARIABLES = 1;  // Un minimum absolu
+
 // Variable globale pour l'instance de l'éditeur CodeMirror.
 // Elle est déclarée ici pour être accessible dans différentes fonctions,
 // notamment par triggerFlowchartUpdate dans flowchart-generator.js si besoin.
@@ -131,7 +136,6 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Appeler la fonction d'initialisation
     initializeDynamicOptions();
-
 
     // --- Gestionnaire pour le bouton "Options Avancées" ---
     const advancedModeCheckbox = document.getElementById('advanced-mode');
