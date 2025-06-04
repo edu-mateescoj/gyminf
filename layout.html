@@ -46,8 +46,31 @@
             height: 3rem;
             margin-right: 15px;
         }
+        /* Style pour les sélecteurs de nombre de variables (initialement masqués) */
+        .var-count-select {
+            display: none;
+            width: 60px; /* Ajustez selon besoin */
+            font-size: 0.8rem;
+            padding: 0.1rem 0.25rem;
+            margin-left: 5px;
+        }        
+        /* Style pour rendre visible un sélecteur quand sa checkbox associée est cochée */
+        /* (Sera géré par JS, mais on peut préparer une classe si besoin) */
+        /* input[type="checkbox"]:checked + label + .var-count-select {
+            display: inline-block !important;
+        } */
+
+        /* Mode avancé plus compact */
+        .advanced-mode-container {
+            background-color: var(--bs-tertiary-bg); /* Un fond pour le distinguer */
+            padding: 0.5rem 1rem; /* Padding interne */
+            margin-bottom: 0.5rem; /* Espace en dessous, avant les cadres */
+            border-radius: var(--bs-border-radius);
+        }    
     </style>
+
 </head>
+
 <body class="d-flex flex-column min-vh-100">
     
     <!-- Bandeau de chargement Pyodide -->
@@ -90,12 +113,25 @@
                     
                     <!-- Premier card-body pour les cadres thématiques -->
                     <div class="card-body pb-0"> <!-- Ajusté pour enlever padding bottom si le footer suit directement des éléments stylés -->
+                        
+                        
                         <!-- Section : Choix des éléments de syntaxe -->
                         <div class="mb-1"> <!-- mb-1 ici, pourrait être mb-2 ou mb-3 pour plus d'espace -->
                             <h3 class="h6 mb-2"> <!-- mb-1 à mb-2 pour espacer du contenu -->
                                 <i class="fas fa-code me-2"></i>
                                 Éléments de Syntaxe à Inclure
                             </h3>
+                        </div>
+                                        
+                        <!-- Section Mode Avancé -->
+                        <div class="advanced-mode-container d-flex justify-content-between align-items-center">
+                            <div>
+                                <input type="checkbox" class="form-check-input me-1" id="advanced-mode">
+                                <label class="form-check-label fw-bold small" for="advanced-mode">
+                                    <i class="fas fa-cogs me-1"></i> Mode avancé
+                                </label>
+                            </div>
+                            <span class="text-muted small">Plus d'options</span>
                         </div>
 
                         <!-- Cadres thématiques côte à côte en responsive -->
@@ -112,25 +148,43 @@
                                         </label>
                                     </div>
                                     <div id="variables-options" class="d-flex flex-column gap-1 ms-2">
+                                        <!-- int (pas de sélecteur de nombre, toujours au moins 1 si des variables sont utilisées) -->
                                         <div class="form-check form-check-inline">
-                                            <input class="form-check-input" type="checkbox" id="var-int" checked disabled>
+                                            <input class="form-check-input var-type-checkbox" type="checkbox" id="var-int" checked disabled>
                                             <label class="form-check-label small" for="var-int">int</label>
+                                            <!-- Pas de sélecteur pour int, implicite -->
                                         </div>
+                                        <!-- float -->
                                         <div class="form-check form-check-inline">
-                                            <input class="form-check-input" type="checkbox" id="var-float">
+                                            <input class="form-check-input var-type-checkbox" data-target-select="var-float-count" type="checkbox" id="var-float">
                                             <label class="form-check-label small" for="var-float">float</label>
+                                            <select class="form-select form-select-sm var-count-select" id="var-float-count">
+                                                <!-- Options 1-4 peuplées par JS -->
+                                            </select>
                                         </div>
+                                        <!-- str -->
                                         <div class="form-check form-check-inline">
-                                            <input class="form-check-input" type="checkbox" id="var-str">
+                                            <input class="form-check-input var-type-checkbox" data-target-select="var-str-count" type="checkbox" id="var-str">
                                             <label class="form-check-label small" for="var-str">str</label>
+                                            <select class="form-select form-select-sm var-count-select" id="var-str-count">
+                                                <!-- Options 1-4 peuplées par JS -->
+                                            </select>
                                         </div>
+                                        <!-- list -->
                                         <div class="form-check form-check-inline">
-                                            <input class="form-check-input" type="checkbox" id="var-list">
+                                            <input class="form-check-input var-type-checkbox" data-target-select="var-list-count" type="checkbox" id="var-list">
                                             <label class="form-check-label small" for="var-list">list</label>
+                                            <select class="form-select form-select-sm var-count-select" id="var-list-count">
+                                                <!-- Options 1-4 peuplées par JS -->
+                                            </select>
                                         </div>
+                                        <!-- bool -->
                                         <div class="form-check form-check-inline">
-                                            <input class="form-check-input" type="checkbox" id="var-bool">
+                                            <input class="form-check-input var-type-checkbox" data-target-select="var-bool-count" type="checkbox" id="var-bool">
                                             <label class="form-check-label small" for="var-bool">bool</label>
+                                            <select class="form-select form-select-sm var-count-select" id="var-bool-count">
+                                                <!-- Options 1-4 peuplées par JS -->
+                                            </select>
                                         </div>
                                     </div>
                                 </div>
@@ -213,17 +267,6 @@
                             
                         </div> <!-- Fin .row g-2 (Cadres thématiques) -->
                     </div> <!-- Fin du premier card-body -->
-                    
-                    <!-- Card-footer pour "Mode avancé" -->
-                    <div class="card-footer py-2 bg-dark-subtle d-flex align-items-center justify-content-between"> <!-- py-0 original, changé pour py-2 -->
-                        <div>
-                            <input type="checkbox" class="form-check-input me-1" id="advanced-mode">
-                            <label class="form-check-label fw-bold small" for="advanced-mode">
-                                <i class="fas fa-cogs me-1"></i> Mode avancé
-                            </label>
-                        </div>
-                        <span class="text-muted small">Plus d’options</span>
-                    </div>
 
                     <!-- Fin section des éléments de syntaxe -->
 
@@ -234,10 +277,10 @@
                         <!-- Option : Difficulté -->
                         <div class="col-md-4 col-sm-6">
                             <div class="form-group">
-                                <label for="difficulty-level" class="form-label"> <!-- Changé l'ID pour la cohérence -->
-                                    <i class="fas fa-sliders-h me-1"></i> Difficulté
+                                <label for="difficulty-level-global" class="form-label"> <!-- Changé l'ID pour la cohérence -->
+                                    <i class="fas fa-tachometer-alt me-1"></i> Niveau Global
                                 </label>
-                                <select class="form-select" id="difficulty-level">
+                                <select class="form-select" id="difficulty-level-global">
                                     <option value="1">Très Facile (1)</option>
                                     <option value="2">Facile (2)</option>
                                     <option value="3" selected>Moyen (3)</option>
@@ -250,10 +293,10 @@
                         <!-- Option : Longueur du code -->
                         <div class="col-md-4 col-sm-6">
                             <div class="form-group">
-                                <label for="num-lines-select" class="form-label"> <!-- Changé l'ID -->
-                                    <i class="fas fa-list-ol me-1"></i> Longueur du Code
+                                <label for="num-lines-global" class="form-label"> <!-- Changé l'ID -->
+                                    <i class="fas fa-align-left me-1"></i> Nb. Lignes (approx.)
                                 </label>
-                                <select class="form-select" id="num-lines-select">
+                                <select class="form-select" id="num-lines-global">
                                     <!-- Les options seront peuplées par JavaScript -->
                                 </select>
                             </div>
@@ -261,10 +304,10 @@
                         <!-- Option : Nombre de variables -->
                         <div class="col-md-4 col-sm-6">
                             <div class="form-group">
-                                <label for="num-variables-select" class="form-label"> <!-- Changé l'ID -->
-                                    <i class="fas fa-cube me-1"></i> Variables
+                                <label for="num-total-variables-global" class="form-label"> <!-- Changé l'ID -->
+                                    <i class="fas fa-cube me-1"></i> Nb. Vars (approx.)
                                 </label>
-                                <select class="form-select" id="num-variables-select">
+                                <select class="form-select" id="num-total-variables-global">
                                     <!-- Les options seront peuplées par JavaScript -->
                                 </select>
                             </div>

@@ -1,68 +1,113 @@
 // js/main.js
 // Fichier JavaScript principal pour l'Outil de Création d'Exercices Python
 
-const MAX_CODE_LINES = 30; // valeurs arbitraires... à voir
-const MAX_VARIABLES = 10;
-const MIN_POSSIBLE_CODE_LINES = 3; // Un minimum absolu
-const MIN_POSSIBLE_VARIABLES = 1;  // Un minimum absolu
+// Constantes pour les limites des options de configuration
+const MAX_CODE_LINES = 30;
+const MAX_VARIABLES_PER_TYPE = 4; // Max pour les petits sélecteurs à côté des types
+const MAX_TOTAL_VARIABLES_GLOBAL = 10; // Max pour le sélecteur global
+const MIN_POSSIBLE_CODE_LINES = 3;
+const MIN_POSSIBLE_TOTAL_VARIABLES_GLOBAL = 1;
 
 // Variable globale pour l'instance de l'éditeur CodeMirror.
-// Elle est déclarée ici pour être accessible dans différentes fonctions,
-// notamment par triggerFlowchartUpdate dans flowchart-generator.js si besoin.
 var codeEditorInstance;
 
 // Attend que le DOM soit entièrement chargé avant d'exécuter le script.
 document.addEventListener('DOMContentLoaded', function() {
     
-    // Initialisation de l'éditeur CodeMirror pour la zone de texte '#code-editor'.
     codeEditorInstance = CodeMirror.fromTextArea(document.getElementById('code-editor'), {
-        mode: 'python',                // Mode de coloration syntaxique pour Python.
-        theme: 'dracula',              // Thème visuel de l'éditeur.
-        lineNumbers: true,             // Affichage des numéros de ligne.
-        indentUnit: 4,                 // Nombre d'espaces pour une unité d'indentation.
-        tabSize: 4,                    // Taille d'une tabulation.
-        indentWithTabs: false,         // Indenter avec des espaces plutôt que des tabulations.
-        lineWrapping: true,            // Retour à la ligne automatique pour les lignes longues.
-        readOnly: false                // L'éditeur est modifiable par l'utilisateur.
+        mode: 'python', theme: 'dracula', lineNumbers: true, indentUnit: 4,
+        tabSize: 4, indentWithTabs: false, lineWrapping: true, readOnly: false
     });
 
-    // Variables pour stocker l'état lié à l'exécution du code et au défi.
-    let variableValuesFromExecution = {}; // Stocke les valeurs des variables après l'exécution du code Python.
+    let variableValuesFromExecution = {};
 
-    // --- Gestion de l'affichage dynamique des cadres d'options ---
-        // Fonction d'initialisation pour les options dynamiques
-    function initializeDynamicOptions() {
-        console.log("Tentative d'initialisation des options dynamiques DOM...");// Récupération des éléments DOM pour les sections Conditions et Boucles.
+    // --- Éléments DOM pour la configuration globale ---
+    const difficultyGlobalSelect = document.getElementById('difficulty-level-global');
+    const numLinesGlobalSelect = document.getElementById('num-lines-global');
+    const numTotalVariablesGlobalSelect = document.getElementById('num-total-variables-global');
+    const advancedModeCheckbox = document.getElementById('advanced-mode');
 
-        const condSectionCheckbox = document.getElementById('frame-conditions');
-        // Le conteneur où les options seront injectées
-        const condOptionsTargetContainer = document.getElementById('conditions-options-container'); 
-        
-        const loopSectionCheckbox = document.getElementById('frame-loops');
-        // Le conteneur où les options des boucles seront injectées
-        const loopOptionsTargetContainer = document.getElementById('loops-options-container');
-
-        const funcSectionCheckbox = document.getElementById('frame-functions');
-        // Le conteneur où les options des boucles seront injectées
-        const funcOptionsTargetContainer = document.getElementById('functions-options-container');
-
-        if (!condSectionCheckbox || !condOptionsTargetContainer || !loopSectionCheckbox || 
-            !loopOptionsTargetContainer) {
-            console.error("Un ou plusieurs éléments DOM cibles pour les options dynamiques sont introuvables.");
+    /**
+     * Peuple un élément <select> avec des options numériques.
+     * @param {HTMLSelectElement} selectElement L'élément <select> à peupler.
+     * @param {number} min La valeur minimale pour les options.
+     * @param {number} max La valeur maximale pour les options.
+     * @param {number} currentSelectedVal La valeur qui devrait être sélectionnée si possible.
+     */
+    function populateSelectWithOptions(selectElement, min, max, currentSelectedVal) {
+        if (!selectElement) {
+            // console.warn("populateSelectWithOptions: selectElement non fourni ou non trouvé.");
             return;
         }
+        const previousValue = parseInt(selectElement.value); 
+        selectElement.innerHTML = ''; 
+        for (let i = min; i <= max; i++) {
+            const option = document.createElement('option');
+            option.value = i; option.textContent = i;
+            selectElement.appendChild(option);
+        }
+        if (!isNaN(currentSelectedVal) && currentSelectedVal >= min && currentSelectedVal <= max) {
+            selectElement.value = currentSelectedVal;
+        } else if (!isNaN(previousValue) && previousValue >= min && previousValue <= max) {
+            selectElement.value = previousValue;
+        } else {
+            selectElement.value = min;
+        }
+    }
+    // ------------------------------------------------------------------------------------
+
+    // --- Initialisation et gestion des options de syntaxe (Ctrl, Loop, Func) ---
+    function initializeDynamicSyntaxOptions() {
+        // Récupération des checkboxes principales des cadres et de leurs conteneurs d'options
+        console.log("Initialisation des options dynamiques des cadres de syntaxe...");
+        const syntaxSections = [
+            { checkboxId: 'frame-conditions', containerId: 'conditions-options-container', baseHtmlGetter: () => conditionsOptionsHTML_Base, advancedHandler: addAdvancedConditionOptionsIfNeeded },
+            { checkboxId: 'frame-loops', containerId: 'loops-options-container', baseHtmlGetter: () => loopsOptionsHTML_Base, advancedHandler: addAdvancedLoopOptionsIfNeeded },
+            { checkboxId: 'frame-functions', containerId: 'functions-options-container', baseHtmlGetter: () => functionsOptionsHTML_Base, advancedHandler: addAdvancedFunctionOptionsIfNeeded }
+        ];
+
+        syntaxSections.forEach(section => {
+            const checkbox = document.getElementById(section.checkboxId);
+            const targetContainer = document.getElementById(section.containerId);
+
+            if (!checkbox || !targetContainer) {
+                console.error(`Éléments manquants pour la section ${section.checkboxId}. Vérifiez les IDs HTML.`);
+                return;
+            }
+
+            const updateDOM = () => {
+                if (checkbox.checked) {
+                    targetContainer.innerHTML = section.baseHtmlGetter();
+                    const internalContainer = targetContainer.querySelector('.d-flex.flex-column.gap-1');
+                    if (internalContainer && section.advancedHandler) {
+                        section.advancedHandler(internalContainer, advancedModeCheckbox.checked);
+                    }
+                    // Gérer la parenté pour les options de Conditions après injection
+                    if (section.checkboxId === 'frame-conditions') {
+                        setupConditionalParenting(internalContainer);
+                    }
+                } else {
+                    targetContainer.innerHTML = '';
+                }
+                updateGlobalConfigSelectors(); // Mettre à jour les sélecteurs globaux après chaque changement
+            };
+
+            checkbox.removeEventListener('change', updateDOM);
+            checkbox.addEventListener('change', updateDOM);
+            updateDOM(); // Appel initial
+        });
+        console.log("Options dynamiques des cadres de syntaxe initialisées.");
+    }
 
         // HTML pour les options de conditions (BASE - SANS les if imbriqués)
         const conditionsOptionsHTML_Base = `
             <div class="d-flex flex-column gap-1">
-                <div class="form-check form-check-inline"><input class="form-check-input" type="checkbox" id="cond-if"><label class="form-check-label small" for="cond-if">if:</label></div>
-                <div class="form-check form-check-inline"><input class="form-check-input" type="checkbox" id="cond-if-else"><label class="form-check-label small" for="cond-if-else">if:_else:</label></div>
-                <div class="form-check form-check-inline"><input class="form-check-input" type="checkbox" id="cond-if-elif"><label class="form-check-label small" for="cond-if-elif">if:_elif:</label></div>
-                <div class="form-check form-check-inline"><input class="form-check-input" type="checkbox" id="cond-if-elif-else"><label class="form-check-label small" for="cond-if-elif-else">elif:_else:</label></div>
-                <!-- Les if...if et if...if...if sont maintenant en mode avancé -->
+                <div class="form-check form-check-inline"><input class="form-check-input ctrl-option" data-ctrl-type="if_simple" type="checkbox" id="cond-if"><label class="form-check-label small" for="cond-if">if:</label></div>
+                <div class="form-check form-check-inline"><input class="form-check-input ctrl-option" data-ctrl-type="if_else" data-ctrl-parent="cond-if" type="checkbox" id="cond-if-else"><label class="form-check-label small" for="cond-if-else">if:_else:</label></div>
+                <div class="form-check form-check-inline"><input class="form-check-input ctrl-option" data-ctrl-type="if_elif" data-ctrl-parent="cond-if" type="checkbox" id="cond-if-elif"><label class="form-check-label small" for="cond-if-elif">if:_elif:</label></div>
+                <div class="form-check form-check-inline"><input class="form-check-input ctrl-option" data-ctrl-type="if_elif_else" data-ctrl-parents="cond-if,cond-if-elif" type="checkbox" id="cond-if-elif-else"><label class="form-check-label small" for="cond-if-elif-else">elif:_else:</label></div>
             </div>`;
         
-        // HTML pour les options de boucles (BASE - SANS les boucles imbriquées)
         const loopsOptionsHTML_Base = `
             <div class="d-flex flex-column gap-1">
                 <div class="form-check form-check-inline"><input class="form-check-input" type="checkbox" id="loop-for-range"><label class="form-check-label small" for="loop-for-range">for_range</label></div>
@@ -71,348 +116,494 @@ document.addEventListener('DOMContentLoaded', function() {
                 <div class="form-check form-check-inline"><input class="form-check-input" type="checkbox" id="loop-while"><label class="form-check-label small" for="loop-while">while_</label></div>
             </div>`;
 
-        // HTML pour les options de fonctions (BASE)
         const functionsOptionsHTML_Base = `
             <div class="d-flex flex-column gap-1">
                 <div class="form-check form-check-inline"><input class="form-check-input" type="checkbox" id="func-def-a"><label class="form-check-label small" for="func-def-a">def f(a)</label></div>
                 <div class="form-check form-check-inline"><input class="form-check-input" type="checkbox" id="func-builtins"><label class="form-check-label small" for="func-builtins">builtins</label></div>
                 <div class="form-check form-check-inline"><input class="form-check-input" type="checkbox" id="func-return"><label class="form-check-label small" for="func-return">return</label></div>
-                <!-- Les autres options seront en mode avancé ou ajoutées ici si de base -->
             </div>`;
 
+        initializeDynamicSyntaxOptions(); // Appel après la définition des HTML de base
 
+         // --- Gestion des sélecteurs de nombre de variables par type ---
+        const varTypeCheckboxes = document.querySelectorAll('.var-type-checkbox');
+        varTypeCheckboxes.forEach(checkbox => {
+            const targetSelectId = checkbox.dataset.targetSelect;
+            if (targetSelectId) {
+                const selectElement = document.getElementById(targetSelectId);
+                if (selectElement) {
+                    // Utiliser populateSelectWithOptions pour la cohérence et la préservation de valeur
+                populateSelectWithOptions(selectElement, 1, MAX_VARIABLES_PER_TYPE, 1); // Défaut à 1
+                
+                checkbox.addEventListener('change', () => {
+                    selectElement.style.display = checkbox.checked ? 'inline-block' : 'none';
+                    if (!checkbox.checked) { // Si on décoche, remettre le select à 1 pour la prochaine fois
+                        selectElement.value = 1;
+                    }
+                    updateGlobalConfigSelectors();
+                });
+                selectElement.style.display = checkbox.checked ? 'inline-block' : 'none';
+            }
+        }
+    });
+
+        // --- Logique de parenté pour les options de Conditions (Ctrl) ---
+        function setupConditionalParenting(container) {
+            if (!container) return;
+            const ifSimple = container.querySelector('#cond-if');
+            const ifElse = container.querySelector('#cond-if-else');
+            const ifElif = container.querySelector('#cond-if-elif');
+            const ifElifElse = container.querySelector('#cond-if-elif-else');
+
+            // Si un enfant est coché, cocher le(s) parent(s)
+            [ifElse, ifElif, ifElifElse].forEach(child => {
+                if (child) {
+                    child.addEventListener('change', () => {
+                        if (child.checked) {
+                            if (ifSimple) ifSimple.checked = true; // Tous dépendent de ifSimple
+                            if (child === ifElifElse && ifElif) ifElif.checked = true; // ifElifElse implique ifElif
+                        }
+                        updateGlobalConfigSelectors();
+                    });
+                }
+            });
+
+            // Si un parent est décoché, décocher les enfants dépendants
+            if (ifSimple) {
+                ifSimple.addEventListener('change', () => {
+                    if (!ifSimple.checked) {
+                        if (ifElse) ifElse.checked = false;
+                        if (ifElif) ifElif.checked = false;
+                        if (ifElifElse) ifElifElse.checked = false;
+                    }
+                    updateGlobalConfigSelectors();
+                });
+            }
+            if (ifElif) {
+                ifElif.addEventListener('change', () => {
+                    if (!ifElif.checked) {
+                        if (ifElifElse) ifElifElse.checked = false;
+                    }
+                    updateGlobalConfigSelectors();
+                });
+            }
+        }
+
+        // --- Gestionnaire pour le "Mode avancé" (impacte les options dans Ctrl, Loop, Func) ---
+        if (advancedModeCheckbox) {
+            advancedModeCheckbox.addEventListener('change', function() {
+                const isAdvanced = this.checked;
+                
+                // Les options d'opérations avancées sont gérées séparément car leur conteneur est statique
+                addAdvancedOperationOptionsIfNeeded(isAdvanced);
+
+                // Pour Ctrl, Loop, Func, on rafraîchit leurs options si elles sont visibles
+                const condContainer = document.querySelector('#conditions-options-container > .d-flex.flex-column.gap-1');
+                if (condContainer) addAdvancedConditionOptionsIfNeeded(condContainer, isAdvanced);
+                
+                const loopContainer = document.querySelector('#loops-options-container > .d-flex.flex-column.gap-1');
+                if (loopContainer) addAdvancedLoopOptionsIfNeeded(loopContainer, isAdvanced);
+
+                const funcContainer = document.querySelector('#functions-options-container > .d-flex.flex-column.gap-1');
+                if (funcContainer) addAdvancedFunctionOptionsIfNeeded(funcContainer, isAdvanced);
+
+                updateGlobalConfigSelectors(); // Mettre à jour après changement du mode avancé
+            });
+        }
+        /*
         function updateConditionsOptionsDOM() {
             if (condSectionCheckbox.checked) {
                 condOptionsTargetContainer.innerHTML = conditionsOptionsHTML_Base;
-                console.log('Options (de base) pour Conditions INJECTÉES dans le DOM.');
+                // console.log('Options (de base) pour Conditions INJECTÉES.');
                 const internalContainer = condOptionsTargetContainer.querySelector('.d-flex.flex-column.gap-1');
                 if (internalContainer) addAdvancedConditionOptionsIfNeeded(internalContainer);
             } else {
-                condOptionsTargetContainer.innerHTML = ''; // Retire les options du DOM
-                console.log('Options Conditions RETIRÉES du DOM.');
+                condOptionsTargetContainer.innerHTML = '';
+                // console.log('Options Conditions RETIRÉES.');
             }
         }
 
         function updateLoopsOptionsDOM() {
             if (loopSectionCheckbox.checked) {
-                loopOptionsTargetContainer.innerHTML = loopsOptionsHTML_Base;
-                console.log('Options Boucles INJECTÉES dans le DOM.');
+                loopOptionsTargetContainer.innerHTML = loopsOptionsHTML_Base; // Correction ici
+                // console.log('Options Boucles (base) INJECTÉES.');
                 const internalContainer = loopOptionsTargetContainer.querySelector('.d-flex.flex-column.gap-1');
                 if (internalContainer) addAdvancedLoopOptionsIfNeeded(internalContainer);
             } else {
-                loopOptionsTargetContainer.innerHTML = ''; // Retire les options du DOM
-                console.log('Options Boucles RETIRÉES du DOM.');
+                loopOptionsTargetContainer.innerHTML = '';
+                // console.log('Options Boucles RETIRÉES.');
             }
         }
 
         function updateFunctionsOptionsDOM() {
             if (funcSectionCheckbox.checked) {
                 funcOptionsTargetContainer.innerHTML = functionsOptionsHTML_Base;
-                console.log('Options Fonctions (base) INJECTÉES.');
+                // console.log('Options Fonctions (base) INJECTÉES.');
                 const internalContainer = funcOptionsTargetContainer.querySelector('.d-flex.flex-column.gap-1');
                 if (internalContainer) addAdvancedFunctionOptionsIfNeeded(internalContainer);
             } else {
                 funcOptionsTargetContainer.innerHTML = '';
-                console.log('Options Fonctions RETIRÉES.');
+                // console.log('Options Fonctions RETIRÉES.');
             }
         }
-
-        // Attacher listener pour func + Appel initial 
-
-        condSectionCheckbox.removeEventListener('change', updateConditionsOptionsDOM);
+        
+        condSectionCheckbox.removeEventListener('change', updateConditionsOptionsDOM); // Prévient les doublons
         condSectionCheckbox.addEventListener('change', updateConditionsOptionsDOM);
         
         loopSectionCheckbox.removeEventListener('change', updateLoopsOptionsDOM);
         loopSectionCheckbox.addEventListener('change', updateLoopsOptionsDOM);
 
+        funcSectionCheckbox.removeEventListener('change', updateFunctionsOptionsDOM);
         funcSectionCheckbox.addEventListener('change', updateFunctionsOptionsDOM);
-        updateFunctionsOptionsDOM();
 
-        // État initial
         updateConditionsOptionsDOM();
         updateLoopsOptionsDOM();
-        console.log("Options dynamiques (DOM manipulation) initialisées.");
+        updateFunctionsOptionsDOM(); 
+        console.log("Options dynamiques des cadres de syntaxe initialisées.");
     }
-
-    // Appeler la fonction d'initialisation
-    initializeDynamicOptions();
-
-    // --- Gestionnaire pour le bouton "Options Avancées" ---
-    const advancedModeCheckbox = document.getElementById('advanced-mode');
-    if (advancedModeCheckbox) {
-        advancedModeCheckbox.addEventListener('change', function() {
-            const isAdvanced = this.checked;
-
-            // Gestion pour Opérations (reste pareil, car #operations-options est toujours dans le DOM)
-            const opOptionsDiv = document.getElementById('operations-options'); // Cible le bon conteneur d'options
-            if (opOptionsDiv) { // Vérifier que le conteneur existe
-                if (isAdvanced) {
-                    // Ajouter les options avancées si elles n'existent pas déjà
-                    if (!document.getElementById('op-and')) {
-                        opOptionsDiv.insertAdjacentHTML('beforeend', `
-                            <div class="form-check form-check-inline">
-                                <input class="form-check-input" type="checkbox" id="op-and">
-                                <label class="form-check-label small" for="op-and">and</label>
-                            </div>`);
-                    }
-                    if (!document.getElementById('op-or')) {
-                        opOptionsDiv.insertAdjacentHTML('beforeend', `
-                            <div class="form-check form-check-inline">
-                                <input class="form-check-input" type="checkbox" id="op-or">
-                                <label class="form-check-label small" for="op-or">or</label>
-                            </div>`);
-                    }
-                    if (!document.getElementById('op-not')) {
-                        opOptionsDiv.insertAdjacentHTML('beforeend', `
-                            <div class="form-check form-check-inline">
-                                <input class="form-check-input" type="checkbox" id="op-not">
-                                <label class="form-check-label small" for="op-not">not</label>
-                            </div>`);
-                    }
-                } else {
-                    // Supprimer les options avancées si elles existent
-                    ['op-and', 'op-or', 'op-not'].forEach(id => {
-                        let el = document.getElementById(id);
-                        if (el && el.parentNode) el.parentNode.remove(); });
-                }
-            } else {
-                console.warn("Conteneur 'operations-options' non trouvé pour le mode avancé.");
-            }
-
-            // Gestion options avancées pour Boucles (doit maintenant cibler le conteneur interne s'il existe)
-            const loopOptionsInternalContainer = document.querySelector('#loops-options-container > .d-flex.flex-column.gap-1');
-            if (loopOptionsInternalContainer) { // Vérifier que le conteneur existe: les options de boucles sont actuellement affichées
-                addAdvancedLoopOptionsIfNeeded(loopOptionsInternalContainer, isAdvanced);
-            } else if (!isAdvanced) {
-                // Si on désactive le mode avancé et que les options de boucles ne sont pas affichées,
-                // il n'y a rien à faire directement sur les options avancées de boucles puisqu'elles ne sont pas dans le DOM.
-                // Elles ne seront pas ajoutées la prochaine fois que les boucles seront affichées.
-                // Si loopOptionsInternalContainer est null (parce que les boucles ne sont pas cochées),
-            // addAdvancedLoopOptionsIfNeeded sera appelé correctement par updateLoopsOptionsDOM quand les boucles seront cochées.
-            }
-
-            // idem pour Conditions et Fonctions
-            const condOptionsInternalContainer = document.querySelector('#conditions-options-container > .d-flex.flex-column.gap-1');
-            if (condOptionsInternalContainer) addAdvancedConditionOptionsIfNeeded(condOptionsInternalContainer, isAdvanced);
-            const funcOptionsInternalContainer = document.querySelector('#functions-options-container > .d-flex.flex-column.gap-1');
-            if (funcOptionsInternalContainer) addAdvancedFunctionOptionsIfNeeded(funcOptionsInternalContainer, isAdvanced);
+    
+    initializeDynamicOptions(); */
 
 
-        });
-    }
-    // Fonction utilitaire pour ajouter/supprimer les options avancées des boucles
-    // Prend en paramètre le conteneur où injecter et l'état du mode avancé
-    function addAdvancedLoopOptionsIfNeeded(container, isAdvancedModeActiveOverride = null) {
-        if (!container) return;
 
-        // Détermine si le mode avancé est actif. Si un override est fourni, l'utilise, sinon vérifie la checkbox.
+    // Gère les options avancées pour le cadre "Op" (opérateurs logiques, slicing)
+    function addAdvancedOperationOptionsIfNeeded(isAdvancedModeActiveOverride = null) {
+        const opOptionsDiv = document.getElementById('operations-options');
+        if (!opOptionsDiv) return;
         const isAdvanced = isAdvancedModeActiveOverride !== null ? isAdvancedModeActiveOverride :
                            (document.getElementById('advanced-mode') ? document.getElementById('advanced-mode').checked : false);
-
-        // options avancées pour les boucles ACTUELLEMENT
-        const advancedLoopOptions = [
-            { id: 'loop-nested-for2', label: 'for^2' },
-            { id: 'loop-nested-for3', label: 'for^3' },
-            { id: 'loop-while-op', label: 'while<op>' } // ça on garde
+        const advancedOpOptions = [
+            { id: 'op-and', label: 'and' }, { id: 'op-or', label: 'or' }, { id: 'op-not', label: 'not' },
+            { id: 'op-slice-ab', label: '[:]' }, // Slicing simple [a:b]
+            { id: 'op-slice-abs', label: '[::]' } // Slicing avec step [a:b:s]
         ];
 
-        // IDs des anciennes options à trasher (si on les rencontre)
-        const oldAdvancedLoopOptionIDs = ['loop-for-tuple', 'loop-continue'];
-
         if (isAdvanced) {
-            console.log("Mode avancé activé pour les boucles. Ajout des options.");
-            advancedLoopOptions.forEach(opt => {
-                if (!container.querySelector(`#${opt.id}`)) {
-                    container.insertAdjacentHTML('beforeend', 
-                        `<div class="form-check form-check-inline">
-                            <input class="form-check-input" type="checkbox" id="${opt.id}">
-                            <label class="form-check-label small" for="${opt.id}">${opt.label}</label>
-                         </div>`
-                    );
-                }
-            });
-            // S'assurer que les anciennes sont bien supprimées
-            oldAdvancedLoopOptionIDs.forEach(idSuffix => {
-                let el = container.querySelector(`#${idSuffix}`);
-                if (el && el.parentNode && el.parentNode.classList.contains('form-check')) {
-                     el.parentNode.remove();
+            advancedOpOptions.forEach(opt => {
+                if (!opOptionsDiv.querySelector(`#${opt.id}`)) { // Vérifie à l'intérieur du conteneur
+                    opOptionsDiv.insertAdjacentHTML('beforeend', `<div class="form-check form-check-inline"><input class="form-check-input" type="checkbox" id="${opt.id}"><label class="form-check-label small" for="${opt.id}">${opt.label}</label></div>`);
                 }
             });
         } else {
-            console.log("Mode avancé désactivé pour les boucles. Suppression des options.");
-            // Supprimer toutes les options avancées définies (nouvelles et anciennes pour être sûr)
-            const allPossibleAdvancedLoopIDs = advancedLoopOptions.map(o => o.id).concat(oldAdvancedLoopOptionIDs);
-            allPossibleAdvancedLoopIDs.forEach(idSuffix => {
-                let el = container.querySelector(`#${idSuffix}`);
-                if (el && el.parentNode && el.parentNode.classList.contains('form-check')) {
-                     el.parentNode.remove();
-                }
+            advancedOpOptions.forEach(opt => {
+                let el = opOptionsDiv.querySelector(`#${opt.id}`);
+                if (el && el.parentNode && el.parentNode.classList.contains('form-check')) el.parentNode.remove();
             });
         }
     }
 
+    // Ajoute/Supprime les options avancées pour les Conditions (Ctrl)
     function addAdvancedConditionOptionsIfNeeded(container, isAdvancedModeActiveOverride = null) {
         if (!container) return;
         const isAdvanced = isAdvancedModeActiveOverride !== null ? isAdvancedModeActiveOverride :
                            (document.getElementById('advanced-mode') ? document.getElementById('advanced-mode').checked : false);
-
+        // Options avancées pour les conditions (if imbriqués)
         const advancedConditionOptions = [
             { id: 'cond-if-if', label: 'if:_if:' },
             { id: 'cond-if-if-if', label: 'if:_if:_if:' }
         ];
-
         if (isAdvanced) {
-            console.log("Mode avancé activé pour les Conditions. Ajout des options.");
+            // console.log("Mode avancé pour Conditions: Ajout.");
             advancedConditionOptions.forEach(opt => {
-                if (!container.querySelector(`#${opt.id}`)) {
-                    container.insertAdjacentHTML('beforeend', 
-                        `<div class="form-check form-check-inline">
-                            <input class="form-check-input" type="checkbox" id="${opt.id}">
-                            <label class="form-check-label small" for="${opt.id}">${opt.label}</label>
-                         </div>`
-                    );
-                }
+                if (!container.querySelector(`#${opt.id}`)) container.insertAdjacentHTML('beforeend', `<div class="form-check form-check-inline"><input class="form-check-input" type="checkbox" id="${opt.id}"><label class="form-check-label small" for="${opt.id}">${opt.label}</label></div>`);
             });
         } else {
-            console.log("Mode avancé désactivé pour les Conditions. Suppression des options.");
+            // console.log("Mode avancé pour Conditions: Suppression.");
             advancedConditionOptions.forEach(opt => {
                 let el = container.querySelector(`#${opt.id}`);
-                if (el && el.parentNode && el.parentNode.classList.contains('form-check')) {
-                     el.parentNode.remove();
-                }
+                if (el && el.parentNode && el.parentNode.classList.contains('form-check')) el.parentNode.remove();
             });
         }
     }
+    
+    // Ajoute/Supprime les options avancées pour les Boucles (Loop)
+    function addAdvancedLoopOptionsIfNeeded(container, isAdvancedModeActiveOverride = null) {
+        if (!container) return;
+        const isAdvanced = isAdvancedModeActiveOverride !== null ? isAdvancedModeActiveOverride :
+                           (document.getElementById('advanced-mode') ? document.getElementById('advanced-mode').checked : false);
+        // Options avancées pour les boucles (boucles imbriquées, while avec opérateur)
+        const advancedLoopOptions = [
+            { id: 'loop-nested-for2', label: 'for^2' },
+            { id: 'loop-nested-for3', label: 'for^3' },
+            { id: 'loop-while-op', label: 'while{op}' },
+            { id: 'loop-range-ab', label: 'range(a,b)'},   
+            { id: 'loop-range-abs', label: 'range(a,b,s)'}
+        ];
+        // Anciennes options à s'assurer de supprimer si elles existent
+        const oldAdvancedLoopOptionIDs = ['loop-for-tuple', 'loop-continue'];
+        if (isAdvanced) {
+            // console.log("Mode avancé pour Boucles: Ajout.");
+            advancedLoopOptions.forEach(opt => {
+                if (!container.querySelector(`#${opt.id}`)) container.insertAdjacentHTML('beforeend', `<div class="form-check form-check-inline"><input class="form-check-input" type="checkbox" id="${opt.id}"><label class="form-check-label small" for="${opt.id}">${opt.label}</label></div>`);
+            });
+            oldAdvancedLoopOptionIDs.forEach(idSuffix => { let el = container.querySelector(`#${idSuffix}`); if (el && el.parentNode) el.parentNode.remove(); });
+        } else {
+            // console.log("Mode avancé pour Boucles: Suppression.");
+            const allPossibleAdvancedLoopIDs = advancedLoopOptions.map(o => o.id).concat(oldAdvancedLoopOptionIDs);
+            allPossibleAdvancedLoopIDs.forEach(idSuffix => { let el = container.querySelector(`#${idSuffix}`); if (el && el.parentNode) el.parentNode.remove(); });
+        }
+    }
 
+    // Ajoute/Supprime les options avancées pour les Fonctions (Func)
     function addAdvancedFunctionOptionsIfNeeded(container, isAdvancedModeActiveOverride = null) {
         if (!container) return;
         const isAdvanced = isAdvancedModeActiveOverride !== null ? isAdvancedModeActiveOverride :
                            (document.getElementById('advanced-mode') ? document.getElementById('advanced-mode').checked : false);
-
+        // Options avancées pour les fonctions
         const advancedFunctionOptions = [
             { id: 'func-def-ab', label: 'def f(a,b)' },
-            { id: 'func-op-list', label: 'opList' }, // Opérations sur listes (ex: .append, len())
-            { id: 'func-op-str', label: 'opStr' }   // Opérations sur chaînes (ex: +, slicing, len())
+            { id: 'func-op-list', label: 'opList' },
+            { id: 'func-op-str', label: 'opStr' }
         ];
-        // Les options de base sont: func-def-a, func-builtins, func-return
-
         if (isAdvanced) {
-            console.log("Mode avancé activé pour les Fonctions. Ajout des options.");
+            // console.log("Mode avancé pour Fonctions: Ajout.");
             advancedFunctionOptions.forEach(opt => {
-                if (!container.querySelector(`#${opt.id}`)) {
-                    container.insertAdjacentHTML('beforeend', 
-                        `<div class="form-check form-check-inline">
-                            <input class="form-check-input" type="checkbox" id="${opt.id}">
-                            <label class="form-check-label small" for="${opt.id}">${opt.label}</label>
-                         </div>`
-                    );
-                }
+                if (!container.querySelector(`#${opt.id}`)) container.insertAdjacentHTML('beforeend', `<div class="form-check form-check-inline"><input class="form-check-input" type="checkbox" id="${opt.id}"><label class="form-check-label small" for="${opt.id}">${opt.label}</label></div>`);
             });
         } else {
-            console.log("Mode avancé désactivé pour les Fonctions. Suppression des options.");
+            // console.log("Mode avancé pour Fonctions: Suppression.");
             advancedFunctionOptions.forEach(opt => {
                 let el = container.querySelector(`#${opt.id}`);
-                if (el && el.parentNode && el.parentNode.classList.contains('form-check')) {
-                     el.parentNode.remove();
-                }
+                if (el && el.parentNode && el.parentNode.classList.contains('form-check')) el.parentNode.remove();
             });
         }
     }
-//  Fin de l'affichage dynamique des cadres d'options
 
 
-    // --- Gestionnaires d'événements pour les boutons ---
+      /**
+     * Calcule les minimums pour lignes/variables 
+     * RETIRÉ : LE score de difficulté conceptuelle.
+     * @returns {object} { minLines: number, minVariables: number}
+     */
+     /**
+     * Calcule les totaux de variables, lignes et score de difficulté.
+     * Cette fonction sera appelée pour mettre à jour les sélecteurs globaux.
+     */
+    function calculateGlobalRequirements() {
+        let minTotalLines = MIN_POSSIBLE_CODE_LINES;
+        let minTotalVariables = 0; // Commence à 0, car on compte explicitement
+        let conceptualDifficultyScore = 0;
 
-    // Gestionnaire pour le bouton "Générer un Code Aléatoire" (#generate-code-btn).
+        const getChecked = (id) => document.getElementById(id) ? document.getElementById(id).checked : false;
+        const getVarCount = (id) => {
+            const sel = document.getElementById(id);
+            return sel && sel.style.display !== 'none' ? parseInt(sel.value) : 0;
+        };
+
+        // 1. Variables par type
+        let varCounts = {
+            int: getChecked('var-int') ? 1 : 0, // On assume au moins 1 int si coché (ou si d'autres le nécessitent)
+            float: getVarCount('var-float-count'),
+            str: getVarCount('var-str-count'),
+            list: getVarCount('var-list-count'),
+            bool: getVarCount('var-bool-count'),
+        };
+        
+        let explicitVarDeclarations = 0;
+        if (varCounts.int > 0) { explicitVarDeclarations += varCounts.int; conceptualDifficultyScore += 0; } // int est basique
+        if (varCounts.float > 0) { explicitVarDeclarations += varCounts.float; conceptualDifficultyScore += varCounts.float * 1; }
+        if (varCounts.str > 0) { explicitVarDeclarations += varCounts.str; conceptualDifficultyScore += varCounts.str * 2; }
+        if (varCounts.list > 0) { explicitVarDeclarations += varCounts.list; conceptualDifficultyScore += varCounts.list * 3; }
+        if (varCounts.bool > 0) { explicitVarDeclarations += varCounts.bool; conceptualDifficultyScore += varCounts.bool * 1; }
+        
+        minTotalVariables = Math.max(MIN_POSSIBLE_TOTAL_VARIABLES_GLOBAL, explicitVarDeclarations);
+        minTotalLines = Math.max(minTotalLines, explicitVarDeclarations); // 1 ligne par déclaration
+
+        // 2. Opérations
+        if (getChecked('op-mult-div-pow') || getChecked('op-modulo-floor')) { minTotalLines +=1; conceptualDifficultyScore += 2; if(minTotalVariables < 2 && explicitVarDeclarations < 2) minTotalVariables = Math.max(minTotalVariables, 2); }
+        if (getChecked('op-and') || getChecked('op-or')) { minTotalLines +=1; conceptualDifficultyScore += 3; if(minTotalVariables < 2 && explicitVarDeclarations < 2) minTotalVariables = Math.max(minTotalVariables, 2); }
+        if (getChecked('op-not')) { minTotalLines +=1; conceptualDifficultyScore += 2; if(minTotalVariables < 1 && explicitVarDeclarations < 1) minTotalVariables = Math.max(minTotalVariables, 1); }
+        if (getChecked('op-slice-ab') || getChecked('op-slice-abs')) {
+            conceptualDifficultyScore += 4;
+            if (varCounts.str > 0 || varCounts.list > 0) minTotalLines +=1;
+            else { minTotalLines +=2; if(minTotalVariables < 1 && explicitVarDeclarations < 1) minTotalVariables = Math.max(minTotalVariables, 1); }
+        }
+
+        // 3. Conditions (Ctrl)
+        let baseCondLines = 0; let condImpact = 0;
+        if (getChecked('cond-if')) { baseCondLines = 2; condImpact = 2;}
+        if (getChecked('cond-if-else')) { baseCondLines = Math.max(baseCondLines, 4); condImpact = Math.max(condImpact, 3);}
+        if (getChecked('cond-if-elif')) { baseCondLines = Math.max(baseCondLines, 4); condImpact = Math.max(condImpact, 4);}
+        if (getChecked('cond-if-elif-else')) { baseCondLines = Math.max(baseCondLines, 6); condImpact = Math.max(condImpact, 5);}
+        
+        if (baseCondLines > 0) {
+            conceptualDifficultyScore += condImpact;
+            minTotalLines += baseCondLines;
+            if (minTotalVariables < 1 && explicitVarDeclarations < 1) minTotalVariables = Math.max(minTotalVariables, 1);
+            if (getChecked('cond-if-if')) { minTotalLines += baseCondLines; conceptualDifficultyScore += 5; if(minTotalVariables < 2 && explicitVarDeclarations < 2) minTotalVariables = Math.max(minTotalVariables, 2);}
+            if (getChecked('cond-if-if-if')) { minTotalLines += baseCondLines * 2; conceptualDifficultyScore += 8; if(minTotalVariables < 3 && explicitVarDeclarations < 3) minTotalVariables = Math.max(minTotalVariables, 3);}
+        }
+
+        // 4. Boucles (Loop) - Adapter la logique comme pour les conditions
+        let baseLoopLines = 0; let loopVarCount = 0; let loopImpact = 0;
+        if (getChecked('loop-for-range')) { baseLoopLines=2; loopVarCount=1; loopImpact=3;}
+        if (getChecked('loop-for-list') || getChecked('loop-for-str')) { baseLoopLines=Math.max(baseLoopLines,2); loopVarCount=Math.max(loopVarCount,1); loopImpact=Math.max(loopImpact,4);}
+        if (getChecked('loop-while')) { baseLoopLines=Math.max(baseLoopLines,2); loopVarCount=Math.max(loopVarCount,1); loopImpact=Math.max(loopImpact,5);}
+
+        if (baseLoopLines > 0) {
+            minTotalLines += baseLoopLines;
+            minTotalVariables = Math.max(minTotalVariables, loopVarCount); // Les variables de boucle s'ajoutent si nécessaire
+            conceptualDifficultyScore += loopImpact;
+            if (getChecked('loop-nested-for2')) { minTotalLines +=2; minTotalVariables = Math.max(minTotalVariables, loopVarCount+1); conceptualDifficultyScore += 6;}
+            if (getChecked('loop-nested-for3')) { minTotalLines +=4; minTotalVariables = Math.max(minTotalVariables, loopVarCount+2); conceptualDifficultyScore += 9;}
+        }
+        if (getChecked('loop-range-ab')) { conceptualDifficultyScore += 2; minTotalVariables = Math.max(minTotalVariables, 2); } // a, b
+        if (getChecked('loop-range-abs')) { conceptualDifficultyScore += 3; minTotalVariables = Math.max(minTotalVariables, 3); } // a, b, s
+        if (getChecked('loop-while-op')) { conceptualDifficultyScore += 1; if(minTotalVariables < 2 && explicitVarDeclarations < 2) minTotalVariables = Math.max(minTotalVariables, 2);}
+
+
+        // 5. Fonctions (Func)
+        if (getChecked('frame-functions')) {
+            minTotalLines += 2; // def f(): pass
+            conceptualDifficultyScore += 5;
+            let funcParams = 0;
+            if (getChecked('func-def-a')) funcParams = 1;
+            if (getChecked('func-def-ab')) funcParams = Math.max(funcParams, 2);
+            minTotalVariables = Math.max(minTotalVariables, funcParams);
+            
+            if (getChecked('func-return')) { minTotalLines +=1; conceptualDifficultyScore += 2; }
+            if (getChecked('func-builtins')) { minTotalLines +=1; conceptualDifficultyScore += 1; }
+            if (getChecked('func-op-list')) { minTotalLines +=1; conceptualDifficultyScore += 3; if (varCounts.list === 0 && explicitVarDeclarations < 1) minTotalVariables = Math.max(minTotalVariables, 1);}
+            if (getChecked('func-op-str')) { minTotalLines +=1; conceptualDifficultyScore += 3; if (varCounts.str === 0 && explicitVarDeclarations < 1) minTotalVariables = Math.max(minTotalVariables, 1);}
+            minTotalLines +=1; // Appel de la fonction
+        }
+
+        // --- Calcul final du niveau de difficulté global (1-6) ---
+        let calculatedDifficultyLevel = 1;
+        if (conceptualDifficultyScore > 0) {
+            // Échelle de mapping : ajustez ces seuils selon vos besoins
+            // Par exemple: 0-5 pts -> niv 1, 6-10 -> niv 2, 11-15 -> niv 3, 16-22 -> niv 4, 23-30 -> niv 5, >30 -> niv 6
+            if (conceptualDifficultyScore <= 5) calculatedDifficultyLevel = 1;
+            else if (conceptualDifficultyScore <= 10) calculatedDifficultyLevel = 2;
+            else if (conceptualDifficultyScore <= 18) calculatedDifficultyLevel = 3;
+            else if (conceptualDifficultyScore <= 28) calculatedDifficultyLevel = 4;
+            else if (conceptualDifficultyScore <= 40) calculatedDifficultyLevel = 5;
+            else calculatedDifficultyLevel = 6;
+        }
+        // Synchroniser le sélecteur de difficulté global avec le niveau calculé
+        if (difficultyGlobalSelect) difficultyGlobalSelect.value = calculatedDifficultyLevel;
+
+
+        // Application des bornes globales pour lignes et total de variables
+        minTotalLines = Math.min(Math.max(minTotalLines, MIN_POSSIBLE_CODE_LINES), MAX_CODE_LINES);
+        minTotalVariables = Math.min(Math.max(minTotalVariables, MIN_POSSIBLE_TOTAL_VARIABLES_GLOBAL), MAX_TOTAL_VARIABLES_GLOBAL);
+        
+        // console.log(`GLOBAL REQS - Lines: ${minTotalLines}, Total Vars: ${minTotalVariables}, Conceptual Score: ${conceptualDifficultyScore}, Calc Diff: ${calculatedDifficultyLevel}`);
+        return { minLines: minTotalLines, minVariables: minTotalVariables };
+    }
+
+
+     /**
+     * Met à jour les options des menus déroulants pour "Longueur du Code" et "Nombre de variables"
+     * en fonction des minimums calculés.
+     */
+    function updateGlobalConfigSelectors() {
+        const { minLines, minVariables } = calculateGlobalRequirements();
+        
+        const currentNumLinesVal = numLinesGlobalSelect ? parseInt(numLinesGlobalSelect.value) : minLines;
+        const currentNumTotalVariablesVal = numTotalVariablesGlobalSelect ? parseInt(numTotalVariablesGlobalSelect.value) : minVariables;
+
+        populateSelectWithOptions(numLinesGlobalSelect, minLines, MAX_CODE_LINES, currentNumLinesVal);
+        populateSelectWithOptions(numTotalVariablesGlobalSelect, minVariables, MAX_TOTAL_VARIABLES_GLOBAL, currentNumTotalVariablesVal);
+        // console.log("Sélecteurs de configuration globale (Longueur, Nb Total Vars) mis à jour.");
+    }
+
+    // --- Attachement des listeners pour la mise à jour des sélecteurs globaux ---
+    // Délégation pour toutes les checkboxes de syntaxe (base et avancées)
+    const syntaxConfigArea = document.querySelector('.card-body .row.g-2.flex-wrap.align-items-start');
+    if (syntaxConfigArea) {
+        syntaxConfigArea.addEventListener('change', function(event) {
+            if (event.target.type === 'checkbox' || event.target.classList.contains('var-count-select')) {
+                setTimeout(updateGlobalConfigSelectors, 50); // Délai pour le DOM
+            }
+        });
+    }
+    // Listener direct pour le mode avancé car il affecte ce qui est disponible pour le calcul
+    if (advancedModeCheckbox) {
+        advancedModeCheckbox.addEventListener('change', () => 
+            setTimeout(updateGlobalConfigSelectors, 100)); // Léger délai plus long
+    }
+    // Le listener pour difficultyGlobalSelect N'EST PLUS NÉCESSAIRE ici pour appeler updateGlobalConfigSelectors,
+    // car la difficulté est maintenant un résultat du calcul. Si l'utilisateur la change, 
+    // c'est une entrée pour la génération, pas pour recalculer les autres min/max.
+
+    // Appel initial pour peupler les sélecteurs globaux
+    updateGlobalConfigSelectors();
+
+
+    // --- Gestionnaire pour "Générer un Code Aléatoire" ---
     const generateCodeButton = document.getElementById('generate-code-btn');
     if (generateCodeButton) {
         generateCodeButton.addEventListener('click', function() {
-            
-            // Pour récupérer l'état de #cond-if, il faut vérifier s'il existe :
-            // const condIfCheckbox = document.getElementById('cond-if');
-            // const isCondIfChecked = condIfCheckbox ? condIfCheckbox.checked : false;
-            // ... faire de même pour toutes les options injectées dynamiquement.
-            console.log("Bouton 'Générer un Code Aléatoire' cliqué.");
-            
-            // 1. Récupérer les options de génération depuis le DOM.
-            const getCheckedStatus = (id) => {
-                const el = document.getElementById(id);
-                return el ? el.checked : false;
+            //console.log("Bouton 'Générer un Code Aléatoire' cliqué.");
+            const getChecked = (id) => document.getElementById(id) ? document.getElementById(id).checked : false;
+            const getSelectVal = (id, defaultVal = 0) => {
+                const sel = document.getElementById(id);
+                // Pour les var-count-select, ne prendre la valeur que si la checkbox associée est cochée ET le select est visible
+                if (id.endsWith('-count')) {
+                    const baseId = id.substring(0, id.lastIndexOf('-count')); // ex: "var-float"
+                    const typeCheckbox = document.getElementById(baseId);
+                    if (!typeCheckbox || !typeCheckbox.checked) return 0; // Si la checkbox de type n'est pas cochée, ce nombre de var ne compte pas
+                }
+                return sel ? parseInt(sel.value) : defaultVal;
             };
-            
             const generationOptions = {
-                var_int: getCheckedStatus('var-int'), // Toujours true car disabled & checked
-                var_float: getCheckedStatus('var-float'),
-                var_str: getCheckedStatus('var-str'),
-                var_list: getCheckedStatus('var-list'),
-                var_bool: getCheckedStatus('var-bool'),
-                
-                op_plus_minus: getCheckedStatus('op-plus-minus'), // Toujours true
-                op_mult_div_pow: getCheckedStatus('op-mult-div-pow'),
-                op_modulo_floor: getCheckedStatus('op-modulo-floor'),
-                op_and: getCheckedStatus('op-and'),
-                op_or: getCheckedStatus('op-or'),
-                op_not: getCheckedStatus('op-not'),
+                // Variables et leur nombre
+                var_int_count: getChecked('var-int') ? 1 : 0, // On peut imaginer un select pour int aussi plus tard
+                var_float_count: getSelectVal('var-float-count'),
+                var_str_count: getSelectVal('var-str-count'),
+                var_list_count: getSelectVal('var-list-count'),
+                var_bool_count: getSelectVal('var-bool-count'),
 
-                main_conditions: getCheckedStatus('frame-conditions'),
-                cond_if: getCheckedStatus('cond-if'), // Sera false si non injecté
-                cond_if_else: getCheckedStatus('cond-if-else'),
-                cond_if_elif: getCheckedStatus('cond-if-elif'),
-                cond_if_elif_else: getCheckedStatus('cond-if-elif-else'),
-                cond_if_if: getCheckedStatus('cond-if-if'),         // mode Avancé
-                cond_if_if_if: getCheckedStatus('cond-if-if-if'),   // mode Avancé
-                
-                main_loops: getCheckedStatus('frame-loops'),
-                loop_for_range: getCheckedStatus('loop-for-range'), // Sera false si non injecté
-                loop_for_list: getCheckedStatus('loop-for-list'),
-                loop_for_str: getCheckedStatus('loop-for-str'),
-                loop_while: getCheckedStatus('loop-while'),
-                loop_nested_for2: getCheckedStatus('loop-nested-for2'), // Avancé
-                loop_nested_for3: getCheckedStatus('loop-nested-for3'), // Avancé
-                loop_while_op: getCheckedStatus('loop-while-op'),       // Avancé
-                                
-                main_functions: getCheckedStatus('frame-functions'),
-                func_def_a: getCheckedStatus('func-def-a'),
-                func_builtins: getCheckedStatus('func-builtins'),
-                func_return: getCheckedStatus('func-return'),
-                func_def_ab: getCheckedStatus('func-def-ab'),       // Avancé
-                func_op_list: getCheckedStatus('func-op-list'),     // Avancé
-                func_op_str: getCheckedStatus('func-op-str'),       // Avancé
+                // Opérations
+                op_plus_minus: getChecked('op-plus-minus'), // Toujours true car disabled
+                op_mult_div_pow: getChecked('op-mult-div-pow'), op_modulo_floor: getChecked('op-modulo-floor'),
+                op_and: getChecked('op-and'), op_or: getChecked('op-or'), op_not: getChecked('op-not'),
+                op_slice_ab: getChecked('op-slice-ab'), op_slice_abs: getChecked('op-slice-abs'),
 
-                complexityLevel: parseInt(document.getElementById('complexity-level').value),
-                numLines: parseInt(document.getElementById('num-lines').value), // à abandonner ??
-                numVariables: parseInt(document.getElementById('num-variables').value)
+                // Conditions (Ctrl)
+                main_conditions: getChecked('frame-conditions'),
+                cond_if: getChecked('cond-if'), cond_if_else: getChecked('cond-if-else'),
+                cond_if_elif: getChecked('cond-if-elif'), cond_if_elif_else: getChecked('cond-if-elif-else'),
+                cond_if_if: getChecked('cond-if-if'), cond_if_if_if: getChecked('cond-if-if-if'),
+
+                // Boucles (Loop)
+                main_loops: getChecked('frame-loops'),
+                loop_for_range: getChecked('loop-for-range'), loop_for_list: getChecked('loop-for-list'),
+                loop_for_str: getChecked('loop-for-str'), loop_while: getChecked('loop-while'),
+                loop_nested_for2: getChecked('loop-nested-for2'), loop_nested_for3: getChecked('loop-nested-for3'),
+                loop_while_op: getChecked('loop-while-op'),
+                loop_range_ab: getChecked('loop-range-ab'), loop_range_abs: getChecked('loop-range-abs'),
+
+                // Fonctions (Func)
+                main_functions: getChecked('frame-functions'),
+                func_def_a: getChecked('func-def-a'), func_builtins: getChecked('func-builtins'),
+                func_return: getChecked('func-return'), func_def_ab: getChecked('func-def-ab'),
+                func_op_list: getChecked('func-op-list'), func_op_str: getChecked('func-op-str'),
+                
+                // Paramètres globaux
+                difficultyLevelGlobal: parseInt(difficultyGlobalSelect.value),
+                numLinesGlobal: parseInt(numLinesGlobalSelect.value),
+                numTotalVariablesGlobal: parseInt(numTotalVariablesGlobalSelect.value)
             };
-            console.log("Options de génération pour code-generator.js (DOM manipulation):", generationOptions);
-
-            // 2. Appeler la fonction de génération de code (doit être définie dans code-generator.js).
+            console.log("Options de génération finales pour code-generator:", generationOptions);
             var newGeneratedCode = "";
-            if (typeof generateRandomPythonCode === 'function') {
-                newGeneratedCode = generateRandomPythonCode(generationOptions);
+            if (typeof generateRandomPythonCode === 'function') { 
+                newGeneratedCode = generateRandomPythonCode(generationOptions); 
             } else {
-                console.warn("La fonction generateRandomPythonCode n'est pas définie (devrait être dans code-generator.js).");
-                newGeneratedCode = "# Erreur: Le générateur de code aléatoire n'est pas disponible.\n# Veuillez entrer du code manuellement.";
+                console.warn("generateRandomPythonCode n'est pas définie.");
+                newGeneratedCode = "# Erreur: Le générateur de code aléatoire n'est pas disponible.";
             }
-            
-            // 3. Mettre à jour le contenu de l'éditeur CodeMirror avec le code généré.
-            if (codeEditorInstance) {
-                codeEditorInstance.setValue(newGeneratedCode);
-            }
-            
-            // 4. Mettre à jour l'interface utilisateur pour le diagramme et le défi.
+            if(codeEditorInstance) codeEditorInstance.setValue(newGeneratedCode);
             var flowchartDisplayArea = document.getElementById('flowchart');
-            if (flowchartDisplayArea) {
-                flowchartDisplayArea.innerHTML = '<p class="text-center text-muted mt-3">Nouveau code généré. Cliquez sur "Lancer le diagramme et les défis" pour voir le diagramme.</p>';
-            }
-            
-            // Réinitialiser les entrées de variables du défi et désactiver les boutons liés au défi.
-            resetChallengeInputs(); 
-            const checkAnswersButton = document.getElementById('check-answers-btn');
-            const showSolutionButton = document.getElementById('show-solution-btn');
-            if (checkAnswersButton) checkAnswersButton.disabled = true;
-            if (showSolutionButton) showSolutionButton.disabled = true;
+            if (flowchartDisplayArea) flowchartDisplayArea.innerHTML = '<p class="text-center text-muted mt-3">Nouveau code généré. Cliquez sur "Lancer..."</p>';
+            resetChallengeInputs();
+            const checkBtn = document.getElementById('check-answers-btn');
+            const showSolBtn = document.getElementById('show-solution-btn');
+            if(checkBtn) checkBtn.disabled = true;
+            if(showSolBtn) showSolBtn.disabled = true;
         });
-       } else {
+    } else {
         console.warn("Bouton 'generate-code-btn' non trouvé.");
     }
 
