@@ -26,6 +26,22 @@
      
     <!-- Favicon à insérer ici -->
     <style>
+        /* nouveautés */
+        #func-builtins-options-wrapper .row {
+        /* ajuster les gouttières si besoin, mais gx-2 est déjà petit */
+        }
+
+        #func-builtins-options-wrapper .col-auto {
+            padding-right: 5px; /* Un peu d'espace entre les colonnes */
+        }
+
+        #func-builtins-options-wrapper .form-check {
+            margin-bottom: 0.1rem; /* Petit espace vertical entre les checkboxes de builtins */
+            padding-left: 1.5em; /* Standard pour Bootstrap form-check */
+        }
+        #func-builtins-options-wrapper .form-check-input {
+            margin-left: -1.5em; /* Standard */
+        }
         /* Style pour le bandeau de chargement */
         #loading-overlay {
             position: fixed;
@@ -294,10 +310,12 @@
                                         <!-- Les options seront injectées ici par JS -->
                                     </div>
                                     <!-- ... (options func-def-a) ... -->
-                                    <div class="form-check form-check-inline">
-                                        <input class="form-check-input" type="checkbox" id="func-builtins"> <!-- La checkbox principale pour "builtins" -->
+                                     
+                                    <!-- <div class="form-check form-check-inline">
+                                        <input class="form-check-input" type="checkbox" id="func-builtins">
                                         <label class="form-check-label small" for="func-builtins">builtins</label>
-                                    </div>
+                                    </div> -->
+                                    
                                     <!-- Nouveau conteneur pour les options de builtins, initialement masqué ou vide -->
                                     <!-- Il sera affiché et peuplé par JS si "func-builtins" est cochée -->
                                     <div id="func-builtins-options-container" class="ms-4 mt-1" style="display: none;"> 

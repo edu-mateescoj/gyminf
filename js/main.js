@@ -1,14 +1,9 @@
 // js/main.js
-// Fichier JavaScript principal pour l'Outil de Création d'Exercices Python
-
-// Constantes pour les limites des options de configuration
 const MAX_CODE_LINES = 30;
-const MAX_VARIABLES_PER_TYPE = 4; // Max pour les petits sélecteurs à côté des types
-const MAX_TOTAL_VARIABLES_GLOBAL = 20; // Max pour le sélecteur global
+const MAX_TOTAL_VARIABLES_GLOBAL = 20;
 const MIN_POSSIBLE_CODE_LINES = 3;
 const MIN_POSSIBLE_TOTAL_VARIABLES_GLOBAL = 1;
 
-// Limites pour les sélecteurs de nombre de variables par type
 const VAR_COUNT_LIMITS = {
     int: { min: 1, max: 3 },
     float: { min: 1, max: 2 },
@@ -18,55 +13,61 @@ const VAR_COUNT_LIMITS = {
 };
 
 const BUILTINS_BASE = [
-    { id: 'builtin-print', label: 'print()' },
-    { id: 'builtin-input', label: 'input()' },
-    { id: 'builtin-len',   label: 'len()' }
+    { id: 'builtin-print', label: 'print()' }, { id: 'builtin-input', label: 'input()' },
+    { id: 'builtin-len', label: 'len()' }
 ];
 const BUILTINS_ADVANCED = [
-    { id: 'builtin-chr', label: 'chr()' },
-    { id: 'builtin-ord', label: 'ord()' },
-    { id: 'builtin-min', label: 'min()' },
-    { id: 'builtin-max', label: 'max()' },
+    { id: 'builtin-chr', label: 'chr()' }, { id: 'builtin-ord', label: 'ord()' },
+    { id: 'builtin-min', label: 'min()' }, { id: 'builtin-max', label: 'max()' },
     { id: 'builtin-sum', label: 'sum()' }
 ];
 
-// Variable globale pour l'instance de l'éditeur CodeMirror.
 var codeEditorInstance;
 
-// Attend que le DOM soit entièrement chargé avant d'exécuter le script.
 document.addEventListener('DOMContentLoaded', function() {
-    
     codeEditorInstance = CodeMirror.fromTextArea(document.getElementById('code-editor'), {
         mode: 'python', theme: 'dracula', lineNumbers: true, indentUnit: 4,
         tabSize: 4, indentWithTabs: false, lineWrapping: true, readOnly: false
     });
-
     let variableValuesFromExecution = {};
 
-    // --- Éléments DOM pour la configuration globale ---
+    // --- Éléments DOM Globaux pour la Configuration ---
     const difficultyGlobalSelect = document.getElementById('difficulty-level-global');
     const numLinesGlobalSelect = document.getElementById('num-lines-global');
     const numTotalVariablesGlobalSelect = document.getElementById('num-total-variables-global');
     const advancedModeCheckbox = document.getElementById('advanced-mode');
 
-    /**
-     * Peuple un élément <select> avec des options numériques.
-     * @param {HTMLSelectElement} selectElement L'élément <select> à peupler.
-     * @param {number} min La valeur minimale pour les options.
-     * @param {number} max La valeur maximale pour les options.
-     * @param {number} currentSelectedVal La valeur à sélectionner par défaut dans le menu déroulant, si elle est disponible parmi les options.
-     */
+    // --- HTML Templates pour les options de syntaxe de BASE ---
+    // Ces templates sont utilisés pour injecter les options de base lorsque les cadres sont activés.
+    const conditionsOptionsHTML_Base = `
+        <div class="d-flex flex-column gap-1">
+            <div class="form-check form-check-inline"><input class="form-check-input ctrl-option" data-ctrl-type="if_simple" type="checkbox" id="cond-if"><label class="form-check-label small" for="cond-if">if:</label></div>
+            <div class="form-check form-check-inline"><input class="form-check-input ctrl-option" data-ctrl-type="if_else" data-ctrl-parent="cond-if" type="checkbox" id="cond-if-else"><label class="form-check-label small" for="cond-if-else">if:_else:</label></div>
+            <div class="form-check form-check-inline"><input class="form-check-input ctrl-option" data-ctrl-type="if_elif" data-ctrl-parent="cond-if" type="checkbox" id="cond-if-elif"><label class="form-check-label small" for="cond-if-elif">if:_elif:</label></div>
+            <div class="form-check form-check-inline"><input class="form-check-input ctrl-option" data-ctrl-type="if_elif_else" data-ctrl-parents="cond-if,cond-if-elif" type="checkbox" id="cond-if-elif-else"><label class="form-check-label small" for="cond-if-elif-else">elif:_else:</label></div>
+        </div>`;
+    const loopsOptionsHTML_Base = `
+        <div class="d-flex flex-column gap-1">
+            <div class="form-check form-check-inline"><input class="form-check-input" type="checkbox" id="loop-for-range"><label class="form-check-label small" for="loop-for-range">for_range</label></div>
+            <div class="form-check form-check-inline"><input class="form-check-input" type="checkbox" id="loop-for-list"><label class="form-check-label small" for="loop-for-list">for_List</label></div>
+            <div class="form-check form-check-inline"><input class="form-check-input" type="checkbox" id="loop-for-str"><label class="form-check-label small" for="loop-for-str">for_Str</label></div>
+            <div class="form-check form-check-inline"><input class="form-check-input" type="checkbox" id="loop-while"><label class="form-check-label small" for="loop-while">while_</label></div>
+        </div>`;
+    const functionsOptionsHTML_Base = `
+        <div class="d-flex flex-column gap-1">
+            <div class="form-check form-check-inline"><input class="form-check-input" type="checkbox" id="func-def-a"><label class="form-check-label small" for="func-def-a">def f(a)</label></div>
+            <div class="form-check form-check-inline" id="func-builtins-main-container"></div>
+            <div class="form-check form-check-inline"><input class="form-check-input" type="checkbox" id="func-return"><label class="form-check-label small" for="func-return">return</label></div>
+        </div>`;
+
+    // --- Fonctions Utilitaires ---
     function populateSelectWithOptions(selectElement, min, max, currentSelectedVal) {
-        if (!selectElement) {
-            // console.warn("populateSelectWithOptions: selectElement non fourni ou non trouvé.");
-            return;
-        }
-        const previousValue = parseInt(selectElement.value); 
-        selectElement.innerHTML = ''; 
+        if (!selectElement) return;
+        const previousValue = parseInt(selectElement.value);
+        selectElement.innerHTML = '';
         for (let i = min; i <= max; i++) {
-            const option = document.createElement('option');
-            option.value = i; option.textContent = i;
-            selectElement.appendChild(option);
+            const option = new Option(i, i); // text, value
+            selectElement.add(option);
         }
         if (!isNaN(currentSelectedVal) && currentSelectedVal >= min && currentSelectedVal <= max) {
             selectElement.value = currentSelectedVal;
@@ -76,345 +77,164 @@ document.addEventListener('DOMContentLoaded', function() {
             selectElement.value = min;
         }
     }
-    // ------------------------------------------------------------------------------------
 
-    // --- Initialisation et gestion des options de syntaxe (Ctrl, Loop, Func) ---
+    // --- Initialisation et gestion des options de syntaxe dynamiques (Ctrl, Loop, Func) ---
     function initializeDynamicSyntaxOptions() {
-        // Récupération des checkboxes principales des cadres et de leurs conteneurs d'options
         console.log("Initialisation des options dynamiques des cadres de syntaxe...");
-        const syntaxSections = [
-            { checkboxId: 'frame-conditions', containerId: 'conditions-options-container', baseHtmlGetter: () => conditionsOptionsHTML_Base, advancedHandler: addAdvancedConditionOptionsIfNeeded },
+        const syntaxSectionsConfig = [
+            { checkboxId: 'frame-conditions', containerId: 'conditions-options-container', baseHtmlGetter: () => conditionsOptionsHTML_Base, advancedHandler: addAdvancedConditionOptionsIfNeeded, specialSetup: setupConditionalParenting },
             { checkboxId: 'frame-loops', containerId: 'loops-options-container', baseHtmlGetter: () => loopsOptionsHTML_Base, advancedHandler: addAdvancedLoopOptionsIfNeeded },
-            { checkboxId: 'frame-functions', containerId: 'functions-options-container', baseHtmlGetter: () => functionsOptionsHTML_Base, advancedHandler: addAdvancedFunctionOptionsIfNeeded }
+            { checkboxId: 'frame-functions', containerId: 'functions-options-container', baseHtmlGetter: () => functionsOptionsHTML_Base, advancedHandler: addAdvancedFunctionOptionsIfNeeded, specialSetup: setupFunctionOptionsExtras }
         ];
 
-        syntaxSections.forEach(section => {
+        syntaxSectionsConfig.forEach(section => {
             const checkbox = document.getElementById(section.checkboxId);
             const targetContainer = document.getElementById(section.containerId);
 
             if (!checkbox || !targetContainer) {
-                console.error(`Éléments manquants pour la section ${section.checkboxId}. Vérifiez les IDs HTML.`);
+                console.error(`Éléments manquants pour la section ${section.checkboxId}. IDs: ${section.checkboxId}, ${section.containerId}`);
                 return;
             }
 
             const updateDOM = () => {
                 if (checkbox.checked) {
                     targetContainer.innerHTML = section.baseHtmlGetter();
-                    if (checkbox.checked && section.checkboxId === 'frame-functions') {
-                const funcBuiltinsCheckbox = targetContainer.querySelector('#func-builtins');
-                if (funcBuiltinsCheckbox) {
-                    funcBuiltinsCheckbox.removeEventListener('change', toggleBuiltinOptions); // Eviter doublons
-                    funcBuiltinsCheckbox.addEventListener('change', toggleBuiltinOptions);
-                    // S'assurer que l'état initial est correct si la checkbox est déjà cochée (par ex. par un rechargement de page)
-                    if (funcBuiltinsCheckbox.checked) {
-                        toggleBuiltinOptions({ target: funcBuiltinsCheckbox }); // Simuler l'événement
-                    }
-                        }
-                    }       
                     const internalContainer = targetContainer.querySelector('.d-flex.flex-column.gap-1');
                     if (internalContainer && section.advancedHandler) {
                         section.advancedHandler(internalContainer, advancedModeCheckbox.checked);
                     }
-                    // Gérer la parenté pour les options de Conditions après injection
-                    if (section.checkboxId === 'frame-conditions') {
-                        setupConditionalParenting(internalContainer);
+                    if (section.specialSetup) { // Appel des configurations spécifiques
+                        section.specialSetup(internalContainer);
                     }
                 } else {
                     targetContainer.innerHTML = '';
                 }
-                updateGlobalConfigSelectors(); // Mettre à jour les sélecteurs globaux après chaque changement
+                updateGlobalConfigSelectors();
             };
 
             checkbox.removeEventListener('change', updateDOM);
             checkbox.addEventListener('change', updateDOM);
-            updateDOM(); // Appel initial
+            updateDOM(); // Appel initial pour définir l'état
         });
         console.log("Options dynamiques des cadres de syntaxe initialisées.");
     }
-
-        // HTML pour les options de conditions (BASE - SANS les if imbriqués)
-        const conditionsOptionsHTML_Base = `
-            <div class="d-flex flex-column gap-1">
-                <div class="form-check form-check-inline"><input class="form-check-input ctrl-option" data-ctrl-type="if_simple" type="checkbox" id="cond-if"><label class="form-check-label small" for="cond-if">if:</label></div>
-                <div class="form-check form-check-inline"><input class="form-check-input ctrl-option" data-ctrl-type="if_else" data-ctrl-parent="cond-if" type="checkbox" id="cond-if-else"><label class="form-check-label small" for="cond-if-else">if:_else:</label></div>
-                <div class="form-check form-check-inline"><input class="form-check-input ctrl-option" data-ctrl-type="if_elif" data-ctrl-parent="cond-if" type="checkbox" id="cond-if-elif"><label class="form-check-label small" for="cond-if-elif">if:_elif:</label></div>
-                <div class="form-check form-check-inline"><input class="form-check-input ctrl-option" data-ctrl-type="if_elif_else" data-ctrl-parents="cond-if,cond-if-elif" type="checkbox" id="cond-if-elif-else"><label class="form-check-label small" for="cond-if-elif-else">elif:_else:</label></div>
-            </div>`;
-        
-        const loopsOptionsHTML_Base = `
-            <div class="d-flex flex-column gap-1">
-                <div class="form-check form-check-inline"><input class="form-check-input" type="checkbox" id="loop-for-range"><label class="form-check-label small" for="loop-for-range">for_range</label></div>
-                <div class="form-check form-check-inline"><input class="form-check-input" type="checkbox" id="loop-for-list"><label class="form-check-label small" for="loop-for-list">for_List</label></div>
-                <div class="form-check form-check-inline"><input class="form-check-input" type="checkbox" id="loop-for-str"><label class="form-check-label small" for="loop-for-str">for_Str</label></div>
-                <div class="form-check form-check-inline"><input class="form-check-input" type="checkbox" id="loop-while"><label class="form-check-label small" for="loop-while">while_</label></div>
-            </div>`;
-
-        const functionsOptionsHTML_Base = `
-            <div class="d-flex flex-column gap-1">
-                <div class="form-check form-check-inline">
-                    <input class="form-check-input" type="checkbox" id="func-def-a">
-                    <label class="form-check-label small" for="func-def-a">def f(a)</label>
-                </div>
-                <div class="form-check form-check-inline">
-                    <input class="form-check-input" type="checkbox" id="func-builtins">
-                    <label class="form-check-label small" for="func-builtins">builtins</label>
-                </div>
-                <!-- Conteneur vide pour les options de builtins, sera peuplé dynamiquement -->
-                <div id="func-builtins-options-container" class="ms-4 mt-1" style="display: none;"></div>
-                <div class="form-check form-check-inline">
-                    <input class="form-check-input" type="checkbox" id="func-return">
-                    <label class="form-check-label small" for="func-return">return</label>
-                </div>
-            </div>`;
-
-        initializeDynamicSyntaxOptions(); // Appel après la définition des HTML de base
-
-            // --- Gestion spécifique des options de Builtins ---
-    /**
-     * Affiche ou masque les options de builtins spécifiques et les peuple.
-     * Appelée lorsque la checkbox #func-builtins change.
-     * @param {Event} event - L'événement de changement de la checkbox #func-builtins.
-     */
-    function toggleBuiltinOptions(event) {
-        const builtinsCheckbox = event.target; // La checkbox #func-builtins
-        // Le conteneur des options de builtins est un frère de la div parente de la checkbox,
-        // ou il est relatif au conteneur des options de fonctions.
-        // On suppose qu'il est à l'intérieur de #functions-options-container et a l'ID func-builtins-options-container
-        const builtinsOptionsContainer = document.getElementById('func-builtins-options-container');
-
-        if (!builtinsOptionsContainer) {
-            console.error("Conteneur #func-builtins-options-container non trouvé !");
-            return;
+    
+    // Configuration spécifique après injection des options de fonctions (pour builtins)
+    function setupFunctionOptionsExtras(funcOptionsContainer) {
+        if (!funcOptionsContainer) return;
+        const builtinsMainContainer = funcOptionsContainer.querySelector('#func-builtins-main-container');
+        if (builtinsMainContainer) {
+            createBuiltinsMainCheckbox(builtinsMainContainer);
         }
-
-        if (builtinsCheckbox.checked) {
-            builtinsOptionsContainer.style.display = 'block'; // Ou 'flex' si vous voulez une disposition flex
-            populateBuiltinOptions(builtinsOptionsContainer);
-        } else {
-            builtinsOptionsContainer.style.display = 'none';
-            builtinsOptionsContainer.innerHTML = ''; // Vider les options quand masqué
-        }
-        updateGlobalConfigSelectors(); // Mettre à jour les totaux
-        handleVisualInterdependencies();
     }
+    
+    initializeDynamicSyntaxOptions(); // Appel PRINCIPAL pour initialiser Ctrl, Loop, Func
 
-    /**
-     * Peuple le conteneur avec les checkboxes des builtins (base + avancés si mode avancé actif).
-     * @param {HTMLElement} container - Le conteneur où injecter les checkboxes.
-     */
-    function populateBuiltinOptions(container) {
-        container.innerHTML = ''; // Vider d'abord
-        let builtinsToShow = [...BUILTINS_BASE];
-        const isAdvanced = advancedModeCheckbox ? advancedModeCheckbox.checked : false;
-
-        if (isAdvanced) {
-            builtinsToShow = builtinsToShow.concat(BUILTINS_ADVANCED);
-        }
-
-        const listGroup = document.createElement('div');
-        listGroup.className = 'list-group list-group-flush d-flex flex-row flex-wrap gap-2'; // Pour affichage en ligne et retour à la ligne
-
-        builtinsToShow.forEach(builtin => {
-            const div = document.createElement('div');
-            div.className = 'form-check form-check-inline'; // Chaque builtin dans son propre form-check
-
-            const input = document.createElement('input');
-            input.className = 'form-check-input builtin-option-checkbox'; // Nouvelle classe pour les cibler
-            input.type = 'checkbox';
-            input.id = builtin.id;
-            input.value = builtin.id;
-            // Conserver l'état coché si l'option existait déjà (utile si on re-peuple)
-            const existingInput = document.getElementById(builtin.id); // Recherche globale, peut être risqué si IDs non uniques
-            if (existingInput && existingInput.checked) {
-                input.checked = true;
-            }
-
-
-            const label = document.createElement('label');
-            label.className = 'form-check-label small';
-            label.htmlFor = builtin.id;
-            label.textContent = builtin.label;
-
-            // Attacher un listener à chaque checkbox de builtin pour mettre à jour la config globale
-            input.addEventListener('change', () => {
-                updateGlobalConfigSelectors();
-                handleVisualInterdependencies();
-            });
-
-            div.appendChild(input);
-            div.appendChild(label);
-            listGroup.appendChild(div);
-        });
-        container.appendChild(listGroup);
-    }
-    // --- Gestionnaire pour le "Mode avancé" ---
-    if (advancedModeCheckbox) {
-        advancedModeCheckbox.addEventListener('change', function() {
-            // S'assurer de repeupler les options de builtins si elles sont actuellement visibles
-            const funcBuiltinsCheckbox = document.getElementById('func-builtins');
-            const builtinsOptionsContainer = document.getElementById('func-builtins-options-container');
-            if (funcBuiltinsCheckbox && funcBuiltinsCheckbox.checked && builtinsOptionsContainer) {
-                populateBuiltinOptions(builtinsOptionsContainer); // Repeupler avec/sans options avancées
-            }
-            // ... (appel à updateGlobalConfigSelectors et handleVisualInterdependencies) ...
-        });
-    }
-
-         // --- Gestion des sélecteurs de nombre de variables par type ---
-        const varTypeCheckboxes = document.querySelectorAll('.var-type-checkbox');
-        varTypeCheckboxes.forEach(checkbox => {
-            const varType = checkbox.id.replace('var-', ''); // Extrait l'info de type: 'int', 'float', etc.
-            const targetSelectId = checkbox.dataset.targetSelect;
-            
-            if (targetSelectId && VAR_COUNT_LIMITS[varType]) { 
-                const selectElement = document.getElementById(targetSelectId);
-                const limits = VAR_COUNT_LIMITS[varType];
-                
-                if (selectElement) {
-                    // Utiliser populateSelectWithOptions pour la cohérence et la préservation de valeur
-                populateSelectWithOptions(selectElement, limits.min, limits.max, limits.min); // Défaut au min du type
-                
-                checkbox.addEventListener('change', () => {
+    // --- Gestion des sélecteurs de nombre de variables par type ---
+    const varTypeCheckboxes = document.querySelectorAll('.var-type-checkbox');
+    varTypeCheckboxes.forEach(checkbox => {
+        const varType = checkbox.id.replace('var-', '');
+        const targetSelectId = checkbox.dataset.targetSelect;
+        if (targetSelectId && VAR_COUNT_LIMITS[varType]) {
+            const selectElement = document.getElementById(targetSelectId);
+            const limits = VAR_COUNT_LIMITS[varType];
+            if (selectElement) {
+                populateSelectWithOptions(selectElement, limits.min, limits.max, limits.min);
+                const updateVarCountSelectVisibility = () => {
                     selectElement.style.display = checkbox.checked ? 'inline-block' : 'none';
-                    if (!checkbox.checked) { // Si on décoche, remettre le select à 1 pour la prochaine fois
-                        selectElement.value = limits.min; // Reset au min si décoché
-                    }
+                    if (!checkbox.checked) selectElement.value = limits.min;
                     updateGlobalConfigSelectors();
-                    // ÉBAUCHE de gestion des interdépendances visuelles
-                    handleVisualInterdependencies(); 
-                });
-                // État initial basé sur la checkbox (par exemple, si 'var-int' est coché par défaut)
-                selectElement.style.display = checkbox.checked ? 'inline-block' : 'none';
+                    handleVisualInterdependencies();
+                };
+                checkbox.removeEventListener('change', updateVarCountSelectVisibility); // Eviter doublons
+                checkbox.addEventListener('change', updateVarCountSelectVisibility);
+                updateVarCountSelectVisibility(); // Etat initial
             }
         }
     });
-    
-    // Assurer l'état initial pour que var-int soit coché par défaut
-    const varIntCheckbox = document.getElementById('var-int');
-    if (varIntCheckbox && varIntCheckbox.checked) {
-        const varIntSelect = document.getElementById('var-int-count');
-        if (varIntSelect) varIntSelect.style.display = 'inline-block';
+
+    // --- Logique de parenté pour les options de Conditions (Ctrl) ---
+    function setupConditionalParenting(container) {
+        if (!container) return;
+        const ifSimple = container.querySelector('#cond-if'); const ifElse = container.querySelector('#cond-if-else');
+        const ifElif = container.querySelector('#cond-if-elif'); const ifElifElse = container.querySelector('#cond-if-elif-else');
+        const allCtrlOptions = [ifSimple, ifElse, ifElif, ifElifElse];
+
+        allCtrlOptions.forEach(opt => { // Ajouter listener générique pour updateGlobalConfig
+            if(opt) opt.addEventListener('change', () => {
+                setTimeout(updateGlobalConfigSelectors,0); // setTimeout pour ordre d'execution
+                setTimeout(handleVisualInterdependencies,0);
+            });
+        });
+
+        [ifElse, ifElif, ifElifElse].forEach(child => {
+            if (child) child.addEventListener('change', () => { if (child.checked) { if (ifSimple) ifSimple.checked = true; if (child === ifElifElse && ifElif) ifElif.checked = true; }});
+        });
+        if (ifSimple) ifSimple.addEventListener('change', () => { if (!ifSimple.checked) { if (ifElse) ifElse.checked = false; if (ifElif) ifElif.checked = false; if (ifElifElse) ifElifElse.checked = false; }});
+        if (ifElif) ifElif.addEventListener('change', () => { if (!ifElif.checked) { if (ifElifElse) ifElifElse.checked = false; }});
     }
 
-
-        // --- Logique de parenté pour les options de Conditions (Ctrl) ---
-        function setupConditionalParenting(container) {
-            if (!container) return;
-            const ifSimple = container.querySelector('#cond-if');
-            const ifElse = container.querySelector('#cond-if-else');
-            const ifElif = container.querySelector('#cond-if-elif');
-            const ifElifElse = container.querySelector('#cond-if-elif-else');
-
-            // Si un enfant est coché, cocher le(s) parent(s)
-            [ifElse, ifElif, ifElifElse].forEach(child => {
-                if (child) {
-                    child.addEventListener('change', () => {
-                        if (child.checked) {
-                            if (ifSimple) ifSimple.checked = true; // Tous dépendent de ifSimple
-                            if (child === ifElifElse && ifElif) ifElif.checked = true; // ifElifElse implique ifElif
-                        }
-                        updateGlobalConfigSelectors();
-                    });
-                }
-            });
-
-            // Si un parent est décoché, décocher les enfants dépendants
-            if (ifSimple) {
-                ifSimple.addEventListener('change', () => {
-                    if (!ifSimple.checked) {
-                        if (ifElse) ifElse.checked = false;
-                        if (ifElif) ifElif.checked = false;
-                        if (ifElifElse) ifElifElse.checked = false;
-                    }
-                    updateGlobalConfigSelectors();
-                });
-            }
-            if (ifElif) {
-                ifElif.addEventListener('change', () => {
-                    if (!ifElif.checked) {
-                        if (ifElifElse) ifElifElse.checked = false;
-                    }
-                    updateGlobalConfigSelectors();
-                });
-            }
-        }
-
-        // --- Gestionnaire pour le "Mode avancé" (impacte les options dans Ctrl, Loop, Func) ---
-        if (advancedModeCheckbox) {
-            advancedModeCheckbox.addEventListener('change', function() {
-                const isAdvanced = this.checked;
-                
-                // Les options d'opérations avancées sont gérées séparément car leur conteneur est statique
-                addAdvancedOperationOptionsIfNeeded(isAdvanced);
-
-                // Pour Ctrl, Loop, Func, on rafraîchit leurs options si elles sont visibles
-                const condContainer = document.querySelector('#conditions-options-container > .d-flex.flex-column.gap-1');
-                if (condContainer) addAdvancedConditionOptionsIfNeeded(condContainer, isAdvanced);
-                
-                const loopContainer = document.querySelector('#loops-options-container > .d-flex.flex-column.gap-1');
-                if (loopContainer) addAdvancedLoopOptionsIfNeeded(loopContainer, isAdvanced);
-
-                const funcContainer = document.querySelector('#functions-options-container > .d-flex.flex-column.gap-1');
-                if (funcContainer) addAdvancedFunctionOptionsIfNeeded(funcContainer, isAdvanced);
-
-                updateGlobalConfigSelectors(); // Mettre à jour après changement du mode avancé
-            });
-        }
-        /*
-        function updateConditionsOptionsDOM() {
-            if (condSectionCheckbox.checked) {
-                condOptionsTargetContainer.innerHTML = conditionsOptionsHTML_Base;
-                // console.log('Options (de base) pour Conditions INJECTÉES.');
-                const internalContainer = condOptionsTargetContainer.querySelector('.d-flex.flex-column.gap-1');
-                if (internalContainer) addAdvancedConditionOptionsIfNeeded(internalContainer);
-            } else {
-                condOptionsTargetContainer.innerHTML = '';
-                // console.log('Options Conditions RETIRÉES.');
-            }
-        }
-
-        function updateLoopsOptionsDOM() {
-            if (loopSectionCheckbox.checked) {
-                loopOptionsTargetContainer.innerHTML = loopsOptionsHTML_Base; // Correction ici
-                // console.log('Options Boucles (base) INJECTÉES.');
-                const internalContainer = loopOptionsTargetContainer.querySelector('.d-flex.flex-column.gap-1');
-                if (internalContainer) addAdvancedLoopOptionsIfNeeded(internalContainer);
-            } else {
-                loopOptionsTargetContainer.innerHTML = '';
-                // console.log('Options Boucles RETIRÉES.');
-            }
-        }
-
-        function updateFunctionsOptionsDOM() {
-            if (funcSectionCheckbox.checked) {
-                funcOptionsTargetContainer.innerHTML = functionsOptionsHTML_Base;
-                // console.log('Options Fonctions (base) INJECTÉES.');
-                const internalContainer = funcOptionsTargetContainer.querySelector('.d-flex.flex-column.gap-1');
-                if (internalContainer) addAdvancedFunctionOptionsIfNeeded(internalContainer);
-            } else {
-                funcOptionsTargetContainer.innerHTML = '';
-                // console.log('Options Fonctions RETIRÉES.');
-            }
-        }
-        
-        condSectionCheckbox.removeEventListener('change', updateConditionsOptionsDOM); // Prévient les doublons
-        condSectionCheckbox.addEventListener('change', updateConditionsOptionsDOM);
-        
-        loopSectionCheckbox.removeEventListener('change', updateLoopsOptionsDOM);
-        loopSectionCheckbox.addEventListener('change', updateLoopsOptionsDOM);
-
-        funcSectionCheckbox.removeEventListener('change', updateFunctionsOptionsDOM);
-        funcSectionCheckbox.addEventListener('change', updateFunctionsOptionsDOM);
-
-        updateConditionsOptionsDOM();
-        updateLoopsOptionsDOM();
-        updateFunctionsOptionsDOM(); 
-        console.log("Options dynamiques des cadres de syntaxe initialisées.");
+    // --- Gestion spécifique des options de Builtins ---
+    function createBuiltinsMainCheckbox(parentContainer) {
+        if (!parentContainer) return;
+        parentContainer.innerHTML = '';
+        const input = document.createElement('input'); input.className = 'form-check-input'; input.type = 'checkbox'; input.id = 'func-builtins';
+        const label = document.createElement('label'); label.className = 'form-check-label small'; label.htmlFor = 'func-builtins'; label.textContent = 'builtins';
+        const builtinsOptionsWrapper = document.createElement('div'); builtinsOptionsWrapper.id = 'func-builtins-options-wrapper';
+        builtinsOptionsWrapper.className = 'mt-1'; builtinsOptionsWrapper.style.display = 'none';
+        parentContainer.appendChild(input); parentContainer.appendChild(label);
+        if (parentContainer.parentElement) parentContainer.parentElement.insertBefore(builtinsOptionsWrapper, parentContainer.nextSibling);
+        input.addEventListener('change', toggleBuiltinOptionsVisibility);
+        if (input.checked) toggleBuiltinOptionsVisibility({ target: input });
     }
-    
-    initializeDynamicOptions(); */
+    function toggleBuiltinOptionsVisibility(event) {
+        const builtinsCheckbox = event.target;
+        const builtinsOptionsWrapper = document.getElementById('func-builtins-options-wrapper');
+        if (!builtinsOptionsWrapper) return;
+        if (builtinsCheckbox.checked) {
+            builtinsOptionsWrapper.style.display = 'block';
+            populateBuiltinOptionsColumns(builtinsOptionsWrapper);
+        } else {
+            builtinsOptionsWrapper.style.display = 'none'; builtinsOptionsWrapper.innerHTML = '';
+        }
+        updateGlobalConfigSelectors(); handleVisualInterdependencies();
+    }
+    function populateBuiltinOptionsColumns(wrapper) {
+        wrapper.innerHTML = ''; const isAdvanced = advancedModeCheckbox.checked;
+        const rowDiv = document.createElement('div'); rowDiv.className = 'row gx-2 gy-1';
+        const colBaseDiv = document.createElement('div'); colBaseDiv.className = 'col-auto';
+        const colAdvancedDiv = document.createElement('div'); colAdvancedDiv.className = 'col-auto';
+        const createBuiltinCheckboxList = (builtinsArray) => {
+            const listContainer = document.createElement('div'); listContainer.className = 'd-flex flex-column align-items-start gap-1';
+            builtinsArray.forEach(builtin => {
+                const div = document.createElement('div'); div.className = 'form-check';
+                const input = document.createElement('input'); input.className = 'form-check-input builtin-option-checkbox'; input.type = 'checkbox'; input.id = builtin.id; input.value = builtin.id;
+                const currentlyCheckedState = document.getElementById(builtin.id)?.checked; if(currentlyCheckedState) input.checked = true;
+                const label = document.createElement('label'); label.className = 'form-check-label small'; label.htmlFor = builtin.id; label.textContent = builtin.label;
+                input.addEventListener('change', () => { updateGlobalConfigSelectors(); handleVisualInterdependencies(); });
+                div.appendChild(input); div.appendChild(label); listContainer.appendChild(div);
+            }); return listContainer;
+        };
+        colBaseDiv.appendChild(createBuiltinCheckboxList(BUILTINS_BASE)); rowDiv.appendChild(colBaseDiv);
+        if (isAdvanced && BUILTINS_ADVANCED.length > 0) { colAdvancedDiv.appendChild(createBuiltinCheckboxList(BUILTINS_ADVANCED)); rowDiv.appendChild(colAdvancedDiv); }
+        wrapper.appendChild(rowDiv);
+    }
 
+    // --- Gestionnaire pour le "Mode avancé" ---
+    if (advancedModeCheckbox) {
+        advancedModeCheckbox.addEventListener('change', function() {
+            const isAdvanced = this.checked;
+            addAdvancedOperationOptionsIfNeeded(isAdvanced);
+            const condContainer = document.querySelector('#conditions-options-container > .d-flex.flex-column.gap-1'); if (condContainer) addAdvancedConditionOptionsIfNeeded(condContainer, isAdvanced);
+            const loopContainer = document.querySelector('#loops-options-container > .d-flex.flex-column.gap-1'); if (loopContainer) addAdvancedLoopOptionsIfNeeded(loopContainer, isAdvanced);
+            const funcBaseOptsContainer = document.querySelector('#functions-options-container > .d-flex.flex-column.gap-1'); if (funcBaseOptsContainer) addAdvancedFunctionOptionsIfNeeded(funcBaseOptsContainer, isAdvanced); // Gère les options avancées de func HORS builtins
+            const funcBuiltinsCheckbox = document.getElementById('func-builtins'); const builtinsOptionsWrapper = document.getElementById('func-builtins-options-wrapper');
+            if (funcBuiltinsCheckbox && funcBuiltinsCheckbox.checked && builtinsOptionsWrapper) populateBuiltinOptionsColumns(builtinsOptionsWrapper); // Repeuple les builtins
+            updateGlobalConfigSelectors(); handleVisualInterdependencies();
+        });
+    }
 
+    // --- Fonctions pour ajouter/supprimer les options AVANCÉES ---
 
     // Gère les options avancées pour le cadre "Op" (opérateurs logiques, slicing)
     function addAdvancedOperationOptionsIfNeeded(isAdvancedModeActiveOverride = null) {
@@ -495,29 +315,37 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     // Ajoute/Supprime les options avancées pour les Fonctions (Func)
+    // addAdvancedFunctionOptionsIfNeeded ne doit plus s'occuper de la checkbox builtins elle-même,
+    // mais des autres options avancées de fonctions.
     function addAdvancedFunctionOptionsIfNeeded(container, isAdvancedModeActiveOverride = null) {
         if (!container) return;
         const isAdvanced = isAdvancedModeActiveOverride !== null ? isAdvancedModeActiveOverride :
                            (document.getElementById('advanced-mode') ? document.getElementById('advanced-mode').checked : false);
-        // Options avancées pour les fonctions
+        // Les options avancées de fonction (hors builtins, qui sont gérés par populateBuiltinOptionsColumns)
         const advancedFunctionOptions = [
             { id: 'func-def-ab', label: 'def f(a,b)' },
             { id: 'func-op-list', label: 'opList' },
             { id: 'func-op-str', label: 'opStr' }
         ];
-        if (isAdvanced) {
-            // console.log("Mode avancé pour Fonctions: Ajout.");
-            advancedFunctionOptions.forEach(opt => {
-                if (!container.querySelector(`#${opt.id}`)) container.insertAdjacentHTML('beforeend', `<div class="form-check form-check-inline"><input class="form-check-input" type="checkbox" id="${opt.id}"><label class="form-check-label small" for="${opt.id}">${opt.label}</label></div>`);
-            });
-        } else {
-            // console.log("Mode avancé pour Fonctions: Suppression.");
-            advancedFunctionOptions.forEach(opt => {
-                let el = container.querySelector(`#${opt.id}`);
-                if (el && el.parentNode && el.parentNode.classList.contains('form-check')) el.parentNode.remove();
-            });
-        }
-        // La partie builtins est gérée par populateBuiltinOptions
+        advancedFunctionOptions.forEach(opt => {
+            let existingOption = container.querySelector(`#${opt.id}`);
+            if (isAdvanced) {
+                if (!existingOption) {
+                    // Injecter avant le conteneur de la checkbox builtins si possible, ou à la fin.
+                    const builtinsMainContainer = container.querySelector('#func-builtins-main-container');
+                    const injectionHTML = `<div class="form-check form-check-inline"><input class="form-check-input" type="checkbox" id="${opt.id}"><label class="form-check-label small" for="${opt.id}">${opt.label}</label></div>`;
+                    if (builtinsMainContainer) {
+                        builtinsMainContainer.insertAdjacentHTML('beforebegin', injectionHTML);
+                    } else {
+                        container.insertAdjacentHTML('beforeend', injectionHTML);
+                    }
+                }
+            } else {
+                if (existingOption && existingOption.parentElement && existingOption.parentElement.classList.contains('form-check')) {
+                    existingOption.parentElement.remove();
+                }
+            }
+        });
     }
 
 
