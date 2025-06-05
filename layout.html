@@ -48,17 +48,18 @@
         }
         /* Style pour les sélecteurs de nombre de variables (initialement masqués) */
         .var-count-select {
-            display: none;
-            width: auto; /* Ajustez selon besoin */
-            font-size: 0.8rem;
-            padding: 0.1rem 0.25rem;
+            display: none; /* Masqué par défaut, affiché par JS */
+            width: auto;   /* Laisser le navigateur déterminer la largeur minimale */
+            /* min-width: 55px;/* Un peu de place pour le chiffre et la flèche */
+            padding: 0.1rem 0.25rem; /* Padding réduit */
+            font-size: 0.8rem; /* Police plus petite */
             margin-left: 5px;
-        }        
-        /* Style pour rendre visible un sélecteur quand sa checkbox associée est cochée */
-        /* (Sera géré par JS, mais on peut préparer une classe si besoin) */
-        /* input[type="checkbox"]:checked + label + .var-count-select {
-            display: inline-block !important;
-        } */
+            height: calc(1.5em + 0.2rem + 2px); /* Aligner la hauteur avec les checkboxes Bootstrap */
+            vertical-align: middle; /* Meilleur alignement vertical */
+        }
+        .form-check-inline { /* Pour aider à l'alignement vertical des labels et selects */
+            align-items: center;
+        }
 
         /* Mode avancé plus compact */
         .advanced-mode-container {
@@ -66,7 +67,34 @@
             padding: 0.5rem 1rem; /* Padding interne */
             margin-bottom: 0.5rem; /* Espace en dessous, avant les cadres */
             border-radius: var(--bs-border-radius);
-        }    
+        }   
+
+        .suggestion-highlight {
+        border: 1px solid #28a745 !important; /* Vert Bootstrap pour 'success' */
+        border-radius: 0.25rem; /* Correspondre au style des cadres */
+        padding: 0.1rem 0.2rem; /* Petit padding pour que la bordure ne colle pas au texte */
+        margin: -0.1rem -0.2rem; /* Compenser le padding pour l'alignement global */
+        /* box-shadow: 0 0 5px rgba(40, 167, 69, 0.5); /* Optionnel: une légère ombre */
+        transition: border-color 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
+        }
+
+        /* Ajustement pour que la bordure s'applique bien autour du form-check-inline */
+        /* sans trop perturber le layout des éléments qui ne sont pas surlignés. */
+        /* On cible le parent .form-check.form-check-inline qui contient le label et l'input. */
+        .form-check.form-check-inline.suggestion-highlight-container {
+            border: 1px solid #28a745; /* Vert Bootstrap */
+            border-radius: var(--bs-border-radius-sm, 0.2rem); /* Utiliser une variable Bootstrap si possible, sinon une valeur fixe */
+            padding: 2px 4px; /* Ajustez pour l'espacement visuel */
+            margin: 1px; /* Pour éviter que les bordures ne se chevauchent trop */
+            transition: border-color 0.3s ease-in-out;
+            background-color: rgba(40, 167, 69, 0.1); /* Fond très léger pour renforcer la suggestion */
+        }
+
+        /* Style pour surligner un select (par exemple, le compteur de booléens) */
+        select.suggestion-highlight-select {
+            border-color: #28a745 !important; /* Vert Bootstrap */
+            box-shadow: 0 0 0 0.25rem rgba(40, 167, 69, .25) !important; /* Ombre de focus Bootstrap success */
+        }
     </style>
 
 </head>
@@ -147,19 +175,23 @@
                                             <i class="fas fa-cube me-1"></i> Vars
                                         </label>
                                     </div>
+
                                     <div id="variables-options" class="d-flex flex-column gap-1 ms-2">
-                                        <!-- int (pas de sélecteur de nombre, toujours au moins 1 si des variables sont utilisées) -->
+
+                                        <!-- int -->
                                         <div class="form-check form-check-inline">
-                                            <input class="form-check-input var-type-checkbox" type="checkbox" id="var-int" checked disabled>
-                                            <label class="form-check-label small" for="var-int">int</label>
-                                            <!-- Pas de sélecteur pour int, implicite -->
+                                            <input class="form-check-input var-type-checkbox" data-target-select="var-int-count" type="checkbox" id="var-int">
+                                            <label class="form-check-label small" for="var-int">int</label> <!-- 'for' pointe vers 'var-int' -->
+                                            <select class="form-select form-select-sm var-count-select" id="var-int-count">
+                                                <!-- Options peuplées par JS -->
+                                            </select>
                                         </div>
                                         <!-- float -->
                                         <div class="form-check form-check-inline">
                                             <input class="form-check-input var-type-checkbox" data-target-select="var-float-count" type="checkbox" id="var-float">
-                                            <label class="form-check-label small" for="var-float">float</label>
+                                            <label class="form-check-label small" for="var-float">float</label> <!-- 'for' pointe vers 'var-float' -->
                                             <select class="form-select form-select-sm var-count-select" id="var-float-count">
-                                                <!-- Options 1-4 peuplées par JS -->
+                                                <!-- Options peuplées par JS -->
                                             </select>
                                         </div>
                                         <!-- str -->
@@ -383,7 +415,7 @@
                 <div class="alert alert-info alert-dismissible fade show d-flex align-items-center" role="alert">
                     <i class="fas fa-info-circle me-2"></i>
                     <div>
-                        Exécutez d'abord le code, puis prédisez les valeurs finales de toutes les variables.
+                        Tracez (exécutez) le code d'abord, puis répondez aux questions.
                     </div>
                     <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Fermer"></button>
                 </div>

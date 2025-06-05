@@ -4,10 +4,18 @@
 // Constantes pour les limites des options de configuration
 const MAX_CODE_LINES = 30;
 const MAX_VARIABLES_PER_TYPE = 4; // Max pour les petits sélecteurs à côté des types
-const MAX_TOTAL_VARIABLES_GLOBAL = 10; // Max pour le sélecteur global
+const MAX_TOTAL_VARIABLES_GLOBAL = 20; // Max pour le sélecteur global
 const MIN_POSSIBLE_CODE_LINES = 3;
 const MIN_POSSIBLE_TOTAL_VARIABLES_GLOBAL = 1;
 
+// Limites pour les sélecteurs de nombre de variables par type
+const VAR_COUNT_LIMITS = {
+    int: { min: 1, max: 3 },
+    float: { min: 1, max: 2 },
+    str: { min: 1, max: 2 },
+    list: { min: 1, max: 2 },
+    bool: { min: 1, max: 3 }
+};
 // Variable globale pour l'instance de l'éditeur CodeMirror.
 var codeEditorInstance;
 
@@ -32,7 +40,7 @@ document.addEventListener('DOMContentLoaded', function() {
      * @param {HTMLSelectElement} selectElement L'élément <select> à peupler.
      * @param {number} min La valeur minimale pour les options.
      * @param {number} max La valeur maximale pour les options.
-     * @param {number} currentSelectedVal La valeur qui devrait être sélectionnée si possible.
+     * @param {number} currentSelectedVal La valeur à sélectionner par défaut dans le menu déroulant, si elle est disponible parmi les options.
      */
     function populateSelectWithOptions(selectElement, min, max, currentSelectedVal) {
         if (!selectElement) {
@@ -128,24 +136,39 @@ document.addEventListener('DOMContentLoaded', function() {
          // --- Gestion des sélecteurs de nombre de variables par type ---
         const varTypeCheckboxes = document.querySelectorAll('.var-type-checkbox');
         varTypeCheckboxes.forEach(checkbox => {
+            const varType = checkbox.id.replace('var-', ''); // Extrait l'info de type: 'int', 'float', etc.
             const targetSelectId = checkbox.dataset.targetSelect;
-            if (targetSelectId) {
+            
+            if (targetSelectId && VAR_COUNT_LIMITS[varType]) { 
                 const selectElement = document.getElementById(targetSelectId);
+                const limits = VAR_COUNT_LIMITS[varType];
+                
                 if (selectElement) {
                     // Utiliser populateSelectWithOptions pour la cohérence et la préservation de valeur
-                populateSelectWithOptions(selectElement, 1, MAX_VARIABLES_PER_TYPE, 1); // Défaut à 1
+                populateSelectWithOptions(selectElement, limits.min, limits.max, limits.min); // Défaut au min du type
                 
                 checkbox.addEventListener('change', () => {
                     selectElement.style.display = checkbox.checked ? 'inline-block' : 'none';
                     if (!checkbox.checked) { // Si on décoche, remettre le select à 1 pour la prochaine fois
-                        selectElement.value = 1;
+                        selectElement.value = limits.min; // Reset au min si décoché
                     }
                     updateGlobalConfigSelectors();
+                    // ÉBAUCHE de gestion des interdépendances visuelles
+                    handleVisualInterdependencies(); 
                 });
+                // État initial basé sur la checkbox (par exemple, si 'var-int' est coché par défaut)
                 selectElement.style.display = checkbox.checked ? 'inline-block' : 'none';
             }
         }
     });
+    
+    // Assurer l'état initial pour que var-int soit coché par défaut
+    const varIntCheckbox = document.getElementById('var-int');
+    if (varIntCheckbox && varIntCheckbox.checked) {
+        const varIntSelect = document.getElementById('var-int-count');
+        if (varIntSelect) varIntSelect.style.display = 'inline-block';
+    }
+
 
         // --- Logique de parenté pour les options de Conditions (Ctrl) ---
         function setupConditionalParenting(container) {
@@ -382,21 +405,27 @@ document.addEventListener('DOMContentLoaded', function() {
     function calculateGlobalRequirements() {
         let minTotalLines = MIN_POSSIBLE_CODE_LINES;
         let minTotalVariables = 0; // Commence à 0, car on compte explicitement
-        let conceptualDifficultyScore = 0;
+        let conceptualDifficultyScore = 0; // heuristique un peu bidon... à revoir
+        // Score de difficulté *conceptuelle* ?? basé sur les options sélectionnées
 
         const getChecked = (id) => document.getElementById(id) ? document.getElementById(id).checked : false;
-        const getVarCount = (id) => {
-            const sel = document.getElementById(id);
-            return sel && sel.style.display !== 'none' ? parseInt(sel.value) : 0;
+        // prendre le type et utiliser VAR_COUNT_LIMITS si le sélecteur n'est pas là ou non visible
+        const getVarCount = (type) => {
+            const checkbox = document.getElementById(`var-${type}`);
+            const select = document.getElementById(`var-${type}-count`);
+            if (checkbox && checkbox.checked && select && select.style.display !== 'none') {
+                return parseInt(select.value);
+            }
+            return 0; // Retourne 0 si la checkbox de type n'est pas cochée ou le select masqué
         };
 
         // 1. Variables par type
         let varCounts = {
-            int: getChecked('var-int') ? 1 : 0, // On assume au moins 1 int si coché (ou si d'autres le nécessitent)
-            float: getVarCount('var-float-count'),
-            str: getVarCount('var-str-count'),
-            list: getVarCount('var-list-count'),
-            bool: getVarCount('var-bool-count'),
+            int: getVarCount('int'),
+            float: getVarCount('float'),
+            str: getVarCount('str'),
+            list: getVarCount('list'),
+            bool: getVarCount('bool'),
         };
         
         let explicitVarDeclarations = 0;
@@ -435,6 +464,20 @@ document.addEventListener('DOMContentLoaded', function() {
         }
 
         // 4. Boucles (Loop) - Adapter la logique comme pour les conditions
+        let loopSpecificVars = 0; // Variables spécifiquement pour les boucles (itération, bornes)
+        if (getChecked('loop-for-range')) { loopSpecificVars = Math.max(loopSpecificVars, 1); /* i */ }
+        if (getChecked('loop-range-ab')) { loopSpecificVars = Math.max(loopSpecificVars, 2); /* a, b (si pas déjà des vars) */ }
+        if (getChecked('loop-range-abs')) { loopSpecificVars = Math.max(loopSpecificVars, 3); /* a, b, s */ }
+        // Les variables de for sur list/str sont souvent la variable d'itération.
+        // La liste/str elle-même est comptée dans varCounts.
+        
+        // On n'ajoute loopSpecificVars à minTotalVariables que si elles ne sont pas déjà couvertes par explicitVarDeclarations.
+        // C'est compliqué... pour l'instant, on s'assure juste que minTotalVariables est assez grand.
+        if (getChecked('frame-loops')) {
+            minTotalVariables = Math.max(minTotalVariables, loopSpecificVars);
+        }
+        // ... (reprendre la logique de calcul de minTotalLines et conceptualDifficultyScore pour les boucles)
+
         let baseLoopLines = 0; let loopVarCount = 0; let loopImpact = 0;
         if (getChecked('loop-for-range')) { baseLoopLines=2; loopVarCount=1; loopImpact=3;}
         if (getChecked('loop-for-list') || getChecked('loop-for-str')) { baseLoopLines=Math.max(baseLoopLines,2); loopVarCount=Math.max(loopVarCount,1); loopImpact=Math.max(loopImpact,4);}
@@ -471,8 +514,8 @@ document.addEventListener('DOMContentLoaded', function() {
         // --- Calcul final du niveau de difficulté global (1-6) ---
         let calculatedDifficultyLevel = 1;
         if (conceptualDifficultyScore > 0) {
-            // Échelle de mapping : ajustez ces seuils selon vos besoins
-            // Par exemple: 0-5 pts -> niv 1, 6-10 -> niv 2, 11-15 -> niv 3, 16-22 -> niv 4, 23-30 -> niv 5, >30 -> niv 6
+            // Échelle de mapping : ARBITRAIRE
+            // 0-5 pts -> niv 1, 6-10 -> niv 2, 11-15 -> niv 3, 16-22 -> niv 4, 23-30 -> niv 5, >30 -> niv 6
             if (conceptualDifficultyScore <= 5) calculatedDifficultyLevel = 1;
             else if (conceptualDifficultyScore <= 10) calculatedDifficultyLevel = 2;
             else if (conceptualDifficultyScore <= 18) calculatedDifficultyLevel = 3;
@@ -508,27 +551,131 @@ document.addEventListener('DOMContentLoaded', function() {
         // console.log("Sélecteurs de configuration globale (Longueur, Nb Total Vars) mis à jour.");
     }
 
-    // --- Attachement des listeners pour la mise à jour des sélecteurs globaux ---
+    // --- Attachement des listeners 
+    // pour la mise à jour des sélecteurs globaux ET interdépendances ---
+    // Le listener sur syntaxConfigArea et advancedModeCheckbox appellera déjà updateGlobalConfigSelectors
+    // et handleVisualInterdependencies avec un setTimeout.
     // Délégation pour toutes les checkboxes de syntaxe (base et avancées)
     const syntaxConfigArea = document.querySelector('.card-body .row.g-2.flex-wrap.align-items-start');
     if (syntaxConfigArea) {
         syntaxConfigArea.addEventListener('change', function(event) {
             if (event.target.type === 'checkbox' || event.target.classList.contains('var-count-select')) {
                 setTimeout(updateGlobalConfigSelectors, 50); // Délai pour le DOM
+                // Gérer les interdépendances visuelles après chaque changement de syntaxe
+                setTimeout(handleVisualInterdependencies, 60); // Léger décalage
             }
         });
     }
-    // Listener direct pour le mode avancé car il affecte ce qui est disponible pour le calcul
-    if (advancedModeCheckbox) {
-        advancedModeCheckbox.addEventListener('change', () => 
-            setTimeout(updateGlobalConfigSelectors, 100)); // Léger délai plus long
+    // Le listener pour advancedModeCheckbox est déjà configuré pour appeler updateGlobalConfigSelectors
+    // et handleVisualInterdependencies via son propre setTimeout.
+    // On s'assure juste que handleVisualInterdependencies est aussi appelé.
+    // // Listener direct pour le mode avancé car il affecte ce qui est disponible pour le calcul
+    if (advancedModeCheckbox) { // advancedModeCheckbox est déjà défini plus haut
+        advancedModeCheckbox.addEventListener('change', () => {
+            // updateGlobalConfigSelectors est déjà appelé par le listener du mode avancé dans la section précédente
+            // On ajoute juste l'appel pour les interdépendances ici aussi, après que les options avancées soient (dés)injectées
+            setTimeout(handleVisualInterdependencies, 150); // Un délai un peu plus long pour être sûr
+        });
     }
     // Le listener pour difficultyGlobalSelect N'EST PLUS NÉCESSAIRE ici pour appeler updateGlobalConfigSelectors,
     // car la difficulté est maintenant un résultat du calcul. Si l'utilisateur la change, 
     // c'est une entrée pour la génération, pas pour recalculer les autres min/max.
 
-    // Appel initial pour peupler les sélecteurs globaux
+    // Appel initial pour les interdépendances et la configuration globale
     updateGlobalConfigSelectors();
+    handleVisualInterdependencies(); // Appel initial pour les interdépendances
+
+    // --- Gestion des interdépendances visuelles (ÉBAUCHE) ---
+    // Cette fonction gère les suggestions visuelles basées sur les options sélectionnées.
+    // Elle est appelée après chaque changement de syntaxe ou du mode avancé.
+    function handleVisualInterdependencies() {
+        const getChecked = (id) => document.getElementById(id) ? document.getElementById(id).checked : false;
+        // Fonction pour récupérer le compte d'une variable type si sa checkbox est cochée
+        const getVarCount = (type) => {
+            const checkbox = document.getElementById(`var-${type}`);
+            const select = document.getElementById(`var-${type}-count`);
+            if (checkbox && checkbox.checked && select && select.style.display !== 'none') {
+                return parseInt(select.value);
+            }
+            return 0;
+        };
+
+        // Classe CSS pour le surlignage des suggestions
+        const highlightClassContainer = 'suggestion-highlight-container';
+        const highlightClassSelect = 'suggestion-highlight-select';
+
+        // Fonction utilitaire pour ajouter/retirer la classe de surlignage au parent (.form-check.form-check-inline)
+        const toggleHighlight = (elementId, condition) => {
+            const element = document.getElementById(elementId);
+            if (element && element.parentElement && element.parentElement.classList.contains('form-check')) { // Cible le div.form-check parent
+                if (condition) {
+                    element.parentElement.classList.add(highlightClassContainer);
+                } else {
+                    element.parentElement.classList.remove(highlightClassContainer);
+                }
+            } else if (element && element.tagName === 'SELECT') { // Pour les selects directement
+                 if (condition) {
+                    element.classList.add(highlightClassSelect);
+                } else {
+                    element.classList.remove(highlightClassSelect);
+                }
+            }
+        };
+
+        // 1. Suggérer Slicing si List ou Str est coché
+        const strIsActive = getVarCount('str') > 0;
+        const listIsActive = getVarCount('list') > 0;
+        toggleHighlight('op-slice-ab', strIsActive || listIsActive);
+        toggleHighlight('op-slice-abs', strIsActive || listIsActive);
+
+        // 2. Suggérer Opérateurs Logiques (and, or, not) si Bool est coché
+        const boolIsActive = getVarCount('bool') > 0;
+        toggleHighlight('op-and', boolIsActive);
+        toggleHighlight('op-or', boolIsActive);
+        toggleHighlight('op-not', boolIsActive); // 'not' suggère aussi bool
+
+        // 3. Suggérer type Bool si 'not', 'and', ou 'or' est coché
+        const logicalOpActive = getChecked('op-and') || getChecked('op-or') || getChecked('op-not');
+        toggleHighlight('var-bool', logicalOpActive);
+        // Si un opérateur logique est actif et qu'on a moins de bools que nécessaire (1 pour not, 2 pour and/or)
+        const boolVarCountSelect = document.getElementById('var-bool-count');
+        if (logicalOpActive && getChecked('var-bool')) { // Seulement si la checkbox bool est déjà cochée
+             if ((getChecked('op-and') || getChecked('op-or')) && getVarCount('bool') < 2) {
+                if (boolVarCountSelect) boolVarCountSelect.classList.add(highlightClassSelect);
+            } else if (getChecked('op-not') && getVarCount('bool') < 1) { // Devrait toujours être au moins 1 si coché
+                if (boolVarCountSelect) boolVarCountSelect.classList.add(highlightClassSelect);
+            }
+             else {
+                if (boolVarCountSelect) boolVarCountSelect.classList.remove(highlightClassSelect);
+            }
+        } else {
+             if (boolVarCountSelect) boolVarCountSelect.classList.remove(highlightClassSelect);
+        }
+
+
+        // 4. Suggérer type Str/List si Slicing est coché
+        const slicingActive = getChecked('op-slice-ab') || getChecked('op-slice-abs');
+        toggleHighlight('var-str', slicingActive);
+        toggleHighlight('var-list', slicingActive);
+
+        // 5. Suggérer type List si 'opList' (Func) ou 'for_List' (Loop) est coché
+        const opListFuncActive = getChecked('func-op-list');
+        const forListLoopActive = getChecked('loop-for-list');
+        toggleHighlight('var-list', opListFuncActive || forListLoopActive || (slicingActive && !strIsActive)); // Suggère list pour slicing si str n'est pas déjà la raison
+
+        // 6. Suggérer type Str si 'opStr' (Func) ou 'for_Str' (Loop) est coché
+        const opStrFuncActive = getChecked('func-op-str');
+        const forStrLoopActive = getChecked('loop-for-str');
+        toggleHighlight('var-str', opStrFuncActive || forStrLoopActive || (slicingActive && !listIsActive)); // Suggère str pour slicing si list n'est pas déjà la raison
+
+        // 7. Suggérer Opérateurs Logiques (and, or, not) si 'while{op}' (Loop) est coché
+        const whileOpLoopActive = getChecked('loop-while-op');
+        toggleHighlight('op-and', whileOpLoopActive || boolIsActive); // Combine avec la suggestion précédente
+        toggleHighlight('op-or', whileOpLoopActive || boolIsActive);  // Combine
+        toggleHighlight('op-not', whileOpLoopActive || boolIsActive); // Combine
+
+        // console.log("Interdependencies updated.");
+    }
 
 
     // --- Gestionnaire pour "Générer un Code Aléatoire" ---
@@ -537,49 +684,63 @@ document.addEventListener('DOMContentLoaded', function() {
         generateCodeButton.addEventListener('click', function() {
             //console.log("Bouton 'Générer un Code Aléatoire' cliqué.");
             const getChecked = (id) => document.getElementById(id) ? document.getElementById(id).checked : false;
-            const getSelectVal = (id, defaultVal = 0) => {
+            const getSelectVal = (id, defaultValIfNotFound = 0, typeIfVarCount = null) => {
                 const sel = document.getElementById(id);
-                // Pour les var-count-select, ne prendre la valeur que si la checkbox associée est cochée ET le select est visible
-                if (id.endsWith('-count')) {
-                    const baseId = id.substring(0, id.lastIndexOf('-count')); // ex: "var-float"
-                    const typeCheckbox = document.getElementById(baseId);
-                    if (!typeCheckbox || !typeCheckbox.checked) return 0; // Si la checkbox de type n'est pas cochée, ce nombre de var ne compte pas
+                if (typeIfVarCount) { // C'est un var-count-select
+                    const typeCheckbox = document.getElementById(`var-${typeIfVarCount}`);
+                    if (!typeCheckbox || !typeCheckbox.checked || !sel || sel.style.display === 'none') {
+                        return 0; // Si le type n'est pas coché ou select masqué, compte pour 0
+                    }
                 }
-                return sel ? parseInt(sel.value) : defaultVal;
+                return sel ? parseInt(sel.value) : defaultValIfNotFound;
             };
             const generationOptions = {
                 // Variables et leur nombre
-                var_int_count: getChecked('var-int') ? 1 : 0, // On peut imaginer un select pour int aussi plus tard
-                var_float_count: getSelectVal('var-float-count'),
-                var_str_count: getSelectVal('var-str-count'),
-                var_list_count: getSelectVal('var-list-count'),
-                var_bool_count: getSelectVal('var-bool-count'),
+                var_int_count: getSelectVal('var-int-count', 0, 'int'), // Nouveau
+                var_float_count: getSelectVal('var-float-count', 0, 'float'),
+                var_str_count: getSelectVal('var-str-count', 0, 'str'),
+                var_list_count: getSelectVal('var-list-count', 0, 'list'),
+                var_bool_count: getSelectVal('var-bool-count', 0, 'bool'),
 
                 // Opérations
                 op_plus_minus: getChecked('op-plus-minus'), // Toujours true car disabled
-                op_mult_div_pow: getChecked('op-mult-div-pow'), op_modulo_floor: getChecked('op-modulo-floor'),
-                op_and: getChecked('op-and'), op_or: getChecked('op-or'), op_not: getChecked('op-not'),
-                op_slice_ab: getChecked('op-slice-ab'), op_slice_abs: getChecked('op-slice-abs'),
+                op_mult_div_pow: getChecked('op-mult-div-pow'), 
+                op_modulo_floor: getChecked('op-modulo-floor'),
+                op_and: getChecked('op-and'), 
+                op_or: getChecked('op-or'), 
+                op_not: getChecked('op-not'),
+                op_slice_ab: getChecked('op-slice-ab'), 
+                op_slice_abs: getChecked('op-slice-abs'),
 
                 // Conditions (Ctrl)
                 main_conditions: getChecked('frame-conditions'),
-                cond_if: getChecked('cond-if'), cond_if_else: getChecked('cond-if-else'),
-                cond_if_elif: getChecked('cond-if-elif'), cond_if_elif_else: getChecked('cond-if-elif-else'),
-                cond_if_if: getChecked('cond-if-if'), cond_if_if_if: getChecked('cond-if-if-if'),
+                cond_if: getChecked('cond-if'), 
+                cond_if_else: getChecked('cond-if-else'),
+                cond_if_elif: getChecked('cond-if-elif'), 
+                cond_if_elif_else: getChecked('cond-if-elif-else'),
+                cond_if_if: getChecked('cond-if-if'), 
+                cond_if_if_if: getChecked('cond-if-if-if'),
 
                 // Boucles (Loop)
                 main_loops: getChecked('frame-loops'),
-                loop_for_range: getChecked('loop-for-range'), loop_for_list: getChecked('loop-for-list'),
-                loop_for_str: getChecked('loop-for-str'), loop_while: getChecked('loop-while'),
-                loop_nested_for2: getChecked('loop-nested-for2'), loop_nested_for3: getChecked('loop-nested-for3'),
+                loop_for_range: getChecked('loop-for-range'), 
+                loop_for_list: getChecked('loop-for-list'),
+                loop_for_str: getChecked('loop-for-str'), 
+                loop_while: getChecked('loop-while'),
+                loop_nested_for2: getChecked('loop-nested-for2'), 
+                loop_nested_for3: getChecked('loop-nested-for3'),
                 loop_while_op: getChecked('loop-while-op'),
-                loop_range_ab: getChecked('loop-range-ab'), loop_range_abs: getChecked('loop-range-abs'),
+                loop_range_ab: getChecked('loop-range-ab'), 
+                loop_range_abs: getChecked('loop-range-abs'),
 
                 // Fonctions (Func)
                 main_functions: getChecked('frame-functions'),
-                func_def_a: getChecked('func-def-a'), func_builtins: getChecked('func-builtins'),
-                func_return: getChecked('func-return'), func_def_ab: getChecked('func-def-ab'),
-                func_op_list: getChecked('func-op-list'), func_op_str: getChecked('func-op-str'),
+                func_def_a: getChecked('func-def-a'), 
+                func_builtins: getChecked('func-builtins'),
+                func_return: getChecked('func-return'), 
+                func_def_ab: getChecked('func-def-ab'),
+                func_op_list: getChecked('func-op-list'), 
+                func_op_str: getChecked('func-op-str'),
                 
                 // Paramètres globaux
                 difficultyLevelGlobal: parseInt(difficultyGlobalSelect.value),
@@ -587,6 +748,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 numTotalVariablesGlobal: parseInt(numTotalVariablesGlobalSelect.value)
             };
             console.log("Options de génération finales pour code-generator:", generationOptions);
+            
             var newGeneratedCode = "";
             if (typeof generateRandomPythonCode === 'function') { 
                 newGeneratedCode = generateRandomPythonCode(generationOptions); 
@@ -800,7 +962,7 @@ document.addEventListener('DOMContentLoaded', function() {
             contentHtml += `<strong>${varName}</strong>: Votre réponse : <code class="user-answer">${result.studentAnswer || "(vide)"}</code>. `;
             if (!result.isCorrect) {
                 allCorrect = false;
-                contentHtml += `Attendu : <code>${result.correctAnswer}</code>.`;
+                // contentHtml += `Attendu : <code>${result.correctAnswer}</code>.`;
             }
             contentHtml += `</li>`;
         }
@@ -1038,7 +1200,7 @@ function checkStudentAnswers(correctVariableValues) {
 
         results[varName] = {
             studentAnswer: studentAnswerTrimmed, // Stocker la réponse nettoyée
-            correctAnswer: correctAnswerAsString, 
+            //correctAnswer: correctAnswerAsString, 
             isCorrect: isCorrect
         };
     });
