@@ -426,25 +426,19 @@ for l in 'abcd':
 """
 
 focus = """
-my_str = "Hello"
-for char in my_str:
-    if char.upper() == char:
-        print("majuscule")
-    else:
-        print("minuscule")
-    print("fin du traitement")
-print("Je suis ici sortie de la boucle")
 
-for l in 'abcd':
-    if l.upper() == l:
-        print("majuscule")
+for mot in ['ab','cd','ef']:
+    if cond == True:
+        print("vrai")
 
-    print("fin du traitement")
+for n in ('a', 'b', 'c'):
+    print(n)
 
-for n in [1, 2, 3]:
-    print("nombre depuis liste= ", n)
-
-for l in ['a', 'b', 'c']:
-    print("lettre depuis liste= ", l)
+for i in range(2,10,3):
+    print("i = ", i)
+for j in range(2,10):
+    print("j = ", j)
+for k in range(10):
+    print("k = ", k)
 
 """

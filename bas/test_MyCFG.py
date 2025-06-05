@@ -321,151 +321,150 @@ class ControlFlowGraph:
         # Retourner les points de sortie uniques. visit_body s'occupera de les fusionner si nécessaire.
         return list(set(final_exit_nodes_after_if))
 
-    def visit_For(self, node: ast.For, parent_id: str) -> List[str]: 
-        #print(f"DEBUG: visit_For pour {ast.unparse(node.target)} in ..., parent: {parent_id}")
-        """Visite une boucle 'for' AST en distinguant les cas for .. in range(...)"""
+    def visit_For(self, node: ast.For, parent_id: str) -> List[str]:
+        """
+        Visite une boucle 'for' AST en utilisant une structure détaillée unifiée.
+        Si l'itérable est un range() avec des arguments littéraux, il est traité comme une liste explicite.
+        """
         iterator_variable_str = ast.unparse(node.target).replace('"', '"')
-        iterable_node = node.iter
+        iterable_node = node.iter # L'objet AST de l'itérable
+
+        iterable_kind_desc, elements_type_desc, iterable_display_name = \
+            self._get_iterable_description(iterable_node)
+
+        # Option pour simplifier si l'itérable est un littéral non vide
+        # (ex: "abc", [1,2], range(5) qui n'est jamais vide)
+        skip_first_check = False
+        if isinstance(iterable_node, (ast.Constant, ast.List, ast.Tuple, ast.Set)): # Littéral itérable
+            if isinstance(iterable_node, ast.Constant) and iterable_node.value: # Chaîne non vide
+                skip_first_check = True
+            elif hasattr(iterable_node, 'elts') and iterable_node.elts: # Liste/Tuple non vide
+                skip_first_check = True
+        elif isinstance(iterable_node, ast.Call) and \
+             isinstance(iterable_node.func, ast.Name) and \
+             iterable_node.func.id == 'range':
+            # Si _evaluate_range_to_list_str a réussi ET que la liste n'est pas vide
+             if "[" in iterable_display_name and iterable_display_name != "[]": # Heuristique !!
+                skip_first_check = True
         
-        # Points de sortie de la boucle For (ceux qui mènent à l'instruction *après* la boucle).
-        loop_overall_exit_points: List[str] = []
+        # Un range peut être vide, mais pour la structure, on pourrait le traiter comme non vide initialement
+        # si on veut sauter le premier test. Cependant, range(0) est vide, range(2,1) aussi...
+        # Il faudrait évaluer les arguments de range pour être sûr.
+        # Pour l'instant, on ne saute pas pour range().
+        #   pass
 
-        #print(f"DEBUG: visit_For - Juste avant le IF. iterator_variable_str = '{iterator_variable_str}'")
-        #print(f"DEBUG: visit_For - Juste avant le IF. type(iterable_node) = {type(iterable_node)}")
-        #if isinstance(iterable_node, ast.Constant):
-        #    print(f"DEBUG: visit_For - iterable_node.value = '{iterable_node.value}'")
 
-        # Cas spécial pour for i in range(...) pour une représentation plus détaillée.
-        if isinstance(iterable_node, ast.Call) and \
-           isinstance(iterable_node.func, ast.Name) and \
-           iterable_node.func.id == 'range':
-            #print(f"DEBUG: visit_For - Cas RANGE")
-            range_args = iterable_node.args
-            start_val_str = "0"; stop_val_str = ""; step_val_str = "1" # Valeurs par défaut pour range.
-            if len(range_args) == 1: 
-                stop_val_str = ast.unparse(range_args[0]).replace('"', '#quot;')
-            elif len(range_args) >= 2:
-                start_val_str = ast.unparse(range_args[0]).replace('"', '#quot;')
-                stop_val_str = ast.unparse(range_args[1]).replace('"', '#quot;')
-                if len(range_args) == 3: 
-                    step_val_str = ast.unparse(range_args[2]).replace('"', '#quot;')
-            else: # Fallback si range() a un nombre inattendu d'arguments.
-                #print(f"DEBUG: visit_For - Cas FALLBACK GENERIC ITERABLE")
-                exits = self._visit_for_generic_iterable(node, parent_id, iterator_variable_str)
-                #print(f"DEBUG: visit_For - Cas FALLBACK GENERIC ITERABLE - return {exits}")
-                return exits
+        current_parent_for_loop_structure = parent_id
+        entry_decision_id = None 
 
-            # Nœud d'initialisation.
-            init_label = f"{iterator_variable_str} = {start_val_str}"
-            init_node_id = self.add_node(init_label, node_type="Process")
-            self.add_edge(parent_id, init_node_id)
-
-            # Nœud de condition.
-            condition_op = "<" # Opérateur par défaut.
-            try: # Essayer de déterminer si le pas est négatif.
-                temp_step_for_eval = step_val_str.replace('#quot;', '') 
-                if temp_step_for_eval: 
-                    evaluated_step = ast.literal_eval(temp_step_for_eval) # Évaluation sûre.
-                    if isinstance(evaluated_step, (int, float)) and evaluated_step < 0:
-                        condition_op = ">" 
-            except (ValueError, SyntaxError):
-                pass # Garder "<" par défaut si l'évaluation échoue.
-
-            loop_condition_label = f"{iterator_variable_str} {condition_op} {stop_val_str}"
-            loop_condition_id = self.add_node(loop_condition_label, node_type="Decision")
-            self.add_edge(init_node_id, loop_condition_id)
-
-            # La branche "False" (terminaison normale) du losange est un point de sortie global.
-            loop_overall_exit_points.append(loop_condition_id) 
-
-            # Nœud d'incrémentation.
-            increment_label = f"{iterator_variable_str} = {iterator_variable_str} + {step_val_str}"
-            increment_node_id = self.add_node(increment_label, node_type="Process")
-            
-            # Mettre à jour la pile des boucles pour 'break' et 'continue'.
-            # break_target: loop_condition_id (la sortie "False" de la condition).
-            # continue_target: increment_node_id.
-            # retest_target: loop_condition_id (après l'incrément).
-            self.loop_stack.append((increment_node_id, loop_condition_id, loop_condition_id)) 
-
-            # Visiter le corps de la boucle (branche "True").
-            true_branch_first_node_id: Optional[str] = None
-            if node.body:
-                nodes_before_body = {n_id for n_id, _ in self.nodes}
-                body_exit_nodes = self.visit_body(node.body, [loop_condition_id])
-                nodes_after_body = {nid for nid,_ in self.nodes}
-                new_nodes_in_body = sorted(list(nodes_after_body - nodes_before_body), key=lambda x: int(x.replace("node","")))
-                if new_nodes_in_body:
-                    true_branch_first_node_id = new_nodes_in_body[0]
-                
-                # Les sorties normales du corps mènent à l'incrémentation.
-                for exit_node in body_exit_nodes:
-                    if exit_node not in self.terminal_nodes: 
-                        self.add_edge(exit_node, increment_node_id)
-
-            if true_branch_first_node_id: 
-                if (loop_condition_id, true_branch_first_node_id, "") in self.edges: 
-                    self.edges.remove((loop_condition_id, true_branch_first_node_id, ""))
-                self.add_edge(loop_condition_id, true_branch_first_node_id, "True")
-            elif not node.body: # Corps vide, la branche "True" va directement à l'incrément.
-                self.add_edge(loop_condition_id, increment_node_id, "True")
-
-            # L'incrément retourne à la condition.
-            self.add_edge(increment_node_id, loop_condition_id) 
-            
-            # Gérer la clause 'orelse' de la boucle.
-            # Elle s'exécute si la boucle se termine normalement (pas par un 'break').
-            false_branch_first_node_id: Optional[str] = None 
-            if node.orelse:
-                # Si orelse existe, loop_condition_id (sortie False) ne va pas directement à la suite,
-                # mais au début de orelse.
-                if loop_condition_id in loop_overall_exit_points:
-                    loop_overall_exit_points.remove(loop_condition_id)
-
-                nodes_before_orelse = {nid for nid,_ in self.nodes}
-                orelse_exit_nodes = self.visit_body(node.orelse, [loop_condition_id]) 
-                nodes_after_orelse = {nid for nid,_ in self.nodes}
-                new_nodes_in_orelse = sorted(list(nodes_after_orelse - nodes_before_orelse), key=lambda x: int(x.replace("node","")))
-                if new_nodes_in_orelse:
-                    false_branch_first_node_id = new_nodes_in_orelse[0]
-                
-                loop_overall_exit_points.extend(orelse_exit_nodes) # Les sorties de orelse sont des sorties globales.
-            
-            if not node.orelse:
-                # Chercher la première arête sortante de loop_condition_id qui n'est pas "True"
-                # c'est l'arête sortante du losange '{condition}', correspondante à la sortie de boucle
-                for from_node, to_node, label in list(self.edges):
-                    if from_node == loop_condition_id and label == "":
-                        #print(f"Relabel DEBUG: {from_node} -> {to_node} ('' -> 'False')")
-                        # On relabelise cette arête en "False": on la supprime pour la recréer labellisée
-                        self.edges.remove((from_node, to_node, label))
-                        self.add_edge(from_node, to_node, "False")
-                        break  # Il ne doit y en avoir qu'une!!
-
-            if false_branch_first_node_id: 
-                if (loop_condition_id, false_branch_first_node_id, "") in self.edges: 
-                    self.edges.remove((loop_condition_id, false_branch_first_node_id, ""))
-                self.add_edge(loop_condition_id, false_branch_first_node_id, "False")
-            # elif not node.orelse : Pas de orelse, l'arête "False" part de loop_condition_id vers la suite.
-
-            # forcer qu'aucune arête sortante du losange ne soit sans label
-            for from_node, to_node, label in list(self.edges):
-                if from_node == loop_condition_id and label == "":
-                    self.edges.remove((from_node, to_node, label))
-                    self.add_edge(from_node, to_node, "False")
-
-            self.loop_stack.pop() # Fin de la gestion de cette boucle.
-
-            #print(f"DEBUG: visit_For - Cas RANGE - return {loop_overall_exit_points}")
-            return list(set(loop_overall_exit_points))   
+        if not skip_first_check:
+            # 1. Première Décision: Y a-t-il des éléments à traiter ?
+            # Utiliser une formulation neutre pour le type d'itérable.
+            entry_decision_label = f"{iterable_kind_desc.capitalize()} {iterable_display_name}<br>contient des {elements_type_desc}s ?"
+            entry_decision_id = self.add_node(entry_decision_label, node_type="Decision")
+            self.add_edge(parent_id, entry_decision_id)
+            current_parent_for_loop_structure = entry_decision_id
         
-        else: # Itérable générique (non-range).
-            #print(f"DEBUG: visit_For - Cas GENERIC ITERABLE")
-            return self._visit_for_generic_iterable(node, parent_id, iterator_variable_str)
-    
-        # Si on arrive ici, c'est qu'il manque un return dans une des branches du if/else !!!
-        #print(f"CRITICAL DEBUG: visit_For - Fin atteinte sans return explicite !")
-        return [] # Fallback pour éviter TypeError, mais indique un bug logique
+        # 2. Initialisation de la variable locale au premier élément
+        init_var_label = f"{iterator_variable_str} ← premier {elements_type_desc}<br>de {iterable_display_name}"
+        init_var_id = self.add_node(init_var_label, node_type="Process")
+        
+        if entry_decision_id: # Si la première décision existe (on ne l'a pas sautée)
+            self.add_edge(entry_decision_id, init_var_id, "Oui")
+        else: # On a sauté la première vérification, connecter directement depuis le parent de la boucle For
+            self.add_edge(parent_id, init_var_id)
+
+        # Nœuds pour le re-test et la mise à jour de l'itérateur
+        retest_decision_label = f"Encore un {elements_type_desc}<br>dans {iterable_display_name} ?"
+        retest_decision_id = self.add_node(retest_decision_label, node_type="Decision")
+        
+        next_var_label = f"{iterator_variable_str} ← {elements_type_desc} suivant<br>de {iterable_display_name}"
+        next_var_id = self.add_node(next_var_label, node_type="Process")
+
+        # --- Connexions et Flux ---
+        loop_overall_exit_points: List[str] = []        
+        if entry_decision_id:
+            # La branche "Non" de entry_decision_id est une sortie de la structure de boucle.
+            # L'arête sera créée par visit_body si loop_overall_exit_points contient entry_decision_id.
+            loop_overall_exit_points.append(entry_decision_id) 
+        
+        # Configuration de la pile pour break/continue
+        # continue -> va au retest_decision_id (pour vérifier s'il y a un suivant)
+        # break -> sort de la boucle (géré par le fait que retest_decision_id est une sortie "Non")
+        # retest (après le corps) -> va au retest_decision_id
+        self.loop_stack.append((retest_decision_id, retest_decision_id, retest_decision_id))
+
+        # Visiter le corps de la boucle
+        body_exit_nodes: List[str] = []
+        first_node_of_body: Optional[str] = None
+        if node.body:
+            nodes_before_body = {nid for nid, _ in self.nodes}
+            # Le corps de la boucle commence après l'initialisation de la variable (init_var_id)
+            body_exit_nodes = self.visit_body(node.body, [init_var_id]) 
+            nodes_after_body = {nid for nid, _ in self.nodes}
+            new_nodes_in_body = sorted(list(nodes_after_body - nodes_before_body), key=lambda x: int(x.replace("node", "")))
+            if new_nodes_in_body:
+                first_node_of_body = new_nodes_in_body[0]
+                # S'assurer que l'arête init_var_id -> first_node_of_body est simple (sans label "Oui")
+                if (init_var_id, first_node_of_body, "Oui") in self.edges:
+                    self.edges.remove((init_var_id, first_node_of_body, "Oui"))
+                    self.add_edge(init_var_id, first_node_of_body, "") # Flux direct
+                elif (init_var_id, first_node_of_body, "") not in self.edges and \
+                     (init_var_id, first_node_of_body, "Non") not in self.edges : # Éviter double arête
+                     self.add_edge(init_var_id, first_node_of_body, "")
+
+
+            # Les sorties normales du corps mènent au nœud de re-test
+            for exit_node in body_exit_nodes:
+                if exit_node not in self.terminal_nodes:
+                    self.add_edge(exit_node, retest_decision_id)
+        else: 
+            # Corps vide : init_var_id mène directement au retest_decision_id
+            self.add_edge(init_var_id, retest_decision_id)
+            # body_exit_nodes reste vide, ce qui est correct
+
+        # Connexion de la deuxième décision (retest_decision_id)
+        self.add_edge(retest_decision_id, next_var_id, "Oui") # Si encore des éléments, prendre le suivant
+        # La branche "Non" de retest_decision_id est une sortie de la structure de boucle.
+        loop_overall_exit_points.append(retest_decision_id) 
+
+        # L'élément suivant (next_var_id) retourne au début du traitement du corps.
+        if first_node_of_body: # Si le corps n'était pas vide et qu'on a identifié son début
+            self.add_edge(next_var_id, first_node_of_body)
+        elif node.body : # Corps non vide, mais first_node_of_body non trouvé (ne devrait pas arriver si la logique est bonne)
+            print(f"Warning: Impossible de connecter next_var_id au début du corps de la boucle for {iterator_variable_str}")
+            self.add_edge(next_var_id, retest_decision_id) # Fallback moins précis, crée une petite boucle sur le test
+        else: # Corps vide, next_var_id retourne directement au retest
+            self.add_edge(next_var_id, retest_decision_id)
+
+        # Gestion de la clause 'orelse'
+        if node.orelse:
+            # orelse est exécuté après que retest_decision_id est "Non" (et si pas de break).
+            # On doit s'assurer que retest_decision_id n'est plus une sortie directe si orelse existe.
+            if retest_decision_id in loop_overall_exit_points:
+                loop_overall_exit_points.remove(retest_decision_id)
+            
+            # Labelliser l'arête retest_decision_id -> début de orelse avec "Non"
+            nodes_before_orelse = {nid for nid,_ in self.nodes}
+            orelse_exit_nodes = self.visit_body(node.orelse, [retest_decision_id])
+            nodes_after_orelse = {nid for nid,_ in self.nodes}
+            new_nodes_in_orelse = sorted(list(nodes_after_orelse - nodes_before_orelse), key=lambda x: int(x.replace("node","")))
+            
+            if new_nodes_in_orelse:
+                first_node_orelse  = new_nodes_in_orelse[0]
+                if (retest_decision_id, first_node_orelse, "") in self.edges:
+                    self.edges.remove((retest_decision_id, first_node_orelse, ""))
+                self.add_edge(retest_decision_id, first_node_orelse, "Non") 
+            elif not orelse_exit_nodes : # orelse est vide mais existe
+                 # La branche "Non" de retest_decision_id doit mener à la suite.
+                 # On la remet comme point de sortie.
+                 loop_overall_exit_points.append(retest_decision_id)
+            
+            # Les sorties de orelse sont des sorties globales de la structure for.
+            loop_overall_exit_points.extend(orelse_exit_nodes)
+        
+        self.loop_stack.pop() # Fin de la gestion de cette boucle.
+        return list(set(loop_overall_exit_points))
     
 
     def _visit_for_generic_iterable(self, node: ast.For, parent_id: str, iterator_variable_str: str) -> List[str]:
@@ -843,120 +842,171 @@ class ControlFlowGraph:
         self.add_edge(parent_id, call_node_id)
         return [call_node_id]
 
-    def _get_iterable_description(self, iterable_node: ast.AST) -> Tuple[str, str, str]:
-        iterable_type_desc = "itérable" 
-        elements_type_desc = "élément"
-        # iterable_name_or_literal est le texte qui sera affiché pour l'itérable
-        # Si c'est une variable, ce sera 'nom_var'. Si c'est un littéral, ce sera sa représentation textuelle.
-        iterable_name_or_literal = ast.unparse(iterable_node).replace('"', '#quot;') 
 
-        actual_node_to_inspect = iterable_node # Le noeud AST qu'on va réellement analyser pour son type
-        original_iterable_name_if_any = None # pour garder une trace si l'itérable d'origine était une variable (la variable est un ast.Name)
+    def _evaluate_range_to_list_str(self, range_args_nodes: List[ast.AST]) -> Optional[str]:
+        """
+        Tente d'évaluer les arguments d'un ast.Call à range() et de retourner
+        la liste de nombres explicite sous forme de chaîne, ou None si l'évaluation échoue.
+        Limite le nombre d'éléments pour éviter des chaînes trop longues.
+        """
+        MAX_RANGE_ELEMENTS_TO_DISPLAY = 10 # Limite pour l'affichage
+
+        args_values = []
+        for arg_node in range_args_nodes:
+            if isinstance(arg_node, ast.Constant) and isinstance(arg_node.value, int):
+                args_values.append(arg_node.value)
+            else:
+                return None # Un argument n'est pas un entier littéral, on ne peut pas dérouler
+
+        start, stop, step = 0, 0, 1 # Valeurs par défaut Python pour range
+        if len(args_values) == 1:
+            stop = args_values[0]
+        elif len(args_values) == 2:
+            start, stop = args_values[0], args_values[1]
+        elif len(args_values) == 3:
+            start, stop, step = args_values[0], args_values[1], args_values[2]
+        else:
+            return None # Nombre d'arguments incorrect
+
+        if step == 0:
+            return None # step ne peut pas être 0
+
+        result_numbers = []
+        current_val = start
+        count = 0
+
+        if step > 0:
+            while current_val < stop and count < MAX_RANGE_ELEMENTS_TO_DISPLAY:
+                result_numbers.append(current_val)
+                current_val += step
+                count += 1
+        else: # step < 0
+            while current_val > stop and count < MAX_RANGE_ELEMENTS_TO_DISPLAY:
+                result_numbers.append(current_val)
+                current_val += step # step est négatif, donc on soustrait
+                count += 1
+        
+        list_str = "[" + ", ".join(map(str, result_numbers))
+        if count == MAX_RANGE_ELEMENTS_TO_DISPLAY and \
+           ((step > 0 and current_val < stop) or (step < 0 and current_val > stop)):
+            list_str += ", ..." # Indiquer que la liste est tronquée
+        list_str += "]"
+        return list_str
+
+
+    def _get_iterable_description(self, iterable_node: ast.AST) -> \
+                                 Tuple[str, str, str]:
+        """
+        Tente de donner une description du type de l'itérable et de ses éléments.
+        Retourne: (
+            iterable_kind_desc: "la séquence", "la collection", "la variable", "le résultat de func()"
+                (neutre pour éviter les problèmes de genre avec le nom de l'itérable)
+            elements_type_desc: "caractère", "nombre", "élément mixte", "élément"
+            iterable_display_name: "'abc'", "ma_liste", "range(10)" 
+                (nom ou littéral pour affichage)
+        )
+        """
+        iterable_kind_desc = "la collection" # Terme générique et neutre
+        elements_type_desc = "élément"
+        # Par défaut, iterable_display_name est la représentation textuelle de l'itérable.
+        # On l'affine pour les noms de variables et les chaînes littérales.
+        iterable_display_name = ast.unparse(iterable_node).replace('"',"#quot;")
+
+        actual_node_to_inspect = iterable_node
+        original_iterable_name_if_any = None
 
         if isinstance(iterable_node, ast.Name):
             original_iterable_name_if_any = iterable_node.id
-            # Pour l'affichage, on veut le nom de la variable, pas sa valeur potentielle
-            iterable_name_or_literal = f"'{iterable_node.id}'" 
-            
+            iterable_display_name = f"'{iterable_node.id}'" # Nom de la variable
+            iterable_kind_desc = "la variable" # Plus spécifique
             if iterable_node.id in self.variable_assignments:
                 assigned_ast_type, assigned_value_or_desc = self.variable_assignments[iterable_node.id]
-                
-                # Maintenant, on essaie de "reconstituer" un noeud AST ou une description
-                # basée sur ce qui a été stocké pour cette variable.
-                if assigned_ast_type == ast.Constant:
-                    # La variable a été affectée à une constante
-                    if isinstance(assigned_value_or_desc, str):
-                        # On traite la variable comme si elle contenait cette chaîne littérale
-                        actual_node_to_inspect = ast.Constant(value=assigned_value_or_desc)
-                        iterable_type_desc = f"chaîne" #  (via var {iterable_name_or_literal}) # Plus précis
-                    # Ajouter d'autres types de constantes si stockés (int, float, bool)
-                    # Cependant, itérer sur un int/float/bool n'est pas typique pour un 'for in'.
+                if assigned_ast_type == ast.Constant and isinstance(assigned_value_or_desc, str):
+                    actual_node_to_inspect = ast.Constant(value=assigned_value_or_desc)
+                    # iterable_kind_desc reste "la variable", mais on inspecte son contenu
                 elif assigned_ast_type == ast.List:
-                    iterable_type_desc = f"liste" # (via var {iterable_name_or_literal})
-                    # Si assigned_value_or_desc contenait les types des éléments, on pourrait les utiliser.
-                    # Pour l'instant, on ne peut pas reconstruire les elts pour actual_node_to_inspect.
-                    # On va donc se baser sur le fait que c'est une "liste" et garder elements_type_desc par défaut.
-                    # On pourrait avoir stocké une description comme "liste de nombres"
+                    actual_node_to_inspect = ast.List(elts=[], ctx=ast.Load()) # Simuler pour type
+                    iterable_kind_desc = "la variable (liste)"
+                    # Si assigned_value_or_desc est "liste de nombres", on peut l'utiliser pour elements_type_desc
                     if isinstance(assigned_value_or_desc, str) and "liste de" in assigned_value_or_desc:
-                        # Ex: "liste de nombres" -> elements_type_desc = "nombre"
                         if "nombres" in assigned_value_or_desc: elements_type_desc = "nombre"
                         elif "chaînes" in assigned_value_or_desc: elements_type_desc = "chaîne"
-                        # etc.
-                    else: # Fallback si c'est juste le type de collection
-                         elements_type_desc = "élément"
-                    # On ne change pas actual_node_to_inspect ici si on n'a pas les elts.
                 elif assigned_ast_type == ast.Tuple:
-                    iterable_type_desc = f"le tuple" #  (via var {iterable_name_or_literal})
-                    elements_type_desc = "élément"
-                elif assigned_ast_type == ast.Set:
-                    iterable_type_desc = f"l'ensemble" # (via var {iterable_name_or_literal})
-                    elements_type_desc = "élément"
-                elif assigned_ast_type == ast.Dict:
-                    iterable_type_desc = f"le dictionnaire" # (via var {iterable_name_or_literal})
-                    elements_type_desc = "clé"
-                elif assigned_ast_type == ast.Call: # La variable vient d'un appel de fonction
-                    iterable_type_desc = f"{assigned_value_or_desc} (via var {iterable_name_or_literal})"
+                    actual_node_to_inspect = ast.Tuple(elts=[], ctx=ast.Load())
+                    iterable_kind_desc = "la variable (tuple)"
+                # ... (ajouter Set, Dict si nécessaire pour variable_assignments) ...
+                elif assigned_ast_type == ast.Call and isinstance(assigned_value_or_desc, str): # ex: "résultat de len()"
+                    iterable_kind_desc = f"la variable (contenu: {assigned_value_or_desc})"
                     elements_type_desc = "élément" # On ne sait pas plus
-                # Si assigned_ast_type est ast.Name (b = a), on a propagé. actual_node_to_inspect reste le Name.
-                # La description sera "la variable 'nom_var'".
+                    return iterable_kind_desc, elements_type_desc, iterable_display_name.strip("'")
 
-        # --- Analyse de actual_node_to_inspect (qui peut être l'original ou un reconstitué) ---
+
+        # Analyse de actual_node_to_inspect (qui peut être l'original ou un reconstitué/simulé)
         if isinstance(actual_node_to_inspect, ast.Constant):
             if isinstance(actual_node_to_inspect.value, str):
-                # Si ce n'est pas déjà mis par la logique de variable ci-dessus
-                if iterable_type_desc == "itérable": iterable_type_desc = "chaîne"
-                if elements_type_desc == "élément": elements_type_desc = "caractère"
+                iterable_kind_desc = "la chaîne" if not original_iterable_name_if_any else iterable_kind_desc # Garder "la variable" si c'en était une
+                elements_type_desc = "caractère"
+                # Mettre des guillemets simples autour du littéral chaîne pour l'affichage
+                escaped_str_value = actual_node_to_inspect.value.replace('"','#quot;')
+                iterable_display_name = f"'{escaped_str_value}'"
+        
         elif isinstance(actual_node_to_inspect, ast.List):
-            if iterable_type_desc == "itérable": iterable_type_desc = "liste"
+            iterable_kind_desc = "la liste" if not original_iterable_name_if_any else iterable_kind_desc
             if hasattr(actual_node_to_inspect, 'elts') and actual_node_to_inspect.elts:
                 element_types_seen = set()
-                # ... (votre logique existante pour analyser les elts d'une liste littérale) ...
-                # (Assurez-vous qu'elle fonctionne bien avec les elts potentiellement vides si actual_node_to_inspect
-                # a été simulé à partir de variable_assignments sans les elts détaillés)
-                first_el_type_str = None
-                all_same = True
                 for elt_node in actual_node_to_inspect.elts:
-                    current_el_type_str = "mixte"
+                    current_el_type_str = "mixte" 
                     if isinstance(elt_node, ast.Constant):
-                        if isinstance(elt_node.value, int): current_el_type_str = "nombre"
-                        elif isinstance(elt_node.value, float): current_el_type_str = "nombre"
+                        if isinstance(elt_node.value, (int, float)): current_el_type_str = "nombre"
                         elif isinstance(elt_node.value, str): current_el_type_str = "chaîne"
                         elif isinstance(elt_node.value, bool): current_el_type_str = "booléen"
-                    elif isinstance(elt_node, ast.Name): current_el_type_str = "variable" # Un élément est une autre variable
+                    elif isinstance(elt_node, ast.Name): current_el_type_str = "variable"
                     element_types_seen.add(current_el_type_str)
-                
-                if len(element_types_seen) == 1:
-                    elements_type_desc = element_types_seen.pop()
-                elif element_types_seen: # Au moins un type a été vu
-                    elements_type_desc = "élément mixte"
-                # else: elements_type_desc reste "élément" (liste vide ou types non identifiables)
+                if len(element_types_seen) == 1: elements_type_desc = element_types_seen.pop()
+                elif element_types_seen: elements_type_desc = "élément mixte"
+            # else: elements_type_desc reste "élément"
 
         elif isinstance(actual_node_to_inspect, ast.Tuple):
-            if iterable_type_desc == "itérable": iterable_type_desc = "le tuple"
-            if elements_type_desc == "élément": elements_type_desc = "élément de tuple"
+            iterable_kind_desc = "le tuple" if not original_iterable_name_if_any else iterable_kind_desc
+            elements_type_desc = "élément" # Peut être affiné
+
         elif isinstance(actual_node_to_inspect, ast.Set):
-            if iterable_type_desc == "itérable": iterable_type_desc = "l'ensemble"
-            if elements_type_desc == "élément": elements_type_desc = "élément d'ensemble"
+            iterable_kind_desc = "l'ensemble" if not original_iterable_name_if_any else iterable_kind_desc
+            elements_type_desc = "élément" # Peut être affiné
+
         elif isinstance(actual_node_to_inspect, ast.Dict):
-            if iterable_type_desc == "itérable": iterable_type_desc = "le dictionnaire"
-            if elements_type_desc == "élément": elements_type_desc = "clé"
-        elif isinstance(actual_node_to_inspect, ast.Name) and original_iterable_name_if_any is None: # C'était un Name dès le début
-            iterable_type_desc = f"variable {iterable_name_or_literal}"
-            # elements_type_desc reste "élément"
-        elif isinstance(actual_node_to_inspect, ast.Call):
-            # Si ce n'est pas déjà mis par la logique de variable
-            if iterable_type_desc == "itérable":
+            iterable_kind_desc = "le dictionnaire" if not original_iterable_name_if_any else iterable_kind_desc
+            elements_type_desc = "clé"
+
+        elif isinstance(actual_node_to_inspect, ast.Call) and \
+             isinstance(actual_node_to_inspect.func, ast.Name) and \
+             actual_node_to_inspect.func.id == 'range':
+            # Tenter de dérouler le range
+            evaluated_range_str = self._evaluate_range_to_list_str(actual_node_to_inspect.args)
+            if evaluated_range_str:
+                iterable_kind_desc = "la séquence de nombres" # Ou "la liste (générée par range)"
+                elements_type_desc = "nombre"
+                iterable_display_name = evaluated_range_str # Affiche la liste explicite
+            else: # N'a pas pu dérouler (args non littéraux)
+                iterable_kind_desc = "la séquence (range)"
+                elements_type_desc = "nombre"
+                # iterable_display_name est déjà ast.unparse(iterable_node)
+
+        elif isinstance(actual_node_to_inspect, ast.Call): # Autre appel de fonction
+            if iterable_kind_desc == "la collection" or iterable_kind_desc == "l'itérable": # Si pas déjà mis par la logique de variable
                 func_name = ast.unparse(actual_node_to_inspect.func).replace('"', '#quot;')
-                iterable_type_desc = f"le résultat de {func_name}()"
+                iterable_kind_desc = f"le résultat de {func_name}()"
             # elements_type_desc reste "élément"
         
-        # Si on a un nom original et que la description est encore générique, utiliser le nom.
-        if original_iterable_name_if_any and iterable_type_desc == "itérable":
-            iterable_type_desc = f"variable {iterable_name_or_literal}"
+        # Si c'était une variable à l'origine et qu'on n'a pas pu déterminer son type de contenu plus précisément
+        if original_iterable_name_if_any and iterable_kind_desc in ["la collection", "l'itérable"]:
+            iterable_kind_desc = f"la variable"
 
-        # Pour l'affichage final, on utilise iterable_name_or_literal qui est soit le nom de la variable
-        # soit la représentation textuelle du littéral.
-        return iterable_type_desc, elements_type_desc, iterable_name_or_literal.strip("'") # Enlever les ' ajoutés pour les noms
+        # Retourner iterable_display_name.strip("'") si c'était un nom de variable,
+        # mais pas si c'est un littéral chaîne qui doit garder ses guillemets.
+        # La logique actuelle pour iterable_display_name le gère déjà bien.
+        return iterable_kind_desc, elements_type_desc, iterable_display_name
+    
 
     def _simplify_junctions(self) -> Tuple[List[Tuple[str, str]], Set[Tuple[str, str, str]]]:
         """
