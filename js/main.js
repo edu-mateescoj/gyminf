@@ -16,6 +16,20 @@ const VAR_COUNT_LIMITS = {
     list: { min: 1, max: 2 },
     bool: { min: 1, max: 3 }
 };
+
+const BUILTINS_BASE = [
+    { id: 'builtin-print', label: 'print()' },
+    { id: 'builtin-input', label: 'input()' },
+    { id: 'builtin-len',   label: 'len()' }
+];
+const BUILTINS_ADVANCED = [
+    { id: 'builtin-chr', label: 'chr()' },
+    { id: 'builtin-ord', label: 'ord()' },
+    { id: 'builtin-min', label: 'min()' },
+    { id: 'builtin-max', label: 'max()' },
+    { id: 'builtin-sum', label: 'sum()' }
+];
+
 // Variable globale pour l'instance de l'éditeur CodeMirror.
 var codeEditorInstance;
 
@@ -86,6 +100,17 @@ document.addEventListener('DOMContentLoaded', function() {
             const updateDOM = () => {
                 if (checkbox.checked) {
                     targetContainer.innerHTML = section.baseHtmlGetter();
+                    if (checkbox.checked && section.checkboxId === 'frame-functions') {
+                const funcBuiltinsCheckbox = targetContainer.querySelector('#func-builtins');
+                if (funcBuiltinsCheckbox) {
+                    funcBuiltinsCheckbox.removeEventListener('change', toggleBuiltinOptions); // Eviter doublons
+                    funcBuiltinsCheckbox.addEventListener('change', toggleBuiltinOptions);
+                    // S'assurer que l'état initial est correct si la checkbox est déjà cochée (par ex. par un rechargement de page)
+                    if (funcBuiltinsCheckbox.checked) {
+                        toggleBuiltinOptions({ target: funcBuiltinsCheckbox }); // Simuler l'événement
+                    }
+                        }
+                    }       
                     const internalContainer = targetContainer.querySelector('.d-flex.flex-column.gap-1');
                     if (internalContainer && section.advancedHandler) {
                         section.advancedHandler(internalContainer, advancedModeCheckbox.checked);
@@ -126,12 +151,114 @@ document.addEventListener('DOMContentLoaded', function() {
 
         const functionsOptionsHTML_Base = `
             <div class="d-flex flex-column gap-1">
-                <div class="form-check form-check-inline"><input class="form-check-input" type="checkbox" id="func-def-a"><label class="form-check-label small" for="func-def-a">def f(a)</label></div>
-                <div class="form-check form-check-inline"><input class="form-check-input" type="checkbox" id="func-builtins"><label class="form-check-label small" for="func-builtins">builtins</label></div>
-                <div class="form-check form-check-inline"><input class="form-check-input" type="checkbox" id="func-return"><label class="form-check-label small" for="func-return">return</label></div>
+                <div class="form-check form-check-inline">
+                    <input class="form-check-input" type="checkbox" id="func-def-a">
+                    <label class="form-check-label small" for="func-def-a">def f(a)</label>
+                </div>
+                <div class="form-check form-check-inline">
+                    <input class="form-check-input" type="checkbox" id="func-builtins">
+                    <label class="form-check-label small" for="func-builtins">builtins</label>
+                </div>
+                <!-- Conteneur vide pour les options de builtins, sera peuplé dynamiquement -->
+                <div id="func-builtins-options-container" class="ms-4 mt-1" style="display: none;"></div>
+                <div class="form-check form-check-inline">
+                    <input class="form-check-input" type="checkbox" id="func-return">
+                    <label class="form-check-label small" for="func-return">return</label>
+                </div>
             </div>`;
 
         initializeDynamicSyntaxOptions(); // Appel après la définition des HTML de base
+
+            // --- Gestion spécifique des options de Builtins ---
+    /**
+     * Affiche ou masque les options de builtins spécifiques et les peuple.
+     * Appelée lorsque la checkbox #func-builtins change.
+     * @param {Event} event - L'événement de changement de la checkbox #func-builtins.
+     */
+    function toggleBuiltinOptions(event) {
+        const builtinsCheckbox = event.target; // La checkbox #func-builtins
+        // Le conteneur des options de builtins est un frère de la div parente de la checkbox,
+        // ou il est relatif au conteneur des options de fonctions.
+        // On suppose qu'il est à l'intérieur de #functions-options-container et a l'ID func-builtins-options-container
+        const builtinsOptionsContainer = document.getElementById('func-builtins-options-container');
+
+        if (!builtinsOptionsContainer) {
+            console.error("Conteneur #func-builtins-options-container non trouvé !");
+            return;
+        }
+
+        if (builtinsCheckbox.checked) {
+            builtinsOptionsContainer.style.display = 'block'; // Ou 'flex' si vous voulez une disposition flex
+            populateBuiltinOptions(builtinsOptionsContainer);
+        } else {
+            builtinsOptionsContainer.style.display = 'none';
+            builtinsOptionsContainer.innerHTML = ''; // Vider les options quand masqué
+        }
+        updateGlobalConfigSelectors(); // Mettre à jour les totaux
+        handleVisualInterdependencies();
+    }
+
+    /**
+     * Peuple le conteneur avec les checkboxes des builtins (base + avancés si mode avancé actif).
+     * @param {HTMLElement} container - Le conteneur où injecter les checkboxes.
+     */
+    function populateBuiltinOptions(container) {
+        container.innerHTML = ''; // Vider d'abord
+        let builtinsToShow = [...BUILTINS_BASE];
+        const isAdvanced = advancedModeCheckbox ? advancedModeCheckbox.checked : false;
+
+        if (isAdvanced) {
+            builtinsToShow = builtinsToShow.concat(BUILTINS_ADVANCED);
+        }
+
+        const listGroup = document.createElement('div');
+        listGroup.className = 'list-group list-group-flush d-flex flex-row flex-wrap gap-2'; // Pour affichage en ligne et retour à la ligne
+
+        builtinsToShow.forEach(builtin => {
+            const div = document.createElement('div');
+            div.className = 'form-check form-check-inline'; // Chaque builtin dans son propre form-check
+
+            const input = document.createElement('input');
+            input.className = 'form-check-input builtin-option-checkbox'; // Nouvelle classe pour les cibler
+            input.type = 'checkbox';
+            input.id = builtin.id;
+            input.value = builtin.id;
+            // Conserver l'état coché si l'option existait déjà (utile si on re-peuple)
+            const existingInput = document.getElementById(builtin.id); // Recherche globale, peut être risqué si IDs non uniques
+            if (existingInput && existingInput.checked) {
+                input.checked = true;
+            }
+
+
+            const label = document.createElement('label');
+            label.className = 'form-check-label small';
+            label.htmlFor = builtin.id;
+            label.textContent = builtin.label;
+
+            // Attacher un listener à chaque checkbox de builtin pour mettre à jour la config globale
+            input.addEventListener('change', () => {
+                updateGlobalConfigSelectors();
+                handleVisualInterdependencies();
+            });
+
+            div.appendChild(input);
+            div.appendChild(label);
+            listGroup.appendChild(div);
+        });
+        container.appendChild(listGroup);
+    }
+    // --- Gestionnaire pour le "Mode avancé" ---
+    if (advancedModeCheckbox) {
+        advancedModeCheckbox.addEventListener('change', function() {
+            // S'assurer de repeupler les options de builtins si elles sont actuellement visibles
+            const funcBuiltinsCheckbox = document.getElementById('func-builtins');
+            const builtinsOptionsContainer = document.getElementById('func-builtins-options-container');
+            if (funcBuiltinsCheckbox && funcBuiltinsCheckbox.checked && builtinsOptionsContainer) {
+                populateBuiltinOptions(builtinsOptionsContainer); // Repeupler avec/sans options avancées
+            }
+            // ... (appel à updateGlobalConfigSelectors et handleVisualInterdependencies) ...
+        });
+    }
 
          // --- Gestion des sélecteurs de nombre de variables par type ---
         const varTypeCheckboxes = document.querySelectorAll('.var-type-checkbox');
@@ -390,6 +517,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 if (el && el.parentNode && el.parentNode.classList.contains('form-check')) el.parentNode.remove();
             });
         }
+        // La partie builtins est gérée par populateBuiltinOptions
     }
 
 
@@ -508,6 +636,19 @@ document.addEventListener('DOMContentLoaded', function() {
             if (getChecked('func-builtins')) { minTotalLines +=1; conceptualDifficultyScore += 1; }
             if (getChecked('func-op-list')) { minTotalLines +=1; conceptualDifficultyScore += 3; if (varCounts.list === 0 && explicitVarDeclarations < 1) minTotalVariables = Math.max(minTotalVariables, 1);}
             if (getChecked('func-op-str')) { minTotalLines +=1; conceptualDifficultyScore += 3; if (varCounts.str === 0 && explicitVarDeclarations < 1) minTotalVariables = Math.max(minTotalVariables, 1);}
+            // Prise en compte des builtins sélectionnés
+            if (getChecked('func-builtins')) {
+                conceptualDifficultyScore += 1; // Le fait d'utiliser des builtins ajoute un peu
+                let builtinsSelectedCount = 0;
+                BUILTINS_BASE.forEach(b => { if (getChecked(b.id)) builtinsSelectedCount++; });
+                if (advancedModeCheckbox.checked) {
+                    BUILTINS_ADVANCED.forEach(b => { if (getChecked(b.id)) builtinsSelectedCount++; });
+                }
+                if (builtinsSelectedCount > 0) {
+                    minTotalLines += builtinsSelectedCount; // 1 ligne par appel de builtin (approximatif)
+                    conceptualDifficultyScore += builtinsSelectedCount * 0.5; // Chaque builtin ajoute un peu de complexité
+                }
+            }
             minTotalLines +=1; // Appel de la fonction
         }
 
@@ -735,12 +876,22 @@ document.addEventListener('DOMContentLoaded', function() {
 
                 // Fonctions (Func)
                 main_functions: getChecked('frame-functions'),
-                func_def_a: getChecked('func-def-a'), 
-                func_builtins: getChecked('func-builtins'),
-                func_return: getChecked('func-return'), 
-                func_def_ab: getChecked('func-def-ab'),
-                func_op_list: getChecked('func-op-list'), 
-                func_op_str: getChecked('func-op-str'),
+                func_def_a: getChecked('func-def-a'),
+                // func_builtins: getChecked('func-builtins'), // La case principale builtins
+                // Builtins spécifiques (seront false si #func-builtins n'est pas cochée car ils ne seront pas dans le DOM)
+                builtin_print: getChecked('builtin-print'),
+                builtin_input: getChecked('builtin-input'),
+                builtin_len: getChecked('builtin-len'),
+                builtin_chr: getChecked('builtin-chr'),   // Avancé
+                builtin_ord: getChecked('builtin-ord'),   // Avancé
+                builtin_min: getChecked('builtin-min'),   // Avancé
+                builtin_max: getChecked('builtin-max'),   // Avancé
+                builtin_sum: getChecked('builtin-sum'),   // Avancé
+                
+                func_return: getChecked('func-return'),
+                func_def_ab: getChecked('func-def-ab'),     // Avancé
+                func_op_list: getChecked('func-op-list'),   // Avancé
+                func_op_str: getChecked('func-op-str'),     // Avancé
                 
                 // Paramètres globaux
                 difficultyLevelGlobal: parseInt(difficultyGlobalSelect.value),

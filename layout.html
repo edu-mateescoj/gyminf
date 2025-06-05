@@ -293,6 +293,17 @@
                                     <div id="functions-options-container" class="mt-2 ms-2">
                                         <!-- Les options seront injectées ici par JS -->
                                     </div>
+                                    <!-- ... (options func-def-a) ... -->
+                                    <div class="form-check form-check-inline">
+                                        <input class="form-check-input" type="checkbox" id="func-builtins"> <!-- La checkbox principale pour "builtins" -->
+                                        <label class="form-check-label small" for="func-builtins">builtins</label>
+                                    </div>
+                                    <!-- Nouveau conteneur pour les options de builtins, initialement masqué ou vide -->
+                                    <!-- Il sera affiché et peuplé par JS si "func-builtins" est cochée -->
+                                    <div id="func-builtins-options-container" class="ms-4 mt-1" style="display: none;"> 
+                                        <!-- Les checkboxes des builtins spécifiques seront injectées ici -->
+                                    </div>
+                                    <!-- ... (option func-return) ... -->
                                 </div>
                             </div>
 
