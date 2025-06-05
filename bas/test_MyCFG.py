@@ -945,26 +945,43 @@ class ControlFlowGraph:
         if isinstance(actual_node_to_inspect, ast.Constant):
             if isinstance(actual_node_to_inspect.value, str):
                 iterable_kind_desc = "la chaîne" if not original_iterable_name_if_any else iterable_kind_desc # Garder "la variable" si c'en était une
-                elements_type_desc = "caractère"
+                elements_type_desc = "caractère" # forcément
                 # Mettre des guillemets simples autour du littéral chaîne pour l'affichage
                 escaped_str_value = actual_node_to_inspect.value.replace('"','#quot;')
                 iterable_display_name = f"'{escaped_str_value}'"
         
-        elif isinstance(actual_node_to_inspect, ast.List):
-            iterable_kind_desc = "la liste" if not original_iterable_name_if_any else iterable_kind_desc
+        elif isinstance(actual_node_to_inspect, (ast.List, ast.Tuple)):
+            if isinstance(actual_node_to_inspect, ast.List):
+                iterable_kind_desc = "la liste" if not original_iterable_name_if_any else iterable_kind_desc
+            else: # ast.Tuple
+                iterable_kind_desc = "le tuple" if not original_iterable_name_if_any else iterable_kind_desc
+
             if hasattr(actual_node_to_inspect, 'elts') and actual_node_to_inspect.elts:
                 element_types_seen = set()
                 for elt_node in actual_node_to_inspect.elts:
                     current_el_type_str = "mixte" 
                     if isinstance(elt_node, ast.Constant):
-                        if isinstance(elt_node.value, (int, float)): current_el_type_str = "nombre"
-                        elif isinstance(elt_node.value, str): current_el_type_str = "chaîne"
-                        elif isinstance(elt_node.value, bool): current_el_type_str = "booléen"
-                    elif isinstance(elt_node, ast.Name): current_el_type_str = "variable"
+                        if isinstance(elt_node.value, (int, float)): 
+                            current_el_type_str = "nombre"
+                        elif isinstance(elt_node.value, str): 
+                            # Différencier caractère de chaîne
+                            if len(elt_node.value) == 1:
+                                current_el_type_str = "caractère"
+                            else:
+                                current_el_type_str = "chaîne"
+                        elif isinstance(elt_node.value, bool): 
+                            current_el_type_str = "booléen"
+                    elif isinstance(elt_node, ast.Name): 
+                        current_el_type_str = "variable"
                     element_types_seen.add(current_el_type_str)
-                if len(element_types_seen) == 1: elements_type_desc = element_types_seen.pop()
-                elif element_types_seen: elements_type_desc = "élément mixte"
-            # else: elements_type_desc reste "élément"
+
+                if len(element_types_seen) == 1: 
+                    elements_type_desc = element_types_seen.pop()
+                elif element_types_seen: 
+                    elements_type_desc = "élément mixte"
+                # else: elements_type_desc reste "élément" (liste/tuple vide ou types non identifiables)
+            else: # Liste ou tuple vide
+                elements_type_desc = "élément"
 
         elif isinstance(actual_node_to_inspect, ast.Tuple):
             iterable_kind_desc = "le tuple" if not original_iterable_name_if_any else iterable_kind_desc
@@ -984,7 +1001,7 @@ class ControlFlowGraph:
             # Tenter de dérouler le range
             evaluated_range_str = self._evaluate_range_to_list_str(actual_node_to_inspect.args)
             if evaluated_range_str:
-                iterable_kind_desc = "la séquence de nombres" # Ou "la liste (générée par range)"
+                iterable_kind_desc = "la séquence" # Ou "la liste (générée par range)"
                 elements_type_desc = "nombre"
                 iterable_display_name = evaluated_range_str # Affiche la liste explicite
             else: # N'a pas pu dérouler (args non littéraux)
