@@ -329,7 +329,8 @@ class ControlFlowGraph:
         iterator_variable_str = ast.unparse(node.target).replace('"', '"')
         iterable_node = node.iter # L'objet AST de l'itérable
 
-        iterable_kind_desc, elements_type_desc, iterable_display_name = \
+        iterable_kind_desc, elements_type_desc_raw, iterable_display_name, \
+        article_indefini_element, article_defini_element = \
             self._get_iterable_description(iterable_node)
 
         # Option pour simplifier si l'itérable est un littéral non vide
@@ -1033,11 +1034,11 @@ class ControlFlowGraph:
         elif elements_type_desc_raw == "booléen": article_indefini_element = "un"; article_defini_element = "le"
         elif elements_type_desc_raw == "clé": article_indefini_element = "une"; article_defini_element = "la"
         # "variable", "élément mixte", "élément" restent avec "un" et "l'" par défaut.
-        
+
         # Retourner iterable_display_name.strip("'") si c'était un nom de variable,
         # mais pas si c'est un littéral chaîne qui doit garder ses guillemets.
         # La logique actuelle pour iterable_display_name le gère déjà bien.
-        return iterable_kind_desc, elements_type_desc, iterable_display_name, \
+        return iterable_kind_desc, elements_type_desc_raw, iterable_display_name, \
                article_indefini_element, article_defini_element
     
 
