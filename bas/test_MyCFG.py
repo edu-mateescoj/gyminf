@@ -1053,7 +1053,7 @@ class ControlFlowGraph:
         # La logique actuelle pour iterable_display_name le gère déjà bien.
         return iterable_kind_desc, elements_type_desc_raw, iterable_display_name, \
                article_indefini_element, article_defini_element
-    
+
 
     def _simplify_junctions(self) -> Tuple[List[Tuple[str, str]], Set[Tuple[str, str, str]]]:
         """
@@ -1215,7 +1215,7 @@ class ControlFlowGraph:
 
 ############### Choisir le code à tester ###############
 import exemples
-selected_code = exemples.NestedIf
+selected_code = exemples.focus
 ########################################################
 
 # --- Génération et Affichage ---
