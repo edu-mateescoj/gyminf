@@ -307,7 +307,7 @@ class ControlFlowGraph:
             # à visit() dans visit_body. Nous la supprimons pour la recréer avec le label "True".
             if (if_decision_id, true_branch_first_node_id, "") in self.edges:
                 self.edges.remove((if_decision_id, true_branch_first_node_id, ""))
-            self.add_edge(if_decision_id, true_branch_first_node_id, "True")
+            self.add_edge(if_decision_id, true_branch_first_node_id, "Oui")
         # else: Si la branche True est vide, if_decision_id est une sortie. Le label "True"
         #       sera sur l'arête if_decision_id -> (jonction ou instruction suivante).
         #       Ceci est géré par le fait que if_decision_id est dans final_exit_nodes_after_if.
@@ -315,7 +315,7 @@ class ControlFlowGraph:
         if false_branch_first_node_id: 
             if (if_decision_id, false_branch_first_node_id, "") in self.edges:
                 self.edges.remove((if_decision_id, false_branch_first_node_id, ""))
-            self.add_edge(if_decision_id, false_branch_first_node_id, "False")
+            self.add_edge(if_decision_id, false_branch_first_node_id, "Non")
         # else: Idem pour la branche False vide.
         
         # Retourner les points de sortie uniques. visit_body s'occupera de les fusionner si nécessaire.
@@ -387,14 +387,11 @@ class ControlFlowGraph:
         retest_decision_id = self.add_node(retest_decision_label, node_type="Decision")
         
         if article_indefini_element == "un":
-            next_var_label = f"{iterator_variable_str} ← {article_defini_element}\
-                  {elements_type_desc_raw} suivant<br>de {iterable_display_name}"
+            next_var_label = f"{iterator_variable_str} ← {article_defini_element} {elements_type_desc_raw} suivant<br>de {iterable_display_name}"
         elif article_indefini_element == "une":
-            next_var_label = f"{iterator_variable_str} ← {article_defini_element}\
-                  {elements_type_desc_raw} suivante<br>de {iterable_display_name}"
+            next_var_label = f"{iterator_variable_str} ← {article_defini_element} {elements_type_desc_raw} suivante<br>de {iterable_display_name}"
         else: # "des" ou autre
-            next_var_label = f"{iterator_variable_str} ← {article_defini_element}\
-                  {elements_type_desc_raw}s suivants<br>de {iterable_display_name}"
+            next_var_label = f"{iterator_variable_str} ← {article_defini_element} {elements_type_desc_raw}s suivants<br>de {iterable_display_name}"
         next_var_id = self.add_node(next_var_label, node_type="Process")
 
         # --- Connexions et Flux ---
@@ -542,8 +539,8 @@ class ControlFlowGraph:
                 # S'assurer que l'arête init_var_id -> first_node_of_body n'a pas de label (ou le bon)
                 # visit_body crée cette arête via son premier appel à self.visit.
                 # On ne met pas de label "True" ici, c'est un flux direct après init_var_id.
-                if (init_var_id, first_node_of_body, "True") in self.edges: # Au cas où une logique l'aurait mis
-                    self.edges.remove((init_var_id, first_node_of_body, "True"))
+                if (init_var_id, first_node_of_body, "Oui") in self.edges: # Au cas où une logique l'aurait mis
+                    self.edges.remove((init_var_id, first_node_of_body, "Oui"))
                     self.add_edge(init_var_id, first_node_of_body, "") # Flux direct
 
             # Les sorties normales du corps mènent au nœud de re-test (retest_decision_id)
@@ -556,7 +553,7 @@ class ControlFlowGraph:
             body_exit_nodes = [init_var_id] # Pour la logique de retour de boucle
 
         # Connexion de la deuxième décision (retest_decision_id)
-        self.add_edge(retest_decision_id, next_var_id, "True") # Si encore des éléments, prendre le suivant
+        self.add_edge(retest_decision_id, next_var_id, "Oui") # Si encore des éléments, prendre le suivant
         loop_overall_exit_points.append(retest_decision_id) # La branche "False" de retest_decision_id est une sortie
 
         # L'élément suivant (next_var_id) retourne au début du traitement du corps.
@@ -614,7 +611,7 @@ class ControlFlowGraph:
                 first_node_orelse  = new_nodes_in_orelse[0]
                 if (retest_decision_id, first_node_orelse, "") in self.edges:
                     self.edges.remove((retest_decision_id, first_node_orelse, ""))
-                self.add_edge(retest_decision_id, first_node_orelse, "False")
+                self.add_edge(retest_decision_id, first_node_orelse, "Non")
             elif not orelse_exit_nodes : # orelse est vide mais existe
                  # L'arête False de retest_decision_id pointe vers la suite
                  # On doit s'assurer que retest_decision_id est une sortie si orelse est vide
@@ -664,9 +661,9 @@ class ControlFlowGraph:
         if true_branch_first_node_id:
             if (while_decision_id, true_branch_first_node_id, "") in self.edges: 
                 self.edges.remove((while_decision_id, true_branch_first_node_id, ""))
-            self.add_edge(while_decision_id, true_branch_first_node_id, "True")
-        elif not node.body: # Corps vide, "True" revient directement au test.
-            self.add_edge(while_decision_id, while_decision_id, "True")
+            self.add_edge(while_decision_id, true_branch_first_node_id, "Oui")
+        elif not node.body: # Corps vide, "Oui" revient directement au test.
+            self.add_edge(while_decision_id, while_decision_id, "Oui")
 
         # Gérer 'orelse' (sortie "False").
         false_branch_first_node_id: Optional[str] = None
@@ -685,7 +682,7 @@ class ControlFlowGraph:
         if false_branch_first_node_id:
             if (while_decision_id, false_branch_first_node_id, "") in self.edges: 
                 self.edges.remove((while_decision_id, false_branch_first_node_id, ""))
-            self.add_edge(while_decision_id, false_branch_first_node_id, "False")
+            self.add_edge(while_decision_id, false_branch_first_node_id, "Non")
         # elif not node.orelse: L'arête "False" sera implicite via loop_overall_exit_points.
             
         self.loop_stack.pop()
@@ -1173,7 +1170,7 @@ class ControlFlowGraph:
             if from_node in decision_nodes and label == "":
                 # Relabel en "False"
                 display_edges.remove((from_node, to_node, label))
-                relabeled_edges.add((from_node, to_node, "False"))
+                relabeled_edges.add((from_node, to_node, "Non"))
         display_edges = display_edges | relabeled_edges
 # --- fin de la correction des labels d'arêtes sortantes des décisions ---      
         
@@ -1218,7 +1215,7 @@ class ControlFlowGraph:
 
 ############### Choisir le code à tester ###############
 import exemples
-selected_code = exemples.focus
+selected_code = exemples.NestedIf
 ########################################################
 
 # --- Génération et Affichage ---
