@@ -426,6 +426,11 @@ for l in 'abcd':
 """
 
 focus = """
+for item in my_list:
+    if item == 'focus':
+        print("Focus trouvé")
+    else:
+        print("Focus non trouvé")
 
 for mot in ['ab','cd','ef']:
     if cond == True:
@@ -436,9 +441,9 @@ for n in ('a', 'b', 'c'):
 
 for i in range(2,10,3):
     print("i = ", i)
-for j in range(2,10):
-    print("j = ", j)
-for k in range(10):
-    print("k = ", k)
+    for j in range(2,10):
+        print("j = ", j)
+        for k in range(10):
+            print("k = ", k)
 
 """

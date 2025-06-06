@@ -361,25 +361,40 @@ class ControlFlowGraph:
         if not skip_first_check:
             # 1. Première Décision: Y a-t-il des éléments à traiter ?
             # Utiliser une formulation neutre pour le type d'itérable.
-            entry_decision_label = f"{iterable_kind_desc.capitalize()} {iterable_display_name}<br>contient des {elements_type_desc}s ?"
+            entry_decision_label = f"{iterable_kind_desc.capitalize()} {iterable_display_name}\
+                <br>contient des {elements_type_desc_raw}s ?" # Garder un pluriel simple avec 's'
             entry_decision_id = self.add_node(entry_decision_label, node_type="Decision")
             self.add_edge(parent_id, entry_decision_id)
             current_parent_for_loop_structure = entry_decision_id
         
         # 2. Initialisation de la variable locale au premier élément
-        init_var_label = f"{iterator_variable_str} ← premier {elements_type_desc}<br>de {iterable_display_name}"
+        # Utiliser les articles pour les labels d'initialisation et de mise à jour
+        if article_indefini_element == "un":
+            init_var_label = f"{iterator_variable_str} ← Le premier {elements_type_desc_raw}<br>de {iterable_display_name}"
+        elif article_indefini_element == "une":
+            init_var_label = f"{iterator_variable_str} ← La première {elements_type_desc_raw}<br>de {iterable_display_name}"
+        else: # "des" ou autre
+            init_var_label = f"{iterator_variable_str} ← Les premier(es) {elements_type_desc_raw}<br>de {iterable_display_name}"
         init_var_id = self.add_node(init_var_label, node_type="Process")
-        
+
         if entry_decision_id: # Si la première décision existe (on ne l'a pas sautée)
             self.add_edge(entry_decision_id, init_var_id, "Oui")
         else: # On a sauté la première vérification, connecter directement depuis le parent de la boucle For
             self.add_edge(parent_id, init_var_id)
 
         # Nœuds pour le re-test et la mise à jour de l'itérateur
-        retest_decision_label = f"Encore un {elements_type_desc}<br>dans {iterable_display_name} ?"
+        retest_decision_label = f"Encore {article_indefini_element} {elements_type_desc_raw}<br>dans {iterable_display_name} ?"
         retest_decision_id = self.add_node(retest_decision_label, node_type="Decision")
         
-        next_var_label = f"{iterator_variable_str} ← {elements_type_desc} suivant<br>de {iterable_display_name}"
+        if article_indefini_element == "un":
+            next_var_label = f"{iterator_variable_str} ← {article_defini_element}\
+                  {elements_type_desc_raw} suivant<br>de {iterable_display_name}"
+        elif article_indefini_element == "une":
+            next_var_label = f"{iterator_variable_str} ← {article_defini_element}\
+                  {elements_type_desc_raw} suivante<br>de {iterable_display_name}"
+        else: # "des" ou autre
+            next_var_label = f"{iterator_variable_str} ← {article_defini_element}\
+                  {elements_type_desc_raw}s suivants<br>de {iterable_display_name}"
         next_var_id = self.add_node(next_var_label, node_type="Process")
 
         # --- Connexions et Flux ---
@@ -433,7 +448,8 @@ class ControlFlowGraph:
         if first_node_of_body: # Si le corps n'était pas vide et qu'on a identifié son début
             self.add_edge(next_var_id, first_node_of_body)
         elif node.body : # Corps non vide, mais first_node_of_body non trouvé (ne devrait pas arriver si la logique est bonne)
-            print(f"Warning: Impossible de connecter next_var_id au début du corps de la boucle for {iterator_variable_str}")
+            print(f"Warning: Impossible de connecter next_var_id au début du corps de la\
+                   boucle for {iterator_variable_str}")
             self.add_edge(next_var_id, retest_decision_id) # Fallback moins précis, crée une petite boucle sur le test
         else: # Corps vide, next_var_id retourne directement au retest
             self.add_edge(next_var_id, retest_decision_id)
@@ -498,7 +514,7 @@ class ControlFlowGraph:
         # --- Connexions ---
         loop_overall_exit_points: List[str] = []        
         # Connexion de la première décision (entry_decision_id)
-        self.add_edge(entry_decision_id, init_var_id, "True") # Si éléments existent, initialiser
+        self.add_edge(entry_decision_id, init_var_id, "Oui") # Si éléments existent, initialiser
         loop_overall_exit_points.append(entry_decision_id)   # La branche "False" de entry_decision_id est une sortie
 
         # Mettre à jour la pile des boucles
