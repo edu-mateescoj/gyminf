@@ -895,22 +895,26 @@ class ControlFlowGraph:
 
 
     def _get_iterable_description(self, iterable_node: ast.AST) -> \
-                                 Tuple[str, str, str]:
+                                 Tuple[str, str, str, str, str]:
         """
         Tente de donner une description du type de l'itérable et de ses éléments.
         Retourne: (
             iterable_kind_desc: "la séquence", "la collection", "la variable", "le résultat de func()"
                 (neutre pour éviter les problèmes de genre avec le nom de l'itérable)
-            elements_type_desc: "caractère", "nombre", "élément mixte", "élément"
+            elements_type_desc_raw: "caractère", "nombre", "chaîne", "booléen", "variable", "mixte", "élément"
             iterable_display_name: "'abc'", "ma_liste", "range(10)" 
                 (nom ou littéral pour affichage)
-        )
+            article_indefini_element: "un", "une"
+            article_defini_element: "le", "la", "l'"
+            )
         """
         iterable_kind_desc = "la collection" # Terme générique et neutre
-        elements_type_desc = "élément"
+        elements_type_desc_raw = "élément"
         # Par défaut, iterable_display_name est la représentation textuelle de l'itérable.
         # On l'affine pour les noms de variables et les chaînes littérales.
         iterable_display_name = ast.unparse(iterable_node).replace('"',"#quot;")
+        article_indefini_element = "un" # par défaut
+        article_defini_element = "l'"  # par défaut
 
         actual_node_to_inspect = iterable_node
         original_iterable_name_if_any = None
@@ -929,26 +933,29 @@ class ControlFlowGraph:
                     iterable_kind_desc = "la variable (liste)"
                     # Si assigned_value_or_desc est "liste de nombres", on peut l'utiliser pour elements_type_desc
                     if isinstance(assigned_value_or_desc, str) and "liste de" in assigned_value_or_desc:
-                        if "nombres" in assigned_value_or_desc: elements_type_desc = "nombre"
-                        elif "chaînes" in assigned_value_or_desc: elements_type_desc = "chaîne"
+                        if "nombres" in assigned_value_or_desc: elements_type_desc_raw = "nombre"
+                        elif "chaînes" in assigned_value_or_desc: elements_type_desc_raw = "chaîne"
                 elif assigned_ast_type == ast.Tuple:
                     actual_node_to_inspect = ast.Tuple(elts=[], ctx=ast.Load())
                     iterable_kind_desc = "la variable (tuple)"
                 # ... (ajouter Set, Dict si nécessaire pour variable_assignments) ...
                 elif assigned_ast_type == ast.Call and isinstance(assigned_value_or_desc, str): # ex: "résultat de len()"
+                    # elements_type_desc_raw reste "élément"
+                    # Déterminer les articles pour "élément"
+                    article_indefini_element = "un"; article_defini_element = "l'"
                     iterable_kind_desc = f"la variable (contenu: {assigned_value_or_desc})"
-                    elements_type_desc = "élément" # On ne sait pas plus
-                    return iterable_kind_desc, elements_type_desc, iterable_display_name.strip("'")
+                    elements_type_desc_raw = "élément" # On ne sait pas plus
+                    return iterable_kind_desc, elements_type_desc_raw, iterable_display_name.strip("'"), article_indefini_element, article_defini_element
 
 
         # Analyse de actual_node_to_inspect (qui peut être l'original ou un reconstitué/simulé)
         if isinstance(actual_node_to_inspect, ast.Constant):
             if isinstance(actual_node_to_inspect.value, str):
                 iterable_kind_desc = "la chaîne" if not original_iterable_name_if_any else iterable_kind_desc # Garder "la variable" si c'en était une
-                elements_type_desc = "caractère" # forcément
+                elements_type_desc_raw = "caractère" # forcément
                 # Mettre des guillemets simples autour du littéral chaîne pour l'affichage
-                escaped_str_value = actual_node_to_inspect.value.replace('"','#quot;')
-                iterable_display_name = f"'{escaped_str_value}'"
+                escaped_value = actual_node_to_inspect.value.replace('"','#quot;')
+                iterable_display_name = f"{escaped_value}"
         
         elif isinstance(actual_node_to_inspect, (ast.List, ast.Tuple)):
             if isinstance(actual_node_to_inspect, ast.List):
@@ -976,24 +983,24 @@ class ControlFlowGraph:
                     element_types_seen.add(current_el_type_str)
 
                 if len(element_types_seen) == 1: 
-                    elements_type_desc = element_types_seen.pop()
+                    elements_type_desc_raw = element_types_seen.pop()
                 elif element_types_seen: 
-                    elements_type_desc = "élément mixte"
+                    elements_type_desc_raw = "élément mixte"
                 # else: elements_type_desc reste "élément" (liste/tuple vide ou types non identifiables)
             else: # Liste ou tuple vide
-                elements_type_desc = "élément"
+                elements_type_desc_raw = "élément"
 
         elif isinstance(actual_node_to_inspect, ast.Tuple):
             iterable_kind_desc = "le tuple" if not original_iterable_name_if_any else iterable_kind_desc
-            elements_type_desc = "élément" # Peut être affiné
+            elements_type_desc_raw = "élément" # Peut être affiné
 
         elif isinstance(actual_node_to_inspect, ast.Set):
             iterable_kind_desc = "l'ensemble" if not original_iterable_name_if_any else iterable_kind_desc
-            elements_type_desc = "élément" # Peut être affiné
+            elements_type_desc_raw = "élément" # Peut être affiné
 
         elif isinstance(actual_node_to_inspect, ast.Dict):
             iterable_kind_desc = "le dictionnaire" if not original_iterable_name_if_any else iterable_kind_desc
-            elements_type_desc = "clé"
+            elements_type_desc_raw = "clé"
 
         elif isinstance(actual_node_to_inspect, ast.Call) and \
              isinstance(actual_node_to_inspect.func, ast.Name) and \
@@ -1002,11 +1009,11 @@ class ControlFlowGraph:
             evaluated_range_str = self._evaluate_range_to_list_str(actual_node_to_inspect.args)
             if evaluated_range_str:
                 iterable_kind_desc = "la séquence" # Ou "la liste (générée par range)"
-                elements_type_desc = "nombre"
+                elements_type_desc_raw = "nombre"
                 iterable_display_name = evaluated_range_str # Affiche la liste explicite
             else: # N'a pas pu dérouler (args non littéraux)
                 iterable_kind_desc = "la séquence (range)"
-                elements_type_desc = "nombre"
+                elements_type_desc_raw = "nombre"
                 # iterable_display_name est déjà ast.unparse(iterable_node)
 
         elif isinstance(actual_node_to_inspect, ast.Call): # Autre appel de fonction
@@ -1019,10 +1026,19 @@ class ControlFlowGraph:
         if original_iterable_name_if_any and iterable_kind_desc in ["la collection", "l'itérable"]:
             iterable_kind_desc = f"la variable"
 
+        # Déterminer les articles en fonction de elements_type_desc_raw
+        if elements_type_desc_raw == "caractère": article_indefini_element = "un"; article_defini_element = "le"
+        elif elements_type_desc_raw == "nombre": article_indefini_element = "un"; article_defini_element = "le"
+        elif elements_type_desc_raw == "chaîne": article_indefini_element = "une"; article_defini_element = "la"
+        elif elements_type_desc_raw == "booléen": article_indefini_element = "un"; article_defini_element = "le"
+        elif elements_type_desc_raw == "clé": article_indefini_element = "une"; article_defini_element = "la"
+        # "variable", "élément mixte", "élément" restent avec "un" et "l'" par défaut.
+        
         # Retourner iterable_display_name.strip("'") si c'était un nom de variable,
         # mais pas si c'est un littéral chaîne qui doit garder ses guillemets.
         # La logique actuelle pour iterable_display_name le gère déjà bien.
-        return iterable_kind_desc, elements_type_desc, iterable_display_name
+        return iterable_kind_desc, elements_type_desc, iterable_display_name, \
+               article_indefini_element, article_defini_element
     
 
     def _simplify_junctions(self) -> Tuple[List[Tuple[str, str]], Set[Tuple[str, str, str]]]:
