@@ -53,18 +53,21 @@ function generateRandomPythonCode(options) {
     let indentLevel = 0;
     let availableVariables = { int: [], float: [], str: [], list: [], bool: [] };
     let allDeclaredVarNames = new Set();
-    let nextVarIndexPool = 0; // Index pour piocher dans VAR_NAMES_POOL
+    let nextVarIndexPool = getRandomInt(0, VAR_NAMES_POOL.length); // Index pour piocher dans VAR_NAMES_POOL
 
     function getNewVarName() {
         let name;
         let attempts = 0;
         do {
-            name = VAR_NAMES_POOL[nextVarIndexPool % VAR_NAMES_POOL.length];
+            name = VAR_NAMES_POOL[nextVarIndexPool % VAR_NAMES_POOL.length]; 
             if (nextVarIndexPool >= VAR_NAMES_POOL.length) {
                 name += Math.floor(nextVarIndexPool / VAR_NAMES_POOL.length);
             }
-            nextVarIndexPool++;
+            nextVarIndexPool = (nextVarIndexPool + 1) % (VAR_NAMES_POOL.length); // tourner dans le pool
+            if (nextVarIndexPool === 0) nextVarIndexPool = getRandomInt(0, VAR_NAMES_POOL.length); // Réinitialiser si on a fait un tour complet
+
             attempts++;
+
         } while (allDeclaredVarNames.has(name) && attempts < VAR_NAMES_POOL.length * 3); // Limite pour éviter boucle infinie
         
         if (allDeclaredVarNames.has(name)) { // Si toujours en conflit, générer un nom vraiment unique
@@ -161,7 +164,8 @@ function generateRandomPythonCode(options) {
         const possibleVars = [];
         types.forEach(type => {
             if (availableVariables[type] && availableVariables[type].length > 0) {
-                possibleVars.push(...availableVariables[type]);
+                possibleVars.push(...availableVariables[type]); // Spread syntax can be used when all elements from an object or array need to be included in a new array or object, or should be applied one-by-one in a function call's arguments list.
+                // Ajouter les variables de ce type
             }
         });
 

@@ -374,15 +374,26 @@
                             </div>
                         </div>
                     </div>
+                    <div class="d-flex gap-2 mb-3"> <!-- Wrapper pour les deux boutons -->
                         <!-- Bouton pour générer un code aléatoire -->
                         <button id="generate-code-btn" class="btn btn-primary d-flex align-items-center">
                             <i class="fas fa-random me-2"></i> Générer un Code Aléatoire
                         </button>
-                    </div> <!-- Fin du deuxième card-body -->
-                </div> <!-- Fin du .card principal (Générateur de Code Python) -->
+
+                        <div class="dropdown">
+                            <button class="btn btn-info d-flex align-items-center dropdown-toggle" type="button" id="load-predefined-code-btn" data-bs-toggle="dropdown" aria-expanded="false">
+                                <i class="fas fa-file-code me-2"></i> Charger un Exemple
+                            </button>
+                            <ul class="dropdown-menu" aria-labelledby="load-predefined-code-btn" id="predefined-examples-list">
+                                <!-- Les exemples seront peuplés par JavaScript -->
+                                <!-- <li><a class="dropdown-item" href="#">Exemple 1</a></li> -->
+                            </ul>
+                        </div> <!-- fin du 2ème bouton -->
+                    </div> <!-- fin du wrapper des 2 boutons -->
+                </div> <!-- Fin du .card principal -->
             </div> <!-- Fin .col-12 -->
         </div> <!-- Fin .row mb-4 -->
-        <!-- Fin de la section générateur de code -->
+        <!-- Fin de la section  -->
  
 <!-- Card section for code execution and flowchart display -->
 <div class="row mb-4">
@@ -507,6 +518,7 @@
     </div>
 </div>      
         <!-- JavaScript  -->
+        <script src="js/codes-exemples.js"></script>
         <script src="js/code-generator.js"></script>
         <script src="js/flowchart-generator.js"></script>
         <script src="js/validation.js"></script>

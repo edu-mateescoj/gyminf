@@ -60,6 +60,47 @@ document.addEventListener('DOMContentLoaded', function() {
             <div class="form-check form-check-inline"><input class="form-check-input" type="checkbox" id="func-return"><label class="form-check-label small" for="func-return">return</label></div>
         </div>`;
 
+    // --- Gestion du chargement des exemples prédéfinis ---
+    const predefinedExamplesList = document.getElementById('predefined-examples-list');
+    const loadPredefinedCodeBtn = document.getElementById('load-predefined-code-btn'); // Le bouton lui-même
+
+    if (predefinedExamplesList && typeof PREDEFINED_EXAMPLES !== 'undefined' && PREDEFINED_EXAMPLES.length > 0) {
+        PREDEFINED_EXAMPLES.forEach((example, index) => {
+            const listItem = document.createElement('li');
+            const link = document.createElement('a');
+            link.className = 'dropdown-item';
+            link.href = '#';
+            link.textContent = example.name;
+            link.dataset.exampleIndex = index; // Stocker l'index pour un accès facile
+
+            link.addEventListener('click', function(e) {
+                e.preventDefault();
+                const exampleIndex = parseInt(this.dataset.exampleIndex);
+                const selectedExample = PREDEFINED_EXAMPLES[exampleIndex];
+                if (selectedExample && codeEditorInstance) {
+                    codeEditorInstance.setValue(selectedExample.code);
+                    console.log(`Exemple chargé : ${selectedExample.name}`);
+                    // Optionnel: déclencher une mise à jour du diagramme ou réinitialiser le défi
+                    // triggerFlowchartUpdate(); // Si vous voulez que le diagramme se mette à jour
+                    resetChallengeInputs();
+                    document.getElementById('check-answers-btn').disabled = true;
+                    document.getElementById('show-solution-btn').disabled = true;
+                    document.getElementById('flowchart').innerHTML = '<p class="text-center text-muted mt-3">Code chargé. Cliquez sur "Lancer..." pour voir le diagramme et le défi.</p>';
+                }
+            });
+
+            listItem.appendChild(link);
+            predefinedExamplesList.appendChild(listItem);
+        });
+    } else if (loadPredefinedCodeBtn) {
+        // S'il n'y a pas d'exemples, on peut désactiver le bouton ou afficher un message
+        loadPredefinedCodeBtn.disabled = true;
+        const noExamplesItem = document.createElement('li');
+        noExamplesItem.innerHTML = '<span class="dropdown-item disabled">Aucun exemple disponible</span>';
+        if (predefinedExamplesList) predefinedExamplesList.appendChild(noExamplesItem);
+        console.warn("PREDEFINED_EXAMPLES n'est pas défini ou est vide. Le chargement d'exemples est désactivé.");
+    }
+        
     // --- Fonctions Utilitaires ---
     function populateSelectWithOptions(selectElement, min, max, currentSelectedVal) {
         if (!selectElement) return;
