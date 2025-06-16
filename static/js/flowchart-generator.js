@@ -37,7 +37,8 @@ async function initPyodideAndLoadScript() {
         // await micropip.install("nom_du_package");
 
         // Charger le contenu du script Python (MyCFG.py)
-        const response = await fetch('MyCFG.py'); // IMPORTANT: Mettez le bon chemin ici
+        const response = await fetch('./../static/py/MyCFG.py'); // IMPORTANT: Mettez le bon
+        // chemin ici
         if (!response.ok) {
             throw new Error("Impossible de charger le script Python CFG: " + response.statusText);
         }
