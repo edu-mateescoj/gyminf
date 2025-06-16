@@ -1,0 +1,11 @@
+# Ignorer le dossier data sauf certains fichiers
+data/*
+# Ne pas ignorer ces fichiers spécifiques
+!data/*.py
+!data/*.csv
+
+# Autres patterns classiques
+__pycache__/
+*.pyc
+.vscode/
+*.bak
