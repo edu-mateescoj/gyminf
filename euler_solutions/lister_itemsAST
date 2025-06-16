@@ -1,0 +1,300 @@
+import ast
+
+# ITEMS_AST enrichie (ast.<Type> ou string pour features logiques)
+ITEMS_AST = [
+    ast.Raise, ast.Assert, ast.With, ast.AsyncWith, ast.ClassDef, ast.Yield, ast.YieldFrom, 
+    ast.AsyncFunctionDef, ast.Await, ast.AsyncFor, ast.Try, ast.Break, ast.Continue, ast.ExceptHandler, 
+    ast.Global, ast.Nonlocal, ast.Lambda, ast.Dict, ast.FunctionDef, 'nested_funcDef', ast.Return, ast.If, 
+    'nested_if', 'If.elif', 'If.else', ast.While, 'nested_while', ast.For, 'nested_for', ast.Import, 
+    ast.ImportFrom, ast.Assign, ast.AnnAssign, ast.AugAssign, ast.Delete, 
+    ast.BoolOp, ast.BinOp, ast.UnaryOp, ast.Compare, ast.Call, ast.Name, ast.Str, ast.Num, ast.List, 
+    ast.ListComp, ast.DictComp, ast.SetComp, ast.Tuple, ast.Set, ast.Attribute, ast.Subscript, ast.Expr, 
+    ast.Bytes, ast.Constant, ast.Starred, ast.Slice
+]
+
+# Noms des items pour base SQL (pour classes ast, on prend __name__)
+def feature_name(item):
+    return item if isinstance(item, str) else item.__name__
+
+FEATURES = [feature_name(item) for item in ITEMS_AST]
+
+# BUILTINS exhaustif
+BUILTINS = [
+    'abs', 'aiter', 'all', 'anext', 'any', 'ascii', 'bin', 'bool', 'breakpoint', 'bytearray', 'bytes', 'callable',
+    'chr', 'classmethod', 'compile', 'complex', 'delattr', 'dict', 'dir', 'divmod', 'enumerate', 'eval', 'exec',
+    'filter', 'float', 'format', 'frozenset', 'getattr', 'globals', 'hasattr', 'hash', 'help', 'hex', 'id', 'input',
+    'int', 'isinstance', 'issubclass', 'iter', 'len', 'list', 'locals', 'map', 'max', 'memoryview', 'min', 'next',
+    'object', 'oct', 'open', 'ord', 'pow', 'print', 'property', 'range', 'repr', 'reversed', 'round', 'set', 'setattr',
+    'slice', 'sorted', 'staticmethod', 'str', 'sum', 'super', 'tuple', 'type', 'vars', 'zip', '__import__'
+]
+MODULES_TO_TRACK = ['math', 'random', 'turtle', 'matplotlib.pyplot', 'numpy',\
+                    'operator', 'os', 'sys', 're', 'datetime'] 
+
+SPECIAL_MATH_FUNCS = {'sqrt', 'pow'}
+
+import collections
+
+class ModularFeatureCounter(ast.NodeVisitor):
+    def __init__(self, items_ast, builtins_list):
+        self.items_ast = items_ast
+        self.builtins = set(builtins_list)
+        # Init compteurs
+        self.counts = collections.Counter()
+        # Pour imbrication (for/while/if, nested_funcDef)
+        self.nesting = collections.defaultdict(int)
+        self.max_nesting = collections.defaultdict(int)
+        self.user_func_names = set()  # noms des fonctions définies par l'utilisateur
+        self.imported_modules = set()
+
+    def visit_Import(self, node):
+        for alias in node.names:
+            self.imported_modules.add(alias.name.split('.')[0])  # ex: 'math'
+        self.counts['Import'] += 1
+
+    def visit_ImportFrom(self, node):
+        if node.module:
+            self.imported_modules.add(node.module.split('.')[0])
+        self.counts['ImportFrom'] += 1
+
+    def visit_FunctionDef(self, node):
+        self.counts['FunctionDef'] += 1
+        self.user_func_names.add(node.name)
+        # Imbrication de fonctions
+        self.nesting['func'] += 1
+        if self.nesting['func'] > 1:
+            self.counts['nested_funcDef'] += 1
+        self.generic_visit(node)
+        self.nesting['func'] -= 1
+
+    def visit_If(self, node):
+        self.counts['If'] += 1
+        # Détecte elif/else via structure AST
+        for idx, child in enumerate(node.orelse):
+            if isinstance(child, ast.If):
+                self.counts['If.elif'] += 1
+                self.visit_If(child)  # gestion récursive elif
+            else:
+                self.counts['If.else'] += 1
+        # Imbrication
+        self.nesting['if'] += 1
+        self.max_nesting['if'] = max(self.max_nesting['if'], self.nesting['if'])
+        if self.nesting['if'] > 1:
+            self.counts['nested_if'] += 1
+        for stmt in node.body:
+            self.visit(stmt)
+        self.nesting['if'] -= 1
+
+    def visit_For(self, node):
+        self.counts['For'] += 1
+        self.nesting['for'] += 1
+        self.max_nesting['for'] = max(self.max_nesting['for'], self.nesting['for'])
+        if self.nesting['for'] > 1:
+            self.counts['nested_for'] += 1
+        self.generic_visit(node) # visite les enfants
+        self.nesting['for'] -= 1 
+
+    def visit_While(self, node):
+        self.counts['While'] += 1
+        self.nesting['while'] += 1
+        self.max_nesting['while'] = max(self.max_nesting['while'], self.nesting['while'])
+        if self.nesting['while'] > 1:
+            self.counts['nested_while'] += 1
+        self.generic_visit(node)
+        self.nesting['while'] -= 1
+
+    def visit_Call(self, node):
+        self.counts['Call'] += 1
+        func = node.func
+        func_name = None
+        module_name = None
+
+        # Pour operator.x ou autre, on veut module et fonction
+        if isinstance(func, ast.Attribute):
+            if isinstance(func.value, ast.Name):
+                module_name = func.value.id
+                func_name = func.attr
+            elif isinstance(func.value, ast.Attribute):  # Cas rare: mod1.mod2.f()
+                try:
+                    module_name = func.value.attr
+                except Exception:
+                    pass
+                func_name = func.attr
+        elif isinstance(func, ast.Name):
+            func_name = func.id
+
+        # --- Classification précise
+        # 1. Builtins
+        if func_name in self.builtins:
+            self.counts[f'call_{func_name}'] += 1
+
+        # 2. Fonctions utilisateur
+        elif func_name in self.user_func_names:
+            self.counts['call_user_func'] += 1
+
+        # 3. Opérateurs arithmétiques via operator module (ex: operator.add)
+        elif module_name == "operator":
+            self.counts['call_operator'] += 1
+
+        # 4. Fonctions mathématiques
+        elif module_name == "math":
+            if func_name in SPECIAL_MATH_FUNCS:
+                self.counts[f'call_math_{func_name}'] += 1
+            else:
+                self.counts['call_math_other'] += 1
+
+        # 5. Appel à d'autres modules d'intérêt (ex: random, os, sys, etc.)
+        elif module_name in MODULES_TO_TRACK:
+            self.counts[f'call_module_{module_name}'] += 1
+
+        # 6. Autre (appel à une fonction d'un module non suivi ou inconnue)
+        elif module_name:
+            self.counts['call_module_other'] += 1
+
+        # 7. Tout autre appel non catégorisé (par défaut: call_user_func)
+        else:
+            self.counts['call_user_func'] += 1
+        # --- Fin classification
+        self.generic_visit(node) 
+
+
+    def generic_visit(self, node):
+        # Pour tous les types dans items_ast (hors features logiques déjà gérés)
+        for item in self.items_ast:
+            if isinstance(item, str): continue  # déjà géré plus haut
+            if isinstance(node, item):
+                self.counts[item.__name__] += 1
+        super().generic_visit(node)
+
+import sqlite3
+import os
+
+EXTRA_CALL_COLUMNS = [
+    'call_math_sqrt', 'call_math_pow', 'call_math_other',
+    'call_operator', 'call_user_func', 'call_module_other'
+]
+# Pour les modules à tracker explicitement
+EXTRA_CALL_COLUMNS += [f'call_module_{mod}' for mod in MODULES_TO_TRACK]
+
+# Tous les noms d'attributs à stocker
+COLUMNS = FEATURES + [f'call_{b}' for b in BUILTINS] + EXTRA_CALL_COLUMNS + ['n_lines', 'n_chars']
+
+def create_db(db_path="Nayuki_AST.db"):
+    with sqlite3.connect(db_path) as conn:
+        cur = conn.cursor()
+        # Table analyse
+        cur.execute(f"""
+            CREATE TABLE IF NOT EXISTS euler_analysis (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                filename TEXT,
+                {', '.join([f'"{col}" INT DEFAULT 0' for col in COLUMNS])}
+            );
+        """)
+        # Table code source
+        cur.execute("""
+            CREATE TABLE IF NOT EXISTS euler_source (
+                id INTEGER PRIMARY KEY,
+                code TEXT
+            );
+        """)
+        conn.commit()
+
+def insert_analysis_and_code(filename, counts, code, db_path="Nayuki_AST.db"):
+    with sqlite3.connect(db_path) as conn:
+        cur = conn.cursor()
+        values = [filename] + [counts[c] for c in COLUMNS]
+        cur.execute(f"""
+            INSERT INTO euler_analysis (filename, {', '.join([f'"{col}"' for col in COLUMNS])})
+            VALUES ({', '.join(['?'] * (1 + len(COLUMNS)))})
+        """, values)
+        analysis_id = cur.lastrowid  # Récupère la clé primaire générée
+        cur.execute("INSERT INTO euler_source (id, code) VALUES (?, ?)", (analysis_id, code))
+        conn.commit()
+
+def analyze_code_file(filepath):
+    with open(filepath, encoding='utf-8') as f:
+        code = f.read()
+    try:
+        tree = ast.parse(code)
+    except Exception as e:
+        print(f"Erreur parsing {filepath} : {e}")
+        return None, None
+    counter = ModularFeatureCounter(ITEMS_AST, BUILTINS)
+    counter.visit(tree)
+    counter.counts['n_lines'] = code.count('\n') + 1
+    counter.counts['n_chars'] = len(code)
+    for feat in COLUMNS:
+        if feat not in counter.counts:
+            counter.counts[feat] = 0
+    return counter.counts, code
+
+def analyze_all_files(folder='euler_solutions', db_path="Nayuki_AST.db"):
+    create_db(db_path)
+    files = [f for f in os.listdir(folder) if f.endswith('.py')]
+    for fname in files:
+        path = os.path.join(folder, fname)
+        counts, code = analyze_code_file(path)
+        if counts:
+            insert_analysis_and_code(fname, counts, code, db_path)
+            print(f"{fname} analysé, inséré et code stocké.")
+        else:
+            print(f"{fname} ignoré (problème d'analyse).")
+
+if __name__ == "__main__":
+    analyze_all_files()
+
+
+
+'''# LISTE D'EXCLUSION
+ast.Raise,
+ast.Assert,
+ast.With,
+ast.AsyncWith,
+ast.ClassDef,
+ast.Yield,
+ast.YieldFrom,
+ast.AsyncFunctionDef,
+ast.Await,
+ast.AsyncFor,
+ast.AsyncWith,
+ast.Try,
+ast.TryExcept,
+ast.TryFinally,
+ast.Break,
+ast.Continue,
+ast.ExceptHandler,
+ast.ClassDef,
+ast.Global,
+ast.Lambda,
+ast.Dict,
+
+# LISTE D'INCLUSION
+ast.FunctionDef,
+nested_funcDef
+ast.Return,
+ast.If,
+nested_if,
+ast.While,
+nested_while,
+ast.For,
+nested_for,
+ast.Import,
+ast.ImportFrom,
+ast.Assign,
+ast.AnnAssign,
+ast.AugAssign,
+ast.Delete,
+ast.orelse,
+ast.BoolOp,
+ast.BinOp,
+ast.UnaryOp,
+ast.Compare,
+ast.Call,
+ast.Name,
+ast.Str,
+ast.Num,
+ast.List,
+ast.ListComp,
+ast.DictComp,
+ast.SetComp,
+ast.Tuple,
+ast.Set'''
