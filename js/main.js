@@ -1167,7 +1167,6 @@ if (codeEditorInstance) {
         });
     }
 
-    // ... (le reste du fichier est identique à partir d'ici)
     // Gestionnaire pour le bouton "Vérifier les réponses" (#check-answers-btn).
     const checkAnswersButton = document.getElementById('check-answers-btn');
     if (checkAnswersButton) {
@@ -1197,9 +1196,22 @@ if (codeEditorInstance) {
         });
     }
     
+    // Gestionnaire pour le bouton "Effacer la console"
     const clearConsoleBtn = document.getElementById('clear-console-btn');
     if (clearConsoleBtn) {
         clearConsoleBtn.addEventListener('click', clearConsole);
+    }
+    
+    // Gestionnaire pour le bouton "Effacer le dessin Turtle"
+    const clearTurtleBtn = document.getElementById('clear-turtle-canvas-btn');
+    if (clearTurtleBtn) {
+        clearTurtleBtn.addEventListener('click', () => {
+            const canvas = document.getElementById('turtle-canvas');
+            if (canvas) {
+                const ctx = canvas.getContext('2d');
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+            }
+        });
     }
 
     // --- Fonctions utilitaires pour la section Défi ---
@@ -1372,16 +1384,6 @@ async function runAndTraceCodeForChallenge(code, pyodideInstance) { // pyodideIn
     console.log("Exécution du code pour le défi maintenant avec I/O personnalisés...");
     clearConsole();
 
-    const clearTurtleBtn = document.getElementById('clear-turtle-canvas-btn');
-    if (clearTurtleBtn) {
-        clearTurtleBtn.addEventListener('click', () => {
-            const canvas = document.getElementById('turtle-canvas');
-            if (canvas) {
-                const ctx = canvas.getContext('2d');
-                ctx.clearRect(0, 0, canvas.width, canvas.height);
-            }
-        });
-    }
     // --- Gestion de Turtle (Méthode Basthon) ---
     const turtleCard = document.getElementById('turtle-graphics-card');
     const turtleCanvas = document.getElementById('turtle-canvas');
@@ -1389,25 +1391,12 @@ async function runAndTraceCodeForChallenge(code, pyodideInstance) { // pyodideIn
 
     // 1. Détection et chargement à la demande
     if (code.includes("import turtle")) {
-        console.log("Détection de 'import turtle'. Chargement du paquet...");
-        try {
-            // On charge le paquet 'turtle' depuis le canal par défaut de Pyodide
-            await pyodideInstance.loadPackage("turtle");
-            console.log("Paquet 'turtle' chargé avec succès.");
-            
-            // On affiche la carte graphique et on la prépare
-            if (turtleCard && turtleCanvas) {
-                turtleCard.style.display = 'block';
-                const ctx = turtleCanvas.getContext('2d');
-                ctx.clearRect(0, 0, turtleCanvas.width, turtleCanvas.height);
-
-                // Le code de configuration reste le même, il dit à turtle où dessiner
-                turtleSetupCode = `import turtle\nturtle.Screen().setup(target_id='turtle-canvas')`;
-            }
-        } catch (e) {
-            console.error("Erreur lors du chargement du paquet turtle:", e);
-            logToConsole(formatPythonError(e.message), 'error');
-            return {}; // Arrêter l'exécution si turtle ne peut pas être chargé
+        if (turtleCard && turtleCanvas) {
+            turtleCard.style.display = 'block';
+            const ctx = turtleCanvas.getContext('2d');
+            ctx.clearRect(0, 0, turtleCanvas.width, turtleCanvas.height);
+            // Le module turtle est déjà installé. On lui dit juste où dessiner.
+            turtleSetupCode = `import turtle\nturtle.Screen().setup(target_id='turtle-canvas')`;
         }
     } else if (turtleCard) {
         turtleCard.style.display = 'none'; // Masquer si turtle n'est pas utilisé
@@ -1442,8 +1431,8 @@ import sys
 import json
 import types
 import asyncio
-from pyodide.ffi import to_js
 import pyodide ###############################################
+from pyodide.ffi import to_js
 
 # --- Stockage des originaux et initialisation ---
 _original_print = builtins.print
@@ -1489,8 +1478,17 @@ async def main():
         # On exécute d'abord le code de configuration de Turtle (qui est synchrone)
         exec(turtle_setup_script, user_ns)
         
-        # Puis on exécute le code de l'élève de manière asynchrone
-        await pyodide.code.eval_code_async(student_code_to_run, globals=user_ns)
+        # CORRECTION POUR PROBLÈME COROUTINE !!
+        # On compile le code de l'élève en mode 'exec' pour en faire un objet 'code'.
+        # Le flag 'CO_COROUTINE' est ajouté par compile si 'await' est utilisé au plus haut niveau.
+        code_obj = compile(student_code_to_run, '<student_code>', 'exec')
+        
+        # On exécute cet objet code. Si c'est une coroutine, on l'attend.
+        # C'est la manière robuste de gérer du code qui peut être synchrone ou asynchrone.
+        result = exec(code_obj, user_ns)
+        if asyncio.iscoroutine(result):
+            await result
+
     except Exception as e:
         import traceback
         _error_detail_trace = traceback.format_exc()
@@ -1501,8 +1499,14 @@ async def main():
         if "pyodide_turtle" in sys.modules :
             sys.modules["pyodide_turtle"].clear_turtle()
         elif "turtle" in sys.modules:
-            sys.modules["turtle"].Screen().clear()
-            sys.modules["turtle"].Screen().bye()
+            # On attend un tick pour laisser le temps au navigateur de dessiner
+            # AVANT DE TOUT EFFACER
+            await asyncio.sleep(0.01)
+            try:
+                sys.modules["turtle"].resetscreen()
+            except Exception as e:
+                # Au cas où même cela échouerait, on ne bloque pas tout.
+                print(f"Erreur lors du nettoyage de turtle: {e}")
 
 # On lance notre fonction 'main' asynchrone et on attend sa complétion.
 await main()  

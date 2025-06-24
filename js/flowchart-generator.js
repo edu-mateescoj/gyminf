@@ -33,23 +33,23 @@ async function initPyodideAndLoadScript() {
         // Charger les packages Python nécessaires (ici, 'ast' est intégré, donc pas besoin de micropip pour lui).
         // Si autres dépendances non standard, il faudrait les charger.
         
-        /*
+        
         // Charger micropip, qui est nécessaire pour installer des paquets tiers
         console.log("Chargement de micropip...");
         await pyodide.loadPackage("micropip");
         const micropip = pyodide.pyimport("micropip");
         console.log("micropip chargé.");
-        */
-       /*
+        
+       
         // Installer pyodide-turtle directement depuis son URL de "wheel" (.whl) FICHIER LOCAL
         // C'est la méthode correcte car il n'est ni sur PyPI, ni dans les paquets par défaut.
-        // const turtleWheelUrl = "./turtle-0.0.1-py3-none-any.whl"; 
+        const turtleWheelUrl = "./turtle-0.0.1-py3-none-any.whl"; 
         // const turtleWheelUrl = "./pyo_js_turtle-0.1.1-py3-none-any.whl"; // Version vincent bouillot
         console.log(`Installation de Turtle (version RPF) depuis ${turtleWheelUrl}...`);
         await micropip.install(turtleWheelUrl);
         console.log("Turtle (version RPF)  installé avec succès.");
-        */
-       
+        
+
         // Charger le contenu du script Python (MyCFG.py)
         const response = await fetch('MyCFG.py');
         if (!response.ok) {
@@ -61,6 +61,7 @@ async function initPyodideAndLoadScript() {
         // Exécuter le script Python pour définir la classe ControlFlowGraph dans l'espace de noms de Pyodide.
         await pyodide.runPythonAsync(cfgPythonScript);
         console.log("Classe ControlFlowGraph définie dans Pyodide.");
+        
         setLoadingState(false); // Masquer le chargement après succès
 
     } catch (error) {
