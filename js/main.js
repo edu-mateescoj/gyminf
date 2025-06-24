@@ -22,13 +22,15 @@ const BUILTINS_ADVANCED = [
     { id: 'builtin-sum', label: 'sum()' }
 ];
 
-var codeEditorInstance;
+
 
 // --- Gestion des boutons de l’éditeur de code: mode édition, régénération, ...  ---
 let lastLoadedCode = ""; // Pour restaurer l'état après génération/chargement
 let isEditorEditable = false;
 // variable d'état globale : permet à tout le JS de savoir si l'éditeur est éditable ou non
-// ATTENTION... AUSSI listener pour le bouton toggleBtn: référence à l'élément bouton
+
+// ATTENTION... AUSSI listener pour le bouton (toggleBtn: référence à l'élément bouton)
+
 function setEditorEditable(editable) {
     isEditorEditable = editable;
     if (codeEditorInstance) {
@@ -42,6 +44,7 @@ function setEditorEditable(editable) {
     }
 }
 
+var codeEditorInstance;
 document.addEventListener('DOMContentLoaded', function() {
 
     codeEditorInstance = CodeMirror.fromTextArea(document.getElementById('code-editor'), {
@@ -75,7 +78,7 @@ document.addEventListener('DOMContentLoaded', function() {
             a.href = url; 
             const now = new Date();
             const yyyy = now.getFullYear().toString(); // Année complète
-            yy = yyyy[2] + yyyy[3]; // 2 derniers chiffres de l'année
+            const yy = yyyy[2] + yyyy[3]; // 2 derniers chiffres de l'année
             const mm = String(now.getMonth() + 1).padStart(2, '0');
             const dd = String(now.getDate()).padStart(2, '0');
             a.download = `mon_code_${dd}${mm}${yy}.py`;
@@ -99,8 +102,16 @@ document.addEventListener('DOMContentLoaded', function() {
                 const reader = new FileReader();
                 reader.onload = function(evt) {
                     if (codeEditorInstance) {
+                        // Invalider l'état du diagramme actuel car un nouveau fichier est chargé
+                        lastDiagramAstDump = "";
+                        document.getElementById('flowchart').innerHTML = '<p class="text-center text-muted mt-3">Nouveau fichier chargé. Cliquez sur "Lancer..." pour voir le diagramme et le défi.</p>';
+                        resetChallengeInputs();
+                        document.getElementById('check-answers-btn').disabled = true;
+                        document.getElementById('show-solution-btn').disabled = true;
+                        
                         codeEditorInstance.setValue(evt.target.result);
                         lastLoadedCode = evt.target.result; // Mémorise ce code comme "dernier chargé"
+                        setDiagramAndChallengeCardState("default"); // Le nouvel état est "default", pas "outdated"
                     }
                 };
                 reader.readAsText(file, "UTF-8");
@@ -128,11 +139,26 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     // 5ème: Reload (restaurer le code après génération/chargement)
-    const reloadBtn = document.getElementById('reload-code-btn');
+    const reloadBtn = document.getElementById("reload-code-btn");
     if (reloadBtn) {
         reloadBtn.addEventListener('click', () => {
             if (lastLoadedCode && codeEditorInstance) {
+                // 1. Invalider l'état du diagramme et du défi AVANT de changer le code.
+                //    Ceci est crucial pour que le listener 'change' ne voie pas un état incohérent.
+                lastDiagramAstDump = ""; // Le diagramme ne correspondra plus, il est donc invalidé.
+                document.getElementById('flowchart').innerHTML = '<p class="text-center text-muted mt-3">Code rechargé. Cliquez sur "Lancer..." pour voir le diagramme et le défi.</p>';
+                resetChallengeInputs();
+                document.getElementById('check-answers-btn').disabled = true;
+                document.getElementById('show-solution-btn').disabled = true;
+
+                // 2. Changer la valeur de l'éditeur.
+                //    Le listener 'change' va se déclencher ici.
                 codeEditorInstance.setValue(lastLoadedCode);
+                
+                // 3. Le listener 'change' verra que lastDiagramAstDump est vide et mettra l'état à "default".
+                //    L'appel explicite ici est une sécurité supplémentaire.
+                setDiagramAndChallengeCardState("default");
+                console.log("Code rechargé depuis la dernière sauvegarde. Diagramme invalidé.");
             }
         });
     }
@@ -147,7 +173,10 @@ document.addEventListener('DOMContentLoaded', function() {
     const generateCodeButton = document.getElementById('generate-code-btn');
     if (generateCodeButton) {
         generateCodeButton.addEventListener('click', function() {
-            console.log("génération du code par ailleurs... on va mémoriser");
+            // La mémorisation se fait après la génération, dans le listener du bouton.
+            // On invalide aussi l'état du diagramme ici.
+            lastDiagramAstDump = "";
+            console.log("génération du code par ailleurs... on va mémoriser et invalider le diagramme");
             if (codeEditorInstance) memorizeLoadedCode(codeEditorInstance.getValue());
         });
     }
@@ -156,7 +185,9 @@ document.addEventListener('DOMContentLoaded', function() {
     if (predefinedExamplesList) {
         predefinedExamplesList.querySelectorAll('a[data-example-index]').forEach(link => {
             link.addEventListener('click', function() {
-                console.log("chargement du code par ailleurs... on va mémoriser");
+                // L'invalidation et la mémorisation sont gérées dans le listener de chaque lien d'exemple.
+                lastDiagramAstDump = "";
+                console.log("chargement du code par ailleurs... on va mémoriser et invalider le diagramme");
                 if (codeEditorInstance) memorizeLoadedCode(codeEditorInstance.getValue());
             });
         });
@@ -210,11 +241,15 @@ document.addEventListener('DOMContentLoaded', function() {
                 const exampleIndex = parseInt(this.dataset.exampleIndex);
                 const selectedExample = PREDEFINED_EXAMPLES[exampleIndex];
                 if (selectedExample && codeEditorInstance) {
+                    // Invalider l'état du diagramme actuel car un nouvel exemple est chargé
+                    lastDiagramAstDump = "";
+                    
                     codeEditorInstance.setValue(selectedExample.code);
                     memorizeLoadedCode(selectedExample.code);
-                    console.log(`Exemple chargé et mémorisé: ${selectedExample.name}`);
-                    // Optionnel: déclencher une mise à jour du diagramme ou réinitialiser le défi
-                    // triggerFlowchartUpdate();
+                    
+                    setDiagramAndChallengeCardState("default");
+                    console.log(`Exemple chargé et mémorisé: ${selectedExample.name}. Diagramme invalidé.`);
+                    
                     resetChallengeInputs();
                     document.getElementById('check-answers-btn').disabled = true;
                     document.getElementById('show-solution-btn').disabled = true;
@@ -909,10 +944,17 @@ document.addEventListener('DOMContentLoaded', function() {
                 console.warn("generateRandomPythonCode n'est pas définie.");
                 newGeneratedCode = "# Erreur: Le générateur de code aléatoire n'est pas disponible.";
             }
+            
+            // Invalider l'état du diagramme actuel car un nouveau code est généré
+            lastDiagramAstDump = "";
+            
             if(codeEditorInstance) codeEditorInstance.setValue(newGeneratedCode);
             memorizeLoadedCode(newGeneratedCode);
+            setDiagramAndChallengeCardState("default");
+            
             var flowchartDisplayArea = document.getElementById('flowchart');
             if (flowchartDisplayArea) flowchartDisplayArea.innerHTML = '<p class="text-center text-muted mt-3">Nouveau code généré. Cliquez sur "Lancer..."</p>';
+            
             resetChallengeInputs();
             const checkBtn = document.getElementById('check-answers-btn');
             const showSolBtn = document.getElementById('show-solution-btn');
@@ -923,6 +965,104 @@ document.addEventListener('DOMContentLoaded', function() {
         console.warn("Bouton 'generate-code-btn' non trouvé.");
     }
 
+// --- Gestion de la synchronisation diagramme/code ---
+
+// Variable globale pour stocker le dump AST du dernier diagramme généré
+let lastDiagramAstDump = "";
+
+// Fonction utilitaire pour obtenir le dump AST du code courant via Pyodide
+async function getAstDumpFromCode(code) {
+    if (!pyodide) {
+        console.warn("Pyodide n'est pas prêt.");
+        return null;
+    }
+    try {
+        // On utilise la classe ControlFlowGraph déjà chargée dans Pyodide
+        pyodide.globals.set("user_python_code", code);
+        const pyScript = `
+import ast
+try:
+    cfg_instance = ControlFlowGraph(user_python_code)
+    result = ast.dump(cfg_instance.tree)
+except Exception:
+    result = None # Retourne None si le code est syntaxiquement invalide
+result
+`;
+        const astDump = await pyodide.runPythonAsync(pyScript);
+        return astDump;
+    } catch (e) {
+        console.error("Erreur lors de la récupération du dump AST:", e);
+        return null;
+    }
+}
+
+/**
+ * Met à jour l'état visuel des cartes du diagramme et du défi.
+ * @param {string} state - "outdated" (rouge), "default" (bleu/info).
+ */
+function setDiagramAndChallengeCardState(state) {
+    const diagramCard = document.getElementById('flowchart')?.closest('.card');
+    const challengeCard = document.getElementById('variables-container')?.closest('.card');
+    
+    [diagramCard, challengeCard].forEach(card => {
+        if (!card) return;
+        // Nettoyer toutes les classes de bordure potentielles
+        card.classList.remove('border-danger', 'border-info', 'border-secondary');
+        card.classList.remove('border'); // Retirer la classe 'border' de base aussi
+
+        if (state === "outdated") {
+            card.classList.add('border', 'border-danger');
+        } else {
+            // Appliquer la bordure par défaut (bleu info)
+            card.classList.add('border', 'border-info');
+        }
+    });
+
+    // Mettre à jour le bouton "Lancer"
+    const runBtn = document.getElementById('run-code-btn');
+    if (runBtn) {
+        runBtn.classList.remove('btn-danger', 'btn-success');
+        if (state === "outdated") {
+            runBtn.classList.add('btn-danger');
+        } else {
+            runBtn.classList.add('btn-success');
+        }
+    }
+}
+
+
+// Listener sur l’éditeur CodeMirror pour détecter les changements
+if (codeEditorInstance) {
+    codeEditorInstance.on('change', async function() {
+        // Si Pyodide n'est pas prêt, on ne fait rien.
+        if (!pyodide) return;
+        
+        // Si lastDiagramAstDump est vide ou null, cela signifie qu'aucun diagramme
+        // n'est actuellement affiché ou qu'il a été invalidé (ex: par un reload).
+        // Dans ce cas, le code ne peut pas être "périmé". L'état est "default".
+        if (!lastDiagramAstDump) {
+            setDiagramAndChallengeCardState("default");
+            return;
+        }
+
+        const currentCode = codeEditorInstance.getValue();
+        const currentAstDump = await getAstDumpFromCode(currentCode);
+
+        // Si le code actuel est syntaxiquement invalide, currentAstDump sera null.
+        // On considère cela comme "périmé" car il ne peut pas correspondre au diagramme.
+        if (!currentAstDump) {
+            setDiagramAndChallengeCardState("outdated");
+            return;
+        }
+        
+        // Comparer le dump AST du code courant à celui du dernier diagramme généré.
+        if (currentAstDump !== lastDiagramAstDump) {
+            setDiagramAndChallengeCardState("outdated");
+        } else {
+            setDiagramAndChallengeCardState("default");
+        }
+    });
+}
     // Gestionnaire pour le bouton "Lancer le diagramme et les défis" (#run-code-btn).
     const runCodeButton = document.getElementById('run-code-btn');
     if (runCodeButton) {
@@ -937,35 +1077,72 @@ document.addEventListener('DOMContentLoaded', function() {
             const currentCode = codeEditorInstance.getValue();
 
             // 1. Mettre à jour le diagramme de flux.
-            if (typeof triggerFlowchartUpdate === 'function') {
-                await triggerFlowchartUpdate(); 
-            } else {
-                console.error("La fonction triggerFlowchartUpdate n'est pas définie.");
-                alert("Erreur : La fonctionnalité de génération de diagramme n'est pas prête.");
+            try {
+                if (typeof triggerFlowchartUpdate === 'function') {
+                    await triggerFlowchartUpdate(); 
+                } else {
+                    throw new Error("La fonction triggerFlowchartUpdate n'est pas définie.");
+                }
+            } catch (e) {
+                console.error("Erreur lors de la mise à jour du diagramme de flux:", e);
+                alert("Erreur : Impossible de mettre à jour le diagramme de flux. Veuillez vérifier la console pour plus de détails.");
+                return; // Ne pas continuer si le diagramme n'a pas pu être mis à jour
             }
-
-            // 2. Exécuter le code Python pour obtenir les valeurs des variables pour le défi.
+            
+            // 2. Mettre à jour le dump AST de référence. C'est le point crucial.
+            //    C'est maintenant la nouvelle "source de vérité" pour le diagramme affiché.
+            try {
+                if (pyodide) {
+                    const astDump = await getAstDumpFromCode(currentCode);
+                    if (astDump) {
+                        lastDiagramAstDump = astDump;
+                        console.log("lastDiagramAstDump mis à jour avec succès.");
+                    } else {
+                        // Le code est syntaxiquement invalide, le diagramme a affiché une erreur.
+                        // On invalide le dump pour que toute modification future ne soit pas comparée à un état inexistant.
+                        lastDiagramAstDump = "";
+                    }
+                }
+            } catch (e) {
+                console.warn("Impossible de mettre à jour le dump AST de référence:", e);
+                lastDiagramAstDump = ""; // Invalider en cas d'erreur
+            }
+            
+            // 3. Après la mise à jour réussie, l'état est "default".
+            setDiagramAndChallengeCardState("default");
+            
+            // 4. Exécuter le code Python pour obtenir les valeurs des variables pour le défi.
             try {
                 variableValuesFromExecution = {}; 
                 resetChallengeInputs();
                 
-                if (typeof pyodide !== 'undefined' && pyodide) { // pyodide est global depuis flowchart-generator.js
+                if (typeof pyodide !== 'undefined' && pyodide) {
                      variableValuesFromExecution = await runAndTraceCodeForChallenge(currentCode, pyodide);
                 } else {
                     console.warn("Pyodide n'est pas encore prêt pour exécuter le code du défi.");
                     alert("Le moteur Python n'est pas encore prêt. Veuillez patienter.");
-                    // S'assurer que les boutons de défi restent désactivés si Pyodide n'est pas prêt
                     const checkAnswersButton = document.getElementById('check-answers-btn');
                     const showSolutionButton = document.getElementById('show-solution-btn');
                     if (checkAnswersButton) checkAnswersButton.disabled = true;
                     if (showSolutionButton) showSolutionButton.disabled = true;
-                    return; // Ne pas continuer si Pyodide n'est pas prêt
+                    return;
                 }
 
-                // 3. Mettre à jour l'interface du défi avec les variables trouvées.
-                populateChallengeInputs(variableValuesFromExecution); 
+                // 5. Mettre à jour l'interface du défi avec les variables trouvées.
+                if (Object.keys(variableValuesFromExecution).length > 0) {
+                    populateChallengeInputs(variableValuesFromExecution);
+                } else {
+                    const container = document.getElementById('variables-container');
+                    if (container) {
+                        container.innerHTML = `
+                            <div class="col-12 text-center text-warning">
+                                <p>Aucune variable à suivre n'a été trouvée après l'exécution du code.<br>
+                                Vérifiez que votre code contient bien des affectations de variables accessibles.</p>
+                            </div>`;
+                    }
+                }
                 
-                // 4. Activer les boutons du défi si des variables ont été trouvées.
+                // 6. Activer les boutons du défi si des variables ont été trouvées.
                 const hasVariables = Object.keys(variableValuesFromExecution).length > 0;
                 const checkAnswersButton = document.getElementById('check-answers-btn');
                 const showSolutionButton = document.getElementById('show-solution-btn');
@@ -974,8 +1151,14 @@ document.addEventListener('DOMContentLoaded', function() {
 
             } catch (error) {
                 console.error("Erreur lors de l'exécution du code pour le défi:", error);
-                // Afficher une modale d'erreur ou un message à l'utilisateur.
-                // S'assurer que les boutons de défi sont désactivés en cas d'erreur.
+                const container = document.getElementById('variables-container');
+                if (container) {
+                    container.innerHTML = `
+                        <div class="col-12 text-center text-danger">
+                            <p>Erreur lors de l'exécution du code Python pour le défi :<br>
+                            <code>${error.message}</code></p>
+                        </div>`;
+                }
                 const checkAnswersButton = document.getElementById('check-answers-btn');
                 const showSolutionButton = document.getElementById('show-solution-btn');
                 if (checkAnswersButton) checkAnswersButton.disabled = true;
@@ -984,6 +1167,7 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
+    // ... (le reste du fichier est identique à partir d'ici)
     // Gestionnaire pour le bouton "Vérifier les réponses" (#check-answers-btn).
     const checkAnswersButton = document.getElementById('check-answers-btn');
     if (checkAnswersButton) {
@@ -1170,6 +1354,9 @@ z = x + y`;
     const showSolBtn = document.getElementById('show-solution-btn');
     if (checkBtn) checkBtn.disabled = true;
     if (showSolBtn) showSolBtn.disabled = true;
+    
+    // État initial des cartes
+    setDiagramAndChallengeCardState("default");
 
 }); // Fin de DOMContentLoaded
 
