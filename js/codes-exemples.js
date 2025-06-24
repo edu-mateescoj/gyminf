@@ -92,6 +92,25 @@ while True:
     if compteur >= 5:
         print("Limite atteinte, sortie de la boucle.")
         break`
+    },
+    {
+        name: "Graphique Turtle Simple",
+        code: `import turtle
+
+# Prépare la tortue pour le dessin
+t = turtle.Turtle()
+t.speed(5) # Vitesse de dessin (1-10)
+
+# Cycler une liste de couleurs
+colors = ['red', 'green', 'blue', 'orange']
+for c in colors:
+    t.color(c)    # Fixer la couleur
+    t.forward(75) # Avancer
+    t.left(90)    # Tourner a gauche de 90 degrés
+
+# Changer la forme de la tortue
+t.shape("turtle")
+`
     }
 
 ];

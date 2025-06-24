@@ -109,7 +109,7 @@
         .card {
             transition: border-color 0.3s;
         }
-        
+
         /* Style pour surligner un select (par exemple, le compteur de booléens) */
         select.suggestion-highlight-select {
             border-color: #28a745 !important; /* Vert Bootstrap */
@@ -508,6 +508,41 @@
     </div>
 </div>
 
+<!-- Section Console d'Exécution -->
+<div class="row mt-4">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header bg-dark text-white d-flex justify-content-between align-items-center">
+                <h2 class="h5 mb-0"><i class="fas fa-terminal me-2"></i>Console d'Exécution</h2>
+                <button id="clear-console-btn" class="btn btn-sm btn-outline-light" title="Effacer la console">
+                    <i class="fas fa-eraser"></i> Effacer
+                </button>
+            </div>
+            <div class="card-body bg-black p-0">
+                <pre id="execution-console-output" class="text-white m-0 p-3" style="min-height: 100px; white-space: pre-wrap; word-wrap: break-word;"></pre>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal pour la fonction input() -->
+<div class="modal fade" id="input-modal" tabindex="-1" data-bs-backdrop="static" data-bs-keyboard="false" aria-labelledby="input-modal-label" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="input-modal-label">Saisie Requise</h5>
+            </div>
+            <div class="modal-body">
+                <p id="input-modal-prompt"></p>
+                <input type="text" class="form-control" id="input-modal-field">
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" id="input-modal-submit-btn">Valider</button>
+            </div>
+        </div>
+    </div>
+</div>
+
 <!-- Modal de Feedback -->
 <div class="modal fade" id="feedback-modal" tabindex="-1" aria-labelledby="feedback-modal-label" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable modal-lg">
@@ -539,7 +574,25 @@
             </div>
         </div>
     </div>
-</div>      
+</div> 
+
+<!-- Section Affichage Graphique Turtle -->
+<div class="row mt-4" id="turtle-graphics-card" style="display: none;"> <!-- Initialement masquée -->
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header bg-success text-white d-flex justify-content-between align-items-center">
+                <h2 class="h5 mb-0"><i class="fas fa-paint-brush me-2"></i>Affichage Graphique (Turtle)</h2>
+                <button id="clear-turtle-canvas-btn" class="btn btn-sm btn-outline-light" title="Effacer le dessin">
+                    <i class="fas fa-eraser"></i> Effacer
+                </button>
+            </div>
+            <div class="card-body text-center p-2">
+                <canvas id="turtle-canvas" width="600" height="400" style="background-color: #f0f0f0; border-radius: 4px; max-width: 100%;"></canvas>
+            </div>
+        </div>
+    </div>
+</div>
+
         <!-- JavaScript  -->
         <script src="js/codes-exemples.js"></script>
         <script src="js/code-generator.js"></script>

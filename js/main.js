@@ -1197,6 +1197,11 @@ if (codeEditorInstance) {
         });
     }
     
+    const clearConsoleBtn = document.getElementById('clear-console-btn');
+    if (clearConsoleBtn) {
+        clearConsoleBtn.addEventListener('click', clearConsole);
+    }
+
     // --- Fonctions utilitaires pour la section Défi ---
 
     /**
@@ -1364,97 +1369,185 @@ z = x + y`;
 // --- Fonctions pour le Défi (déplacées de l'intérieur de DOMContentLoaded pour être globales si nécessaire, mais restent dans ce scope) ---
 
 async function runAndTraceCodeForChallenge(code, pyodideInstance) { // pyodideInstance au lieu de pyodide global
-    console.log("Exécution du code pour le défi...");
-    let tracedVariables = {};
+    console.log("Exécution du code pour le défi maintenant avec I/O personnalisés...");
+    clearConsole();
 
-    const escapedCodeForPythonTripleQuotes = code
-        .replace(/\\/g, '\\\\') 
-        .replace(/"""/g, '\\"\\"\\"'); 
-
-    // Validation syntaxique préliminaire dans Pyodide
-    const syntaxValidationScript = `
-import ast
-import traceback
-
-error_detail = ""
-parsed_code_string = """${escapedCodeForPythonTripleQuotes}"""
-
-try:
-    ast.parse(parsed_code_string)
-    _syntax_check_result = "Syntax OK"
-except Exception as e:
-    _syntax_check_result = f"Syntax Error: {type(e).__name__}: {str(e)}\\n{traceback.format_exc()}"
-
-_syntax_check_result # Retourne le résultat
-`;
-    try {
-        console.log("Script de validation syntaxique pour le défi (avant exécution Pyodide):", syntaxValidationScript);
-        let syntaxCheckResult = await pyodideInstance.runPythonAsync(syntaxValidationScript);
-        console.log("Résultat de la validation syntaxique (Pyodide):", syntaxCheckResult);
-        if (syntaxCheckResult !== "Syntax OK") {
-            console.error("Erreur de syntaxe détectée par Pyodide avant l'exécution tracée:", syntaxCheckResult);
-            alert(`Erreur de syntaxe dans votre code Python:\n${syntaxCheckResult}`);
-            return {}; // Retourne un objet vide car l'exécution ne peut pas continuer
-        }
-    } catch (e) { // Erreur inattendue durant la validation elle-même (rare)
-        console.error("Erreur inattendue durant la validation syntaxique avec Pyodide:", e);
-        alert(`Une erreur inattendue est survenue lors de la vérification de la syntaxe de votre code:\n${e.message}`);
-        return {};
+    const clearTurtleBtn = document.getElementById('clear-turtle-canvas-btn');
+    if (clearTurtleBtn) {
+        clearTurtleBtn.addEventListener('click', () => {
+            const canvas = document.getElementById('turtle-canvas');
+            if (canvas) {
+                const ctx = canvas.getContext('2d');
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+            }
+        });
     }
-    
-    // Le code de traçage est injecté après la validation
-    // Assurez-vous que `escapedCodeForPythonTripleQuotes` est utilisé ici aussi pour la cohérence
-    const tracingWrapper = `
-import types
-import json
+    // --- Gestion de Turtle (Méthode Basthon) ---
+    const turtleCard = document.getElementById('turtle-graphics-card');
+    const turtleCanvas = document.getElementById('turtle-canvas');
+    let turtleSetupCode = "";
 
-user_ns = {} 
+    // 1. Détection et chargement à la demande
+    if (code.includes("import turtle")) {
+        console.log("Détection de 'import turtle'. Chargement du paquet...");
+        try {
+            // On charge le paquet 'turtle' depuis le canal par défaut de Pyodide
+            await pyodideInstance.loadPackage("turtle");
+            console.log("Paquet 'turtle' chargé avec succès.");
+            
+            // On affiche la carte graphique et on la prépare
+            if (turtleCard && turtleCanvas) {
+                turtleCard.style.display = 'block';
+                const ctx = turtleCanvas.getContext('2d');
+                ctx.clearRect(0, 0, turtleCanvas.width, turtleCanvas.height);
+
+                // Le code de configuration reste le même, il dit à turtle où dessiner
+                turtleSetupCode = `import turtle\nturtle.Screen().setup(target_id='turtle-canvas')`;
+            }
+        } catch (e) {
+            console.error("Erreur lors du chargement du paquet turtle:", e);
+            logToConsole(formatPythonError(e.message), 'error');
+            return {}; // Arrêter l'exécution si turtle ne peut pas être chargé
+        }
+    } else if (turtleCard) {
+        turtleCard.style.display = 'none'; // Masquer si turtle n'est pas utilisé
+    }
+
+    // 1. Rendre nos fonctions JS accessibles à Pyodide
+    pyodideInstance.globals.set("js_print_handler", logToConsole);
+    pyodideInstance.globals.set("js_input_handler", handlePythonInput);
+
+    // On passe le code à Pyodide via des variables globales, pas par injection de chaîne.
+    // beaucoup plus robuste ??
+    pyodideInstance.globals.set("turtle_setup_script", turtleSetupCode);
+    pyodideInstance.globals.set("student_code_to_run", code); // On passe le code brut ici
+    // On utilise une variable globale pour le code de l'élève:
+    /* PLUS BESOIN D'ECHAPPER LES GUILLEMETS TRIPLES
+    * // On échappe les guillemets triples pour éviter les conflits dans le code Python
+    * // On échappe les backslashes pour éviter les erreurs de syntaxe
+    * const escapedCodeForPythonTripleQuotes = code
+    *    .replace(/\\/g, '\\\\') 
+    *    .replace(/"""/g, '\\"\\"\\"'); 
+    */
+
+    // On passe l'objet pyodide lui-même au script Python pour qu'il puisse l'utiliser ??
+    // pyodideInstance.globals.set("pyodide", pyodideInstance);
+
+    // Définition des fonctions "custom" puis filtrage des variables
+    // 2. Le wrapper Python qui redéfinit les builtins et exécute le code
+    const tracingWrapper = `
+import builtins
+import io
+import sys
+import json
+import types
+import asyncio
+from pyodide.ffi import to_js
+import pyodide ###############################################
+
+# --- Stockage des originaux et initialisation ---
+_original_print = builtins.print
+_original_input = builtins.input
+user_ns = {}
 _final_vars = {}
 _error_detail_trace = None
 
-try:
-    exec("""${escapedCodeForPythonTripleQuotes}""", user_ns) # Utilise la même version échappée
-except Exception as e:
-    import traceback
-    _error_detail_trace = f"{type(e).__name__}: {str(e)}\\n{traceback.format_exc()}"
+# --- Redéfinition de print() ---
+def custom_print(*args, **kwargs):
+    # On utilise un buffer pour capturer la sortie formatée par print
+    s_io = io.StringIO()
+    # On force la sortie à aller dans notre buffer au lieu de la console
+    kwargs['file'] = s_io
+    _original_print(*args, **kwargs)
+    message = s_io.getvalue()
+    # On appelle le handler JS avec la chaîne capturée
+    js_print_handler(message)
 
+# --- Redéfinition de input() ---
+# C'est une fonction asynchrone car elle doit attendre le JS
+async def custom_input(prompt=""):
+    # On appelle le handler JS, qui retourne une Promise.
+    # L'await ici met en pause l'exécution Python jusqu'à ce que la Promise soit résolue.
+    response = await js_input_handler(prompt)
+    # On affiche aussi l'invite et la réponse dans la console pour la traçabilité
+    js_print_handler(str(prompt) + str(response) + '\\n', 'output')
+    return response
 
-if _error_detail_trace is None: # Pas d'erreur d'exécution
+# --- Surcharge des builtins ---
+builtins.print = custom_print
+builtins.input = custom_input
+
+# --- Exécution et traçage ---
+async def main():
+    # Cette fonction 'main' asynchrone va contenir l'exécution du code
+    global _error_detail_trace, user_ns # Rendre les variables accessibles
+
+    try:
+        # On utilise pyodide.code.eval_code_async qui est conscient de l'asynchronisme.
+        # Il va gérer les 'await' implicites sur les fonctions comme notre custom_input.
+        
+        # On exécute d'abord le code de configuration de Turtle (qui est synchrone)
+        exec(turtle_setup_script, user_ns)
+        
+        # Puis on exécute le code de l'élève de manière asynchrone
+        await pyodide.code.eval_code_async(student_code_to_run, globals=user_ns)
+    except Exception as e:
+        import traceback
+        _error_detail_trace = traceback.format_exc()
+    finally:
+        # --- Restauration des builtins originaux ---
+        builtins.print = _original_print
+        builtins.input = _original_input
+        if "pyodide_turtle" in sys.modules :
+            sys.modules["pyodide_turtle"].clear_turtle()
+        elif "turtle" in sys.modules:
+            sys.modules["turtle"].Screen().clear()
+            sys.modules["turtle"].Screen().bye()
+
+# On lance notre fonction 'main' asynchrone et on attend sa complétion.
+await main()  
+
+# --- Traçage des variables (si pas d'erreur) ---
+if _error_detail_trace is None:
     for _var_name, _val in user_ns.items():
-        if _var_name.startswith('__') and _var_name.endswith('__'):
+        if _var_name.startswith('__') or isinstance(_val, (types.ModuleType, types.FunctionType, type)):
             continue
+        # ... (votre logique de filtrage existante) ...
         if _var_name in ['pyodide', 'sys', 'micropip', 'json', 'types', 'ast', 'traceback', 
                          'error_detail', 'current_code', 'user_python_code', 
                          'cfg_instance', 'mermaid_output', 'error_message', 'output_dict',
                          'parsed_code_string', 'List', 'Dict', 'Set', 'Tuple', 'Optional',
-                         '_syntax_check_result', '_error_detail_trace', 'user_ns', '_final_vars', # Exclure les variables du wrapper
-                         '_var_name', '_val' # Exclure les variables de boucle du wrapper
-                         ]:
-            continue
-        if isinstance(_val, (types.ModuleType, types.FunctionType, type, types.BuiltinFunctionType, types.BuiltinMethodType)):
+                         '_syntax_check_result', '_error_detail_trace', 'user_ns', '_final_vars',
+                         '_original_print', '_original_input', 'custom_print', 'custom_input', 's_io',
+                         'js_print_handler', 'js_input_handler', 'main',
+                         'turtle_setup_script', 'student_code_to_run',
+                         '_var_name', '_val']:
             continue
         
         if isinstance(_val, (str, int, float, bool, list, dict, tuple, set)) or _val is None:
             _final_vars[_var_name] = _val
         else:
             try:
-                _final_vars[_var_name] = repr(_val) 
+                _final_vars[_var_name] = repr(_val)
             except:
                 _final_vars[_var_name] = "<valeur non sérialisable>"
 
-# Retourne un dictionnaire avec les variables ou les détails de l'erreur
-json.dumps({"variables": _final_vars, "error": _error_detail_trace}) 
+# --- Retour du résultat ---
+json.dumps({"variables": _final_vars, "error": _error_detail_trace})
 `;
 
-    console.log("Wrapper de traçage passé à Pyodide pour le défi:", tracingWrapper);
+    console.log("Wrapper de traçage (avec I/O) passé à Pyodide:", tracingWrapper);
+    let tracedVariables = {};
     try {
+        // IMPORTANT: On utilise runPythonAsync car notre code est asynchrone (à cause de input)
         let resultJson = await pyodideInstance.runPythonAsync(tracingWrapper);
         if (resultJson) {
             const result = JSON.parse(resultJson);
             if (result.error) {
-                console.error("Erreur d'exécution lors du traçage pour le défi:", result.error);
-                alert(`Erreur lors de l'exécution de votre code Python:\n${result.error}`);
-                return {}; // Retourne un objet vide en cas d'erreur d'exécution
+                console.error("Erreur d'exécution Python capturée:", result.error);
+                const friendlyError = formatPythonError(result.error);
+                logToConsole(friendlyError, 'error');
+                return {}; // Retourne un objet vide en cas d'erreur
             }
             tracedVariables = result.variables;
         }
@@ -1462,11 +1555,13 @@ json.dumps({"variables": _final_vars, "error": _error_detail_trace})
 
     } catch (error) { // Erreur inattendue durant l'exécution du wrapper lui-même
         console.error("Erreur majeure lors de l'exécution tracée pour le défi (wrapper):", error);
-        alert(`Une erreur majeure est survenue lors de l'exécution de votre code : ${error.message}`);
-        tracedVariables = {}; 
+        const friendlyError = formatPythonError(error.message);
+        logToConsole(friendlyError, 'error');
+        tracedVariables = {};
     }
     return tracedVariables;
 }
+
 
 
 function checkStudentAnswers(correctVariableValues) {
@@ -1593,4 +1688,121 @@ function revealCorrectSolution(correctVariableValues) {
     const showSolBtn = document.getElementById('show-solution-btn');
     if (checkBtn) checkBtn.disabled = true;
     if (showSolBtn) showSolBtn.disabled = true;
+}
+// --- Gestion de la Console et des I/O personnalisées ---
+
+/**
+ * Affiche un message dans la console d'exécution.
+ * @param {string} message Le message à afficher.
+ * @param {string} type 'output' pour une sortie standard, 'error' pour une erreur.
+ */
+function logToConsole(message, type = 'output') {
+    const consoleOutput = document.getElementById('execution-console-output');
+    if (!consoleOutput) return;
+
+    const line = document.createElement('div');
+    line.className = type === 'error' ? 'text-danger' : 'text-light';
+    
+    // Crée un nœud de texte pour éviter l'interprétation HTML du message
+    line.appendChild(document.createTextNode(message));
+    
+    consoleOutput.appendChild(line);
+    consoleOutput.scrollTop = consoleOutput.scrollHeight; // Auto-scroll
+}
+
+/**
+ * Efface le contenu de la console d'exécution.
+ */
+function clearConsole() {
+    const consoleOutput = document.getElementById('execution-console-output');
+    if (consoleOutput) {
+        consoleOutput.innerHTML = '';
+    }
+}
+
+/**
+ * Gère la fonction input() de Python en affichant un modal.
+ * Retourne une Promise qui se résout avec la saisie de l'utilisateur.
+ * @param {string} prompt Le message à afficher à l'utilisateur.
+ * @returns {Promise<string>}
+ */
+function handlePythonInput(prompt) {
+    const inputModal = new bootstrap.Modal(document.getElementById('input-modal'));
+    const promptElement = document.getElementById('input-modal-prompt');
+    const inputField = document.getElementById('input-modal-field');
+    const submitButton = document.getElementById('input-modal-submit-btn');
+
+    promptElement.textContent = prompt || "";
+    inputField.value = '';
+
+    return new Promise((resolve) => {
+        const submitListener = () => {
+            const value = inputField.value;
+            // Nettoyer l'événement pour ne pas qu'il se cumule
+            submitButton.removeEventListener('click', submitListener);
+            inputField.removeEventListener('keydown', enterListener);
+            inputModal.hide();
+            resolve(value);
+        };
+
+        const enterListener = (event) => {
+            if (event.key === 'Enter') {
+                submitListener();
+            }
+        };
+
+        submitButton.addEventListener('click', submitListener);
+        inputField.addEventListener('keydown', enterListener);
+        
+        // Mettre le focus sur le champ de saisie une fois le modal affiché
+        document.getElementById('input-modal').addEventListener('shown.bs.modal', () => {
+            inputField.focus();
+        }, { once: true });
+
+        inputModal.show();
+    });
+}
+
+/**
+ * Formate une erreur Python en un message lisible pour un élève.
+ * @param {string} traceback Le traceback complet de Python.
+ * @returns {string} Un message d'erreur formaté et simplifié.
+ */
+function formatPythonError(traceback) {
+    if (!traceback) return "Une erreur inconnue est survenue.";
+
+    const lines = traceback.trim().split('\n');
+    const errorLine = lines[lines.length - 1]; // Ex: "NameError: name 'x' is not defined"
+
+    const match = errorLine.match(/^(\w+):\s*(.*)$/);
+    if (!match) return traceback; // Si le format est inattendu, on retourne le traceback brut.
+
+    const errorType = match[1];
+    const errorMessage = match[2];
+    let hint = "";
+
+    switch (errorType) {
+        case 'NameError':
+            hint = `'NameError': La variable ${errorMessage.split("'")[1]} a été utilisée avant d'avoir reçu une valeur. Avez-vous fait une faute de frappe ou oublié de l'initialiser ?`;
+            break;
+        case 'TypeError':
+            hint = "'TypeError': Vous avez essayé de faire une opération entre des types de données incompatibles. Par exemple, additionner un nombre et du texte (`5 + 'hello'`). Vérifiez que vos variables ont le bon type.";
+            break;
+        case 'IndexError':
+            hint = "'IndexError': Vous avez essayé d'accéder à un élément d'une liste ou d'une chaîne avec un indice qui n'existe pas. Par exemple, demander le 5ème élément d'une liste qui n'en a que 3.";
+            break;
+        case 'SyntaxError':
+            hint = `'SyntaxError': Votre code contient une erreur d'écriture. Vérifiez attentivement la ligne indiquée : les deux-points (\`:\`) à la fin des \`if\`/\`for\`/\`def\`, l'indentation (les espaces au début des lignes), et les parenthèses. Message original : ${errorMessage}`;
+            break;
+        case 'ValueError':
+            hint = `'ValueError': Une fonction a reçu un argument du bon type, mais avec une valeur inappropriée. Par exemple, \`int('abc')\`. Message original : ${errorMessage}`;
+            break;
+        case 'ZeroDivisionError':
+            hint = "'ZeroDivisionError': Vous avez tenté de diviser un nombre par zéro, ce qui est impossible en mathématiques.";
+            break;
+        default:
+            hint = "Une erreur est survenue. Lisez attentivement le message pour trouver un indice.";
+    }
+
+    return `Erreur détectée : ${errorLine}\n\n💡 Piste : ${hint}`;
 }
