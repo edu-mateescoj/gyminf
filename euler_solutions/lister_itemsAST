@@ -369,14 +369,14 @@ if __name__ == "__main__":
     # )
 
     # 2. Ensuite, analyser tous les snippets (fonctions) et les stocker avec les métriques
-    analyze_all_snippets(
-       db_path=DB_PATH,
-       folder=FOLDER,
-       items_ast=ITEMS_AST,
-       builtins_list=BUILTINS,
-       modules_to_track=MODULES_TO_TRACK,
-       special_math_funcs=SPECIAL_MATH_FUNCS
-    )
+    # analyze_all_snippets(
+    #    db_path=DB_PATH,
+    #    folder=FOLDER,
+    #    items_ast=ITEMS_AST,
+    #    builtins_list=BUILTINS,
+    #    modules_to_track=MODULES_TO_TRACK,
+    #    special_math_funcs=SPECIAL_MATH_FUNCS
+    # )
 
     # 3. pour (ré)initialiser la DB sans rien analyser :
     #create_db(DB_PATH, FEATURES, BUILTINS, MODULES_TO_TRACK, SPECIAL_MATH_FUNCS)

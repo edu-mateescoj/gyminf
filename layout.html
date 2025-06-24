@@ -419,6 +419,24 @@
                 </div>
                 <!-- Zone d'édition de code -->
                 <textarea id="code-editor"></textarea>
+                <div id="code-toolbar" class="d-flex align-items-center justify-content-start py-1 px-2" style="background: #23272b; border-radius: 0 0 0.25rem 0.25rem; border-top: 1px solid #444; font-size: 1rem;">
+                    <button id="toggle-editable-btn" class="btn btn-sm btn-outline-light me-2" title="Rendre non éditable">
+                        <i class="fas fa-edit"></i>
+                </button>
+                    <button id="download-code-btn" class="btn btn-sm btn-outline-light me-2" title="Sauver le code dans un fichier .py">
+                <i class="fas fa-download"></i>
+                </button>
+                <button id="open-file-btn" class="btn btn-sm btn-outline-light me-2" title="Ouvrir un fichier .py">
+                    <i class="fas fa-folder-open"></i>
+                    <input type="file" id="file-input" accept=".py" style="display:none;">
+                </button>
+                <button id="share-code-btn" class="btn btn-sm btn-outline-light me-2" title="Copier dans le presse-papier">
+                    <i class="fas fa-share-alt"></i>
+                </button>
+                <button id="reload-code-btn" class="btn btn-sm btn-outline-light" title="Restaurer le code à la dernière génération/chargement">
+                    <i class="fas fa-undo"></i>
+                </button>
+                </div>
             </div>
         </div>
     </div>

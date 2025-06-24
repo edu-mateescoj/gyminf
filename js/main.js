@@ -24,12 +24,145 @@ const BUILTINS_ADVANCED = [
 
 var codeEditorInstance;
 
+// --- Gestion des boutons de l’éditeur de code: mode édition, régénération, ...  ---
+let lastLoadedCode = ""; // Pour restaurer l'état après génération/chargement
+let isEditorEditable = false;
+// variable d'état globale : permet à tout le JS de savoir si l'éditeur est éditable ou non
+// ATTENTION... AUSSI listener pour le bouton toggleBtn: référence à l'élément bouton
+function setEditorEditable(editable) {
+    isEditorEditable = editable;
+    if (codeEditorInstance) {
+        codeEditorInstance.setOption('readOnly', !editable);
+    }
+    const btn = document.getElementById('toggle-editable-btn');
+    if (btn) {
+        btn.innerHTML = editable
+            ? '<i class="far fa-edit"></i> Rendre non éditable'
+            : '<i class="fas fa-edit"></i> Rendre éditable';
+    }
+}
+
 document.addEventListener('DOMContentLoaded', function() {
+
     codeEditorInstance = CodeMirror.fromTextArea(document.getElementById('code-editor'), {
-        mode: 'python', theme: 'dracula', lineNumbers: true, indentUnit: 4,
-        tabSize: 4, indentWithTabs: false, lineWrapping: true, readOnly: false
+        mode: 'python', 
+        theme: 'dracula', 
+        lineNumbers: true, 
+        firstLineNumber: 0,
+        indentUnit: 4,
+        tabSize: 4, 
+        indentWithTabs: false, 
+        lineWrapping: true, 
+        readOnly: !isEditorEditable // Initialement non éditable
+
     });
-    let variableValuesFromExecution = {};
+    
+    // 1er bouton: Toggle éditable
+    const toggleBtn = document.getElementById('toggle-editable-btn');
+    if (toggleBtn) {
+        toggleBtn.addEventListener('click', () => setEditorEditable(!isEditorEditable));
+    }
+
+    // 2ème: Télécharger le code
+    const downloadBtn = document.getElementById('download-code-btn');
+    if (downloadBtn) {
+        downloadBtn.addEventListener('click', () => {
+            if (!codeEditorInstance) return;
+            const code = codeEditorInstance.getValue();
+            const blob = new Blob([code], {type: "text/x-python"}); //
+            const url = URL.createObjectURL(blob); // Crée un objet URL pour le blob
+            const a = document.createElement('a'); // Crée un lien temporaire pour le téléchargement
+            a.href = url; 
+            const now = new Date();
+            const yyyy = now.getFullYear().toString(); // Année complète
+            yy = yyyy[2] + yyyy[3]; // 2 derniers chiffres de l'année
+            const mm = String(now.getMonth() + 1).padStart(2, '0');
+            const dd = String(now.getDate()).padStart(2, '0');
+            a.download = `mon_code_${dd}${mm}${yy}.py`;
+            document.body.appendChild(a);
+            a.click();
+            setTimeout(() => {
+                document.body.removeChild(a);
+                URL.revokeObjectURL(url);
+            }, 0);
+        });
+    }
+
+    // 3ème bouton: Ouvrir un fichier .PY ONLY
+    const openFileBtn = document.getElementById('open-file-btn');
+    const fileInput = document.getElementById('file-input');
+    if (openFileBtn && fileInput) {
+        openFileBtn.addEventListener('click', () => fileInput.click());
+        fileInput.addEventListener('change', (e) => {
+            const file = e.target.files[0];
+            if (file && file.name.endsWith('.py')) {
+                const reader = new FileReader();
+                reader.onload = function(evt) {
+                    if (codeEditorInstance) {
+                        codeEditorInstance.setValue(evt.target.result);
+                        lastLoadedCode = evt.target.result; // Mémorise ce code comme "dernier chargé"
+                    }
+                };
+                reader.readAsText(file, "UTF-8");
+            } else {
+                alert("Choisissez un fichier .py UNIQUEMENT");
+            }
+            fileInput.value = ""; // Reset pour permettre de recharger le même fichier
+        });
+    }
+
+    // 4ème: Partager (ici: copier dans le presse-papier)
+    const shareBtn = document.getElementById('share-code-btn');
+    if (shareBtn) {
+        shareBtn.addEventListener('click', async () => {
+            if (!codeEditorInstance) return;
+            const code = codeEditorInstance.getValue();
+            try {
+                await navigator.clipboard.writeText(code);
+                shareBtn.classList.add('btn-success');
+                setTimeout(() => shareBtn.classList.remove('btn-success'), 1000);
+            } catch (err) {
+                alert("Impossible de copier dans le presse-papier.");
+            }
+        });
+    }
+
+    // 5ème: Reload (restaurer le code après génération/chargement)
+    const reloadBtn = document.getElementById('reload-code-btn');
+    if (reloadBtn) {
+        reloadBtn.addEventListener('click', () => {
+            if (lastLoadedCode && codeEditorInstance) {
+                codeEditorInstance.setValue(lastLoadedCode);
+            }
+        });
+    }
+
+    // --- Mémoriser le code après génération ou chargement d'exemple ---
+    function memorizeLoadedCode(code) {
+        lastLoadedCode = code;
+    }
+
+    // Appelle memorizeLoadedCode(code) après chaque génération ou chargement d'exemple
+    // dans le gestionnaire du bouton "Générer un Code Aléatoire" :
+    const generateCodeButton = document.getElementById('generate-code-btn');
+    if (generateCodeButton) {
+        generateCodeButton.addEventListener('click', function() {
+            console.log("génération du code par ailleurs... on va mémoriser");
+            if (codeEditorInstance) memorizeLoadedCode(codeEditorInstance.getValue());
+        });
+    }
+    // dans le gestionnaire de chargement d'exemple :
+    const predefinedExamplesList = document.getElementById('predefined-examples-list');
+    if (predefinedExamplesList) {
+        predefinedExamplesList.querySelectorAll('a[data-example-index]').forEach(link => {
+            link.addEventListener('click', function() {
+                console.log("chargement du code par ailleurs... on va mémoriser");
+                if (codeEditorInstance) memorizeLoadedCode(codeEditorInstance.getValue());
+            });
+        });
+    }
+    
+    let variableValuesFromExecution = {}; // Pour stocker les valeurs des variables après l'exécution du code
 
     // --- Éléments DOM Globaux pour la Configuration ---
     const difficultyGlobalSelect = document.getElementById('difficulty-level-global');
@@ -61,8 +194,7 @@ document.addEventListener('DOMContentLoaded', function() {
         </div>`;
 
     // --- Gestion du chargement des exemples prédéfinis ---
-    const predefinedExamplesList = document.getElementById('predefined-examples-list');
-    const loadPredefinedCodeBtn = document.getElementById('load-predefined-code-btn'); // Le bouton lui-même
+     const loadPredefinedCodeBtn = document.getElementById('load-predefined-code-btn'); // Le bouton lui-même
 
     if (predefinedExamplesList && typeof PREDEFINED_EXAMPLES !== 'undefined' && PREDEFINED_EXAMPLES.length > 0) {
         PREDEFINED_EXAMPLES.forEach((example, index) => {
@@ -79,9 +211,10 @@ document.addEventListener('DOMContentLoaded', function() {
                 const selectedExample = PREDEFINED_EXAMPLES[exampleIndex];
                 if (selectedExample && codeEditorInstance) {
                     codeEditorInstance.setValue(selectedExample.code);
-                    console.log(`Exemple chargé : ${selectedExample.name}`);
+                    memorizeLoadedCode(selectedExample.code);
+                    console.log(`Exemple chargé et mémorisé: ${selectedExample.name}`);
                     // Optionnel: déclencher une mise à jour du diagramme ou réinitialiser le défi
-                    // triggerFlowchartUpdate(); // Si vous voulez que le diagramme se mette à jour
+                    // triggerFlowchartUpdate();
                     resetChallengeInputs();
                     document.getElementById('check-answers-btn').disabled = true;
                     document.getElementById('show-solution-btn').disabled = true;
@@ -689,7 +822,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
 
     // --- Gestionnaire pour "Générer un Code Aléatoire" ---
-    const generateCodeButton = document.getElementById('generate-code-btn');
+    // déjé déclaré: const generateCodeButton = document.getElementById('generate-code-btn');
     if (generateCodeButton) {
         generateCodeButton.addEventListener('click', function() {
             //console.log("Bouton 'Générer un Code Aléatoire' cliqué.");
@@ -777,6 +910,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 newGeneratedCode = "# Erreur: Le générateur de code aléatoire n'est pas disponible.";
             }
             if(codeEditorInstance) codeEditorInstance.setValue(newGeneratedCode);
+            memorizeLoadedCode(newGeneratedCode);
             var flowchartDisplayArea = document.getElementById('flowchart');
             if (flowchartDisplayArea) flowchartDisplayArea.innerHTML = '<p class="text-center text-muted mt-3">Nouveau code généré. Cliquez sur "Lancer..."</p>';
             resetChallengeInputs();
@@ -1023,6 +1157,7 @@ else:
 z = x + y`;
     if (codeEditorInstance) {
         codeEditorInstance.setValue(defaultPythonCode);
+        memorizeLoadedCode(defaultPythonCode);
     }
 
     var flowchartDisplayArea = document.getElementById('flowchart');

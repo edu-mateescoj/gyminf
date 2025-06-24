@@ -18,8 +18,11 @@ class SyntaxVisitor(ast.NodeVisitor):
         super().generic_visit(node) # Call the generic visit method to continue traversing the tree
         self.nesting_level -= 1 
 
-code = "for i in range(10):\n    if i % 2 == 0:\n        print(i)"
+code = "for i in range(10):\n    if i % 2 == 0.0:\n        print(i) #commentaire"
 code0 = "x = 1"
+codebis = ast.unparse(ast.parse(code))
+print(codebis)
+
 tree = ast.parse(code)
 tree0 = ast.parse(code0)
 v = SyntaxVisitor()
