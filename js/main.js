@@ -1012,9 +1012,11 @@ function setDiagramAndChallengeCardState(state) {
 
         if (state === "outdated") {
             card.classList.add('border', 'border-danger');
+            card.style.opacity = '0.3'; // Légèrement transparent pour indiquer l'état périmé
         } else {
             // Appliquer la bordure par défaut (bleu info)
             card.classList.add('border', 'border-info');
+            card.style.opacity = "1"; // Restaure l'opacité normale
         }
     });
 
@@ -1390,15 +1392,30 @@ async function runAndTraceCodeForChallenge(code, pyodideInstance) { // pyodideIn
     let turtleSetupCode = "";
 
     // 1. Détection et chargement à la demande
+    // On suppose que turtle est installé. On ne fait que la configuration.
     if (code.includes("import turtle")) {
-        if (turtleCard && turtleCanvas) {
-            turtleCard.style.display = 'block';
-            const ctx = turtleCanvas.getContext('2d');
-            ctx.clearRect(0, 0, turtleCanvas.width, turtleCanvas.height);
-            // Le module turtle est déjà installé. On lui dit juste où dessiner.
-            turtleSetupCode = `import turtle\nturtle.Screen().setup(target_id='turtle-canvas')`;
+        try {
+            await pyodideInstance.loadPackage('turtle'); // ou bien "turtle" ??
+            if (turtleCard && turtleCanvas) {
+                turtleCard.style.display = 'block';
+                // Le nettoyage du canvas se fait ICI UNIQUEMENT au début, et pas à la fin.
+                // la solution au problème de la fenêtre blanche ??
+                const ctx = turtleCanvas.getContext('2d');
+                ctx.clearRect(0, 0, turtleCanvas.width, turtleCanvas.height);
+                // Le module turtle est déjà installé. On lui dit juste où dessiner.
+                turtleSetupCode = `
+import sys
+import pyo_js_turtle as turtle
+sys.modules['turtle'] = turtle
+turtle.Screen().setup(target_id='turtle-canvas')
+`; //turtle.setup_canvas('turtle-canvas') 
         }
-    } else if (turtleCard) {
+    } catch (e) {
+        console.error("Erreur lors du chargement du paquet Turtle:", e);
+        logToConsole(formatPythonError(e.message), 'error');
+        return {}; // On arrête l'exécution si Turtle échoue
+    }
+} else if (turtleCard) {
         turtleCard.style.display = 'none'; // Masquer si turtle n'est pas utilisé
     }
 
@@ -1479,15 +1496,7 @@ async def main():
         exec(turtle_setup_script, user_ns)
         
         # CORRECTION POUR PROBLÈME COROUTINE !!
-        # On compile le code de l'élève en mode 'exec' pour en faire un objet 'code'.
-        # Le flag 'CO_COROUTINE' est ajouté par compile si 'await' est utilisé au plus haut niveau.
-        code_obj = compile(student_code_to_run, '<student_code>', 'exec')
-        
-        # On exécute cet objet code. Si c'est une coroutine, on l'attend.
-        # C'est la manière robuste de gérer du code qui peut être synchrone ou asynchrone.
-        result = exec(code_obj, user_ns)
-        if asyncio.iscoroutine(result):
-            await result
+        await pyodide.code.eval_code_async(student_code_to_run, globals=user_ns)
 
     except Exception as e:
         import traceback
@@ -1496,17 +1505,7 @@ async def main():
         # --- Restauration des builtins originaux ---
         builtins.print = _original_print
         builtins.input = _original_input
-        if "pyodide_turtle" in sys.modules :
-            sys.modules["pyodide_turtle"].clear_turtle()
-        elif "turtle" in sys.modules:
-            # On attend un tick pour laisser le temps au navigateur de dessiner
-            # AVANT DE TOUT EFFACER
-            await asyncio.sleep(0.01)
-            try:
-                sys.modules["turtle"].resetscreen()
-            except Exception as e:
-                # Au cas où même cela échouerait, on ne bloque pas tout.
-                print(f"Erreur lors du nettoyage de turtle: {e}")
+
 
 # On lance notre fonction 'main' asynchrone et on attend sa complétion.
 await main()  
@@ -1722,6 +1721,21 @@ function clearConsole() {
     if (consoleOutput) {
         consoleOutput.innerHTML = '';
     }
+}
+
+// Toggle affichage de la console d'exécution
+const consoleHeader = document.getElementById('execution-console-header');
+const consoleBody = document.getElementById('execution-console-body');
+if (consoleHeader && consoleBody) {
+    consoleHeader.addEventListener('click', function(e) {
+        // Ignore le clic sur le bouton "Effacer la console" pour pas que ça replie la card
+        if (e.target.closest('#clear-console-btn')) return;
+        if (consoleBody.style.display === "none") {
+            consoleBody.style.display = "";
+        } else {
+            consoleBody.style.display = "none";
+        }
+    });
 }
 
 /**
