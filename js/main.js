@@ -1458,10 +1458,6 @@ class AwaitInputTransformer(ast.NodeTransformer):
             return ast.Await(value=node)
         return self.generic_visit(node)
 
-tree = ast.parse(student_code_to_run)
-tree = AwaitInputTransformer().visit(tree)
-ast.fix_missing_locations(tree)
-student_code_to_run = compile(tree, filename="<ast>", mode="exec")
 
 # --- Stockage des originaux et initialisation ---
 _original_print = builtins.print
@@ -1501,14 +1497,21 @@ async def main():
     global _error_detail_trace, user_ns # Rendre les variables accessibles
 
     try:
+        from ast import unparse
+        
         # On utilise pyodide.code.eval_code_async qui est conscient de l'asynchronisme.
         # Il va gérer les 'await' implicites sur les fonctions comme notre custom_input.
         
         # On exécute d'abord le code de configuration de Turtle (qui est synchrone)
         exec(turtle_setup_script, user_ns)
         
+        tree = ast.parse(student_code_to_run)
+        transformed_tree = AwaitInputTransformer().visit(tree)
+        ast.fix_missing_locations(transformed_tree)
+        transformed_code_string = unparse(transformed_tree)
+
         # CORRECTION POUR PROBLÈME COROUTINE !!
-        await pyodide.code.eval_code_async(student_code_to_run, globals=user_ns)
+        await pyodide.code.eval_code_async(transformed_code_string, globals=user_ns)
 
     except Exception as e:
         import traceback
@@ -1548,7 +1551,10 @@ if _error_detail_trace is None:
                 _final_vars[_var_name] = "<valeur non sérialisable>"
 
 # --- Retour du résultat ---
-json.dumps({"variables": _final_vars, "error": _error_detail_trace})
+# Le résultat de cette expression (un string JSON) sera retourné à JavaScript
+json.dumps({"variables": _final_vars, 
+"error": _error_detail_trace
+})
 `;
 
     console.log("Wrapper de traçage (avec I/O) passé à Pyodide:", tracingWrapper);
