@@ -30,6 +30,9 @@ async function initPyodideAndLoadScript() {
         pyodide = await loadPyodide();
         console.log("Pyodide chargé avec succès.");
 
+        // DEBUG COROUTINE
+        pyodide.globals.set("js_input_handler", handlePythonInput); // 
+
         // Charger les packages Python nécessaires (ici, 'ast' est intégré, donc pas besoin de micropip pour lui).
         // Si autres dépendances non standard, il faudrait les charger.
         

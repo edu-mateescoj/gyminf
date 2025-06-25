@@ -1450,6 +1450,18 @@ import types
 import asyncio
 import pyodide ###############################################
 from pyodide.ffi import to_js
+import ast
+
+class AwaitInputTransformer(ast.NodeTransformer):
+    def visit_Call(self, node):
+        if isinstance(node.func, ast.Name) and node.func.id == "input":
+            return ast.Await(value=node)
+        return self.generic_visit(node)
+
+tree = ast.parse(student_code_to_run)
+tree = AwaitInputTransformer().visit(tree)
+ast.fix_missing_locations(tree)
+student_code_to_run = compile(tree, filename="<ast>", mode="exec")
 
 # --- Stockage des originaux et initialisation ---
 _original_print = builtins.print
@@ -1745,6 +1757,7 @@ if (consoleHeader && consoleBody) {
  * @returns {Promise<string>}
  */
 function handlePythonInput(prompt) {
+    console.log("DEBUG : Appel à handlePythonInput avec prompt:", prompt);
     const inputModal = new bootstrap.Modal(document.getElementById('input-modal'));
     const promptElement = document.getElementById('input-modal-prompt');
     const inputField = document.getElementById('input-modal-field');
