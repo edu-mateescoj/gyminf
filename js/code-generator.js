@@ -244,26 +244,34 @@ function generateRandomPythonCode(options) {
     
     // Phase 3: Générer les structures de contrôle
     function generateControlStructures() {
+        /*
         // Conditions
         if (options.main_conditions && options.cond_if && linesGenerated < targetLines - 1) {
             generateIfStatement();
         }
-        
-        // Boucles
+        */
+        // Conditions - sans vérification de lignes restantes
+        if (options.main_conditions && options.cond_if) {
+            generateIfStatement();
+        }        
+        // Boucles - sans vérification de lignes restantes
         if (options.main_loops) {
-            if (options.loop_for_range && linesGenerated < targetLines - 1) {
+            if (options.loop_for_range && declaredVarsByType.int.length > 0) {
                 generateForRangeLoop();
-            } else if (options.loop_for_list && declaredVarsByType.list.length > 0 && linesGenerated < targetLines - 1) {
+            } 
+            if (options.loop_for_list && declaredVarsByType.list.length > 0) {
                 generateForListLoop();
-            } else if (options.loop_for_str && declaredVarsByType.str.length > 0 && linesGenerated < targetLines - 1) {
+            } 
+            if (options.loop_for_str && declaredVarsByType.str.length > 0) {
                 generateForStrLoop();
-            } else if (options.loop_while && linesGenerated < targetLines - 2) {
+            } 
+            if (options.loop_while && declaredVarsByType.str.length > 0) {
                 generateWhileLoop();
             }
         }
         
         // Fonctions
-        if (options.main_functions && linesGenerated < targetLines - 3) {
+        if (options.main_functions) { // && linesGenerated < targetLines - 3) {
             generateFunction();
         }
     }
@@ -487,16 +495,94 @@ function generateRandomPythonCode(options) {
         }
     }
     
-    // --- EXÉCUTION DE LA GÉNÉRATION ---
+// --- EXÉCUTION DE LA GÉNÉRATION ---
+
+// D'abord calculer les lignes requises pour les structures demandées
+function calculateRequiredLines() {
+    let requiredLines = 0;
     
-    // Phase 1: Générer les variables
-    generateVariables();
+    // Conditions
+    if (options.main_conditions && options.cond_if) {
+        requiredLines += options.cond_if_else ? 4 : 2;
+    }
     
-    // Phase 2: Générer les opérations
-    generateOperations();
+    // Boucles (prendre la plus grande)
+    if (options.main_loops) {
+        let loopLines = 0;
+        if (options.loop_for_range) loopLines += 2;
+        if (options.loop_for_list) loopLines += 2;
+        if (options.loop_for_str) loopLines += 2;
+        if (options.loop_while) loopLines += 3; // +1 pour init compteur hors du corps
+        requiredLines += loopLines;
+    }
     
-    // Phase 3: Générer les structures de contrôle
-    generateControlStructures();
+    // Fonctions
+    if (options.main_functions) {
+        requiredLines += 3; // def, corps, appel
+        if (options.builtin_print) requiredLines += 1;
+        if (options.func_return) requiredLines += 1;
+    }
+    
+    return requiredLines;
+}
+
+
+// pour phase 0: Garantir les variables nécessaires pour les structures
+function ensureRequiredVariables() {
+    // Pour les conditions
+    if (options.main_conditions && options.cond_if) {
+        if (declaredVarsByType.bool.length === 0 && declaredVarsByType.int.length === 0) {
+            // Préférer créer une variable bool car plus explicite pour les conditions
+            const varName = generateUniqueVarName('bool');
+            codeLines.push(`${varName} = ${getRandomItem(["True", "False"])}`);
+            declaredVarsByType.bool.push(varName);
+            allDeclaredVarNames.add(varName);
+            linesGenerated++;
+        }
+    }
+    
+    // Pour les boucles
+    if (options.main_loops) {
+        // Pour for_list, garantir une liste
+        if (options.loop_for_list && declaredVarsByType.list.length === 0) {
+            const varName = generateUniqueVarName('list');
+            codeLines.push(`${varName} = ${LITERALS_BY_TYPE.list(difficulty)}`);
+            declaredVarsByType.list.push(varName);
+            allDeclaredVarNames.add(varName);
+            linesGenerated++;
+        }
+        
+        // Pour for_str, garantir une chaîne
+        if (options.loop_for_str && declaredVarsByType.str.length === 0) {
+            const varName = generateUniqueVarName('str');
+            codeLines.push(`${varName} = ${LITERALS_BY_TYPE.str()}`);
+            declaredVarsByType.str.push(varName);
+            allDeclaredVarNames.add(varName);
+            linesGenerated++;
+        }
+    }
+}
+
+// Calculer lignes minimales nécessaires et variables essentielles
+const requiredLines = calculateRequiredLines();
+const availableForVariables = Math.max(1, targetLines - requiredLines);
+
+// NOUVEL ORDRE D'EXÉCUTION:
+
+// Phase 0: Garantir les variables nécessaires pour les structures demandées
+ensureRequiredVariables();
+
+// 1. Structures de contrôle (PRIORITAIRES)
+generateControlStructures();
+
+// 2. Variables (limitées pour laisser de la place aux structures)
+generateVariables(availableForVariables); 
+
+// 3. Opérations si reste des lignes
+generateOperations();
+
+// 4. Compléter si besoin
+
     
     // Si on n'a pas généré assez de lignes, ajouter des opérations simples
     while (linesGenerated < targetLines) {
