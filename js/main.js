@@ -571,7 +571,7 @@ document.addEventListener('DOMContentLoaded', function() {
         let minTotalLines = MIN_POSSIBLE_CODE_LINES;
         let minTotalVariables = 0; // Commence à 0, car on compte explicitement
         let conceptualDifficultyScore = 0; // heuristique un peu bidon... à revoir
-        // Score de difficulté *conceptuelle* ?? basé sur les options sélectionnées
+        // idée future: un score de difficulté *conceptuelle* ?? basé sur les options sélectionnées
 
         const getChecked = (id) => document.getElementById(id) ? document.getElementById(id).checked : false;
         // prendre le type et utiliser VAR_COUNT_LIMITS si le sélecteur n'est pas là ou non visible
@@ -628,37 +628,69 @@ document.addEventListener('DOMContentLoaded', function() {
             if (getChecked('cond-if-if-if')) { minTotalLines += baseCondLines * 2; conceptualDifficultyScore += 8; if(minTotalVariables < 3 && explicitVarDeclarations < 3) minTotalVariables = Math.max(minTotalVariables, 3);}
         }
 
-        // 4. Boucles (Loop) - Adapter la logique comme pour les conditions
-        let loopSpecificVars = 0; // Variables spécifiquement pour les boucles (itération, bornes)
-        if (getChecked('loop-for-range')) { loopSpecificVars = Math.max(loopSpecificVars, 1); /* i */ }
-        if (getChecked('loop-range-ab')) { loopSpecificVars = Math.max(loopSpecificVars, 2); /* a, b (si pas déjà des vars) */ }
-        if (getChecked('loop-range-abs')) { loopSpecificVars = Math.max(loopSpecificVars, 3); /* a, b, s */ }
-        // Les variables de for sur list/str sont souvent la variable d'itération.
-        // La liste/str elle-même est comptée dans varCounts.
-        
-        // On n'ajoute loopSpecificVars à minTotalVariables que si elles ne sont pas déjà couvertes par explicitVarDeclarations.
-        // C'est compliqué... pour l'instant, on s'assure juste que minTotalVariables est assez grand.
-        if (getChecked('frame-loops')) {
-            minTotalVariables = Math.max(minTotalVariables, loopSpecificVars);
+    // 4. Boucles (Loop) - NOUVELLE LOGIQUE QUI COMPTE CHAQUE BOUCLE INDÉPENDAMMENT
+    if (getChecked('frame-loops')) {
+        // Compter chaque boucle séparément, plutôt qu'un calcul du maximum
+        if (getChecked('loop-for-range')) {
+            minTotalLines += 2;
+            minTotalVariables += 1; // Variable d'itération i
         }
-        // ... (reprendre la logique de calcul de minTotalLines et conceptualDifficultyScore pour les boucles)
-
-        let baseLoopLines = 0; let loopVarCount = 0; let loopImpact = 0;
-        if (getChecked('loop-for-range')) { baseLoopLines=2; loopVarCount=1; loopImpact=3;}
-        if (getChecked('loop-for-list') || getChecked('loop-for-str')) { baseLoopLines=Math.max(baseLoopLines,2); loopVarCount=Math.max(loopVarCount,1); loopImpact=Math.max(loopImpact,4);}
-        if (getChecked('loop-while')) { baseLoopLines=Math.max(baseLoopLines,2); loopVarCount=Math.max(loopVarCount,1); loopImpact=Math.max(loopImpact,5);}
-
-        if (baseLoopLines > 0) {
+        
+        if (getChecked('loop-for-list')) {
+            minTotalLines += 2;
+            minTotalVariables += 1; // Variable d'itération pour liste
+            if (varCounts.list === 0) { // Si pas de liste explicitement demandée
+                minTotalVariables += 1; // Une liste nécessaire
+            }
+        }
+        
+        if (getChecked('loop-for-str')) {
+            minTotalLines += 2;
+            minTotalVariables += 1; // Variable d'itération pour chaîne
+            if (varCounts.str === 0) { // Si pas de chaîne explicitement demandée
+                minTotalVariables += 1; // Une chaîne nécessaire
+            }
+        }
+        
+        if (getChecked('loop-while')) {
+            minTotalLines += 3; // +1 pour init compteur
+            minTotalVariables += 1; // Variable de compteur
+        }
+/*
+            if (baseLoopLines > 0) {
             minTotalLines += baseLoopLines;
             minTotalVariables = Math.max(minTotalVariables, loopVarCount); // Les variables de boucle s'ajoutent si nécessaire
             conceptualDifficultyScore += loopImpact;
             if (getChecked('loop-nested-for2')) { minTotalLines +=2; minTotalVariables = Math.max(minTotalVariables, loopVarCount+1); conceptualDifficultyScore += 6;}
             if (getChecked('loop-nested-for3')) { minTotalLines +=4; minTotalVariables = Math.max(minTotalVariables, loopVarCount+2); conceptualDifficultyScore += 9;}
         }
-        if (getChecked('loop-range-ab')) { conceptualDifficultyScore += 2; minTotalVariables = Math.max(minTotalVariables, 2); } // a, b
-        if (getChecked('loop-range-abs')) { conceptualDifficultyScore += 3; minTotalVariables = Math.max(minTotalVariables, 3); } // a, b, s
-        if (getChecked('loop-while-op')) { conceptualDifficultyScore += 1; if(minTotalVariables < 2 && explicitVarDeclarations < 2) minTotalVariables = Math.max(minTotalVariables, 2);}
-
+  */
+        // Garder les options avancées
+        if (getChecked('loop-nested-for2')) { 
+            minTotalLines += 2; 
+            minTotalVariables += 1; 
+            conceptualDifficultyScore += 6;
+        }
+        if (getChecked('loop-nested-for3')) { 
+            minTotalLines += 4; 
+            minTotalVariables += 2; 
+            conceptualDifficultyScore += 9;
+        }
+        
+        if (getChecked('loop-range-ab')) { 
+            conceptualDifficultyScore += 2; 
+            minTotalVariables = Math.max(minTotalVariables, 2); 
+        } // a, b
+        if (getChecked('loop-range-abs')) { 
+            conceptualDifficultyScore += 3; 
+            minTotalVariables = Math.max(minTotalVariables, 3); 
+        } // a, b, s
+        if (getChecked('loop-while-op')) { 
+            conceptualDifficultyScore += 1; 
+            if(minTotalVariables < 2 && explicitVarDeclarations < 2) 
+                minTotalVariables = Math.max(minTotalVariables, 2);
+        }
+    }
 
         // 5. Fonctions (Func)
         if (getChecked('frame-functions')) {
@@ -724,9 +756,14 @@ document.addEventListener('DOMContentLoaded', function() {
         const currentNumLinesVal = numLinesGlobalSelect ? parseInt(numLinesGlobalSelect.value) : minLines;
         const currentNumTotalVariablesVal = numTotalVariablesGlobalSelect ? parseInt(numTotalVariablesGlobalSelect.value) : minVariables;
 
-        populateSelectWithOptions(numLinesGlobalSelect, minLines, MAX_CODE_LINES, currentNumLinesVal);
-        populateSelectWithOptions(numTotalVariablesGlobalSelect, minVariables, MAX_TOTAL_VARIABLES_GLOBAL, currentNumTotalVariablesVal);
-        // console.log("Sélecteurs de configuration globale (Longueur, Nb Total Vars) mis à jour.");
+        // Mettre à jour le nombre de lignes disponibles, avec minLines comme minimum
+        populateSelectWithOptions(numLinesGlobalSelect, minLines, MAX_CODE_LINES, 
+            // Si la valeur actuelle est inférieure au nouveau minimum, utiliser le minimum
+            Math.max(currentNumLinesVal, minLines));
+
+        // Même chose pour le nombre de variables
+        populateSelectWithOptions(numTotalVariablesGlobalSelect, minVariables, MAX_TOTAL_VARIABLES_GLOBAL, 
+            Math.max(currentNumTotalVariablesVal, minVariables));
     }
 
     // --- Attachement des listeners 
@@ -1377,7 +1414,8 @@ z = x + y`;
     // État initial des cartes
     setDiagramAndChallengeCardState("default");
 
-}); // Fin de DOMContentLoaded
+}
+); // Fin de DOMContentLoaded
 
 
 // --- Fonctions pour le Défi (déplacées de l'intérieur de DOMContentLoaded pour être globales si nécessaire, mais restent dans ce scope) ---

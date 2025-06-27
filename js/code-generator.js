@@ -500,29 +500,47 @@ function generateRandomPythonCode(options) {
 // D'abord calculer les lignes requises pour les structures demandées
 function calculateRequiredLines() {
     let requiredLines = 0;
-    
-    // Conditions
+    let requiredVars = 0;
+
+    // Les conditions n'ajoutent pas nécessairement de variables
     if (options.main_conditions && options.cond_if) {
         requiredLines += options.cond_if_else ? 4 : 2;
     }
     
-    // Boucles (prendre la plus grande)
+    // Boucles - chaque boucle a besoin d'au moins une variable d'itération
     if (options.main_loops) {
-        let loopLines = 0;
-        if (options.loop_for_range) loopLines += 2;
-        if (options.loop_for_list) loopLines += 2;
-        if (options.loop_for_str) loopLines += 2;
-        if (options.loop_while) loopLines += 3; // +1 pour init compteur hors du corps
-        requiredLines += loopLines;
+        if (options.loop_for_range) {
+            requiredLines += 2;
+            requiredVars += 1; // Variable d'itération pour for in range
+        }
+        if (options.loop_for_list) {
+            requiredLines += 2;
+            requiredVars += 1; // Variable d'itération + besoin d'une liste
+        }
+        if (options.loop_for_str) {
+            requiredLines += 2;
+            requiredVars += 1; // Variable d'itération + besoin d'une chaîne
+        }
+        if (options.loop_while) {
+            requiredLines += 3; // +1 pour init compteur
+            requiredVars += 1; // Variable de compteur
+        }
     }
     
     // Fonctions
     if (options.main_functions) {
         requiredLines += 3; // def, corps, appel
+        if (options.func_def_a) requiredVars += 1; // Paramètre a
+        if (options.func_def_ab) requiredVars += 1; // Paramètre b supplémentaire
         if (options.builtin_print) requiredLines += 1;
         if (options.func_return) requiredLines += 1;
     }
     
+    // Mettre à jour le nombre minimum de variables dans les options
+    if (options.numTotalVariablesGlobal < requiredVars) {
+        options.numTotalVariablesGlobal = requiredVars;
+    }
+
     return requiredLines;
 }
 
@@ -541,24 +559,60 @@ function ensureRequiredVariables() {
         }
     }
     
-    // Pour les boucles
+    // Pour les boucles - CHAQUE BOUCLE SÉLECTIONNÉE AJOUTE UNE VARIABLE D'ITÉRATION
     if (options.main_loops) {
-        // Pour for_list, garantir une liste
-        if (options.loop_for_list && declaredVarsByType.list.length === 0) {
-            const varName = generateUniqueVarName('list');
-            codeLines.push(`${varName} = ${LITERALS_BY_TYPE.list(difficulty)}`);
-            declaredVarsByType.list.push(varName);
-            allDeclaredVarNames.add(varName);
-            linesGenerated++;
+        // Pour for_range, garantir une variable d'itération
+        if (options.loop_for_range) {
+            const iterVarName = generateUniqueVarName('int');
+            // Ne pas ajouter la ligne de code mais enregistrer la variable comme requise
+            allDeclaredVarNames.add(iterVarName);
+            declaredVarsByType.int.push(iterVarName);
+            // On ne génère pas de ligne ici car la variable sera créée dans la boucle
         }
         
-        // Pour for_str, garantir une chaîne
-        if (options.loop_for_str && declaredVarsByType.str.length === 0) {
-            const varName = generateUniqueVarName('str');
-            codeLines.push(`${varName} = ${LITERALS_BY_TYPE.str()}`);
-            declaredVarsByType.str.push(varName);
-            allDeclaredVarNames.add(varName);
-            linesGenerated++;
+        // Pour for_list, garantir une liste et une variable d'itération
+        if (options.loop_for_list) {
+            // Créer la liste si nécessaire
+            if (declaredVarsByType.list.length === 0) {
+                const listName = generateUniqueVarName('list');
+                codeLines.push(`${listName} = ${LITERALS_BY_TYPE.list(difficulty)}`);
+                declaredVarsByType.list.push(listName);
+                allDeclaredVarNames.add(listName);
+                linesGenerated++;
+            }
+            
+            // Préenregistrer la variable d'itération
+            const iterVarName = generateUniqueVarName('int');
+            allDeclaredVarNames.add(iterVarName);
+            declaredVarsByType.int.push(iterVarName);
+        }
+        
+        // Pour for_str, garantir une chaîne et une variable d'itération
+        if (options.loop_for_str) {
+            // Créer la chaîne si nécessaire
+            if (declaredVarsByType.str.length === 0) {
+                const strName = generateUniqueVarName('str');
+                codeLines.push(`${strName} = ${LITERALS_BY_TYPE.str()}`);
+                declaredVarsByType.str.push(strName);
+                allDeclaredVarNames.add(strName);
+                linesGenerated++;
+            }
+            
+            // Préenregistrer la variable d'itération
+            const iterVarName = generateUniqueVarName('str'); // Pour for_str, l'itérateur est de type str
+            allDeclaredVarNames.add(iterVarName);
+            declaredVarsByType.str.push(iterVarName);
+        }
+        
+        // Pour while, garantir une variable de compteur
+        if (options.loop_while) {
+            if (declaredVarsByType.int.length === 0) {
+                const counterName = generateUniqueVarName('int');
+                codeLines.push(`${counterName} = ${getRandomInt(3, 5)}`);
+                declaredVarsByType.int.push(counterName);
+                allDeclaredVarNames.add(counterName);
+                linesGenerated++;
+            }
         }
     }
 }
