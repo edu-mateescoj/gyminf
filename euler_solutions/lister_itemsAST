@@ -10,7 +10,7 @@ import os
 FOLDER = 'euler_solutions'    # Dossier contenant les fichiers Python à analyser
 DB_PATH = "Nayuki_AST.db"     # Nom de la base SQLite à utiliser/créer
 
-# Liste d’éléments AST à surveiller (à personnaliser selon ton besoin)
+# Liste d’éléments AST à surveiller
 ITEMS_AST = [
     ast.Raise, ast.Assert, ast.With, ast.AsyncWith, ast.ClassDef, ast.Yield, ast.YieldFrom,
     ast.AsyncFunctionDef, ast.Await, ast.AsyncFor, ast.Try, ast.Break, ast.Continue, ast.ExceptHandler,
