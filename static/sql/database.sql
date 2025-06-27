@@ -1,0 +1,78 @@
+CREATE DATABASE IF NOT EXISTS GYMINF_POC;
+USE GYMINF_POC;
+
+CREATE TABLE IF NOT EXISTS user (
+    ID INT AUTO_INCREMENT PRIMARY KEY,
+    username VARCHAR(50) NOT NULL,
+    password VARCHAR(255) NOT NULL
+);
+
+CREATE TABLE IF NOT EXISTS code (
+    ID INT AUTO_INCREMENT PRIMARY KEY,
+    user_id INT NOT NULL,
+    code VARCHAR(511) NOT NULL,
+    difficulty INT NOT NULL,
+    time_created DATETIME NOT NULL,
+
+    FOREIGN KEY (user_id) REFERENCES user(id)
+    ON DELETE CASCADE
+    ON UPDATE CASCADE
+);
+
+CREATE TABLE IF NOT EXISTS diagram (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    user_id INT NOT NULL,
+    code_id INT NOT NULL,
+    time_created DATETIME NOT NULL,
+
+    FOREIGN KEY (user_id) REFERENCES user(id)
+    ON DELETE CASCADE
+    ON UPDATE CASCADE,
+
+    FOREIGN KEY (code_id) REFERENCES code(id)
+    ON DELETE CASCADE
+    ON UPDATE CASCADE
+);
+
+CREATE TABLE IF NOT EXISTS check_solution (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    user_id INT NOT NULL,
+    code_id INT NOT NULL,
+    time_created DATETIME NOT NULL,
+
+    FOREIGN KEY (user_id) REFERENCES user(id)
+    ON DELETE CASCADE
+    ON UPDATE CASCADE,
+
+    FOREIGN KEY (code_id) REFERENCES code(id)
+    ON DELETE CASCADE
+    ON UPDATE CASCADE
+);
+
+CREATE TABLE IF NOT EXISTS check_answer (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    user_id INT NOT NULL,
+    code_id INT NOT NULL,
+    time_created DATETIME NOT NULL,
+
+    FOREIGN KEY (user_id) REFERENCES user(id)
+    ON DELETE CASCADE
+    ON UPDATE CASCADE,
+
+    FOREIGN KEY (code_id) REFERENCES code(id)
+    ON DELETE CASCADE
+    ON UPDATE CASCADE
+);
+
+
+CREATE TABLE IF NOT EXISTS answer (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    check_answer_id INT NOT NULL,
+    var_name VARCHAR(50) NOT NULL,
+    prediction VARCHAR(50),
+    correctness BOOLEAN DEFAULT FALSE
+
+    FOREIGN KEY (check_answer_id) REFERENCES check_answer(id)
+    ON DELETE CASCADE
+    ON UPDATE CASCADE
+);
