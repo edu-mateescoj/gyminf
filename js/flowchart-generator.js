@@ -36,7 +36,7 @@ async function initPyodideAndLoadScript() {
         // Charger les packages Python nécessaires (ici, 'ast' est intégré, donc pas besoin de micropip pour lui).
         // Si autres dépendances non standard, il faudrait les charger.
         
-        
+/*        
         // Charger micropip, qui est nécessaire pour installer des paquets tiers
         console.log("Chargement de micropip...");
         await pyodide.loadPackage("micropip");
@@ -51,7 +51,7 @@ async function initPyodideAndLoadScript() {
         console.log(`Installation de Turtle (version Vincent Bouillot) depuis ${turtleWheelUrl}...`);
         await micropip.install(turtleWheelUrl);
         console.log("Turtle (version Vincent Bouillot)  installé avec succès.");
-        
+*/        
 
         // Charger le contenu du script Python (MyCFG.py)
         const response = await fetch('MyCFG.py');
