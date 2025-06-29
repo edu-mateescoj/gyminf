@@ -15,7 +15,15 @@ function generateRandomPythonCode(options) {
         list: ['items', 'values', 'data', 'elements', 'numbers', 'results', 'scores', 'names'],
         bool: ['is_valid', 'found', 'done', 'active', 'enabled', 'exists', 'has_value', 'ready']
     };
-    
+    const FUNCTION_NAMES = [
+    'calculate', 'compute', 'process', 'transform', 'convert',
+    'analyze', 'validate', 'check', 'verify', 'format',
+    'get_data', 'update', 'create', 'generate', 'build',
+    'initialize', 'setup', 'configure', 'prepare', 'find',
+    'search', 'retrieve', 'fetch', 'display', 'show',
+    'sum', 'multiply', 'divide', 'subtract', 'compare',
+    'filter', 'sort', 'count', 'average', 'normalize'
+];
     // Valeurs littérales pour chaque type
     const LITERALS_BY_TYPE = {
         int: (difficulty) => getRandomInt(-getValueRange(difficulty), getValueRange(difficulty)),
@@ -325,11 +333,12 @@ function generateRandomPythonCode(options) {
         if (options.main_conditions && options.cond_if) {
         structures.push('if');
     }
-    
+    // Ne plus vérifier si des variables list OU str existent
+    // && declaredVarsByType.list.length > 0
     if (options.main_loops) {
         if (options.loop_for_range) structures.push('for_range');
-        if (options.loop_for_list && declaredVarsByType.list.length > 0) structures.push('for_list');
-        if (options.loop_for_str && declaredVarsByType.str.length > 0) structures.push('for_str');
+        if (options.loop_for_list) structures.push('for_list');
+        if (options.loop_for_str) structures.push('for_str');
         if (options.loop_while) structures.push('while');
     }
     
@@ -481,7 +490,7 @@ function generateRandomPythonCode(options) {
         if (declaredVarsByType.int.length > 0) {
             // Modifier une variable existante
             const targetVar = getRandomItem(declaredVarsByType.int);
-            loopBody = `${targetVar} += ${loopVar}`;
+            loopBody = `${targetVar} = ${targetVar} + ${loopVar}`;
         } else {
             // Action simple
             loopBody = "pass";
@@ -495,10 +504,20 @@ function generateRandomPythonCode(options) {
     // Génération d'une boucle for..list
     function generateForListLoop() {
         const indent = safeIndent(indentLevel);
-        const listVar = getRandomItem(declaredVarsByType.list);
+        let iterableExpr;
+        
+        // Vérifier s'il y a des variables list disponibles
+        if (declaredVarsByType.list.length > 0) {
+            // Utiliser une variable existante
+            iterableExpr = getRandomItem(declaredVarsByType.list);
+        } else {
+            // Utiliser directement un littéral
+            iterableExpr = LITERALS_BY_TYPE.list(difficulty);
+        }
+        
         const loopVar = generateUniqueVarName('int'); // Nom pour l'élément de liste
         
-        codeLines.push(`${indent}for ${loopVar} in ${listVar}:`);
+        codeLines.push(`${indent}for ${loopVar} in ${iterableExpr}:`);
         indentLevel++;
         
         // Corps de la boucle
@@ -509,7 +528,7 @@ function generateRandomPythonCode(options) {
             loopBody = `print(${loopVar})`;
         } else if (declaredVarsByType.int.length > 0) {
             const targetVar = getRandomItem(declaredVarsByType.int);
-            loopBody = `${targetVar} += ${loopVar}`;
+            loopBody = `${targetVar} = ${targetVar} + ${loopVar}`;
         } else {
             loopBody = "pass";
         }
@@ -522,23 +541,23 @@ function generateRandomPythonCode(options) {
     // Génération d'une boucle for..str
     function generateForStrLoop() {
         const indent = safeIndent(indentLevel);
+        let iterableExpr; // Expression itérable pour la boucle for
+        let strVar;
         
-        // tester si il n'y a pas de variable string disponible
-        // sinon en créer une
-        if (declaredVarsByType.str.length === 0) {
-            const strVar = generateUniqueVarName('str');
-            const strValue = LITTERALS_BY_TYPE.str();
-            codeLines.push(`${indent}${strVar} = ${strValue}`);
-            // mettre à jour les listes:
-            declaredVarsByType.str.push(strVar);
-            allDeclaredVarNames.add(strVar);
-            linesGenerated++;
+        // Vérifier si l'utilisateur a demandé des variables str
+        if (options.var_str_count > 0 && declaredVarsByType.str.length > 0) {
+            // Utiliser une variable de type str parmi celles déclarées
+            strVar = getRandomItem(declaredVarsByType.str);
+            iterableExpr = strVar;
+        } else {
+            // Utiliser directement un littéral créé pour l'occasion
+            iterableExpr = LITERALS_BY_TYPE.str();
         }
-        // création de strVar effectuée: ce sera notre itérable
-        const strVar = getRandomItem(declaredVarsByType.str);
-        // maintenant choisir un nom pour l'itérateur
+        
+        // Nom pour l'itérateur
         const charVar = generateUniqueVarName('str');
-        codeLines.push(`${indent}for ${charVar} in ${strVar}:`);
+        
+        codeLines.push(`${indent}for ${charVar} in ${iterableExpr}:`);
         indentLevel++;
         
         // Corps de la boucle
@@ -547,22 +566,17 @@ function generateRandomPythonCode(options) {
         
         // Choisir une opération pour le corps de la boucle
         if (options.builtin_print) {
-            // Utiliser print si disponible
             loopBody = `print(${charVar})`;
-        } else if (declaredVarsByType.str.length > 1) {
-            // Si une autre chaîne est disponible, y concaténer les caractères
-            const targetStr = getRandomItem(declaredVarsByType.str.filter(s => s !== strVar));
+        } else if (declaredVarsByType.str.length > 0) {
+            // Si une chaîne est disponible, y concaténer les caractères
+            const targetStr = getRandomItem(declaredVarsByType.str);
             loopBody = `${targetStr} = ${targetStr} + ${charVar}`;
         } else if (declaredVarsByType.int.length > 0) {
-            // Si un entier est disponible, incrémenter si le caractère est un chiffre
+            // Si un entier est disponible
             const targetInt = getRandomItem(declaredVarsByType.int);
-            if (charVar.isDigit()) {
-                loopBody = `${loopBodyIndent}    ${targetInt} = int(${charVar})`
-            }
-            loopBody = `${loopBodyIndent}    ${targetInt} = ${targetInt} + ${getRandomItem(['+','-'])} + ${getRandomInt(1,3)}`;
+            loopBody = `if ${charVar}.isdigit():\n${loopBodyIndent}    ${targetInt} += int(${charVar})`;
             linesGenerated++; // Ligne supplémentaire pour le if
         } else {
-            // Sinon, rien
             loopBody = "pass";
         }
         
@@ -609,15 +623,17 @@ function generateRandomPythonCode(options) {
     // Génération d'une fonction simple
     function generateFunction() {
         const indent = safeIndent(indentLevel);
-        let funcName = "calculer";
+        let funcName = getRandomItem(FUNCTION_NAMES);
         let params = [];
         
         // Déterminer les paramètres selon les options
         if (options.func_def_ab) {
-            params = ["a", "b"];
-        } else if (options.func_def_a) {
-            params = ["a"];
-        }
+            // Pour deux paramètres, utiliser des noms significatifs en fonction du nom de la fonction
+        params = chooseAppropriateParameterNames(funcName, 2);
+    } else if (options.func_def_a) {
+        // Pour un paramètre, utiliser un nom significatif en fonction du nom de la fonction
+        params = chooseAppropriateParameterNames(funcName, 1);
+    }
         
         // Définition de la fonction
         codeLines.push(`${indent}def ${funcName}(${params.join(", ")}):`);
@@ -651,7 +667,30 @@ function generateRandomPythonCode(options) {
             linesGenerated++;
         }
     }
-    
+    // Nouvelle fonction pour choisir des noms de paramètres appropriés
+    function chooseAppropriateParameterNames(funcName, count) {
+        // Paramètres possibles selon la catégorie de fonction
+        const mathParams = ['x', 'y', 'n', 'a', 'b', 'num', 'value'];
+        const dataParams = ['data', 'items', 'elements', 'values', 'collection'];
+        const textParams = ['text', 'message', 'content', 'string', 'input'];
+        const utilParams = ['value', 'option', 'flag', 'mode', 'config'];
+        
+        // Sélectionner la liste appropriée selon le nom de la fonction
+        let paramList;
+        if (['calculate', 'compute', 'sum', 'multiply', 'divide', 'subtract', 'average'].includes(funcName)) {
+            paramList = mathParams;
+        } else if (['process', 'filter', 'sort', 'update', 'transform'].includes(funcName)) {
+            paramList = dataParams;
+        } else if (['format', 'display', 'show', 'validate'].includes(funcName)) {
+            paramList = textParams;
+        } else {
+            paramList = utilParams;
+        }
+        
+        // Mélanger les paramètres et en prendre le nombre demandé
+        const shuffled = [...paramList].sort(() => Math.random() - 0.5);
+        return shuffled.slice(0, count);
+    }
     // Génération d'une opération simple pour le corps des structures de contrôle
     function generateSimpleOperation() {
         // Opérations possibles selon les variables disponibles
@@ -905,36 +944,20 @@ function ensureRequiredVariables() {
             // On ne génère pas de ligne ici car la variable sera créée dans la boucle
             }
         }
-        // Pour for_list, garantir une liste et une variable d'itération
+
+        // Pour for_list, créer une liste littérale pour itérer si l'utilisateur n'a pas demandé de list
         if (options.loop_for_list) {
-            // Créer la liste si nécessaire
-            if (declaredVarsByType.list.length === 0) {
-                const listName = generateUniqueVarName('list');
-                codeLines.push(`${listName} = ${LITERALS_BY_TYPE.list(difficulty)}`);
-                declaredVarsByType.list.push(listName);
-                allDeclaredVarNames.add(listName);
-                linesGenerated++;
-            }
-            
-            // Préenregistrer la variable d'itération
+            // Préenregistrer seulement la variable d'itération (pas besoin de créer une list ici)
             const iterVarName = generateUniqueVarName('int');
             allDeclaredVarNames.add(iterVarName);
             declaredVarsByType.int.push(iterVarName);
         }
-        
-        // Pour for_str, garantir une chaîne et une variable d'itération
-        if (options.loop_for_str) {
-            // Créer la chaîne si nécessaire
-            if (declaredVarsByType.str.length === 0) {
-                const strName = generateUniqueVarName('str');
-                codeLines.push(`${strName} = ${LITERALS_BY_TYPE.str()}`);
-                declaredVarsByType.str.push(strName);
-                allDeclaredVarNames.add(strName);
-                linesGenerated++;
-            }
             
-            // Préenregistrer la variable d'itération
-            const iterVarName = generateUniqueVarName('str'); // Pour for_str, l'itérateur est de type str
+        
+        // Pour for_str, créer une variable d'itération même si l'utilisateur n'a pas demandé de str
+        if (options.loop_for_str) {
+            // Préenregistrer seulement la variable d'itération (pas besoin de créer une str ici)
+            const iterVarName = generateUniqueVarName('str');
             allDeclaredVarNames.add(iterVarName);
             declaredVarsByType.str.push(iterVarName);
         }
