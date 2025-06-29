@@ -84,13 +84,15 @@ function generateRandomPythonCode(options) {
     
     function generateUniqueVarName(type) {
         // Noms disponibles pour ce type
-        const availableNames = VAR_NAMES_BY_TYPE[type] || VAR_NAMES_BY_TYPE.int;
+        const availableNames = VAR_NAMES_BY_TYPE[type] || VAR_NAMES_BY_TYPE.int; // par défaut à 'int'
         
-        // Essayer de trouver un nom non utilisé
-        for (const name of availableNames) {
-            if (!allDeclaredVarNames.has(name)) {
-                return name;
-            }
+        // Filtrer les noms de variables disponibles pour ce type qui n'ont pas encore été utilisés
+        const availableUnusedNames = availableNames.filter(name => !allDeclaredVarNames.has(name));
+
+        // Si nous avons des noms disponibles non utilisés, en choisir un aléatoirement
+        if (availableUnusedNames.length > 0) {
+            // Sélection aléatoire pour éviter de toujours utiliser les mêmes noms dans le code généré
+            return getRandomItem(availableUnusedNames);
         }
         
         // Si tous les noms sont pris, ajouter un suffixe numérique
@@ -520,9 +522,22 @@ function generateRandomPythonCode(options) {
     // Génération d'une boucle for..str
     function generateForStrLoop() {
         const indent = safeIndent(indentLevel);
-        const strVar = getRandomItem(declaredVarsByType.str);
-        const charVar = generateUniqueVarName('str');
         
+        // tester si il n'y a pas de variable string disponible
+        // sinon en créer une
+        if (declaredVarsByType.str.length === 0) {
+            const strVar = generateUniqueVarName('str');
+            const strValue = LITTERALS_BY_TYPE.str();
+            codeLines.push(`${indent}${strVar} = ${strValue}`);
+            // mettre à jour les listes:
+            declaredVarsByType.str.push(strVar);
+            allDeclaredVarNames.add(strVar);
+            linesGenerated++;
+        }
+        // création de strVar effectuée: ce sera notre itérable
+        const strVar = getRandomItem(declaredVarsByType.str);
+        // maintenant choisir un nom pour l'itérateur
+        const charVar = generateUniqueVarName('str');
         codeLines.push(`${indent}for ${charVar} in ${strVar}:`);
         indentLevel++;
         
@@ -530,9 +545,24 @@ function generateRandomPythonCode(options) {
         const loopBodyIndent = safeIndent(indentLevel);
         let loopBody;
         
+        // Choisir une opération pour le corps de la boucle
         if (options.builtin_print) {
+            // Utiliser print si disponible
             loopBody = `print(${charVar})`;
+        } else if (declaredVarsByType.str.length > 1) {
+            // Si une autre chaîne est disponible, y concaténer les caractères
+            const targetStr = getRandomItem(declaredVarsByType.str.filter(s => s !== strVar));
+            loopBody = `${targetStr} = ${targetStr} + ${charVar}`;
+        } else if (declaredVarsByType.int.length > 0) {
+            // Si un entier est disponible, incrémenter si le caractère est un chiffre
+            const targetInt = getRandomItem(declaredVarsByType.int);
+            if (charVar.isDigit()) {
+                loopBody = `${loopBodyIndent}    ${targetInt} = int(${charVar})`
+            }
+            loopBody = `${loopBodyIndent}    ${targetInt} = ${targetInt} + ${getRandomItem(['+','-'])} + ${getRandomInt(1,3)}`;
+            linesGenerated++; // Ligne supplémentaire pour le if
         } else {
+            // Sinon, rien
             loopBody = "pass";
         }
         
