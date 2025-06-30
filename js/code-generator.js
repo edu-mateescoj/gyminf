@@ -123,15 +123,7 @@ function generateRandomPythonCode(options) {
     let allPlannedVarNames = new Set();
 
     // --- GÉNÉRATION DE VARIABLES (NOUVELLE APPROCHE) ---
-    // objectifs: séparation claire entre les variables "déclarées" et "planifiées" y c. itérateurs
-    
-    //
-    function planVariable(type) {
-        const name = generateUniqueVarName(type);
-        allPlannedVarNames.add(name);
-        plannedVarsByType[type].push(name);
-        return name;
-    }
+
     function generateUniqueVarName(type) {
         // Noms disponibles pour ce type
         const availableNames = VAR_NAMES_BY_TYPE[type] || VAR_NAMES_BY_TYPE.int; // par défaut à 'int'
@@ -153,66 +145,44 @@ function generateRandomPythonCode(options) {
         
         return newName;
     }
-    
-    function ensureVariableExists(type, preferPlanned = false) {
-        // Si on doit créer une variable, vérifier si on est dans une structure
-        // qui nécessite de l'ajouter AVANT la structure plutôt que dedans
-        
-        // Si on est à un niveau d'indentation > 0, on est dans une structure
-        if (indentLevel > 0) {
-            // Trouver d'abord une variable existante
-            if (declaredVarsByType[type].length > 0) {
-                return getRandomItem(declaredVarsByType[type]);
-            }
-            
-            // Sinon, créer une variable avant la boucle
-            // Sauvegarder la position actuelle dans codeLines
-            const currentPosition = codeLines.length;
-            const name = generateUniqueVarName(type);
-            
-            // Trouver l'endroit où insérer la déclaration 
-            // Logique n°1: juste avant la dernière ligne indentée
-            let insertPosition = currentPosition - 1;
-            while (insertPosition >= 0 && codeLines[insertPosition].startsWith("    ")) {
-                insertPosition--;
-            }
-            
-            // Insérer la déclaration en début de "file" des initialisations
-            codeLines.unshift(`${name} = ${LITERALS_BY_TYPE[type](difficulty)}`);
-            declaredVarsByType[type].push(name);
-            allDeclaredVarNames.add(name);
-            linesGenerated++;
-            
-            return name;
-        }
-        // Si on est à l'extérieur de toute structure, on peut créer la variable normalement
-        // Si on a des variables planifiées et qu'on préfère les utiliser
-        if (preferPlanned && plannedVarsByType[type].length > 0) {
-            const name = getRandomItem(plannedVarsByType[type]);
-            // Créer la variable avec une valeur par défaut
-            return declareVariable(name, type, LITERALS_BY_TYPE[type](difficulty));
-        }
-        // Sinon, créer une nouvelle variable
+    /**
+     * Crée une nouvelle variable d'un type donné, l'initialise,
+     * et ajoute sa déclaration au début du code.
+     * @param {string} type - Le type de la variable à créer ('int', 'str', etc.).
+     * @returns {string} Le nom de la variable créée.
+     */
+    function declareVariable(type) {
         const name = generateUniqueVarName(type);
-        return declareVariable(name, type, LITERALS_BY_TYPE[type](difficulty));
-    }
-        function declareVariable(name, type, value) {
-        // Générer la ligne de code de l'initialisation
+        const value = LITERALS_BY_TYPE[type](difficulty);
+        
+        // Ajoute toujours l'initialisation au début du tableau de lignes de code.
         codeLines.unshift(`${name} = ${value}`);
-        // Déplacer de "planifiée" à "déclarée" si nécessaire
-        if (allPlannedVarNames.has(name)) {
-            allPlannedVarNames.delete(name);
-            const index = plannedVarsByType[type].indexOf(name); // trouver l'index de la variable planifiée
-            if (index > -1) plannedVarsByType[type].splice(index, 1); // supprimer de la liste planifiée
-        }
-        // Ajouter aux registres des variables déclarées
-        if (!allDeclaredVarNames.has(name)) {
-            allDeclaredVarNames.add(name);
-            declaredVarsByType[type].push(name);
-        }
+        
+        // Enregistre la nouvelle variable comme étant déclarée.
+        allDeclaredVarNames.add(name);
+        declaredVarsByType[type].push(name);
         linesGenerated++;
+        
         return name;
     }
+    /**
+     * Garantit qu'une variable du type spécifié existe.
+     * Si une ou plusieurs variables de ce type existent déjà, en retourne une au hasard.
+     * Sinon, en déclare une nouvelle.
+     * @param {string} type - Le type de la variable requise.
+     * @returns {string} Le nom d'une variable existante ou nouvellement créée.
+     */
+    function ensureVariableExists(type) {
+        // Vérifie si une variable du type demandé existe déjà.
+        if (declaredVarsByType[type] && declaredVarsByType[type].length > 0) {
+            // Si oui, en retourne une au hasard.
+            return getRandomItem(declaredVarsByType[type]);
+        }
+        
+        // Si non, appelle declareVariable pour en créer une.
+        return declareVariable(type);
+    }
+
     // Générer une valeur pour un type donné
     function generateValueForType(type) {
         return LITERALS_BY_TYPE[type](difficulty);
@@ -587,7 +557,7 @@ function generateRandomPythonCode(options) {
         // Corps de la boucle - s'assurer qu'une variable modifiable existe
         // on va opérer (pour le moment:+) à l'itérateur donc on va prendre un 'int'
         const loopBodyIndent = safeIndent(indentLevel);
-        let targetVar = ensureVariableExists('int', true);
+        let targetVar = ensureVariableExists('int');
         codeLines.push(`${loopBodyIndent}${targetVar} = ${targetVar} + ${loopVar}`);
     
         indentLevel--;
@@ -655,7 +625,7 @@ function generateRandomPythonCode(options) {
         const loopBodyIndent = safeIndent(indentLevel);
         
         // S'assurer qu'une variable de type 'str' existe pour la concaténation.
-        const targetVar = ensureVariableExists('str', true);
+        const targetVar = ensureVariableExists('str');
         const loopBody = `${targetVar} = ${targetVar} + ${charVar}`;
         
         codeLines.push(`${loopBodyIndent}${loopBody}`);
@@ -874,89 +844,6 @@ function generateRandomPythonCode(options) {
     }
 
 
-    // pour phase 0: Garantir les variables nécessaires pour les structures
-    function ensureVariableForStructure(type, context) {
-    // type: 'condition', 'loop_body', 'function_body'
-    const { declaredVarsByType, allDeclaredVarNames, codeLines, linesGenerated } = context;
-    
-    // Vérifier s'il y a des variables utilisables pour cette structure
-    let hasValidVar = false;
-    
-    switch(type) {
-        case 'condition': 
-        // Une condition a besoin d'un booléen ou d'une variable comparable
-        hasValidVar = declaredVarsByType.bool.length > 0 || declaredVarsByType.int.length > 0;
-        break;
-        case 'loop_body':
-        // Un corps de boucle a besoin d'au moins une variable modifiable
-        hasValidVar = declaredVarsByType.int.length > 0 || declaredVarsByType.list.length > 0;
-        break;
-        case 'function_body':
-        // Une fonction a besoin de variables pour son corps
-        hasValidVar = declaredVarsByType.int.length > 0 || context.funcParams?.length > 0;
-        break;
-    }
-    
-    // Si pas de variable valide, créer une appropriée
-    if (!hasValidVar) {
-        let varType, varValue;
-        
-        switch(type) {
-        case 'condition':
-            varType = 'bool';
-            varValue = 'True';
-            break;
-        case 'loop_body':
-        case 'function_body':
-            varType = 'int';
-            varValue = '0';
-            break;
-        }
-        
-        const varName = generateUniqueVarName(varType);
-        codeLines.push(`${varName} = ${varValue}`);
-        declaredVarsByType[varType].push(varName);
-        allDeclaredVarNames.add(varName);
-        linesGenerated++;
-        
-        return varName;
-    }
-    
-    // Sinon, retourner une variable existante appropriée
-    switch(type) {
-        case 'condition':
-        return declaredVarsByType.bool.length > 0 
-            ? declaredVarsByType.bool[0]
-            : declaredVarsByType.int[0];
-        case 'loop_body':
-        case 'function_body':
-        return declaredVarsByType.int.length > 0 
-            ? declaredVarsByType.int[0] 
-            : declaredVarsByType.list[0];
-    }
-    }
-
-    function ensureVariablesForOptions() {
-        // Variables pour les options sélectionnées
-        if (options.var_int_count > 0) {
-            ensureVariablesOfType('int', options.var_int_count);
-        }
-        if (options.var_float_count > 0) {
-            ensureVariablesOfType('float', options.var_float_count);
-        }
-        if (options.var_str_count > 0) {
-            ensureVariablesOfType('str', options.var_str_count);
-        }
-        if (options.var_list_count > 0) {
-            ensureVariablesOfType('list', options.var_list_count);
-        }
-        if (options.var_bool_count > 0) {
-            ensureVariablesOfType('bool', options.var_bool_count);
-        }
-        
-        // Variables pour les structures
-        ensureRequiredVariables();
-    }
 
     function ensureVariablesOfType(type, count) {
         while (declaredVarsByType[type].length < count) {
@@ -1001,85 +888,6 @@ function generateRandomPythonCode(options) {
         }
     }
 
-    function ensureRequiredVariables() {
-        // Pour les conditions
-        if (options.main_conditions && options.cond_if) { // replier le frame 'Ctrl' devrait vouloir dire 'pas de conditionnelles'
-            if (declaredVarsByType.bool.length === 0 && declaredVarsByType.int.length === 0) {
-                // Préférer créer une variable bool car plus explicite pour les conditions
-                const varName = generateUniqueVarName('bool');
-                codeLines.push(`${varName} = ${getRandomItem(["True", "False"])}`); // trop simple mais suffisant pour difficulty == 1
-                declaredVarsByType.bool.push(varName);
-                allDeclaredVarNames.add(varName);
-                linesGenerated++;
-            }
-        }
-        
-        // Pour les boucles - CHAQUE BOUCLE SÉLECTIONNÉE AJOUTE UNE VARIABLE D'ITÉRATION
-        if (options.main_loops) {
-            // Pour for_range, garantir une variable d'itération
-            if (options.loop_for_range) {
-                const iterVarName = generateUniqueVarName('int');
-                // Ajouter aux variables planifiées (pas déclarées)
-                allPlannedVarNames.add(iterVarName);
-                plannedVarsByType.int.push(iterVarName);
-                // On ne génère pas de ligne ici car la variable sera créée dans la boucle
-                }
-            }
-
-            // Pour for_list, créer un nom pour l'itérateur
-            // MAIS pour l'itérable: créer une liste littérale si l'utilisateur n'a pas demandé de list
-            // ou utiliser une variable list existante
-            if (options.loop_for_list) {
-                // Préenregistrer seulement la variable d'itération (pas besoin de créer une list ici)
-                const iterVarName = generateUniqueVarName('int');
-                allPlannedVarNames.add(iterVarName);
-                plannedVarsByType.int.push(iterVarName);
-
-                // S'assurer que l'utilisateur a demandé des listes et qu'une liste est disponible
-                if (options.var_list_count > 0 && declaredVarsByType.list.length === 0) {
-                    // Créer une liste littérale si aucune n'est disponible
-                    const listName = generateUniqueVarName('list');
-                    codeLines.push(`${listName} = ${LITERALS_BY_TYPE.list(difficulty)}`);
-                    declaredVarsByType.list.push(listName);
-                    allDeclaredVarNames.add(listName);
-                    linesGenerated++;
-                }
-                else if (!options.var_list_count || options.var_list_count === 0) {
-                    // Si l'utilisateur n'a pas demandé de liste, créer une liste littérale dans la boucle
-                    // pour éviter de créer une variable list inutile
-                }
-            }
-                
-            
-            // Pour for_str, créer un nom pour l'itérateur
-            if (options.loop_for_str) {
-                // Préenregistrer seulement la variable d'itération (pas besoin de créer une str ici)
-                const iterVarName = generateUniqueVarName('str');
-                allDeclaredVarNames.add(iterVarName);
-                declaredVarsByType.str.push(iterVarName);
-
-                // S'assurer que l'utilisateur a demandé des chaînes et qu'une chaîne est disponible
-                if (options.var_str_count > 0 && declaredVarsByType.str.length === 0) {
-                    // Créer une chaîne littérale si aucune n'est disponible
-                    const strName = generateUniqueVarName('str');
-                    codeLines.push(`${strName} = ${LITERALS_BY_TYPE.str()}`);
-                    declaredVarsByType.str.push(strName);
-                    allDeclaredVarNames.add(strName);
-                    linesGenerated++;
-                }
-            }
-            
-            // Pour while, garantir une variable int en compteur
-            if (options.loop_while) {
-                if (declaredVarsByType.int.length === 0) {
-                    const counterName = generateUniqueVarName('int');
-                    codeLines.push(`${counterName} = ${getRandomInt(difficulty, difficulty + 2)}`);
-                    declaredVarsByType.int.push(counterName);
-                    allDeclaredVarNames.add(counterName);
-                    linesGenerated++;
-                }
-            }
-        } // Fin du bloc options.main_loops
 
         // Vérification des variables planifiées (nouvelles variables)
         for (const type in plannedVarsByType) {
@@ -1182,20 +990,22 @@ function generateRandomPythonCode(options) {
     const requiredLines = calculateRequiredLines();
     const availableForVariables = Math.max(1, targetLines - requiredLines);
 
-    // --- EXÉCUTION DE LA GÉNÉRATION (NOUVELLE LOGIQUE) ---
+    // --- EXÉCUTION DE LA GÉNÉRATION (LOGIQUE SIMPLIFIÉE `UNSHIFT`) ---
 
-    // 1. Initialiser les variables de base selon les options utilisateur
+    /*
+    // ANCIEN 1. Initialiser les variables de base selon les options utilisateur
     ensureVariablesForOptions();
+    */
 
-    // 2. Générer les structures dans un ordre aléatoire
+    // 1. Générer les structures dans un ordre aléatoire
     generateControlStructures();
 
-    // 3. Compléter avec des opérations si besoin
+    // 2. Compléter avec des opérations si besoin
     if (linesGenerated < targetLines) {
         generateOperations();
     }
 
-    // 4. Ajouter des opérations supplémentaires pour atteindre le nombre de lignes souhaité
+    // 3. Ajouter des opérations supplémentaires pour atteindre le nombre de lignes souhaité
     while (linesGenerated < targetLines) {
         if (!addFiller()) break; // Sortir si impossible d'ajouter plus d'opérations
     }
@@ -1257,4 +1067,247 @@ function generateRandomPythonCode(options) {
 j'ai maintenant des fonctions inutilisées dans mon code...  comme finalVariableCheck , ensureVariableForStructure, generateSimpleOperation, generateVariables, planVariable, ... également des variables inutilisées : availableForVariables
 => revoir le process dans son ensemble, depuis main.js jusqu'à la fin de la génération ?
 format LaTex pour overleaf
+*/
+// pour phase 0: Garantir les variables nécessaires pour les structures
+function ensureVariableForStructure(type, context) {
+    // type: 'condition', 'loop_body', 'function_body'
+    const { declaredVarsByType, allDeclaredVarNames, codeLines, linesGenerated } = context;
+    
+    // Vérifier s'il y a des variables utilisables pour cette structure
+    let hasValidVar = false;
+    
+    switch(type) {
+        case 'condition': 
+        // Une condition a besoin d'un booléen ou d'une variable comparable
+        hasValidVar = declaredVarsByType.bool.length > 0 || declaredVarsByType.int.length > 0;
+        break;
+        case 'loop_body':
+        // Un corps de boucle a besoin d'au moins une variable modifiable
+        hasValidVar = declaredVarsByType.int.length > 0 || declaredVarsByType.list.length > 0;
+        break;
+        case 'function_body':
+        // Une fonction a besoin de variables pour son corps
+        hasValidVar = declaredVarsByType.int.length > 0 || context.funcParams?.length > 0;
+        break;
+    }
+    
+    // Si pas de variable valide, créer une appropriée
+    if (!hasValidVar) {
+        let varType, varValue;
+        
+        switch(type) {
+        case 'condition':
+            varType = 'bool';
+            varValue = 'True';
+            break;
+        case 'loop_body':
+        case 'function_body':
+            varType = 'int';
+            varValue = '0';
+            break;
+        }
+        
+        const varName = generateUniqueVarName(varType);
+        codeLines.push(`${varName} = ${varValue}`);
+        declaredVarsByType[varType].push(varName);
+        allDeclaredVarNames.add(varName);
+        linesGenerated++;
+        
+        return varName;
+    }
+    
+    // Sinon, retourner une variable existante appropriée
+    switch(type) {
+        case 'condition':
+        return declaredVarsByType.bool.length > 0 
+            ? declaredVarsByType.bool[0]
+            : declaredVarsByType.int[0];
+        case 'loop_body':
+        case 'function_body':
+        return declaredVarsByType.int.length > 0 
+            ? declaredVarsByType.int[0] 
+            : declaredVarsByType.list[0];
+    }
+}
+
+function planVariable(type) {
+    const name = generateUniqueVarName(type);
+    allPlannedVarNames.add(name);
+    plannedVarsByType[type].push(name);
+    return name;
+}
+
+function old_declareVariable(name, type, value) {
+    // Générer la ligne de code de l'initialisation
+    codeLines.unshift(`${name} = ${value}`);
+    // Déplacer de "planifiée" à "déclarée" si nécessaire
+    if (allPlannedVarNames.has(name)) {
+        allPlannedVarNames.delete(name);
+        const index = plannedVarsByType[type].indexOf(name); // trouver l'index de la variable planifiée
+        if (index > -1) plannedVarsByType[type].splice(index, 1); // supprimer de la liste planifiée
+    }
+    // Ajouter aux registres des variables déclarées
+    if (!allDeclaredVarNames.has(name)) {
+        allDeclaredVarNames.add(name);
+        declaredVarsByType[type].push(name);
+    }
+    linesGenerated++;
+    return name;
+}
+
+function old_ensureVariableExists(type) {
+    // Si on doit créer une variable, vérifier si on est dans une structure
+    // qui nécessite de l'ajouter AVANT la structure plutôt que dedans
+    
+    // Si on est à un niveau d'indentation > 0, on est dans une structure
+    if (indentLevel > 0) {
+        // Trouver d'abord une variable existante
+        if (declaredVarsByType[type].length > 0) {
+            return getRandomItem(declaredVarsByType[type]);
+        }
+        
+        // Sinon, créer une variable avant la boucle
+        // Sauvegarder la position actuelle dans codeLines
+        const currentPosition = codeLines.length;
+        const name = generateUniqueVarName(type);
+        
+        // Trouver l'endroit où insérer la déclaration 
+        // Logique n°1: juste avant la dernière ligne indentée
+        let insertPosition = currentPosition - 1;
+        while (insertPosition >= 0 && codeLines[insertPosition].startsWith("    ")) {
+            insertPosition--;
+        }
+        
+        // Insérer la déclaration en début de "file" des initialisations
+        codeLines.unshift(`${name} = ${LITERALS_BY_TYPE[type](difficulty)}`);
+        declaredVarsByType[type].push(name);
+        allDeclaredVarNames.add(name);
+        linesGenerated++;
+        
+        return name;
+    }
+    // Si on est à l'extérieur de toute structure, on peut créer la variable normalement
+    // Si on a des variables planifiées et qu'on préfère les utiliser
+    if (preferPlanned && plannedVarsByType[type].length > 0) {
+        const name = getRandomItem(plannedVarsByType[type]);
+        // Créer la variable avec une valeur par défaut
+        return declareVariable(name, type, LITERALS_BY_TYPE[type](difficulty));
+    }
+    // Sinon, créer une nouvelle variable
+    const name = generateUniqueVarName(type);
+    return declareVariable(name, type, LITERALS_BY_TYPE[type](difficulty));
+}
+
+function ensureVariablesForOptions() {
+    // Variables pour les options sélectionnées
+    if (options.var_int_count > 0) {
+        ensureVariablesOfType('int', options.var_int_count);
+    }
+    if (options.var_float_count > 0) {
+        ensureVariablesOfType('float', options.var_float_count);
+    }
+    if (options.var_str_count > 0) {
+        ensureVariablesOfType('str', options.var_str_count);
+    }
+    if (options.var_list_count > 0) {
+        ensureVariablesOfType('list', options.var_list_count);
+    }
+    if (options.var_bool_count > 0) {
+        ensureVariablesOfType('bool', options.var_bool_count);
+    }
+    
+    // Variables pour les structures
+    ensureRequiredVariables();
+}
+
+function ensureRequiredVariables() {
+    // Pour les conditions
+    if (options.main_conditions && options.cond_if) { // replier le frame 'Ctrl' devrait vouloir dire 'pas de conditionnelles'
+        if (declaredVarsByType.bool.length === 0 && declaredVarsByType.int.length === 0) {
+            // Préférer créer une variable bool car plus explicite pour les conditions
+            ensureVariableExists('bool'); // Utiliser la nouvelle fonction propre
+        }
+    }
+    
+    // Pour les boucles, la logique est maintenant gérée DANS chaque fonction de boucle.
+    /*
+    if (options.main_loops) {
+        // Pour for_range, garantir une variable d'itération
+        if (options.loop_for_range) {
+            const iterVarName = generateUniqueVarName('int');
+            // Ajouter aux variables planifiées (pas déclarées)
+            allPlannedVarNames.add(iterVarName);
+            plannedVarsByType.int.push(iterVarName);
+            // On ne génère pas de ligne ici car la variable sera créée dans la boucle
+            }
+        }
+
+        // Pour for_list, créer un nom pour l'itérateur
+        // MAIS pour l'itérable: créer une liste littérale si l'utilisateur n'a pas demandé de list
+        // ou utiliser une variable list existante
+        if (options.loop_for_list) {
+            // Préenregistrer seulement la variable d'itération (pas besoin de créer une list ici)
+            const iterVarName = generateUniqueVarName('int');
+            allPlannedVarNames.add(iterVarName);
+            plannedVarsByType.int.push(iterVarName);
+
+            // S'assurer que l'utilisateur a demandé des listes et qu'une liste est disponible
+            if (options.var_list_count > 0 && declaredVarsByType.list.length === 0) {
+                // Créer une liste littérale si aucune n'est disponible
+                const listName = generateUniqueVarName('list');
+                codeLines.push(`${listName} = ${LITERALS_BY_TYPE.list(difficulty)}`);
+                declaredVarsByType.list.push(listName);
+                allDeclaredVarNames.add(listName);
+                linesGenerated++;
+            }
+            else if (!options.var_list_count || options.var_list_count === 0) {
+                // Si l'utilisateur n'a pas demandé de liste, créer une liste littérale dans la boucle
+                // pour éviter de créer une variable list inutile
+            }
+        }
+            
+        
+        // Pour for_str, créer un nom pour l'itérateur
+        if (options.loop_for_str) {
+            // Préenregistrer seulement la variable d'itération (pas besoin de créer une str ici)
+            const iterVarName = generateUniqueVarName('str');
+            allDeclaredVarNames.add(iterVarName);
+            declaredVarsByType.str.push(iterVarName);
+
+            // S'assurer que l'utilisateur a demandé des chaînes et qu'une chaîne est disponible
+            if (options.var_str_count > 0 && declaredVarsByType.str.length === 0) {
+                // Créer une chaîne littérale si aucune n'est disponible
+                const strName = generateUniqueVarName('str');
+                codeLines.push(`${strName} = ${LITERALS_BY_TYPE.str()}`);
+                declaredVarsByType.str.push(strName);
+                allDeclaredVarNames.add(strName);
+                linesGenerated++;
+            }
+        }
+        
+        // Pour while, garantir une variable int en compteur
+        if (options.loop_while) {
+            if (declaredVarsByType.int.length === 0) {
+                const counterName = generateUniqueVarName('int');
+                codeLines.push(`${counterName} = ${getRandomInt(difficulty, difficulty + 2)}`);
+                declaredVarsByType.int.push(counterName);
+                allDeclaredVarNames.add(counterName);
+                linesGenerated++;
+            }
+        }
+        */
+    }
+/*
+Je voudrai maintenant me concentrer sur l'enrichissement de l'expérience d'apprentissage: 
+Je veux éviter les pass dans les For... in List, je veux ajouter des instructions dans les corps des structures (heuristique: faire que le nombre d'instructions corresponde à 1 +l'arrondi entier de difficulty // 2). Il faudra pour cela 
+Exemple de code généré peu satisfaisant:
+suffix = "hello"
+for char in "world":
+    suffix = suffix + char
+for item2 in [2, 1, 1, -2]:
+    pass
+suffix += " texte"
+suffix += " texte"
+suffix += " texte"
+DAns les optins on avait var_str_count: 2, var_list_count: 2, donc le nombre de listes apparaissant dans le code généré est insuffisant
 */

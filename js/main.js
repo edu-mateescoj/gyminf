@@ -270,20 +270,45 @@ document.addEventListener('DOMContentLoaded', function() {
     }
         
     // --- Fonctions Utilitaires ---
-    function populateSelectWithOptions(selectElement, min, max, currentSelectedVal) {
+    function populateSelectWithOptions(selectElement, min, max, valueToSelect) {
         if (!selectElement) return;
-        const previousValue = parseInt(selectElement.value);
-        selectElement.innerHTML = '';
+        
+        // Sauvegarder la valeur qui doit être sélectionnée.
+        const targetValue = valueToSelect;
+        // Sauvegarder la valeur précédente pour comparaison
+        const previousValue = selectElement.value;
+
+        selectElement.innerHTML = ''; // Vider les options existantes
+
         for (let i = min; i <= max; i++) {
             const option = new Option(i, i); // text, value
             selectElement.add(option);
         }
-        if (!isNaN(currentSelectedVal) && currentSelectedVal >= min && currentSelectedVal <= max) {
-            selectElement.value = currentSelectedVal;
-        } else if (!isNaN(previousValue) && previousValue >= min && previousValue <= max) {
-            selectElement.value = previousValue;
+
+        // Définir la valeur sélectionnée.
+        // Si la valeur cible est valide, on la sélectionne.
+        // Sinon, on se rabat sur le minimum possible par sécurité.
+        if (targetValue >= min && targetValue <= max) {
+            selectElement.value = targetValue;
         } else {
             selectElement.value = min;
+        }
+        // Si la valeur a changé, mettre en évidence le label
+        if (previousValue !== selectElement.value) {
+            // Trouver le label associé
+            const label = selectElement.closest('.form-group')?.querySelector('label');
+            if (label) {
+                const originalColor = label.style.color;
+                label.style.transition = "color 0.5s ease";
+                label.style.color = "#0d6efd"; // Bleu Bootstrap
+                
+                setTimeout(() => {
+                    label.style.color = originalColor;
+                    setTimeout(() => {
+                        label.style.transition = "";
+                    }, 500);
+                }, 2000);
+            }
         }
     }
 
@@ -757,27 +782,35 @@ document.addEventListener('DOMContentLoaded', function() {
         const currentNumTotalVariablesVal = numTotalVariablesGlobalSelect ? parseInt(numTotalVariablesGlobalSelect.value) : minVariables;
 
         // Mettre à jour le nombre de lignes disponibles, avec minLines comme minimum
-        populateSelectWithOptions(numLinesGlobalSelect, minLines, MAX_CODE_LINES, 
+        populateSelectWithOptions(numLinesGlobalSelect, minLines, MAX_CODE_LINES, minLines);
             // Si la valeur actuelle est inférieure au nouveau minimum, utiliser le minimum
-            Math.max(currentNumLinesVal, minLines));
+            // Math.max(currentNumLinesVal, minLines));
 
         // Même chose pour le nombre de variables
-        populateSelectWithOptions(numTotalVariablesGlobalSelect, minVariables, MAX_TOTAL_VARIABLES_GLOBAL, 
-            Math.max(currentNumTotalVariablesVal, minVariables));
+        populateSelectWithOptions(numTotalVariablesGlobalSelect, minVariables, MAX_TOTAL_VARIABLES_GLOBAL, minVariables);
+                // Math.max(currentNumTotalVariablesVal, minVariables));
     }
 
     // --- Attachement des listeners 
     // pour la mise à jour des sélecteurs globaux ET interdépendances ---
     // Le listener sur syntaxConfigArea et advancedModeCheckbox appellera déjà updateGlobalConfigSelectors
     // et handleVisualInterdependencies avec un setTimeout.
-    // Délégation pour toutes les checkboxes de syntaxe (base et avancées)
+    // Délégation pour toutes les options de syntaxe (base et avancées)
     const syntaxConfigArea = document.querySelector('.card-body .row.g-2.flex-wrap.align-items-start');
     if (syntaxConfigArea) {
-        syntaxConfigArea.addEventListener('change', function(event) {
-            if (event.target.type === 'checkbox' || event.target.classList.contains('var-count-select')) {
-                setTimeout(updateGlobalConfigSelectors, 50); // Délai pour le DOM
-                // Gérer les interdépendances visuelles après chaque changement de syntaxe
-                setTimeout(handleVisualInterdependencies, 60); // Léger décalage
+        // On utilise 'click' pour une réactivité immédiate à chaque interaction.
+        syntaxConfigArea.addEventListener('click', function(event) {
+            // On vérifie que le clic vient bien d'une option pour éviter de se déclencher sur des clics "vides".
+            if (event.target.matches('input[type="checkbox"], label, select')) {
+            // Peu importe la cible exacte du clic (label, input, etc.),
+            // toute interaction dans cette zone doit déclencher une mise à jour.
+            
+            // On utilise setTimeout pour s'assurer que l'état de la checkbox (cochée/décochée)
+            // est bien mis à jour dans le DOM avant de lancer les calculs.
+                setTimeout(() => {
+                    updateGlobalConfigSelectors();
+                    handleVisualInterdependencies();
+                }, 50); // Un court délai est suffisant.
             }
         });
     }
@@ -785,11 +818,21 @@ document.addEventListener('DOMContentLoaded', function() {
     // et handleVisualInterdependencies via son propre setTimeout.
     // On s'assure juste que handleVisualInterdependencies est aussi appelé.
     // // Listener direct pour le mode avancé car il affecte ce qui est disponible pour le calcul
-    if (advancedModeCheckbox) { // advancedModeCheckbox est déjà défini plus haut
+    if (advancedModeCheckbox) { 
         advancedModeCheckbox.addEventListener('change', () => {
-            // updateGlobalConfigSelectors est déjà appelé par le listener du mode avancé dans la section précédente
-            // On ajoute juste l'appel pour les interdépendances ici aussi, après que les options avancées soient (dés)injectées
-            setTimeout(handleVisualInterdependencies, 150); // Un délai un peu plus long pour être sûr
+            // ... (code existant du listener du mode avancé) ...
+            // Il appelle déjà updateGlobalConfigSelectors() et handleVisualInterdependencies().
+            // On peut simplifier en s'assurant qu'il le fait bien.
+            const isAdvanced = advancedModeCheckbox.checked;
+            addAdvancedOperationOptionsIfNeeded(isAdvanced);
+            const condContainer = document.querySelector('#conditions-options-container > .d-flex.flex-column.gap-1'); if (condContainer) addAdvancedConditionOptionsIfNeeded(condContainer, isAdvanced);
+            const loopContainer = document.querySelector('#loops-options-container > .d-flex.flex-column.gap-1'); if (loopContainer) addAdvancedLoopOptionsIfNeeded(loopContainer, isAdvanced);
+            const funcBaseOptsContainer = document.querySelector('#functions-options-container > .d-flex.flex-column.gap-1'); if (funcBaseOptsContainer) addAdvancedFunctionOptionsIfNeeded(funcBaseOptsContainer, isAdvanced);
+            
+            setTimeout(() => {
+                updateGlobalConfigSelectors();
+                handleVisualInterdependencies();
+            }, 100); // Un délai légèrement plus long pour laisser le temps aux options d'être ajoutées/supprimées.
         });
     }
     // Le listener pour difficultyGlobalSelect N'EST PLUS NÉCESSAIRE ici pour appeler updateGlobalConfigSelectors,
@@ -997,6 +1040,9 @@ document.addEventListener('DOMContentLoaded', function() {
             const showSolBtn = document.getElementById('show-solution-btn');
             if(checkBtn) checkBtn.disabled = true;
             if(showSolBtn) showSolBtn.disabled = true;
+            // Mettre à jour les sélecteurs globaux après la génération
+            // pour s'assurer qu'ils sont cohérents pour le *FUTUR* code généré
+            updateGlobalConfigSelectors();
         });
     } else {
         console.warn("Bouton 'generate-code-btn' non trouvé.");
