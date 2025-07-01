@@ -1,3 +1,5 @@
+// Importer le nouveau générateur par patterns
+const { generateProgramByPattern } = require('./pattern-generator');
 /**
  * Générateur amélioré de code Python pédagogique
  * Aligne variables par type et génère une structure cohérente selon les options
@@ -5,6 +7,17 @@
 function generateRandomPythonCode(options) {
     console.log("Début de generateRandomPythonCode avec options :", JSON.parse(JSON.stringify(options)));
 
+        // Vérifier si l'approche par patterns est activée
+    const usePatternApproach = true; // À terme, cela pourrait être une option
+
+    if (usePatternApproach) {
+        // Utiliser le nouveau générateur par patterns
+        return generateProgramByPattern(options);
+    } else {
+        // Utiliser l'ancien générateur (pour compatibilité)
+        return generateCodeWithLegacyApproach(options);
+    }
+}
     // --- CONSTANTES POUR LA GÉNÉRATION ---
     
     // Noms de variables appropriés par type (conformes à PEP8)
@@ -24,6 +37,12 @@ function generateRandomPythonCode(options) {
     'sum', 'multiply', 'divide', 'subtract', 'compare',
     'filter', 'sort', 'count', 'average', 'normalize'
 ];
+    
+/**
+ * Version LEGACY du générateur pour compatibilité
+ * C'est l'ancien code de generateRandomPythonCode
+ */
+function generateCodeWithLegacyApproach(options) {
     // Valeurs littérales pour chaque type
     const LITERALS_BY_TYPE = {
         int: (difficulty) => getRandomInt(-getValueRange(difficulty), getValueRange(difficulty)),
@@ -1760,18 +1779,7 @@ function old_ensureVariableExists(type) {
     return declareVariable(name, type, LITERALS_BY_TYPE[type](difficulty));
 }
 
-
-/*
-Je voudrai maintenant me concentrer sur l'enrichissement de l'expérience d'apprentissage: 
-Je veux éviter les pass dans les For... in List, je veux ajouter des instructions dans les corps des structures (heuristique: faire que le nombre d'instructions corresponde à 1 +l'arrondi entier de difficulty // 2). Il faudra pour cela 
-Exemple de code généré peu satisfaisant:
-suffix = "hello"
-for char in "world":
-    suffix = suffix + char
-for item2 in [2, 1, 1, -2]:
-    pass
-suffix += " texte"
-suffix += " texte"
-suffix += " texte"
-DAns les optins on avait var_str_count: 2, var_list_count: 2, donc le nombre de listes apparaissant dans le code généré est insuffisant
-*/
+// Exporter la fonction principale
+module.exports = {
+    generateRandomPythonCode
+};
