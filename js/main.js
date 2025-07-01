@@ -778,8 +778,9 @@ document.addEventListener('DOMContentLoaded', function() {
     function updateGlobalConfigSelectors() {
         const { minLines, minVariables } = calculateGlobalRequirements();
         
-        const currentNumLinesVal = numLinesGlobalSelect ? parseInt(numLinesGlobalSelect.value) : minLines;
-        const currentNumTotalVariablesVal = numTotalVariablesGlobalSelect ? parseInt(numTotalVariablesGlobalSelect.value) : minVariables;
+        // choisi de toujours utiliser minLines et minVariables à la place => variables devenu obsolètes
+        // const currentNumLinesVal = numLinesGlobalSelect ? parseInt(numLinesGlobalSelect.value) : minLines;
+        // const currentNumTotalVariablesVal = numTotalVariablesGlobalSelect ? parseInt(numTotalVariablesGlobalSelect.value) : minVariables;
 
         // Mettre à jour le nombre de lignes disponibles, avec minLines comme minimum
         populateSelectWithOptions(numLinesGlobalSelect, minLines, MAX_CODE_LINES, minLines);
