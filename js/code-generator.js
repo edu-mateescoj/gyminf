@@ -1,5 +1,5 @@
-// Importer le nouveau générateur par patterns
-const { generateProgramByPattern } = require('./pattern-generator');
+// Retirer l'import require et modifier l'approche
+
 /**
  * Générateur amélioré de code Python pédagogique
  * Aligne variables par type et génère une structure cohérente selon les options
@@ -7,8 +7,8 @@ const { generateProgramByPattern } = require('./pattern-generator');
 function generateRandomPythonCode(options) {
     console.log("Début de generateRandomPythonCode avec options :", JSON.parse(JSON.stringify(options)));
 
-        // Vérifier si l'approche par patterns est activée
-    const usePatternApproach = true; // À terme, cela pourrait être une option
+    // Vérifier si l'approche par patterns est activée
+    const usePatternApproach = window.generateProgramByPattern !== undefined; // Vérifie si la fonction est disponible
 
     if (usePatternApproach) {
         // Utiliser le nouveau générateur par patterns

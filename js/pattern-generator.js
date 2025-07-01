@@ -1,10 +1,4 @@
-// Importer la bibliothèque de patterns
-const { 
-    OPERATION_PATTERNS, 
-    STRUCTURE_PATTERNS, 
-    BLOCK_BODY_PATTERNS, 
-    PROGRAM_PATTERNS 
-} = require('./pattern-library');
+// Retirer l'import require et utiliser la variable globale PATTERN_LIBRARY
 
 /**
  * Sélectionne et applique un pattern de programme complet
@@ -12,6 +6,12 @@ const {
  * @returns {string} - Code Python généré
  */
 function generateProgramByPattern(options) {
+    // Référencer les patterns depuis la variable globale
+    const PROGRAM_PATTERNS = PATTERN_LIBRARY.PROGRAM_PATTERNS;
+    const STRUCTURE_PATTERNS = PATTERN_LIBRARY.STRUCTURE_PATTERNS;
+    const BLOCK_BODY_PATTERNS = PATTERN_LIBRARY.BLOCK_BODY_PATTERNS;
+    const OPERATION_PATTERNS = PATTERN_LIBRARY.OPERATION_PATTERNS;
+
     // Filtrer les patterns disponibles selon les options et le niveau de difficulté
     const availablePatterns = PROGRAM_PATTERNS.filter(pattern => {
         // Vérifier la difficulté
@@ -105,6 +105,7 @@ function generateVariableDeclarations(context) {
  */
 function generateConditionalBlock(context) {
     const { options, difficulty } = context;
+    const STRUCTURE_PATTERNS = PATTERN_LIBRARY.STRUCTURE_PATTERNS;
     
     // Sélectionner un pattern conditionnel approprié
     const availablePatterns = STRUCTURE_PATTERNS.if.filter(pattern => {
@@ -145,6 +146,7 @@ function generateConditionalBlock(context) {
  */
 function generateBlockBody(blockType, context) {
     const { difficulty } = context;
+    const BLOCK_BODY_PATTERNS = PATTERN_LIBRARY.BLOCK_BODY_PATTERNS;
     
     // Sélectionner un pattern de corps approprié
     const availablePatterns = BLOCK_BODY_PATTERNS[blockType].filter(
@@ -163,6 +165,8 @@ function generateBlockBody(blockType, context) {
  * Génère une opération variée pour une variable selon son type
  */
 function generateVariedOperation(type, varName, difficulty) {
+    const OPERATION_PATTERNS = PATTERN_LIBRARY.OPERATION_PATTERNS;
+    
     // Sélectionner les patterns disponibles pour ce type et cette difficulté
     const availablePatterns = OPERATION_PATTERNS[type]
         ? OPERATION_PATTERNS[type].filter(p => p.difficulty <= difficulty)
@@ -180,6 +184,80 @@ function generateVariedOperation(type, varName, difficulty) {
     return selectedPattern.generateCode({ varName, difficulty });
 }
 
-module.exports = {
-    generateProgramByPattern
-};
+// Fonctions utilitaires nécessaires au fonctionnement
+function generateBasicProgram(options) {
+    return `# Programme basique de démonstration
+x = 10
+y = 20
+result = x + y
+print(result)`;
+}
+
+function generateUniqueVarName(type, context) {
+    // Implémentation simplifiée
+    const typeToNames = {
+        'int': ['count', 'number', 'total', 'value'],
+        'float': ['price', 'rate', 'factor'],
+        'str': ['name', 'text', 'message'],
+        'list': ['items', 'data', 'elements'],
+        'bool': ['is_valid', 'found', 'done']
+    };
+    
+    const names = typeToNames[type] || typeToNames.int;
+    let counter = 1;
+    let varName;
+    
+    do {
+        varName = `${names[Math.floor(Math.random() * names.length)]}${counter}`;
+        counter++;
+    } while (context.allDeclaredVarNames.has(varName));
+    
+    return varName;
+}
+
+function generateUniqueIteratorName(type) {
+    const prefixMap = {
+        'int': 'i',
+        'str': 'char',
+        'list': 'item'
+    };
+    
+    return `${prefixMap[type] || 'iter'}`;
+}
+
+function getRandomInt(min, max) {
+    min = Math.ceil(min);
+    max = Math.floor(max);
+    return Math.floor(Math.random() * (max - min + 1)) + min;
+}
+
+function getRandomItem(array) {
+    if (!array || array.length === 0) return null;
+    return array[Math.floor(Math.random() * array.length)];
+}
+
+/**
+ * Génération d'un bloc de boucle
+ * (Fonction à implémenter complètement)
+ */
+function generateLoopBlock(context) {
+    return "# Bloc de boucle à implémenter";
+}
+
+/**
+ * Génération d'opérations sur des variables
+ * (Fonction à implémenter complètement)
+ */
+function generateVariableOperations(context) {
+    return "# Opérations sur variables à implémenter";
+}
+
+/**
+ * Génération d'un calcul de résultat final
+ * (Fonction à implémenter complètement)
+ */
+function generateResultComputation(context) {
+    return "# Calcul de résultat à implémenter";
+}
+
+// Pas d'export, on expose la fonction principale comme une variable globale
