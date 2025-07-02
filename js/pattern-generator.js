@@ -1,4 +1,9 @@
 // Retirer l'import require et utiliser la variable globale PATTERN_LIBRARY
+/**
+ * Générateur de code Python basé sur des patterns
+ * Utilise la bibliothèque de patterns pour produire du code pédagogique
+ * qui respecte les contraintes d'options et de difficulté
+ */
 
 /**
  * Sélectionne et applique un pattern de programme complet
@@ -6,31 +11,32 @@
  * @returns {string} - Code Python généré
  */
 function generateProgramByPattern(options) {
+    console.log("Génération de code avec l'approche par patterns");
+    
     // Référencer les patterns depuis la variable globale
     const PROGRAM_PATTERNS = PATTERN_LIBRARY.PROGRAM_PATTERNS;
-    const STRUCTURE_PATTERNS = PATTERN_LIBRARY.STRUCTURE_PATTERNS;
-    const BLOCK_BODY_PATTERNS = PATTERN_LIBRARY.BLOCK_BODY_PATTERNS;
-    const OPERATION_PATTERNS = PATTERN_LIBRARY.OPERATION_PATTERNS;
-
+    
     // Filtrer les patterns disponibles selon les options et le niveau de difficulté
     const availablePatterns = PROGRAM_PATTERNS.filter(pattern => {
         // Vérifier la difficulté
         if (pattern.difficulty > options.difficultyLevelGlobal) return false;
         
-        // Vérifier les options requises
+        // Vérifier les options requises (au moins une doit être présente)
         if (pattern.requiredOptions) {
             return pattern.requiredOptions.some(opt => options[opt]);
         }
         return true;
     });
-
+    
+    // Si aucun pattern ne correspond, utiliser un modèle basique
     if (availablePatterns.length === 0) {
-        // Fallback si aucun pattern ne correspond
+        console.log("Aucun pattern disponible pour ces options, utilisation d'un modèle basique");
         return generateBasicProgram(options);
     }
-
+    
     // Sélectionner un pattern aléatoirement parmi ceux disponibles
     const selectedPattern = getRandomItem(availablePatterns);
+    console.log(`Pattern sélectionné: ${selectedPattern.name}`);
     
     // Initialiser le contexte de génération
     const context = {
@@ -41,7 +47,7 @@ function generateProgramByPattern(options) {
         },
         allDeclaredVarNames: new Set()
     };
-
+    
     // Générer le code selon la structure du pattern sélectionné
     const codeBlocks = [];
     
@@ -62,6 +68,9 @@ function generateProgramByPattern(options) {
             case '{result_computation}':
                 codeBlocks.push(generateResultComputation(context));
                 break;
+            case '{function_definition}':
+                codeBlocks.push(generateFunctionDefinition(context));
+                break;
             default:
                 // Si c'est une chaîne littérale, l'ajouter telle quelle
                 if (section.startsWith('{') && section.endsWith('}')) {
@@ -71,44 +80,91 @@ function generateProgramByPattern(options) {
                 }
         }
     }
-
-    // Joindre tous les blocs de code générés
-    return codeBlocks.join('\n\n');
+    
+    // Filtrer les blocs vides et joindre tous les blocs de code générés
+    return codeBlocks.filter(block => block && block.trim().length > 0).join('\n\n');
 }
 
 /**
  * Génère les déclarations de variables selon les options et le contexte
+ * @param {Object} context - Contexte de génération
+ * @returns {string} - Code Python pour les déclarations de variables
  */
 function generateVariableDeclarations(context) {
     const { options } = context;
     const lines = [];
-
+    
+    // Déterminer les types de variables à générer et leur quantité
+    const types = [
+        { type: 'int', count: options.var_int_count || 0 },
+        { type: 'float', count: options.var_float_count || 0 },
+        { type: 'str', count: options.var_str_count || 0 },
+        { type: 'list', count: options.var_list_count || 0 },
+        { type: 'bool', count: options.var_bool_count || 0 }
+    ];
+    
     // Générer des variables pour chaque type activé dans les options
-    if (options.var_int_count > 0) {
-        for (let i = 0; i < options.var_int_count; i++) {
-            const varName = generateUniqueVarName('int', context);
-            const value = getRandomInt(-10, 10); // Valeur arbitraire pour l'exemple
-            lines.push(`${varName} = ${value}`);
-            context.declaredVarsByType.int.push(varName);
-            context.allDeclaredVarNames.add(varName);
+    for (const { type, count } of types) {
+        if (count > 0) {
+            for (let i = 0; i < count; i++) {
+                // Créer un nom unique pour cette variable
+                const varName = generateUniqueVarName(type, context);
+                
+                // Générer une valeur appropriée pour ce type
+                let value;
+                if (type === 'list') {
+                    // Pour les listes, déterminer les types d'éléments selon les autres options
+                    const elementTypes = ['int'];
+                    if (options.var_str_count > 0) elementTypes.push('str');
+                    if (options.var_bool_count > 0) elementTypes.push('bool');
+                    
+                    value = PATTERN_LIBRARY.LITERALS_BY_TYPE.list(
+                        context.difficulty,
+                        elementTypes
+                    );
+                } else {
+                    value = PATTERN_LIBRARY.LITERALS_BY_TYPE[type](context.difficulty);
+                }
+                
+                // Ajouter la ligne de déclaration
+                lines.push(`${varName} = ${value}`);
+                
+                // Mettre à jour le contexte
+                context.declaredVarsByType[type].push(varName);
+                context.allDeclaredVarNames.add(varName);
+            }
         }
     }
-
-    // Faire de même pour les autres types (float, str, list, bool)
-    // ...
-
+    
+    // S'assurer qu'on a au moins une variable si aucune n'est spécifiée
+    if (lines.length === 0) {
+        const varName = generateUniqueVarName('int', context);
+        lines.push(`${varName} = 10  # Variable par défaut`);
+        context.declaredVarsByType.int.push(varName);
+        context.allDeclaredVarNames.add(varName);
+    }
+    
     return lines.join('\n');
 }
 
 /**
  * Génère un bloc conditionnel (if, if/else, if/elif/else)
+ * @param {Object} context - Contexte de génération
+ * @returns {string} - Code Python pour le bloc conditionnel
  */
 function generateConditionalBlock(context) {
     const { options, difficulty } = context;
-    const STRUCTURE_PATTERNS = PATTERN_LIBRARY.STRUCTURE_PATTERNS;
     
-    // Sélectionner un pattern conditionnel approprié
-    const availablePatterns = STRUCTURE_PATTERNS.if.filter(pattern => {
+    // Vérifier que les options permettent de générer une condition
+    if (!options.cond_if) {
+        return "";
+    }
+    
+    // Récupérer les patterns de structure conditionnelle
+    const STRUCTURE_PATTERNS = PATTERN_LIBRARY.STRUCTURE_PATTERNS.if;
+    
+    // Filtrer les patterns conditionnels selon la difficulté et les options
+    const availablePatterns = STRUCTURE_PATTERNS.filter(pattern => {
         if (pattern.difficulty > difficulty) return false;
         
         // Vérifier les options requises
@@ -120,144 +176,260 @@ function generateConditionalBlock(context) {
     
     if (availablePatterns.length === 0) return "";
     
+    // Sélectionner un pattern aléatoirement
     const selectedPattern = getRandomItem(availablePatterns);
     
-    // Générer le corps du if
+    // Préparer les différentes branches de la condition
     const bodyContext = { ...context, parentStructure: 'if' };
     const bodyCode = generateBlockBody('if_body', bodyContext);
     
-    // Générer le corps du else si nécessaire
+    let elifCode = "";
     let elseCode = "";
+    
+    // Générer le corps du else et du elif si nécessaire
+    if (selectedPattern.pattern.includes('elif')) {
+        const elifContext = { ...context, parentStructure: 'elif' };
+        elifCode = generateBlockBody('if_body', elifContext);
+    }
+    
     if (selectedPattern.pattern.includes('else:')) {
         const elseContext = { ...context, parentStructure: 'else' };
         elseCode = generateBlockBody('if_body', elseContext);
     }
     
     // Générer le code final
-    return selectedPattern.generateCode({ 
-        ...context, 
-        bodyCode, 
-        elseCode 
+    return selectedPattern.generateCode({
+        ...context,
+        bodyCode,
+        elifCode,
+        elseCode
     });
 }
 
 /**
  * Génère un corps de bloc approprié au contexte
+ * @param {string} blockType - Type de bloc ('if_body', 'for_body', etc.)
+ * @param {Object} context - Contexte de génération
+ * @returns {string} - Code Python pour le corps du bloc
  */
 function generateBlockBody(blockType, context) {
     const { difficulty } = context;
     const BLOCK_BODY_PATTERNS = PATTERN_LIBRARY.BLOCK_BODY_PATTERNS;
     
-    // Sélectionner un pattern de corps approprié
-    const availablePatterns = BLOCK_BODY_PATTERNS[blockType].filter(
-        pattern => pattern.difficulty <= difficulty
-    );
-    
-    if (availablePatterns.length === 0) return "pass";
-    
-    const selectedPattern = getRandomItem(availablePatterns);
-    
-    // Générer le code du corps
-    return selectedPattern.generateCode(context);
-}
+    // Vérifier si ce type de bloc existe
+    if (!BLOCK_// filepath: c:\Users\install\gyminf\js\pattern-generator.js
+/**
+ * Générateur de code Python basé sur des patterns
+ * Utilise la bibliothèque de patterns pour produire du code pédagogique
+ * qui respecte les contraintes d'options et de difficulté
+ */
 
 /**
- * Génère une opération variée pour une variable selon son type
+ * Sélectionne et applique un pattern de programme complet
+ * @param {Object} options - Options sélectionnées par l'utilisateur
+ * @returns {string} - Code Python généré
  */
-function generateVariedOperation(type, varName, difficulty) {
-    const OPERATION_PATTERNS = PATTERN_LIBRARY.OPERATION_PATTERNS;
+function generateProgramByPattern(options) {
+    console.log("Génération de code avec l'approche par patterns");
     
-    // Sélectionner les patterns disponibles pour ce type et cette difficulté
-    const availablePatterns = OPERATION_PATTERNS[type]
-        ? OPERATION_PATTERNS[type].filter(p => p.difficulty <= difficulty)
-        : [];
+    // Référencer les patterns depuis la variable globale
+    const PROGRAM_PATTERNS = PATTERN_LIBRARY.PROGRAM_PATTERNS;
     
+    // Filtrer les patterns disponibles selon les options et le niveau de difficulté
+    const availablePatterns = PROGRAM_PATTERNS.filter(pattern => {
+        // Vérifier la difficulté
+        if (pattern.difficulty > options.difficultyLevelGlobal) return false;
+        
+        // Vérifier les options requises (au moins une doit être présente)
+        if (pattern.requiredOptions) {
+            return pattern.requiredOptions.some(opt => options[opt]);
+        }
+        return true;
+    });
+    
+    // Si aucun pattern ne correspond, utiliser un modèle basique
     if (availablePatterns.length === 0) {
-        // Fallback pour les types sans patterns ou difficulté insuffisante
-        return `${varName} = ${varName}  # Opération identité`;
+        console.log("Aucun pattern disponible pour ces options, utilisation d'un modèle basique");
+        return generateBasicProgram(options);
     }
     
-    // Sélectionner un pattern aléatoire parmi ceux disponibles
+    // Sélectionner un pattern aléatoirement parmi ceux disponibles
+    const selectedPattern = getRandomItem(availablePatterns);
+    console.log(`Pattern sélectionné: ${selectedPattern.name}`);
+    
+    // Initialiser le contexte de génération
+    const context = {
+        options: options,
+        difficulty: options.difficultyLevelGlobal,
+        declaredVarsByType: {
+            int: [], float: [], str: [], list: [], bool: []
+        },
+        allDeclaredVarNames: new Set()
+    };
+    
+    // Générer le code selon la structure du pattern sélectionné
+    const codeBlocks = [];
+    
+    for (const section of selectedPattern.structure) {
+        switch (section) {
+            case '{variable_declarations}':
+                codeBlocks.push(generateVariableDeclarations(context));
+                break;
+            case '{conditional_block}':
+                codeBlocks.push(generateConditionalBlock(context));
+                break;
+            case '{loop_block}':
+                codeBlocks.push(generateLoopBlock(context));
+                break;
+            case '{variable_operations}':
+                codeBlocks.push(generateVariableOperations(context));
+                break;
+            case '{result_computation}':
+                codeBlocks.push(generateResultComputation(context));
+                break;
+            case '{function_definition}':
+                codeBlocks.push(generateFunctionDefinition(context));
+                break;
+            default:
+                // Si c'est une chaîne littérale, l'ajouter telle quelle
+                if (section.startsWith('{') && section.endsWith('}')) {
+                    console.warn(`Placeholder inconnu: ${section}`);
+                } else {
+                    codeBlocks.push(section);
+                }
+        }
+    }
+    
+    // Filtrer les blocs vides et joindre tous les blocs de code générés
+    return codeBlocks.filter(block => block && block.trim().length > 0).join('\n\n');
+}
+
+/**
+ * Génère les déclarations de variables selon les options et le contexte
+ * @param {Object} context - Contexte de génération
+ * @returns {string} - Code Python pour les déclarations de variables
+ */
+function generateVariableDeclarations(context) {
+    const { options } = context;
+    const lines = [];
+    
+    // Déterminer les types de variables à générer et leur quantité
+    const types = [
+        { type: 'int', count: options.var_int_count || 0 },
+        { type: 'float', count: options.var_float_count || 0 },
+        { type: 'str', count: options.var_str_count || 0 },
+        { type: 'list', count: options.var_list_count || 0 },
+        { type: 'bool', count: options.var_bool_count || 0 }
+    ];
+    
+    // Générer des variables pour chaque type activé dans les options
+    for (const { type, count } of types) {
+        if (count > 0) {
+            for (let i = 0; i < count; i++) {
+                // Créer un nom unique pour cette variable
+                const varName = generateUniqueVarName(type, context);
+                
+                // Générer une valeur appropriée pour ce type
+                let value;
+                if (type === 'list') {
+                    // Pour les listes, déterminer les types d'éléments selon les autres options
+                    const elementTypes = ['int'];
+                    if (options.var_str_count > 0) elementTypes.push('str');
+                    if (options.var_bool_count > 0) elementTypes.push('bool');
+                    
+                    value = PATTERN_LIBRARY.LITERALS_BY_TYPE.list(
+                        context.difficulty,
+                        elementTypes
+                    );
+                } else {
+                    value = PATTERN_LIBRARY.LITERALS_BY_TYPE[type](context.difficulty);
+                }
+                
+                // Ajouter la ligne de déclaration
+                lines.push(`${varName} = ${value}`);
+                
+                // Mettre à jour le contexte
+                context.declaredVarsByType[type].push(varName);
+                context.allDeclaredVarNames.add(varName);
+            }
+        }
+    }
+    
+    // S'assurer qu'on a au moins une variable si aucune n'est spécifiée
+    if (lines.length === 0) {
+        const varName = generateUniqueVarName('int', context);
+        lines.push(`${varName} = 10  # Variable par défaut`);
+        context.declaredVarsByType.int.push(varName);
+        context.allDeclaredVarNames.add(varName);
+    }
+    
+    return lines.join('\n');
+}
+
+/**
+ * Génère un bloc conditionnel (if, if/else, if/elif/else)
+ * @param {Object} context - Contexte de génération
+ * @returns {string} - Code Python pour le bloc conditionnel
+ */
+function generateConditionalBlock(context) {
+    const { options, difficulty } = context;
+    
+    // Vérifier que les options permettent de générer une condition
+    if (!options.cond_if) {
+        return "";
+    }
+    
+    // Récupérer les patterns de structure conditionnelle
+    const STRUCTURE_PATTERNS = PATTERN_LIBRARY.STRUCTURE_PATTERNS.if;
+    
+    // Filtrer les patterns conditionnels selon la difficulté et les options
+    const availablePatterns = STRUCTURE_PATTERNS.filter(pattern => {
+        if (pattern.difficulty > difficulty) return false;
+        
+        // Vérifier les options requises
+        if (pattern.requiredOptions) {
+            return pattern.requiredOptions.every(opt => options[opt]);
+        }
+        return true;
+    });
+    
+    if (availablePatterns.length === 0) return "";
+    
+    // Sélectionner un pattern aléatoirement
     const selectedPattern = getRandomItem(availablePatterns);
     
-    // Générer l'opération
-    return selectedPattern.generateCode({ varName, difficulty });
-}
-
-// Fonctions utilitaires nécessaires au fonctionnement
-function generateBasicProgram(options) {
-    return `# Programme basique de démonstration
-x = 10
-y = 20
-result = x + y
-print(result)`;
-}
-
-function generateUniqueVarName(type, context) {
-    // Implémentation simplifiée
-    const typeToNames = {
-        'int': ['count', 'number', 'total', 'value'],
-        'float': ['price', 'rate', 'factor'],
-        'str': ['name', 'text', 'message'],
-        'list': ['items', 'data', 'elements'],
-        'bool': ['is_valid', 'found', 'done']
-    };
+    // Préparer les différentes branches de la condition
+    const bodyContext = { ...context, parentStructure: 'if' };
+    const bodyCode = generateBlockBody('if_body', bodyContext);
     
-    const names = typeToNames[type] || typeToNames.int;
-    let counter = 1;
-    let varName;
+    let elifCode = "";
+    let elseCode = "";
     
-    do {
-        varName = `${names[Math.floor(Math.random() * names.length)]}${counter}`;
-        counter++;
-    } while (context.allDeclaredVarNames.has(varName));
+    // Générer le corps du else et du elif si nécessaire
+    if (selectedPattern.pattern.includes('elif')) {
+        const elifContext = { ...context, parentStructure: 'elif' };
+        elifCode = generateBlockBody('if_body', elifContext);
+    }
     
-    return varName;
-}
-
-function generateUniqueIteratorName(type) {
-    const prefixMap = {
-        'int': 'i',
-        'str': 'char',
-        'list': 'item'
-    };
+    if (selectedPattern.pattern.includes('else:')) {
+        const elseContext = { ...context, parentStructure: 'else' };
+        elseCode = generateBlockBody('if_body', elseContext);
+    }
     
-    return `${prefixMap[type] || 'iter'}`;
-}
-
-function getRandomInt(min, max) {
-    min = Math.ceil(min);
-    max = Math.floor(max);
-    return Math.floor(Math.random() * (max - min + 1)) + min;
-}
-
-function getRandomItem(array) {
-    if (!array || array.length === 0) return null;
-    return array[Math.floor(Math.random() * array.length)];
+    // Générer le code final
+    return selectedPattern.generateCode({
+        ...context,
+        bodyCode,
+        elifCode,
+        elseCode
+    });
 }
 
 /**
- * Génération d'un bloc de boucle
- * (Fonction à implémenter complètement)
+ * Génère un corps de bloc approprié au contexte
+ * @param {string} blockType - Type de bloc ('if_body', 'for_body', etc.)
+ * @param {Object} context - Contexte de génération
+ * @returns {string} - Code Python pour le corps du bloc
  */
-function generateLoopBlock(context) {
-    return "# Bloc de boucle à implémenter";
+function generateBlockBody(blockType, context) {
 }
-
-/**
- * Génération d'opérations sur des variables
- * (Fonction à implémenter complètement)
- */
-function generateVariableOperations(context) {
-    return "# Opérations sur variables à implémenter";
-}
-
-/**
- * Génération d'un calcul de résultat final
- * (Fonction à implémenter complètement)
- */
-function generateResultComputation(context) {
-    return "# Calcul de résultat à implémenter";
-}
-
-// Pas d'export, on expose la fonction principale comme une variable globale
