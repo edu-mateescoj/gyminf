@@ -136,10 +136,10 @@ function generateRandomPythonCode(options) {
         }
         // Si tous les noms sont pris, ajouter un suffixe numérique
         let counter = 1;
-        let baseName = availableNames[0];
+        let baseName = getRandomItem(availableNames) || type;
         let newName;
         do {
-            newName = `${baseName}${counter}`;
+            newName = `${baseName}_${counter}`;
             counter++;
         } while (allDeclaredVarNames.has(newName));
         
@@ -151,12 +151,12 @@ function generateRandomPythonCode(options) {
      * @param {string} type - Le type de la variable à créer ('int', 'str', etc.).
      * @returns {string} Le nom de la variable créée.
      */
-    function declareVariable(type) {
+    function declareVariable(type, value = null) {
         const name = generateUniqueVarName(type);
-        const value = LITERALS_BY_TYPE[type](difficulty);
+        const finalValue = value !== null ? value : LITERALS_BY_TYPE[type](difficulty, 'int');
         
         // Ajoute toujours l'initialisation au début du tableau de lignes de code.
-        codeLines.unshift(`${name} = ${value}`);
+        codeLines.unshift(`${name} = ${finalvalue}`);
         
         // Enregistre la nouvelle variable comme étant déclarée.
         allDeclaredVarNames.add(name);
@@ -204,10 +204,12 @@ function generateRandomPythonCode(options) {
             if (options.var_float_count > 0) itemTypes.push('float');
             
             // Génère une nouvelle liste avec des types d'éléments diversifiés
-            const listVar = declareVariable('list', generateDiverseList(itemTypes, difficulty));
-            
+            const listValue = generateDiverseList(itemTypes, difficulty);
+            const listVar = declareVariable('list', listValue);
+            currentListCount++;
             // S'assurer que la liste est utilisée quelque part dans le code
-            ensureListVariableIsUsed(listVar);
+            // ensureListVariableIsUsed(listVar);
+            ensureVariableIsUsed(listVar, 'list');
         }
     }
     // Générer une liste avec des éléments de types diversifiés
@@ -302,6 +304,8 @@ function generateRandomPythonCode(options) {
         }
     }
 
+    // --- ANCIENNE GÉNÉRATION DES ÉLÉMENTS DE SYNTAXE ---
+
     // Phase 1 : Génération des variables selon les options
     function generateVariables() {
         const typesToGenerate = [];
@@ -338,9 +342,7 @@ function generateRandomPythonCode(options) {
             linesGenerated++;
         }
     }
-    
-    // --- GÉNÉRATION DES ÉLÉMENTS DE SYNTAXE ---
-    
+        
     // Phase 2: Générer les opérations
     function generateOperations() {
         // Plus-Minus est toujours activé
@@ -433,7 +435,7 @@ function generateRandomPythonCode(options) {
         }
     }
     
-    // Phase 3: Générer les structures de contrôle
+    // EN PLACE : Générer les structures de contrôle
     // 1. Créer un gestionnaire central pour générer des conditions adaptées au contexte
     function generateCondition(varTypes = ['int', 'bool'], preferExisting = true) {
         // Cette fonction génère une condition appropriée selon les types disponibles
@@ -545,12 +547,12 @@ function generateRandomPythonCode(options) {
      * Génère un nombre approprié d'instructions pour le corps d'une structure.
      * @param {number} indentLevel - Niveau d'indentation actuel
      * @param {string} contextType - Type de structure ('for_list', 'for_str', 'function', etc.)
-     * @param {Object} options - Options de génération comme le niveau de difficulté
+     * @param {Object} contextOptions - Options de génération comme le niveau de difficulté
      * @returns {Array<string>} - Tableau de lignes de code pour le corps
      */
-    function generateStructureBody(indentLevel, contextType, options = {}) {
+    function generateStructureBody(indentLevel, contextType, contextOptions = {}) {
         // Calculer le nombre d'instructions selon la difficulté
-        const structureDifficulty = options.difficulty || difficulty;
+        const structureDifficulty = contextOptions.difficulty || difficulty;
         const instructionCount = 1 + Math.floor(structureDifficulty / 3);
     
         const indent = safeIndent(indentLevel);
@@ -564,7 +566,7 @@ function generateRandomPythonCode(options) {
         switch (contextType) {
             case 'for_range': {
             // Pour une boucle for sur range, utiliser la variable d'itération
-            const loopVar = options.loopVar;
+            const loopVar = contextOptions.loopVar;
             
             // Cible à modifier sera généralement un entier
             const targetVar = ensureVariableExists('int');
@@ -594,10 +596,10 @@ function generateRandomPythonCode(options) {
         }
             case 'for_list': {
                 // Pour une boucle for sur liste, utiliser la variable d'itération
-                const loopVar = options.loopVar;
+                const loopVar = contextOptions.loopVar;
                 
                 // Déterminer le type de variable à modifier (dépend du contenu de la liste)
-                const targetType = Math.random() > 0.3 ? 'int' : 'str';
+                const targetType = Math.random() > 0.4 ? 'int' : 'str';
                 const targetVar = ensureVariableExists(targetType);
                 
                 // Générer différentes opérations utilisant la variable d'itération
@@ -621,17 +623,18 @@ function generateRandomPythonCode(options) {
             }
             case 'for_str': {
                 // Pour une boucle for sur chaîne, utiliser la variable de caractère
-                const charVar = options.loopVar;
+                const charVar = contextOptions.loopVar;
                 const targetVar = ensureVariableExists('str');
-                
+                const countVar = ensureVariableExists('int');
+
                 for (let i = 0; i < instructionCount; i++) {
-                    if (i === 0) {
+                    if (i%2 === 0) {
                         // Première instruction toujours une concaténation?
                         bodyLines.push(`${indent}${targetVar} = ${targetVar} + ${charVar}`);
                         bodyLines.push(`${indent}${generateVariedOperation('str', targetVar, difficulty).replace(/;$/, '')}`);
                     } else if (structureDifficulty >= 3 && Math.random() > 0.5) {
                         // Concaténation conditionnelle pour difficulté moyenne+
-                        bodyLines.push(`${indent}if ${charVar} in "aeiou":`);
+                        bodyLines.push(`${indent}if ${charVar} in "aeiouy":`);
                         bodyLines.push(`${indent}    ${targetVar} += ${charVar}.upper()`);
                     } else {
                         // Utiliser generateVariedOperation pour les autres instructions
@@ -641,45 +644,45 @@ function generateRandomPythonCode(options) {
                 break;
             }
             case 'function': {
-                const params = options.params || [];
-                
-                for (let i = 0; i < instructionCount; i++) {
-                    // Adapter selon l'index dans le corps
-                    if (i === 0 && params.length > 0) {
-                        // Première instruction utilise un paramètre si disponible
-                        const param = params[0];
-                        bodyLines.push(`${indent}result = ${param} * 2`);
-                    } else if (i === instructionCount-1 && options.hasReturn) {
-                        // Dernière instruction peut être un return
-                        if (params.length > 0) {
-                            bodyLines.push(`${indent}return result`);
-                        } else {
-                            bodyLines.push(`${indent}return True`);
-                        }
-                    } else if (options.hasPrint && Math.random() > 0.5) {
-                        // Instruction print si l'option est activée
-                        if (params.length > 0) {
-                            bodyLines.push(`${indent}print("Valeur:", ${params[0]})`);
-                        } else {
-                            bodyLines.push(`${indent}print("Fonction exécutée")`);
-                        }
+                const params = contextOptions.params || [];
+                // Un nom de variable locale pour les calculs internes
+                const localResultVar = "local_result"; 
+
+                if (params.length > 0) {
+                    // La première instruction utilise un paramètre, c'est crucial.
+                    const firstParam = params[0];
+                    // Opération de base qui dépend du type probable du paramètre
+                    if (firstParam.includes('name') || firstParam.includes('text')) {
+                         bodyLines.push(`${indent}${localResultVar} = "Processed: " + str(${firstParam})`);
                     } else {
-                        // Utiliser generateAppropriateStatement pour variété
-                        bodyLines.push(`${indent}${generateAppropriateStatement()}`);
+                         bodyLines.push(`${indent}${localResultVar} = ${firstParam} * ${getRandomInt(2,5)}`);
                     }
+                } else {
+                    // Si pas de paramètre, on initialise quand même une variable locale.
+                    bodyLines.push(`${indent}${localResultVar} = ${getRandomInt(1, 10)}`);
+                }
+
+                // Instructions intermédiaires
+                for (let i = 1; i < instructionCount; i++) {
+                    bodyLines.push(`${indent}${localResultVar} += 1 # Étape de calcul`);
+                }
+
+                // L'instruction de retour, si demandée, est la toute dernière.
+                if (contextOptions.hasReturn) {
+                    bodyLines.push(`${indent}return ${localResultVar}`);
                 }
                 break;
             }
             default:
-                // Par défaut, générer des instructions génériques
+                // Fallback générique
                 for (let i = 0; i < instructionCount; i++) {
                     bodyLines.push(`${indent}${generateAppropriateStatement()}`);
                 }
         }
         
-        // Si aucune instruction n'a été générée, ajouter au moins un pass
+        // Un corps de structure ne doit JAMAIS être vide, `pass` est la seule solution.
         if (bodyLines.length === 0) {
-            bodyLines.push(`${indent}pass  # Corps vide`);
+            bodyLines.push(`${indent}pass`);
         }
     
         return bodyLines;
@@ -927,7 +930,9 @@ function generateRandomPythonCode(options) {
         linesGenerated += 3 + bodyLines.length;
     }
     
-    // Génération d'une fonction simple
+    // orchestre la création d'un corps de fonction crédible en passant des options spécifiques à generateStructureBody 
+    // (paramètres, option return, etc...
+    // génère un appel de fonction qui utilise le résultat si la fonction est censée retourner une valeur
     function generateFunction() {
         const indent = safeIndent(indentLevel);
         let funcName = getRandomItem(FUNCTION_NAMES);
@@ -951,7 +956,8 @@ function generateRandomPythonCode(options) {
             params, 
             difficulty,
             hasReturn: options.func_return,
-            hasPrint: options.builtin_print
+            hasPrint: options.builtin_print,
+            hasInput: options.builtin_input //pour plus tard
         });
         
         // Ajouter les lignes du corps au code
