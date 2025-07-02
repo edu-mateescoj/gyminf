@@ -896,7 +896,7 @@ const PATTERN_LIBRARY = {
         }
     ]
 };
-/ --- FONCTIONS UTILITAIRES ---
+// --- FONCTIONS UTILITAIRES ---
 
 /**
  * Génère une expression de condition appropriée au contexte

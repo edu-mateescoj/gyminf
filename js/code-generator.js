@@ -7,37 +7,23 @@
 function generateRandomPythonCode(options) {
     console.log("Début de generateRandomPythonCode avec options :", JSON.parse(JSON.stringify(options)));
 
-    // Vérifier si l'approche par patterns est activée
-    const usePatternApproach = window.generateProgramByPattern !== undefined; // Vérifie si la fonction est disponible
+    // Vérifier si l'approche par patterns est activée et disponible
+    const usePatternApproach = typeof generateProgramByPattern === 'function';
 
     if (usePatternApproach) {
-        // Utiliser le nouveau générateur par patterns
-        return generateProgramByPattern(options);
+        try {
+            console.log("Utilisation du générateur par patterns");
+            return generateProgramByPattern(options);
+        } catch (error) {
+            console.error("Erreur dans le générateur par patterns:", error);
+            console.log("Fallback sur le générateur legacy");
+            return generateCodeWithLegacyApproach(options);
+        }
     } else {
-        // Utiliser l'ancien générateur (pour compatibilité)
+        console.log("Générateur par patterns non disponible, utilisation du générateur legacy");
         return generateCodeWithLegacyApproach(options);
     }
-}
-    // --- CONSTANTES POUR LA GÉNÉRATION ---
-    
-    // Noms de variables appropriés par type (conformes à PEP8)
-    const VAR_NAMES_BY_TYPE = {
-        int: ['count', 'total', 'num', 'value', 'index', 'i', 'j', 'k', 'x', 'y', 'z'],
-        float: ['price', 'rate', 'ratio', 'avg', 'score', 'factor', 'pi', 'epsilon', 'scale'],
-        str: ['name', 'text', 'message', 'word', 'label', 'title', 'code', 'prefix', 'suffix'],
-        list: ['items', 'values', 'data', 'elements', 'numbers', 'results', 'scores', 'names'],
-        bool: ['is_valid', 'found', 'done', 'active', 'enabled', 'exists', 'has_value', 'ready']
-    };
-    const FUNCTION_NAMES = [
-    'calculate', 'compute', 'process', 'transform', 'convert',
-    'analyze', 'validate', 'check', 'verify', 'format',
-    'get_data', 'update', 'create', 'generate', 'build',
-    'initialize', 'setup', 'configure', 'prepare', 'find',
-    'search', 'retrieve', 'fetch', 'display', 'show',
-    'sum', 'multiply', 'divide', 'subtract', 'compare',
-    'filter', 'sort', 'count', 'average', 'normalize'
-];
-    
+} 
 /**
  * Version LEGACY du générateur pour compatibilité
  * C'est l'ancien code de generateRandomPythonCode
@@ -1780,6 +1766,6 @@ function old_ensureVariableExists(type) {
 }
 
 // Exporter la fonction principale
-module.exports = {
+window.codeGenerator = {
     generateRandomPythonCode
 };
