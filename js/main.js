@@ -13,12 +13,16 @@ const VAR_COUNT_LIMITS = {
 };
 
 const BUILTINS_BASE = [
-    { id: 'builtin-print', label: 'print()' }, { id: 'builtin-input', label: 'input()' },
-    { id: 'builtin-len', label: 'len()' }
+    { id: 'builtin-print', label: 'print()' },
+    { id: 'builtin-input', label: 'input()' },
+    { id: 'builtin-len', label: 'len()' },
+    { id: 'builtin-isinstance', label: 'isinstance()' }
 ];
 const BUILTINS_ADVANCED = [
-    { id: 'builtin-chr', label: 'chr()' }, { id: 'builtin-ord', label: 'ord()' },
-    { id: 'builtin-min', label: 'min()' }, { id: 'builtin-max', label: 'max()' },
+    { id: 'builtin-chr', label: 'chr()' }, 
+    { id: 'builtin-ord', label: 'ord()' },
+    { id: 'builtin-min', label: 'min()' }, 
+    { id: 'builtin-max', label: 'max()' },
     { id: 'builtin-sum', label: 'sum()' }
 ];
 
@@ -220,8 +224,8 @@ document.addEventListener('DOMContentLoaded', function() {
     const functionsOptionsHTML_Base = `
         <div class="d-flex flex-column gap-1">
             <div class="form-check form-check-inline"><input class="form-check-input" type="checkbox" id="func-def-a"><label class="form-check-label small" for="func-def-a">def f(a)</label></div>
-            <div class="form-check form-check-inline" id="func-builtins-main-container"></div>
             <div class="form-check form-check-inline"><input class="form-check-input" type="checkbox" id="func-return"><label class="form-check-label small" for="func-return">return</label></div>
+            <div class="form-check form-check-inline" id="func-builtins-main-container"></div>
         </div>`;
 
     // --- Gestion du chargement des exemples prédéfinis ---
@@ -1000,13 +1004,15 @@ document.addEventListener('DOMContentLoaded', function() {
                 builtin_print: getChecked('builtin-print'),
                 builtin_input: getChecked('builtin-input'),
                 builtin_len: getChecked('builtin-len'),
+                func_return: getChecked('func-return'),
+                
+                builtin_isinstance: getChecked('builtin-isinstance'), 
                 builtin_chr: getChecked('builtin-chr'),   // Avancé
                 builtin_ord: getChecked('builtin-ord'),   // Avancé
                 builtin_min: getChecked('builtin-min'),   // Avancé
                 builtin_max: getChecked('builtin-max'),   // Avancé
                 builtin_sum: getChecked('builtin-sum'),   // Avancé
                 
-                func_return: getChecked('func-return'),
                 func_def_ab: getChecked('func-def-ab'),     // Avancé
                 func_op_list: getChecked('func-op-list'),   // Avancé
                 func_op_str: getChecked('func-op-str'),     // Avancé
@@ -1510,7 +1516,7 @@ turtle.Screen().setup(target_id='turtle-canvas')
 
     // On passe le code à Pyodide via des variables globales, pas par injection de chaîne.
     // beaucoup plus robuste ??
-    pyodideInstance.globals.set("turtle_setup_script", turtleSetupCode);
+    // pyodideInstance.globals.set("turtle_setup_script", turtleSetupCode);
     pyodideInstance.globals.set("student_code_to_run", code); // On passe le code brut ici
     // On utilise une variable globale pour le code de l'élève:
     /* PLUS BESOIN D'ECHAPPER LES GUILLEMETS TRIPLES
@@ -1536,6 +1542,47 @@ import asyncio
 import pyodide ###############################################
 from pyodide.ffi import to_js
 import ast
+
+# --- Analyse du code pour trouver les appels de fonctions ---
+# --- et retourner les valeurs pour le défi ---
+
+def extract_function_calls(code):
+    try:
+        tree = ast.parse(code)
+        calls = []
+        
+        class FunctionCallExtractor(ast.NodeVisitor):
+            def visit_Assign(self, node):
+                if isinstance(node.value, ast.Call):
+                    call = node.value
+                    if isinstance(call.func, ast.Name):
+                        # Stocker l'information sur l'appel: nom de la fonction et variable de résultat
+                        calls.append({
+                            'func_name': call.func.id,
+                            'result_var': node.targets[0].id if isinstance(node.targets[0], ast.Name) else None
+                        })
+                self.generic_visit(node)
+            
+            def visit_Expr(self, node):
+                # Cas où une fonction est appelée sans affecter le résultat
+                if isinstance(node.value, ast.Call):
+                    call = node.value
+                    if isinstance(call.func, ast.Name):
+                        # Stocker l'information sur l'appel sans variable de résultat
+                        calls.append({
+                            'func_name': call.func.id,
+                            'result_var': None
+                        })
+                self.generic_visit(node)
+        
+        extractor = FunctionCallExtractor()
+        extractor.visit(tree)
+        return calls
+    except:
+        return []
+# ---- Fin de l'analyse du code pour les appels de fonctions ---
+# --------------------------------------------------------------
+
 
 class AwaitInputTransformer(ast.NodeTransformer):
     def visit_Call(self, node):
@@ -1588,7 +1635,7 @@ async def main():
         # Il va gérer les 'await' implicites sur les fonctions comme notre custom_input.
         
         # On exécute d'abord le code de configuration de Turtle (qui est synchrone)
-        exec(turtle_setup_script, user_ns)
+        # exec(turtle_setup_script, user_ns)
         
         tree = ast.parse(student_code_to_run)
         transformed_tree = AwaitInputTransformer().visit(tree)
@@ -1597,6 +1644,26 @@ async def main():
 
         # CORRECTION POUR PROBLÈME COROUTINE !!
         await pyodide.code.eval_code_async(transformed_code_string, globals=user_ns)
+
+        # On ajoute du code pour capturer les résultats des fonctions
+        function_calls = extract_function_calls(student_code_to_run)
+        for call_info in function_calls:
+            if call_info['func_name'] in user_ns and callable(user_ns[call_info['func_name']]):
+                func_name = call_info['func_name']
+                # Vérifier si la fonction est définie dans l'espace utilisateur
+                if not call_info['result_var'] and hasattr(user_ns[func_name], '__code__'):
+                    # Si la fonction est appelée sans stocker le résultat, on ajoute une variable pour le défi
+                    try:
+                        # Récupérer les paramètres d'appel potentiels depuis le code
+                        # Ceci est une simplification, idéalement on analyserait l'AST pour les arguments exacts
+                        # Pour simplifier, on teste avec un argument entier, ce qui fonctionnera dans les cas simples
+                        result = user_ns[func_name](4)  # Essai avec 4 comme argument
+                        # Créer une variable pour stocker ce résultat
+                        result_var_name = f"{func_name}_result"
+                        user_ns[result_var_name] = result
+                    except:
+                        # En cas d'erreur (mauvais nombre d'arguments, etc.), on ignore simplement
+                        pass
 
     except Exception as e:
         import traceback
