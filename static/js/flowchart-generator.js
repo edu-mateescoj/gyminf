@@ -54,7 +54,7 @@ async function initPyodideAndLoadScript() {
 */        
 
         // Charger le contenu du script Python (MyCFG.py)
-        const response = await fetch('MyCFG.py');
+        const response = await fetch('./static/py/MyCFG.py');
         if (!response.ok) {
             throw new Error("Impossible de charger le script Python CFG: " + response.statusText);
         }
