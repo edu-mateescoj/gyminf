@@ -250,6 +250,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     
                     codeEditorInstance.setValue(selectedExample.code);
                     memorizeLoadedCode(selectedExample.code);
+                    codeIsGenerated(lastLoadedCode);
                     
                     setDiagramAndChallengeCardState("default");
                     console.log(`Exemple chargé et mémorisé: ${selectedExample.name}. Diagramme invalidé.`);
@@ -1026,7 +1027,7 @@ document.addEventListener('DOMContentLoaded', function() {
             
             var newGeneratedCode = "";
             if (typeof generateRandomPythonCode === 'function') { 
-                newGeneratedCode = generateRandomPythonCode(generationOptions); 
+                newGeneratedCode = generateRandomPythonCode(generationOptions);
             } else {
                 console.warn("generateRandomPythonCode n'est pas définie.");
                 newGeneratedCode = "# Erreur: Le générateur de code aléatoire n'est pas disponible.";
@@ -1037,6 +1038,7 @@ document.addEventListener('DOMContentLoaded', function() {
             
             if(codeEditorInstance) codeEditorInstance.setValue(newGeneratedCode);
             memorizeLoadedCode(newGeneratedCode);
+            codeIsGenerated(lastLoadedCode);
             setDiagramAndChallengeCardState("default");
             
             var flowchartDisplayArea = document.getElementById('flowchart');
@@ -1451,6 +1453,7 @@ z = x + y`;
     if (codeEditorInstance) {
         codeEditorInstance.setValue(defaultPythonCode);
         memorizeLoadedCode(defaultPythonCode);
+        codeIsGenerated(lastLoadedCode);
     }
 
     var flowchartDisplayArea = document.getElementById('flowchart');

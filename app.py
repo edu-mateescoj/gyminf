@@ -44,6 +44,17 @@ def code_is_generated():
         return jsonify({'status': 'error' })
 
 
+@app.route('/flowchart_generation', methods=['POST'])
+def flowchart_is_generated():
+    data = request.get_json()
+    code = data['code']
+    username = session['username']
+    if flowchart_generation_log(username, code):
+        return jsonify({'status': 'success' })
+    else:
+        return jsonify({'status': 'error' })
+
+
 def editor(username):
     return render_template('layout.html', username=username)
 
@@ -83,14 +94,37 @@ def signup(username, password):
 def code_generation_log(username: str, code: str) -> bool:
     cursor = con.cursor()
     status = False
-    print(username)
     try:
         cursor.execute("SELECT id from user WHERE username = %s", (username,))
         user_id = cursor.fetchone()
         user_id = user_id[0]
-        print(datetime.now())
         if user_id:
+            code = code.replace('\n', '\\n')
             cursor.execute("INSERT INTO code (user_id, code, difficulty, time_created) VALUES (%s, %s, %s, %s)", (user_id, code, 1, datetime.now()))
+            con.commit()
+            status = True
+    except:
+        status = False
+    finally:
+        cursor.close()
+    return status
+
+def flowchart_generation_log(username: str, code: str) -> bool:
+    cursor = con.cursor()
+    status = False
+    try:
+        cursor.execute("SELECT id from user WHERE username = %s", (username,))
+        user_id = cursor.fetchone()
+        user_id = user_id[0]
+        print(user_id)
+        code = code.replace('\n', '\\n')
+        cursor.execute("SELECT id from code WHERE user_id = %s ORDER BY id DESC LIMIT 1", (user_id,))
+        code_id = cursor.fetchone()
+        code_id = code_id[0]
+        print(code_id)
+        if user_id and code_id:
+            cursor.execute("INSERT INTO diagram (user_id, code_id, time_created) VALUES (%s, %s, %s)",
+                           (user_id, code_id, datetime.now()))
             con.commit()
             status = True
     except:
