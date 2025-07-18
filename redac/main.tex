@@ -1,0 +1,896 @@
+\documentclass[11pt,a4paper]{article}
+
+\usepackage[utf8]{inputenc}     % Encodage UTF-8
+\usepackage[T1]{fontenc}        % Encodage des caractères pour la sortie PDF
+\usepackage[french]{babel}      % Support de la langue française
+\usepackage{csquotes}           % Gestion avancée des guillemets
+\usepackage{amsmath,amssymb}    % Symboles mathématiques
+\usepackage{xcolor}             % Gestion des couleurs
+\usepackage{geometry}           % Gestion des marges
+\usepackage{graphicx}           % Inclusion d'images
+\usepackage{hyperref}           % Liens hypertexte
+\usepackage{ulem}
+\hypersetup{colorlinks=true, urlcolor=blue, linkcolor=blue, citecolor=blue}
+\usepackage{minted}             % pour l'affichage du code
+\usemintedstyle{friendly}       % un style de coloration syntaxique
+\usepackage{listings}
+\usepackage{longtable}
+\usepackage{tabularx,array,booktabs}
+\usepackage{float}
+\usepackage{adjustbox}
+
+\usepackage{tikz}
+\usetikzlibrary{shapes.geometric, arrows}
+\usetikzlibrary{arrows, positioning} % Utilisation d'arrows au lieu de arrows.meta
+\usetikzlibrary{automata,positioning,arrows.meta}
+
+\geometry{margin=2cm}         % Marges du document
+
+\title{\textbf{Conception et implémentation d'un exerciseur automatique pour l'enseignement de la programmation}}
+\author{ }
+\date{}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+Les contextes: professionnel, personnel, pédagogique et pratique
+\par
+Les objectifs fonctionnels
+\par
+Les Choix \& hypothèses techniques à l'heure actuelle
+\end{abstract}
+
+\tableofcontents
+
+\section{Introduction}
+\begin{itemize}
+    \item Paragraphe 1 ...
+    \item Paragraphe 2 ...
+\end{itemize}
+
+\section{Applications similaires}
+État de l'art, et comment l'application présentée dans ce travail de mémoire diffère de ces applications.
+
+\section{Présentation générale de l'application}
+\begin{itemize}
+    \item Présentation UI
+    \item Présentation des fonctionnalités
+    \item Présentation technos utilisées
+\end{itemize}
+
+\section{Présentation détaillée de la génération automatique du code}
+
+\section{Présentation détaillée de la génération automatique du logigramme}
+
+\section{Discussion}
+\begin{itemize}
+    \item Une limite est ...
+    \item Un travail futur est ...
+\end{itemize}
+
+\section{Conclusion}
+
+
+
+
+
+\section{Éléments de contextes}
+D'où vient le projet.
+
+\subsection{Contexte institutionnel}
+\begin{itemize}
+    \item[$\bullet$ Institutionnel et pédagogique:] École secondaire genevoise; enseignement de l'informatique comme “Discipline Fondamentale” C'est-à-dire un cours obligatoire pour tous les élèves de 1ère et 2ème année avec très peu d’heures hebdomadaires pour chaque élève: massification des effectifs d’élèves pour l’enseignant, difficulté voire opposition de certains élèves face à la programmation.
+    \item[$\bullet$ Professionnel et personnel:] Ce projet rentre dans le cadre de la validation de ma formation GymInf et doit se terminer durant le semestre académique courant.
+    \item[$\bullet$ Professionnel et institutionnel:] 
+        \begin{itemize}
+        \item Constat de l'absence d’une culture de groupe de discipline, besoin de créer une “communauté de pratique”; 
+        \item Très grand nombre d'élèves pour chaque enseignant. Et donc besoin de rationaliser au maximum la pratique en créant des outils automatiques, besoin d’autonomiser les élèves dans leurs apprentissages; 
+        \item Indisponibilité (technique ou budgétaire) ou inadéquation des outils existants (curriculum différent, objectifs "venus d'en haut" et nécessité de se conformer à une épreuve commune)
+        \end{itemize}
+\end{itemize}
+
+\subsection{Cadre didactique: des hypothèses surtout}
+\begin{enumerate}
+    \item Pas d'analyse prévue de l'efficacité du dispositif par manque de temps et désynchronisation par rapport à l'année scolaire.
+    \item Hypothèse forte: les intérêts multiples d'un générateur d'exercices aléatoires, pour autant que  l'aléa réponde à des critères pédagogiques fixés et contrôlables par l'enseignant et/ou par l'apprenant $\rightarrow$ grande variété des questions, évite la mémorisation de la solution sans investissement personnel, évite le \textit{plagiat de solutions}; peut permettre une différenciation (par adaptation au niveau réel ou supposé de l'élève).
+    \item Plusieurs raisons de refuser l'IA générative pour la génération aléatoire d'exercices: \begin{enumerate}
+        \item l'impact écologique (climat et environnement: énergie, eau et terres rares, etc.), 
+        \item l'inadéquation par rapport à une démarche scientifique "explicative et contrôlée", 
+        \item les dérives sociales des géants du numérique et la cannibalisation des communs numériques pour l'entrainement des LLM privés
+    \end{enumerate}
+    \item Hypothèse : intérêt de la représentation \textbf{flowchart} comme moyen d'apprentissage de la programmation - en plus d'être un objectif d'apprentissage (cf. \textit{computational thinking})  
+    \item Hypothèses fortes: suprématie de la méthodologie PRIMM, qui peut aussi s'appliquer au langage flowchart (i.e. il existe un intérêt à faire lire et modifier des flowcharts aux élèves avant de leur faire écrire des flowcharts, c.f. toute la littérature depuis le  \textit{constructionnisme} de Papert).
+
+\end{enumerate}
+
+\subsection{Contexte pratico-pratique}
+\begin{itemize}
+    \item Pas de ressource spécifique allouée, pas de soutien institutionnel, nécessité d'une solution \textit{full front-end}.
+    \item Défaut de connaissances personnelles dans le développement Web en général, et en particulier des technologies JavaScript apparues après 2015.
+\end{itemize}
+
+\newpage
+\section{Objectifs fonctionnels}
+
+Ces objectifs apparaissent comme des conclusions ($\Rightarrow$) de la section précédente.
+
+\subsection{Un éditeur Python...}
+\begin{enumerate}
+    
+    \item Une fenêtre pour afficher du code Python $\Rightarrow$ besoin de recevoir du code Python de façon programmatique (voir plus loin "Générateur de codes")
+    
+    \item Implémentation de la méthode PRIM(M) $\Rightarrow$ besoin d'un outil dynamique permettant de donner un feedback instantané
+    
+    \item Encore un corollaire: besoin d'un outil permettant d'interpréter Python, qui puisse "résister" un minimum à l'apprenant afin que celui-ci s'y confronte, qui permette à l'apprenant de s'investir et d'investiguer en modifiant le code $\Rightarrow$ autres besoins ci-dessous
+    
+    \item Encore un corollaire: besoin d'un outil permettant de tester l'élève de façon adaptée aux objectifs controlables par l'enseignant $\Rightarrow$ autres besoins ci-dessous
+
+    \item Un affichage "joli" pour engager tous les élèves, et pour ressembler aux \textit{IDE} que rencontreront les élèves les plus motivés, et pour bénéficier de fonctionnalités utiles dans un cadre pédagogique: aplatissement de blocs et auto-complétion (à explorer).
+    
+\end{enumerate}
+
+\subsection{Un générateur de codes Python, de questions pertinentes, de valeurs \& erreurs attendues}
+
+\begin{enumerate}
+    
+    \item Besoin de choisir les constructions utilisées dans la génération du script qui servira de support à l'exercice \par $\Rightarrow$ besoin de fixer maintenant les types (de base) à utiliser ? Si possible une approche modulaire (très \textit{méta}) capable de s'adapter à l'ajout de fonctionnalités ultérieures (facile à dire...)
+
+    \item Idées: en constantes une liste pré-existante de noms de variables avec leurs types parmi lesquelles choisir de façon aléatoire, et pour chaque variable un choix aléatoire de valeurs prises parmi un ensemble pré-défini qui s'ajuste selon niveau de difficulté choisi
+
+    \item Besoin de contrôler l'aléa pour assurer une plus-value pédagogique \par $\Rightarrow$ finalement utiliser un ensemble de \textit{templates} à remplir pour chaque classe d'exercices à générer ? (plutôt qu'une approche grammaticale du langage) \par $\Rightarrow$ abandonner l'idée de générer des programmes réalistes avec définition de fonction, appels à \texttt{input} ou à \texttt{print}?
+    
+    \item Idées pour faire d'un script un véritable exercice: prédéfinir les questions à poser aux élèves selon le \textit{template} choisi (\textit{aka} la classe d'exercices)\par Exemples: "Quel est le nombre de passages dans la boucle?" si une boucle est choisie, "Combien de fois le bloc $xyz$ a-t-il été exécuté?" si des boucles imbriquées ont été choisies, etc. 
+    
+    \item Besoin de générer les valeurs attendues et des \textit{erreurs attendues} signifiantes afin de pouvoir fournir un feedback à valeur ajoutée  \par $\Rightarrow$ Idée plus radicale: se limiter à des affectations de valeurs (les questions aux élèves se limiteraient à "Valeur de x = ...", "valeur de y = ...")
+
+    \item Préparer des questions "Comment serait modifiée la valeur si ... \textit{(ici la modification à prévoir)} ?" en plus, pour renforcer/tester la compréhension.
+    
+    \item Besoin de contrôler l'impossibilité de générer un script invalide pour le rendre en flowchart \textbf{VS.} la possibilité de générer un script invalide \textbf{exprès} comme variable didactique, et si oui, selon quelles erreurs permises? (Division par zéro? Index Error?) 
+    
+    \item A décider: la génération d'exercices "Chercher l'erreur" comme bonus, y compris erreurs syntaxiques? Un intérêt pédagogique avéré mais secondaire par rapport à mes objectifs curriculaires: le débogage
+    
+\end{enumerate}
+        
+\subsection{... mais un éditeur augmenté + un rendu flowchart?}
+\begin{enumerate}
+    
+    \item Besoin d'interactions entre le DOM et l'interprétation du code Python: 
+    \begin{enumerate}
+        \item réception des choix utilisateurs par l'UI pour les passer à la génération de scripts; 
+        \item retour des valeurs attendues et des erreurs attendues vers la page; 
+        \item lecture des réponses élèves pour comparaison avec les valeurs \& erreurs attendues; 
+        \item affichage du feedback approprié selon étape précédente.
+    \end{enumerate}
+    
+    \item Possibilité d'enregistrer le script sur un support (un bouton \texttt{Download} de sauvegarde) $+$ Possibilité de revenir au script généré (un bouton \texttt{Reload}) annulant les modifications apportées par l'élève depuis la génération, pour investir les dimensions "Investigate" et "Modify" du PRIMM
+
+    \item Créer le rendu flowchart pour les codes valides:
+    \begin{itemize}
+        \item \textbf{Soit} à la génération du script, flowchart statique (plus facile car le rendu flowchart est encapsulé avec la génération du code \textbf{mais} en contradiction avec le point précédent!
+        \item \textbf{Soit} dynamique, modifiable en continu avec le code Python modifiable (besoin d'ajouter encore un bouton: alourdit l'UI qui devient moins lisible).
+    \end{itemize}
+    
+\end{enumerate}
+
+\section{Stack technologique: choix \& hypothèses}
+
+\subsection{UI}
+
+\begin{enumerate}
+    \item Chargement des dépendances (parmi tous les possbles pour exécuter du Python dans le navigateur, préférence = $Pyodide$, et en plus $Skulpt$ si besoin) $+$ la jungle des frameworks pour affichage "joli": gros travail de debugging à prévoir même avec $LABjs$
+    
+    \item Des \texttt{checkbox} pour choisir les \textit{templates}, avec une logique d'exclusion de choix mutuellement exclusifs à définir et à implémenter (si et seulement si la boucle $for$ est choisie il existe la possibilité d'imbriquer des boucles, autre exemple selon le niveau de difficulté choisie on peut griser ou rendre visible certains choix, etc.)
+    
+    \item Les deux vues  \texttt{script} dans un éditeur de code, et \texttt{flowchart} si implémentées: onglets ou $toggle$ entre les \texttt{<div>}.
+    
+    \item Pour la présentation du feedback élève à renvoyer après enregistrement des réponses élèves: coloration des cellules $+$ modales pour retours ad hoc, notamment selon comparaison avec erreurs attendues
+    
+    \item Une piste: les \texttt{tooltips}, pour ajouter des \texttt{mouseover} sur les tokens du code, si possibilité d'y avoir accès... Autre piste: à la création de l'arbre syntaxique, possibilité de récupérer les annotations des noeuds par les parseurs Python
+\end{enumerate}
+
+\subsection{Pistes et Hypothèses spécifiques flowchart... desquelles dépendra la logique de génération du code!}
+
+Des solutions très difficiles à créer from scratch, ou des solutions difficiles qui alourdissent la stack.
+
+\begin{enumerate}
+    \item Manipuler directement le DOM de l'UI via Pyodide: créer les éléments HTML appropriés et concevoir leur manipulation (= réinventer la roue, puisque des bibliothèques spécialisées ont été créées pour ça)... $\Rightarrow$ idées suivantes:
+    \item Bibliothèques JS existantes, exemple $Mermaid.js$: il faut que Python communique le flowchart à Mermaid $\rightarrow$ d'où l'idée du parsing AST
+    \item $Graphviz$ et son $DOT language$: à ma connaissance en WebAssembly (accessoirement alourdirait le chargement de la page) donc \textit{à ma connaissance} impossibilité de modifier le DOM directement rendant compliquée (impossible?) l'option du rendu dynamique du flowchart... MAJ 26/03/25 des modules Python existeraient pour faire le travail demandé: cf. \url{https://github.com/pydot/pydot}
+\end{enumerate}
+
+\subsection{Génération du code - des idées de pistes avec une supposition à questionner sur le besoin de travailler l'AST correspondant}
+
+Différentes approches à envisager, pas forcément mutuellement exclusives.
+
+\begin{enumerate}
+    \item[Approche texte + \texttt{ast}:] Le générateur de code créerait le script à afficher (texte) par application de \textit{templates} préddéfinis en les remplissant au fur et à mesure avec les variables et structures sélectionnées aléatoirement (exemple: "\texttt{if <condition> : <indent> <bloc>}). Approche la plus accessible et la plus facile à controler pédagogiquement, et la plus intuitive pour la production du script car on travaille du texte (ce que l'on veut en sortie) mais il manque le lien logique pour nous rapprocher du flowchart: besoin d'analyser la syntaxe du code généré pour en extraire la structure du code! C'est ce que promettent des fonctions comme \texttt{ast.parse()} pour retourner la racine de l'arbre syntaxique, et la classe \texttt{ast.NodeVisitor} pour parcourir les noeuds intéressants à traduire en noeuds flowchart (pour en garder que les éléments ciblés par nos objetifs pédagogiques). Pyodide est sensé nous donner la possibilité de créer et manipuler les éléments HTML correspondants, à styliser avec une classe CSS correspondante (à définir... plus facile à dire qu'à faire: il faudra supporter l'ancienneté des navigateurs installés dans les écoles et les terminaux des élèves iOS v18 et plus...).
+     
+     \item[Approche naïve:] S'inspirer de \cite{fuzzingbook} qui semble choisir des productions grammaticales correctes, mais à la signification aléatoire. 
+
+     \item [Approche AST radicale:] Générer un AST pour le traduire en Python et le traduire en flowchart = utiliser l'AST comme une sorte de DSL en faisant une application intensive du module \texttt{ast}. Approche inspirée de ce que j'ai compris de \url{https://github.com/radomirbosak/random-ast}. Utiliser l'arbre assurerait une cohérence syntaxique par rapport au langage (et permettrait des erreurs $Index Error$ ou $Division by zero$ et d'autres plus difficiles à contrôler). Le module \texttt{astor} semble faire le job de traduire l'arbre en code (cf. \url{https://pypi.org/project/astor/}). Le problème principal est la difficulté de créer le générateur d'arbre AST ! Sans parler de la difficulté de le maintenir pérenne selon les mises à jour Python !
+     
+    \item[Approche via DSL radicale:] D'après \url{https://en.wikipedia.org/wiki/Domain-specific_language} il s'agit d'une solution standard dans l'industrie logicielle de concevoir un DSL adapté à un problème spécifique afin de faciliter la génération de solutions... mais qui semble totalement hors de portée, dépassant le cadre de ce projet, à moins d'en trouver un clé en main !
+    
+\end{enumerate}
+
+\newpage
+
+\section{Rétro-planning}
+\textbf{Date supposée de rendu de note: vendredi 12 septembre 2025.}
+\begin{itemize}
+    \item Avril: Délimiter le périmètre du projet
+    \item Mai:
+    \item Juin: Finaliser le développement + continuer sur la bibliographie pour justifier les choix ou identifier d'autres plateformes similaires mais pas "satisfaisantes"...
+    \item Juillet: Rédaction du mémoire
+    \item Août: Rédaction du mémoire + Mémoire envoyé à l'expert au plus tard la semaine du lundi 25 août 2025.
+    \item Septembre: Soutenance à prévoir au plus tard la semaine du lundi 8 septembre 2025.
+\end{itemize}
+
+TODO liste:
+\begin{itemize}
+    \item \sout{Écrire à Andreas} $\longrightarrow$ Andreas a confirmé "\textit{que cet-te étudiant-e remplit toutes les conditions pour démarrer le projet individuel}" cf. PDF ci-joint dans le folder.\\
+    Je cite Andreas: \\ 
+$\bullet$ \textit{ Nous devons recevoir la note de ton projet individuel au plus tard le 12 septembre 2025. A ce jour, la soutenance du projet peut avoir lieu.\\
+$\bullet$ L’Université de Fribourg n’a pas (encore) des directives concernant l’utilisation de l’IA et il faut suivre les instructions de ton superviseur.}\\
+    \item \textbf{Intégrer les différents projets en un seul ;}
+    \begin{enumerate}
+        \item mis l'ancien projet (html, js, css) dans le index.html du dépôt edu\_mateescoj/gyminf
+        \item plus long sera de retrouver les essais skulpt et pyodide fonctionnels
+    \end{enumerate}
+    \item Liste des fonctionnalités:
+    \begin{itemize}
+        \item Justification de la fonctionnalité
+        \item Dépendance en amont/aval ?
+        \item Estimation du temps de développement.
+        \item DONE ou TODO
+    \item À quoi doit ressembler l'interface ? $\rightarrow$ fichier \texttt{png} dans le dépôt \texttt{edu-mateescoj/gyminf}
+    \item \sout{Le publier sur GitHub (optionnel)}.
+    \end{itemize}
+\end{itemize}
+
+\subsection{Fonctionnalités TODO}
+
+\begin{itemize}
+    \item Y a-t-il différents types d'utilisateurs ? $\longrightarrow$ oui et non: 
+    \begin{enumerate}
+        \item oui: enseignants et élèves n'auront pas le même usage
+        \item non: enseignants et élèves partagent la même interface et les mêmes fonctionnalités
+    \end{enumerate}
+    \item Formuler les fonctionnalités sous la forme : 
+    \begin{enumerate}
+        \item Enseignants \textbf{ET} élèves peuvent :
+        \begin{itemize}
+            \item utiliser l'outil sur les machines fournies à l'école pour générer des \textit{code snippets}, et regénérer à l'infini
+            \item sélectionner les éléments du langage à mobiliser pour chaque code qui sera généré
+            \item afficher le code sous forme Python et/ou \textit{flowchart}, au choix
+            \item afficher les valeurs des variables en fin de script
+            \item sauvegarder localement (pour plus tard) codes et flowcharts jugés intéressants $\longrightarrow$ \texttt{<button onclick="window.print()">Print this page</button>} ?\\ 
+            ou bien \texttt{html2canvas(document.querySelector("\#capture")).then(canvas => { document.body.appendChild(canvas) });} ?
+            \item modifier le code Python généré automatiquement pour l'afficher en flowchart, pour l'évaluer, pour l'exporter, et revenir au code généré initialement
+        \end{itemize}
+        \item "En tant qu'enseignant, je peux ..." en plus des éléments ci-dessus:
+        \begin{itemize}
+            \item utiliser les codes générés pour préparer des questions pour animer un cours dialogué, pour interroger les élèves en classe, ou pour impressions (asynchrone)
+            \item types d'exercices envisagés: lecture de code Python ; lecture de flowcharts ; traduction d'un langage à l'autre ; code à modifier pour obtenir un certain résultat attendu (prédéfini par l'enseignant)
+            \item laisser les élèves être autonomes dans leur progression, rendre les élèves conscients que c'est l'ordinateur qui "donne la réponse"
+            \item rendre les élèves conscients des contenus (les éléments à cocher/décocher) et du caractère \textit{presque scientifique} de la démarche
+        \end{itemize}
+        \item "En tant qu'élève, je peux ..." en plus des éléments ci-dessus:
+        \begin{itemize}
+            \item m'exercer à la lecture de code Python et à la lecture de flowchart, par l'évaluation de variables en fin de script, de façon autonome avec une rétroaction (juste ou faux)
+            \item investiguer des modification du code Python et voir leur effet sur le flowchart et sur les valeurs des variables en sortie du script
+            \item bénéficier d'une rétroaction plus riche en cas d'erreur (validation des types? erreurs attendues comme l'indexation pré-évaluées?)
+            \item utiliser la plateforme à l'école, sur smartphone, sur tablette et autres écrans personnels (\textit{fully responsive design})
+        \end{itemize}
+    \end{enumerate}
+\end{itemize}
+
+\newpage
+\section{POINT DE SITUATION en date du 2 mai}
+
+\textbf{A faire pour que mon code soit "au niveau" de fuzzing book} : 
+\begin{enumerate}
+    \item fixer la gestion des nœuds de jonction: \textit{bug or feature ?} $\Longrightarrow$ on garde ou pas? \begin{itemize}
+    \item si oui, ajuster le rendu Mermaid (plus fin? grisé?...)
+    \item sinon, changer la logique: 
+    \item labelliser toutes les arêtes et les stocker dans un \texttt{set} de tuples (from , to, label) ??
+    \item ou rajouter encore une structure pour stocker les arêtes provenant des noeuds terminaux en différenciant les types de terminaisons (Condition $\neq$ FunctionDef) ?? (\textit{side effect} possible: éviter les doublons de \texttt{return} en regroupant les arêtes terminales sortantes semblables)
+    \end{itemize}
+    \item gérer les \texttt{pass}, les \texttt{break}, les \texttt{continue}
+    \item numéroter les nœuds graphique selon \texttt{lineno} pour visualiser correspondance syntaxe $\thicksim$ sémantique
+    \item colorer les flèches "True / False" resp. Bleu/Rouge contre Noir par défaut
+\end{enumerate}
+
+------------------------------------------------------
+
+\textbf{A faire pour que mon code fasse "mieux" que fuzzing book} : 
+\begin{enumerate}
+    \item capturer au passage (avec les parcours de l'arbre) des informations pertinentes pour la partie "exerciseur": \begin{itemize}
+        \item types des variables si pas \texttt{AnnAssign} déjà
+        \item nombre d'itérations et/ou longueur de chaines, ...
+        \item \textbf{si code valide: valeurs des variables en sortie (JS \textit{fake Python} ou bien Python exec ??)}
+    \end{itemize}
+    \item gérer les \texttt{try: except: else: finally:}, les \texttt{Raise}, les \texttt{Assert}, ...
+    \item représenter les appels de type I/O différemment des autres (convention flowchart: parallélogramme)
+    \item représenter les (futurs, à implémenter) internal\_call différemment
+    \item affichage plus joli: travail syntaxe Mermaid selon dispo JS
+    \item gérer récursion ???
+\end{enumerate}
+
+------------------------------------------------------
+
+\textbf{Pistes à discuter} pour améliorer mon code pour le rendre plus "propre", lisible et compréhensible (?) (important ou non ? pour possibilité de réutilisation/collaboration?) :
+\begin{enumerate}
+    \item révéler la séparation des concepts : noeud AST vs. noeud de graphe
+    \item allouer les responsabilités : organiser le code pour le rendre "modulaire"
+    \item $\longrightarrow$ décomposer le code en des classes \texttt{ASTNode} et  \texttt{GraphNode} (pour arrêter de tout appeler "noeud"!), 
+    \item la \texttt{class ControlFlowGraph} resterait là pour orchestrer le tout, et appeler un  \texttt{CFGBuilder} à délimiter.  
+\end{enumerate}
+
+\section{Comparaison: MyCFG $\neq$ PyCFG}
+
+Nommage des fichiers .py à l'heure d'écriture : \newline
+\begin{itemize}
+    \item fichier PyCFG.py = Andreas Zeller ("fuzzingbook") puis Rahul Gopinath (etc.) contenant les classes CFGNode et PyCFG, que j'ai à peine modifié pour le rendre fonctionnel dans mon environnement (imports modules + compatibilité 'script' et pas 'Notebook').
+Je cite FuzzingBook:
+\begin{quote}
+    CFGNode representing each node in the control flow graph (...) Next, the PyCFG class which is responsible for parsing, and holding the graph.
+\end{quote}
+    \item Mon fichier: maintenant nommé MyCFG.py :) contenant une seule classe (hypertrophiée) ControlFlowGraph.
+\end{itemize}
+
+%\renewcommand{\arraystretch}{1.2} % un peu d'espace vertical
+\noindent\textbf{Ci-dessous : tableau comparatif}
+%\vspace{0.5cm}
+
+\begin{longtable}{|p{3cm}|p{7cm}|p{6cm}|}
+  \caption{Comparaison des logiques de construction de graphe de flot de contrôle}
+  \label{tab:comparatif}
+  \\ \hline
+  \textbf{Aspect} & \textbf{MyCFG} & \textbf{PyCFG} \\
+  \hline
+  \endfirsthead
+
+  \multicolumn{3}{l}{\small\slshape Suite du tableau \ref{tab:comparatif}}\\
+  \hline
+  \textbf{Aspect} & \textbf{MyCFG} & \textbf{PyCFG} \\
+  \hline
+  \endhead
+
+  \hline
+  \multicolumn{3}{r}{\small\slshape Table suite en page suivante} \\
+  \endfoot
+
+  \hline
+  \endlastfoot
+
+  % ============ contenu du tableau ============
+\textbf{Philosophie générale} & 
+Analyse directe de l'AST Python, au plus proche de la syntaxe du code source, approche qui se veut pédagogique car tolérante (accepte des chaînes non valides avec \texttt{return} hors d'une définition) & 
+Analyse plus sémantique, mais \texttt{lineno} visualisé à chaque nœud; reconstruit le flot d'exécution réel, "désucre" les structures (ex: for $\rightarrow$ while + next), pédagogique mais plus exigente au sens où elle révèle des "détails", plus bas niveau ! \\
+\hline
+\textbf{Entrée acceptée} & 
+Une chaîne de caractères représentant un code Python \textbf{syntaxiquement valide} (y compris invalide, tant que l'AST peut être construit) & 
+Uniquement du code Python valide (car lorsqu’il rencontre un return, il cherche à rattacher ce nœud à la fonction englobante en remontant la pile (liste Python) des parents, donc si le return n’est pas dans une fonction (cf. mes \texttt{exemples.py} comme dans NestedIf), la pile des parents finit par être vide, ce qui provoque un \texttt{IndexError} et pas un \texttt{SyntaxError: 'return' outside function}  \\
+\hline
+\textbf{Construction du graphe} & 
+Plusieurs visites de l'AST, chaque structure (If, For, While, etc.) a sa méthode dédiée (\texttt{visit\_If}, \texttt{visit\_For}, ...) & 
+Similaire (cf. classe \texttt{PyCFG}) avec  méthodes nommées \texttt{on\_NodeType} (ex: \texttt{on\_if}, \texttt{on\_for}, ...) pour chaque type de nœud AST \\
+\hline
+\textbf{Gestion des branches et jonctions} & 
+Ajoute explicitement des nœuds de jonction pour les structures de contrôle (type \texttt{Junction} pour chaque If, For et While), gère ce qui est sensé représenter une sortie terminale (\texttt{Return}); A MODIFIER: applique la même gestion à \texttt{Break} et \texttt{continue} & 
+Suit le flot réel, relie les nœuds selon l’exécution, gère les retours et les sorties via la structure du graphe et la pile de parents. Pas de nœud terminal \texttt{End} pour le flowchart, autre que les \texttt{return} de la fonction définie. \\
+\hline
+\textbf{Gestion des boucles} & 
+Représente les boucles telles qu'elles apparaissent dans le code source (ex: \texttt{For i in ...}) & 
+Transforme les boucles \texttt{for} en séquence équivalente (syntaxe un peu cryptique: \texttt{iter}, \texttt{next}, \texttt{while}), chaque étape devient un nœud \\
+\hline
+\textbf{Gestion des appels de fonction (hors définition de fonction)} & 
+Si l'appel est interprété comme tel par l'AST alors affiché de façon spécifique (parallélogramme), sinon affectation simple (rectangle), NB: rendu visuel différent selon que l'appel est avant ou après la déf° (cf. exemples \texttt{defif} et \texttt{defif2}). POUR LE MOMENT: pas différencié appels internes/externes, mais parait faisable & 
+Appels de fonctions natives sont comme affectations classiques (rectangles simples); appels des fonctions internes: suivis par le flux de la définitino de fonction. NB: \texttt{return} est un ovale "exit", même si suivi par du code. \\
+\hline
+\textbf{Gestion des définitions de fonctions} & 
+Problématique quand le code est uniquement une définition de fonction ! Les nœuds \texttt{Start} et \texttt{End} sont alors artificiels... logique à redéfinir ??  & 
+Impeccable. Caveat idem ci-dessus ! \\
+\hline
+\textbf{Tolérance aux erreurs} & 
+Tolère des return en dehors des fonctions & 
+Requiert du code Python syntaxiquement valide pour fonctionner (ex: expressions avec variables non intitialisées ne lèvent psa d'exception) \\
+\hline
+\textbf{Sortie / Visualisation} & 
+Génère une chaine en syntaxe Mermaid (un DOT language similaire à Graphviz) mieux adaptée pour un rendu Web il me semble: plus facile à maintenir & 
+Génère du DOT-Graphviz: infrastrucutre plus lourde! à décortiquer pour rendre un Mermaid_{JS} mais visualisation avancée, couleurs et styles selon le flot \\
+\hline
+\textbf{Gros Pour} & 
+plus souple = plus proche de ce qui est fait en classe ; infrastructure légère & 
+visualisation plus propre (eg: flux principal vs \texttt{def})  \\
+\hline
+\textbf{Gros Contre} & 
+encore bugs et incertitudes... & 
+c'est Digraph qui fait le graph !! \\
+\hline
+
+  % ========== fin du contenu ==========
+\end{longtable}
+
+\caption{Comparaison des logiques de construction de graphe de flot de contrôle}
+% \end{table}
+
+
+\section{Documentation du 28 avril: fichier \texttt{MyCFG} }
+
+\begin{longtable}{| >{\bfseries}l | p{4cm} | p{7cm} |}
+\caption{Correspondance des Types de Nœuds Internes, Nœuds AST et Sémantique}\label{tab:node_types}\\
+\hline
+\textbf{Node Type (Interne)} & \textbf{Nœud(s) AST Correspondant(s)} & \textbf{Sémantique (Langage Naturel)} \\
+\hline
+\endfirsthead
+\hline
+\endfoot
+\hline
+\multicolumn{3}{r}{\small\slshape Table suite en page suivante} \\
+\hline
+\endlastfoot
+% --- Types Implémentés --- & & \\ \hline
+StartEnd & \texttt{ast.Module} (implicite), \texttt{ast.FunctionDef} (implicite) & Représente le point d'entrée ('Start') ou de sortie ('End') global du script/module ou d'une fonction spécifique. \\ \hline
+Decision & \texttt{ast.If}, \texttt{ast.While}, \texttt{ast.For} & Nœud où le flux de contrôle se divise en fonction d'une condition (If, While) ou de l'état d'une itération (For, While). Représenté typiquement par un losange. \\ \hline
+Process & \texttt{ast.Assign}, \texttt{ast.Expr}, \texttt{ast.Call}, et autre non implémentés via \texttt{generic\_visit}: \texttt{ast.Pass}, \texttt{ast.Delete}, \texttt{ast.Import}, \texttt{ast.ImportFrom} & Représente une étape d'exécution séquentielle : une affectation, l'évaluation d'une expression, un appel de fonction, une instruction vide (\texttt{pass}), une suppression, un import, etc. Représenté typiquement par un rectangle. \\ \hline
+Junction & N/A (Nœud structurel ajouté) & Point de convergence où plusieurs chemins d'exécution se rejoignent (souvent après un 'If/Else') ou point de sortie défini d'une boucle. Représenté typiquement par un petit cercle ou un point. \\ \hline
+Return & \texttt{ast.Return} & Indique la fin de l'exécution d'une fonction et potentiellement le retour d'une valeur. Termine le chemin d'exécution dans cette fonction. Représenté par une forme spécifique (parallélogramme incliné, etc.). \\ \hline
+Jump & \texttt{ast.Break}, \texttt{ast.Continue} & Représente un saut inconditionnel dans le flux de contrôle vers un autre point défini (sortie de boucle pour 'Break', début de l'itération suivante pour 'Continue'). Termine le chemin séquentiel *local*. Représenté par un cercle ou une note. \\ \hline
+Subroutine & \texttt{ast.FunctionDef} & Représente la *définition* d'une fonction (sa signature). Peut être lié au flux principal pour montrer où elle est définie. Représenté par un parallélogramme ou un rectangle avec des barres. \\ \hline
+\\ \hline
+% --- Types à Implémenter (en vrac, pas exhaustif) --- & & \\ \hline
+
+ExceptionHandler & \texttt{ast.ExceptHandler} (dans \texttt{ast.Try}) & Bloc de code exécuté lorsqu'une exception spécifique est attrapée dans un bloc 'Try'. \\ \hline
+TryBlock & \texttt{ast.Try} (partie \texttt{body}) & Le bloc de code principal surveillé pour les exceptions. \\ \hline
+FinallyBlock & \texttt{ast.Try} (partie \texttt{finalbody}) & Bloc de code qui est *toujours* exécuté après un bloc 'Try', qu'une exception ait eu lieu ou non. Modifie le flux de sortie. \\ \hline
+ElseBlock (Try/Loop) & \texttt{ast.Try} (partie \texttt{orelse}), \texttt{ast.For}/\texttt{ast.While} (partie \texttt{orelse}) & Bloc exécuté si *aucune* exception n'est levée dans le 'Try' correspondant, ou si une boucle se termine *normalement* (sans 'Break'). \\ \hline
+Raise & \texttt{ast.Raise} & Provoque un saut inconditionnel hors du flux normal vers un gestionnaire d'exception ou termine le programme si non attrapé. Termine le chemin séquentiel local. \\ \hline
+ContextManager (With) & \texttt{ast.With}, \texttt{ast.AsyncWith} & Gère l'entrée et la sortie d'un contexte (ex: ouverture/fermeture de fichier). Représente un bloc avec potentiellement du code setup/teardown implicite. \\ \hline
+Assertion & \texttt{ast.Assert} & Vérifie une condition et lève une \texttt{AssertionError} si elle est fausse. Peut être vu comme une Décision menant potentiellement à un 'Raise'. \\ \hline
+ClassDefinition & \texttt{ast.ClassDef} & Similaire à 'Subroutine', représente la définition d'une classe. \\ \hline
+Yield & \texttt{ast.Yield}, \texttt{ast.YieldFrom} & Spécifique aux générateurs, met en pause l'exécution et retourne une valeur, permettant la reprise ultérieure. Modifie profondément le flux. \\ \hline
+AsyncAwait & \texttt{ast.AsyncFunctionDef}, \texttt{ast.Await}, \texttt{ast.AsyncFor}, \texttt{ast.AsyncWith} & Constructs pour la programmation asynchrone, impliquant des points de suspension et une boucle d'événements. (Probablement hors de portée initiale). \\ \hline
+
+\end{longtable}
+\newpage
+
+\section{Documentation des modifs UI du 24/06/25}
+Défis rencontrés : \begin{itemize}
+    \item Garantir que l'état visuel de l'interface reflète toujours de manière fiable la synchronisation entre le code dans l'éditeur et le diagramme affiché, à la condition que le flowchart soit effectivement modifié (pas pour les changement cosmétiques, non sémantiques); 
+    \item L'état "périmé" (outdated) n'a de sens que s'il y a un diagramme de référence à comparer. Si nous rechargeons le code, nous invalidons de fait le diagramme précédent.
+    \item Arriver à un code plus cohérent qui élimine la "condition de concurrence" (race condition) qui se produit lorsque des estionnaires d'événements accèdent à - et manipulent - l'état visuel des bordures, et que le résultat final dépend de l'ordre, imprévisible, dans lequel ils s'exécutent. 
+\end{itemize}
+
+\textbf{Petit scénario explicatif de la concurrence par la métaphore de la "course" (race condition):}
+1. Le problème avec le bouton 'reload':
+Le "coureur" n°1 démarre : Le gestionnaire d'événement du bouton reload-code-btn est appelé.
+Le "coureur" n°1 agit : Il exécute la ligne codeEditorInstance.setValue(lastLoadedCode).
+Le "coureur" n°2 est déclenché : L'action setValue déclenche immédiatement l'événement change de l'éditeur de code. Le gestionnaire codeEditorInstance.on('change', ...) se met en route.
+Le "coureur" n°2 agit :
+Il récupère le nouveau code.
+Il calcule son AST.
+Il le compare à lastDiagramAstDump, qui contient toujours l'AST de l'ancien code (celui d'avant le rechargement).
+La comparaison échoue ! Les AST sont différents.
+Le "coureur" n°2 conclut donc que le diagramme est périmé et appelle setDiagramAndChallengeCardState("outdated"). Les bordures deviennent rouges.
+Le "coureur" n°1 termine sa course : Après que le "coureur" n°2 a fini, le gestionnaire du bouton "Reload" reprend et exécute sa dernière ligne : setDiagramAndChallengeCardState("default").
+Le Résultat ? Le plus souvent, le "coureur" n°2 (le change handler) était plus rapide ou son effet visuel s'appliquait en dernier, laissant les bordures rouges. Le résultat était imprévisible et dépendait du timing du navigateur. C'était une course, et le mauvais coureur gagnait.
+2. LA solution: pas faire courir les processus plus vite, mais changer les règles de la course pour qu'elle devienne une coopération orchestrée.
+1) Invalider l'État de Référence en Premier
+Dans le nouveau code du reload-code-btn, la toute première chose que nous faisons est :
+lastDiagramAstDump = "";
+C'est l'équivalent de dire : "Attention, le diagramme qui était affiché n'a plus aucune valeur. Il n'y a plus de référence valide."
+2) Rendre le \texttt{change} Handler plus "Intelligent"
+Le gestionnaire codeEditorInstance.on('change', ...) a maintenant une nouvelle instruction au tout début de son code :
+\begin{minted}{Javascript}
+if (!lastDiagramAstDump) {
+    setDiagramAndChallengeCardState("default");
+    return; // Arrête-toi ici !
+}
+\end{minted}
+i.e. "Avant de faire quoi que ce soit, vérifie s'il existe un diagramme de référence valide. Si lastDiagramAstDump est vide, le diagramme est invalidé. Ton seul travail est de t'assurer que les bordures sont bleues (default) et de t'arrêter immédiatement. Ne continue pas la comparaison des AST."
+
+Continuons la métaphore avec des "coopérateurs" et non des coureurs concurrents:
+Le "coopérateur" n°1 démarre : Le gestionnaire du reload-code-btn est appelé.
+Le "coopérateur" n°1 prépare le terrain : Il exécute immédiatement lastDiagramAstDump = "". L'état de référence est maintenant invalidé. C'est le passage de témoin.
+Le "coopérateur" n°1 continue : Il appelle codeEditorInstance.setValue(lastLoadedCode).
+Le "coopérateur" n°2 est déclenché : L'événement change est émis.
+Le "coopérateur" n°2 lit les instructions :
+Il entre dans sa logique et sa première question est : if (!lastDiagramAstDump).
+La réponse est VRAI ! Le "coopérateur" n°1 a bien invalidé la variable.
+Il exécute donc setDiagramAndChallengeCardState("default") (les bordures deviennent bleues) et s'arrête net grâce au return.
+Fin de l'opération : Le gestionnaire change a terminé son travail correctement. Le gestionnaire reload termine aussi. Le résultat final est stable, prévisible et correct : les bordures sont bleues.
+
+Bref, la liste des modis effectuées:
+\begin{enumerate}
+    \item setDiagramAndChallengeCardState(state) :
+    \begin{itemize}
+        \item Légèrement modifiée pour être plus robuste : elle retire d'abord toutes les classes de bordure potentielles (border-danger, border-info, etc.) ainsi que la classe border de base, avant de réappliquer les bonnes. Cela évite d'avoir plusieurs classes de bordure en même temps.
+        \item Utilise \texttt{?.closest('.card')} pour éviter une erreur si l'élément n'est pas trouvé dans le DOM.
+    \end{itemize}
+    
+    \item lastDiagramAstDump (Variable Globale) :
+    \begin{itemize}
+        \item Cette variable est maintenant la seule source de vérité pour l'état du diagramme affiché.
+        \item Elle est initialisée à "" (chaîne vide).
+        \item Elle n'est mise à jour que lors d'un clic réussi sur le bouton "Lancer ...".
+        \item Elle est invalidée (remise à "") chaque fois qu'un nouveau code est chargé, généré ou rechargé, car le diagramme ne correspond plus.
+    \end{itemize}
+
+    \item Listener du bouton "Lancer..." (run-code-btn) :
+    \begin{itemize}
+        \item C'est ici que lastDiagramAstDump est mis à jour avec le ast.dump du code qui vient d'être exécuté pour générer le diagramme.
+        \item Après cette mise à jour, il appelle \texttt{setDiagramAndChallengeCardState("default")} pour mettre les bordures en bleu, car le code et le diagramme sont maintenant synchronisés.
+    \end{itemize}
+
+    \item Listener du bouton "Reload" (reload-code-btn) :
+    \begin{itemize}
+        \item C'est le cœur de la correction. La logique est maintenant :
+        \begin{enumerate}
+            \item Invalider l'état du diagramme en premier : lastDiagramAstDump est remis à "" et le contenu du div $\#flowchart$ est effacé.
+            \item Ensuite, mettre à jour le code dans l'éditeur : codeEditorInstance.setValue(lastLoadedCode).
+        \end{enumerate}
+        \item \textbf{Pourquoi cet ordre est-il crucial ?} Lorsque \texttt{setValue} est appelé, l'événement \texttt{change} de l'éditeur se déclenche immédiatement. Ce listener (décrit ci-dessous) verra que \texttt{lastDiagramAstDump} est vide et mettra l'état visuel à "default", ce qui est exactement le comportement souhaité. La course est ainsi gagnée en préparant l'état avant de déclencher l'événement !
+    \end{itemize}
+
+    \item Listener \texttt{change} de \texttt{codeEditorInstance} :
+Sa logique a été affinée :
+    \begin{itemize}
+        \item a. Il vérifie d'abord si lastDiagramAstDump est vide/invalide. Si c'est le cas, cela signifie qu'il n'y a pas de diagramme de référence. L'état est donc forcément "default" (on ne peut pas être "périmé" par rapport à rien). Il met les bordures en bleu et s'arrête.
+        \item b. Ce n'est que si lastDiagramAstDump a une valeur qu'il procède à la comparaison des AST et met l'état à "outdated" si nécessaire.
+    \end{itemize}
+    \end{enumerate}
+\newpage
+
+\section{Documentation des modifs \texttt{code-generator.js} du 30/06/25}
+
+\subsection{Objectifs du générateur}
+
+\begin{itemize}
+    \item Générer du code Python syntaxiquement correct et exécutable
+    \item Adapter la complexité selon le niveau souhaité
+    \item Permettre la sélection précise d'éléments syntaxiques
+    \item Produire du code pédagogiquement pertinent
+    \item Offrir une variété suffisante pour des exercices diversifiés
+\end{itemize}
+
+\subsection{Architecture globale}
+L'architecture du générateur repose sur une interaction entre l'interface utilisateur (HTML/CSS/JavaScript) et le moteur de génération de code (JavaScript). Le processus global se déroule comme suit:
+\begin{figure}[ht]
+%\centering
+\begin{adjustbox}{center,max width=\linewidth}
+\begin{tikzpicture}[node distance=1.8cm, auto]
+% Définition des styles
+    \tikzstyle{block} = [rectangle, draw, fill=blue!20, text width=10em, text centered, rounded corners, minimum height=3em]
+    \tikzstyle{action} = [rectangle, draw, fill=green!20, text width=8em, text centered, rounded corners, minimum height=2.5em]
+    \tikzstyle{output} = [rectangle, draw, fill=orange!20, text width=8em, text centered, rounded corners, minimum height=2.5em]
+    \tikzstyle{line} = [draw, -latex']
+    
+    % Placement des nœuds principaux
+    \node [block] (ui) {Interface utilisateur\\(layout.html)};
+    \node [action, below of=ui, yshift=-0.5cm] (config) {Configuration des options};
+    \node [block, below of=config, yshift=-0.5cm] (mainjs) {main.js};
+    
+    % Branches pour générer et lancer
+    \node [action, below left of=mainjs, xshift=-4cm, yshift=-1cm] (generate) {Bouton "Générer un Code Aléatoire"};
+    \node [action, below right of=mainjs, xshift=4cm, yshift=-1cm] (run) {Bouton "Lancer le diagramme et les défis"};
+    
+    % Nœuds liés à la génération de code
+    \node [block, below of=generate, yshift=-0.5cm] (codegen) {code-generator.js};
+    \node [output, below of=codegen, yshift=-0.5cm] (code) {Code Python généré};
+    
+    % Nœuds liés au flowchart
+    \node [block, below of=run, xshift=-2cm, yshift=-0.5cm] (flowgen) {flowchart-generator.js};
+    \node [block, below of=flowgen, yshift=-0.5cm] (mycfg) {MyCFG.py via Pyodide};
+    \node [output, below of=mycfg, yshift=-0.5cm] (flowchart) {Diagramme de flux};
+    
+    % Nœuds liés au défi
+    \node [block, below of=run, xshift=2cm, yshift=-0.5cm] (runtrace) {runAndTraceCode\\ForChallenge()};
+    \node [output, below of=runtrace, yshift=-0.5cm] (challenge) {Défi élève};
+    
+    % Connexions
+    \path [line] (ui) -- (config);
+    \path [line] (config) -- (mainjs);
+    \path [line] (mainjs) -- (generate);
+    \path [line] (mainjs) -- (run);
+    \path [line] (generate) -- node[left] {appelle} (codegen);
+    \path [line] (codegen) -- node[left] {generateRandomPythonCode()} (code);
+    \path [line] (run) -- (flowgen);
+    \path [line] (run) -- (runtrace);
+    \path [line] (flowgen) -- node[left] {triggerFlowchartUpdate()} (mycfg);
+    \path [line] (mycfg) -- node[left] {to\_mermaid()} (flowchart);
+    \path [line] (runtrace) -- (challenge);
+    % Connexions courbes corrigées
+%    \path [line] (code)      edge[bend left=30]  node[above] {affiché dans l'éditeur}   (ui);
+ %   \path [line] (flowchart) edge[bend right=45] node[below] {affiché dans le panneau}  (ui);
+  %  \path [line] (challenge) edge[bend right=60] node[below] {affiché dans le panneau}  (ui);
+\end{tikzpicture}
+\end{adjustbox}
+\caption{Architecture détaillée de l'exerciseur Python}
+\label{fig:architecture}
+\end{figure}
+
+\subsection{Flux d'exécution du processus de génération actuel}
+TODO: Debug indentation dans ForRange \newline
+Le processus de génération suit ces étapes principales:
+
+\begin{enumerate}
+    \item L'utilisateur configure les options dans l'interface (types de variables, structures de contrôle, etc.)
+    \item Le bouton "Générer un Code Aléatoire" déclenche la collecte des options
+    \item La fonction \texttt{generateRandomPythonCode(options)} est appelée par \texttt{main.js}
+    \item Cette fonction est définie dans \texttt{code-generator.js}
+    \item Le générateur crée le code en plusieurs phases:
+    \begin{enumerate}
+        \item Initialisation des constantes et variables
+        \item Calcul des lignes requises pour les structures demandées
+        \item Préparation des variables nécessaires
+        \item Génération des structures de contrôle
+        \item Complétion pour atteindre le nombre de lignes cible
+    \end{enumerate}
+    \item Le code généré est retourné à l'interface
+    \item L'utilisateur peut alors simuler l'exécution du code, visualiser le diagramme et répondre aux défis.
+\end{enumerate}
+
+\subsection{Principales fonctions de génération }
+
+Implémentées actuellement:
+\begin{longtable}{p{5cm}p{10cm}}
+\toprule
+\textbf{Fonction} & \textbf{Description} \\
+\midrule
+\texttt{generateRandomPythonCode} & Fonction principale de génération qui orchestre tout le processus \\
+\texttt{calculateRequiredLines} & Calcule le nombre minimum de lignes nécessaires \\
+\texttt{ensureVariablesForOptions} & Crée les variables demandées par l'utilisateur \\
+\texttt{ensureRequiredVariables} & Garantit que les variables nécessaires aux structures sont présentes \\
+\texttt{generateControlStructures} & Génère les structures de contrôle (if, boucles, fonctions) \\
+\texttt{generateIfStatement} & Génère une structure conditionnelle if/elif/else \\
+\texttt{generateForRangeLoop} & Génère une boucle for avec range() \\
+\texttt{generateForListLoop} & Génère une boucle for parcourant une liste \\
+\texttt{generateForStrLoop} & Génère une boucle for parcourant une chaîne \\
+\texttt{generateWhileLoop} & Génère une boucle while \\
+\texttt{generateFunction} & Génère une définition de fonction \\
+\texttt{addFiller} & Ajoute des opérations simples pour atteindre le nombre de lignes cible \\
+\bottomrule
+\end{longtable}
+
+Actuellement abandonnées:
+\begin{longtable}{p{5cm}p{10cm}}
+\toprule
+\textbf{Fonction} & \textbf{Description} \\
+\midrule
+\texttt{generateSimpleOperation} & Fonction qui écrit un minimum de code \\
+\texttt{planVariable} & Fonction de gestion de la présence des variables nécessaires \\
+\texttt{ensureVariableForStructure} & Fonction qui crée les variables demandées par les structures sélectionnées \\
+\texttt{finalVariableCheck} & ... \\
+\texttt{availableForVariables} & variable de stockage  \\
+\bottomrule
+\end{longtable}
+
+\subsection{Stratégie actuelle de gestion des variables}
+La gestion des variables est encore problématique, c'est l'un des aspects les plus complexes du générateur. Elle repose sur plusieurs mécanismes:
+
+\begin{itemize}
+    \item Les variables sont stockées dans \texttt{declaredVarsByType}, un objet qui les classe par type
+    \item Un ensemble \texttt{allDeclaredVarNames} permet de vérifier l'unicité des noms
+    \item Les variables planifiées mais non encore déclarées sont stockées dans \texttt{plannedVarsByType}
+    \item Des fonctions utilitaires générent des noms uniques et des valeurs appropriées
+\end{itemize}
+
+Résultat: plusieurs problèmes !
+\begin{enumerate}
+    \item \textbf{Problème d'indentation déjà mentionné}: La fonction \texttt{ensureVariableExists()} ne respecte pas l'indentation courante lors de la création de variables dans des structures de contrôle.
+    
+    \item \textbf{Fonctions redondantes}: Plusieurs fonctions coexistent avec des rôles similaires:
+    \begin{itemize}
+        \item \texttt{finalVariableCheck()} n'est finalement jamais appelée dans le flux d'exécution actuel
+        \item \texttt{ensureVariableForStructure()} redondante avec \texttt{ensureVariableExists()}
+        \item \texttt{generateSimpleOperation()} similaire à \texttt{generateAppropriateStatement()}
+        \item \texttt{generateVariables()} et \texttt{ensureVariablesForOptions()} ont des rôles qui se chevauchent
+    \end{itemize}
+    
+    \item \textbf{Variables inutilisées}: \texttt{availableForVariables} est calculée mais jamais utilisée
+    
+    \item \textbf{Distinction confuse}: La distinction entre variables "déclarées" et "planifiées" qui était prévue n'est pas toujours clairement respectée dans le code
+\end{enumerate}
+
+\subsection{Solutions proposées}
+
+Pour résoudre ces problèmes, les modifications suivantes sont recommandées:
+
+\begin{enumerate}
+    \item \textbf{Correction de \texttt{ensureVariableExists()}}: Modifier cette fonction pour qu'elle tienne compte de l'indentation courante et ajoute les variables avant les structures de contrôle:
+    
+    \begin{minted}{javascript}
+function ensureVariableExists(type, preferPlanned = false) {
+    // Si on est dans une structure (indentLevel > 0)
+    if (indentLevel > 0) {
+        // Trouver d'abord une variable existante
+        if (declaredVarsByType[type].length > 0) {
+            return getRandomItem(declaredVarsByType[type]);
+        }
+        
+        // Sinon, créer une variable AVANT la structure
+        const name = generateUniqueVarName(type);
+        const currentPosition = codeLines.length;
+        
+        // Trouver l'endroit où insérer la déclaration
+        let insertPosition = currentPosition - 1;
+        while (insertPosition >= 0 && 
+               codeLines[insertPosition].startsWith("    ")) {
+            insertPosition--;
+        }
+        
+        // Insérer la déclaration à cet endroit
+        codeLines.splice(insertPosition + 1, 0, 
+            `${name} = ${LITERALS_BY_TYPE[type](difficulty)}`);
+        declaredVarsByType[type].push(name);
+        allDeclaredVarNames.add(name);
+        linesGenerated++;
+        
+        return name;
+    }
+    
+    // Comportement normal hors structures
+    // ...
+}
+    \end{minted}
+    
+    \item \textbf{Simplification des fonctions de gestion des variables}:
+    \begin{itemize}
+        \item Supprimer \texttt{finalVariableCheck()} et intégrer sa logique dans \texttt{ensureRequiredVariables()}
+        \item Remplacer \texttt{ensureVariableForStructure()} par des appels à \texttt{ensureVariableExists()}
+        \item Unifier \texttt{generateSimpleOperation()} et \texttt{generateAppropriateStatement()}
+        \item Clarifier les rôles de \texttt{generateVariables()} et \texttt{ensureVariablesForOptions()}
+    \end{itemize}
+    
+    \item \textbf{Nettoyage des variables inutilisées}: Supprimer \texttt{availableForVariables} ou l'utiliser effectivement dans le code
+    
+    \item \textbf{Clarification de la distinction entre variables déclarées et planifiées}:
+    \begin{itemize}
+        \item Documenter clairement le cycle de vie des variables
+        \item Utiliser systématiquement \texttt{declareVariable()} pour passer une variable de "planifiée" à "déclarée"
+        \item Vérifier que toutes les variables planifiées sont bien déclarées avant la fin de la génération
+    \end{itemize}
+\end{enumerate}
+
+\section{Structures de contrôle}
+
+\subsection{Logique de génération des structures}
+
+Les structures de contrôle sont générées selon un processus en deux phases:
+
+\begin{enumerate}
+    \item \textbf{Préparation}:
+    \begin{itemize}
+        \item Construction d'une liste des structures à générer selon les options
+        \item Mélange aléatoire de cette liste pour varier l'ordre d'apparition
+        \item Vérification et création des variables nécessaires
+    \end{itemize}
+    
+    \item \textbf{Génération}:
+    \begin{itemize}
+        \item Parcours de la liste des structures
+        \item Appel de la fonction appropriée pour chaque structure
+        \item Gestion de l'indentation et du comptage des lignes
+    \end{itemize}
+\end{enumerate}
+
+\subsection{Itérateurs et variables locales}
+
+Un soin particulier est apporté aux variables d'itération:
+
+\begin{itemize}
+    \item Les noms d'itérateurs sont générés via \texttt{generateUniqueIteratorName()}
+    \item Un compteur global \texttt{iteratorCounter} garantit des noms distincts
+    \item Les itérateurs sont traités différemment des variables ordinaires
+\end{itemize}
+
+\subsection{Cas particuliers}
+
+\begin{itemize}
+    \item \textbf{Boucles for-in-list et for-in-str}: Si l'utilisateur n'a pas spécifié de variables list/str, un littéral est utilisé directement dans la boucle
+    \item \textbf{Boucles while}: Une condition décrémentale est générée pour éviter les boucles infinies
+    \item \textbf{Conditions if-elif-else}: La parenté entre options est gérée (if-elif implique if, if-elif-else implique if-elif)
+\end{itemize}
+
+\subsection{Réorganisation des fonctions proposée}
+
+Pour améliorer la clarté et la maintenabilité du code, nous proposons la restructuration suivante:
+Voir Figure~\href{fig:proposed_architecture}
+
+\begin{figure}[htbp]
+\centering
+\begin{tikzpicture}[node distance=1.5cm, auto]
+    % Définition des styles
+    \tikzstyle{block} = [rectangle, draw, fill=blue!20, text width=10em, text centered, rounded corners, minimum height=3em]
+    \tikzstyle{phase} = [rectangle, draw, fill=green!20, text width=8em, text centered, rounded corners, minimum height=2em]
+    \tikzstyle{line} = [draw, -latex']
+   
+    % Phases principales - avec beaucoup plus d'espace entre elles
+    \node [phase] (phase1) {1. Initialisation};
+    \node [phase, below of=phase1, yshift=-1.5cm] (phase2) {2. Planification};
+    \node [phase, below of=phase2, yshift=-4cm] (phase3) {3. Génération};
+    \node [phase, below of=phase3, yshift=-4cm] (phase4) {4. Finalisation};
+    
+    % Fonctions de l'étape 1
+    \node [block, right of=phase1, xshift=5cm] (init) {Initialisation des variables et constantes};
+    
+    % Fonctions de l'étape 2 - Alignées verticalement avec leur phase
+    \node [block, right of=phase2, xshift=5cm] (plan1) {calculateRequiredLines};
+    \node [block, below of=plan1, yshift=-1cm] (plan2) {planVariables};
+    
+    % Fonctions de l'étape 3 - Alignées verticalement avec leur phase
+    \node [block, right of=phase3, xshift=5cm] (gen1) {ensureVariables};
+    \node [block, below of=gen1, yshift=-1cm] (gen2) {generateStructures};
+    
+    % Fonctions de l'étape 4 - Alignées verticalement avec leur phase
+    \node [block, right of=phase4, xshift=5cm] (final1) {addFiller};
+    \node [block, below of=final1, yshift=-1cm] (final2) {verifyVariables};
+    
+    % Connexions
+    \path [line] (phase1) -- (phase2);
+    \path [line] (phase2) -- (phase3);
+    \path [line] (phase3) -- (phase4);
+    \path [line] (phase1) -- (init);
+    \path [line] (phase2) -- (plan1);
+    \path [line] (phase2) -- (plan2);
+    \path [line] (phase3) -- (gen1);
+    \path [line] (phase3) -- (gen2);
+    \path [line] (phase4) -- (final1);
+    \path [line] (phase4) -- (final2);
+\end{tikzpicture}
+\caption{Architecture proposée pour le générateur}
+\label{fig:proposed_architecture}
+\end{figure}
+
+\subsection{Cycle de vie des variables}
+
+Clarifications proposées:
+
+\begin{enumerate}
+    \item \textbf{Planification}: Les variables sont planifiées selon les besoins (options utilisateur et structures)
+    \item \textbf{Déclaration}: Les variables sont déclarées dans le code avec une valeur initiale
+    \item \textbf{Utilisation}: Les variables sont utilisées dans les structures de contrôle
+    \item \textbf{Vérification}: Toutes les variables utilisées sont bien déclarées
+\end{enumerate}
+
+
+
+
+\begin{thebibliography}{99}
+
+\bibitem{pyodide} Pyodide Development Team. (2023). \textit{Pyodide Documentation}. Récupéré de \url{https://pyodide.org} (consulté en 2024).
+
+\bibitem{codemirror6} Haverbeke, M. (2021). \textit{CodeMirror 6 Documentation}. Récupéré de \url{https://codemirror.net/6/} (consulté en 2024).
+
+\bibitem{ace} Ace Editor. (n.d.). \textit{Ace - The High Performance Code Editor for the Web}. Récupéré de \url{https://ace.c9.io} (consulté en 2024).
+
+\bibitem{python-ast} Python Software Foundation. (2023). \textit{Python Documentation: ast --- Abstract Syntax Trees}. Extrait de \url{https://docs.python.org/3/library/ast.html} (consulté en 2024).
+
+\bibitem{python-dis} Python Software Foundation. (2023). \textit{Python Documentation: dis --- Disassembler for Python bytecode}. Extrait de \url{https://docs.python.org/3/library/dis.html} (consulté en 2024).
+
+\bibitem{kluyver2012} Kluyver, T. (2012). \textit{Green Tree Snakes: Getting to and from ASTs}. Documentation en ligne, \url{https://greentreesnakes.readthedocs.io} (consulté en 2024).
+
+\bibitem{fuzzingbook} Zeller, A. et al. (2022). \textit{The Fuzzing Book} – Chapitre "Fuzzing with Grammars". En ligne, \url{https://www.fuzzingbook.org} (consulté en 2024).
+
+\bibitem{didask} Didask. (n.d.). \textit{Qu'est-ce qu'un outil auteur ? - Le guide complet}. Recopié de \url{https://www.didask.com (consulté en 2025)}.
+
+\bibitem{wenger} Wenger, E. (1998).\textit{Communities of practice: Learning, meaning, and identity}. Cambridge University Press. \url{https://doi.org/10.1017/CBO9780511803932}
+
+\bibitem{papert1980} Papert, S. (1980). \textit{Mindstorms: Children, Computers, and Powerful Ideas}. Basic Books.
+
+\bibitem{messer2023} Messer, M., Brown, N.C.C., Kölling, M., \& Shi, M. (2023). Automated Grading 
+and Feedback Tools for Programming Education: A Systematic Review. \textit{arXiv preprint} 
+arXiv:2306.11722.
+
+\bibitem{zimmermann2024} Zimmermann, A. E., King, E. E., \& Bose, D. D. (2024). Effectiveness 
+and Utility of Flowcharts on Learning in a Classroom Setting: A Mixed-Methods Study. 
+\textit{American Journal of Pharmaceutical Education, 88}(1), 100591.
+
+\bibitem{sovietov} Sovietov, P. (2022). Automatic Generation of Programming Exercises. \textit{Institute of Information Technologies MIREA – Russian technological university Moscow, Russia - sovetov@mirea.ru} 10.48550/arXiv.2205.11304. 
+
+\end{thebibliography}
+
+\end{document}

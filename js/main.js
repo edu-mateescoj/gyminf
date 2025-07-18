@@ -223,6 +223,7 @@ document.addEventListener('DOMContentLoaded', function() {
         </div>`;
     const functionsOptionsHTML_Base = `
         <div class="d-flex flex-column gap-1">
+            <div class="form-check form-check-inline"><input class="form-check-input" type="checkbox" id="func-def-simple"><label class="form-check-label small" for="func-def-simple">def f()</label></div>
             <div class="form-check form-check-inline"><input class="form-check-input" type="checkbox" id="func-def-a"><label class="form-check-label small" for="func-def-a">def f(a)</label></div>
             <div class="form-check form-check-inline"><input class="form-check-input" type="checkbox" id="func-return"><label class="form-check-label small" for="func-return">return</label></div>
             <div class="form-check form-check-inline" id="func-builtins-main-container"></div>
@@ -337,6 +338,14 @@ document.addEventListener('DOMContentLoaded', function() {
             const updateDOM = () => {
                 if (checkbox.checked) {
                     targetContainer.innerHTML = section.baseHtmlGetter();
+                    //  Logique pour cocher l'option de base par défaut
+                    if (section.checkboxId === 'frame-conditions') {
+                        const ifCheckbox = targetContainer.querySelector('#cond-if');
+                        if (ifCheckbox) ifCheckbox.checked = true;
+                    } else if (section.checkboxId === 'frame-functions') {
+                        const funcSimpleCheckbox = targetContainer.querySelector('#func-def-simple');
+                        if (funcSimpleCheckbox) funcSimpleCheckbox.checked = true;
+                    }
                     const internalContainer = targetContainer.querySelector('.d-flex.flex-column.gap-1');
                     if (internalContainer && section.advancedHandler) {
                         section.advancedHandler(internalContainer, advancedModeCheckbox.checked);
@@ -722,18 +731,42 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
         // 5. Fonctions (Func)
-        if (getChecked('frame-functions')) {
-            minTotalLines += 2; // def f(): pass
-            conceptualDifficultyScore += 5;
+        if (getChecked('frame-functions') && (getChecked('func-def-simple') || getChecked('func-def-a') || getChecked('func-def-ab'))) {
             let funcParams = 0;
-            if (getChecked('func-def-a')) funcParams = 1;
-            if (getChecked('func-def-ab')) funcParams = Math.max(funcParams, 2);
+            let funcDefLines = 0;
+            
+            if (getChecked('func-def-simple')) {
+                funcDefLines = 2; // def f(): pass
+                conceptualDifficultyScore += 4;
+            }
+            if (getChecked('func-def-a')) {
+                funcParams = 1;
+                funcDefLines = Math.max(funcDefLines, 2);
+                conceptualDifficultyScore = Math.max(conceptualDifficultyScore, 5);
+            }
+            if (getChecked('func-def-ab')) {
+                funcParams = Math.max(funcParams, 2);
+                funcDefLines = Math.max(funcDefLines, 2);
+                conceptualDifficultyScore = Math.max(conceptualDifficultyScore, 6);
+            }
+            
+            minTotalLines += funcDefLines;
             minTotalVariables = Math.max(minTotalVariables, funcParams);
             
             if (getChecked('func-return')) { minTotalLines +=1; conceptualDifficultyScore += 2; }
-            if (getChecked('func-builtins')) { minTotalLines +=1; conceptualDifficultyScore += 1; }
             if (getChecked('func-op-list')) { minTotalLines +=1; conceptualDifficultyScore += 3; if (varCounts.list === 0 && explicitVarDeclarations < 1) minTotalVariables = Math.max(minTotalVariables, 1);}
             if (getChecked('func-op-str')) { minTotalLines +=1; conceptualDifficultyScore += 3; if (varCounts.str === 0 && explicitVarDeclarations < 1) minTotalVariables = Math.max(minTotalVariables, 1);}
+            
+            // Ligne pour l'appel de la fonction
+            minTotalLines +=1; 
+
+            // Lignes supplémentaires pour l'appel si des variables sont déclarées
+            if (funcParams > 0 && explicitVarDeclarations > 0) {
+                minTotalLines += funcParams; 
+            }
+            if (getChecked('func-return') && explicitVarDeclarations > 0) {
+                minTotalLines += 1; // Ligne pour utiliser la valeur de retour
+            }
             // Prise en compte des builtins sélectionnés
             if (getChecked('func-builtins')) {
                 conceptualDifficultyScore += 1; // Le fait d'utiliser des builtins ajoute un peu
@@ -998,6 +1031,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
                 // Fonctions (Func)
                 main_functions: getChecked('frame-functions'),
+                func_def_simple: getChecked('func-def-simple'),
                 func_def_a: getChecked('func-def-a'),
                 // func_builtins: getChecked('func-builtins'), // La case principale builtins
                 // Builtins spécifiques (seront false si #func-builtins n'est pas cochée car ils ne seront pas dans le DOM)
