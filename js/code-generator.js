@@ -1622,7 +1622,7 @@ function generateRandomPythonCode(options) {
                     () => `${varName}.insert(${getRandomInt(0, declaredVarsByType.list.length - 1)}, ${getRandomInt(-difficulty, +difficulty)})`] : []),
                 // Suppression d'éléments
                 ...(declaredVarsByType.list.length > 0 ? [
-                    () => `if len(${varName}) > 0:\n    ${varName}.pop(0)  # Suppression du premier élément`
+                    () => `if ${varName}: ${varName}.pop(0) # Suppression du premier élément`
                 ] : [])
             ],
             'bool': [
