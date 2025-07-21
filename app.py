@@ -1,3 +1,13 @@
+''' ici les routes côté serveur; le code Python généré est en format JSON
+Les requêtes sont traitées par le serveur Flask qui répond avec un statut de réussite
+FLUX: 
+    0.1/ dans db_queries.js sont définies les fonctions AJAX qui préparent les données, utilisent la fonction utilitaire logFactory, 
+envoient les requêtes POST aux routes Flask correspondantes, qui appellent app.py
+    0.2/ dans app.py les fonctions Python qui traitent les requêtes, exécutent la journalisation et renvoient un statut de réussite
+  1/ dans layout.html les boutons ("run-code-btn" pour lancer le flowchart et les défis)
+2/ dans main.js : les appels aux fonctions AJAX pour envoyer les données au serveur
+'''
+
 from datetime import datetime
 
 from flask import Flask, render_template, request, flash, session, jsonify
@@ -6,22 +16,30 @@ from flaskext.mysql import MySQL
 
 import config
 
-app = Flask(__name__)
-app.secret_key = config.SECRET_KEY
-app.config.update(config.MYSQL_CONFIG)
-mysql = MySQL()
-mysql.init_app(app)
-bcrypt = Bcrypt(app)
-con = mysql.connect()
+app = Flask(__name__) # crée une instance de l'application Flask
+# __name__ est le nom du module courant, utilisé pour localiser les ressources de l'application
+# Flask utilise __name__ pour savoir où chercher les fichiers de templates, les fichiers statiques
+app.secret_key = config.SECRET_KEY 
+app.config.update(config.MYSQL_CONFIG) # met à jour la configuration de l'application avec les paramètres MySQL
+mysql = MySQL() # initialise l'extension MySQL
+mysql.init_app(app) # lie l'application Flask à l'extension MySQL
+bcrypt = Bcrypt(app) # initialise l'extension Bcrypt pour le hachage de mot de passe
+con = mysql.connect() # crée l'objet con := établit la connexion à la base de données MySQL
 
 
-@app.route('/', methods=['GET'])
+@app.route('/', methods=['GET']) 
+# dit que la fonction gère les requêtes GET vers l'url racine '/'
+# GET / POST: point de vue client
 def home():
-    return render_template('connexion.html')
-
+    return render_template('connexion.html') #fichier à voir dans le dossier "templates"
+                                            #"convention over configuration" (Flask)
 
 @app.route('/', methods=['POST'])
 def authenticate():
+    ''' Traite les formulaires de connexion ou inscription
+    Selon les données du formulaire POST : redirige selon le type (signin ou signup)
+    # Si authentification réussie, affiche layout.html, sinon renvoie à connexion.html
+    '''
     username = request.form['username']
     password = request.form['password']
     type = request.form['type']
@@ -35,6 +53,11 @@ def authenticate():
 
 @app.route('/code_generation', methods=['POST'])
 def code_is_generated():
+    ''' 
+    Appelle la fonction de journalisation (stockeen base de données le username et son code généré 
+    Si code généré: reçoit données JSON, en extrait le code 
+    Renvoie un statut de succès ou d'erreur
+    '''
     data = request.get_json()
     code = data['code']
     username = session['username']
@@ -46,6 +69,11 @@ def code_is_generated():
 
 @app.route('/flowchart_generation', methods=['POST'])
 def flowchart_is_generated():
+    '''
+    Enregistre en base de données le username et le code généré
+    Si flowchart généré: Reçoit les données JSON, en extrait le code
+    Renvoie un statut de succès ou d'erreur
+    '''
     data = request.get_json()
     code = data['code']
     username = session['username']
@@ -92,16 +120,27 @@ def signup(username, password):
 
 
 def code_generation_log(username: str, code: str) -> bool:
-    cursor = con.cursor()
+    '''
+    Fonction de journalisation: commence par remplacer les sauts de ligne pour stockage SQL
+    Stocke user_id, code, difficulty, time_created (horodatage)
+    Retourne statut de réussite (True si insertion a réussi)
+    '''
+    cursor = con.cursor() # crée un curseur pour exécuter des requêtes SQL
+    # objet con := connexion à la base de données MySQL
+    # con.cursor() crée l'objet cursor qui permet d'exécuter des requêtes SQL
+    # cursor := interface pour exécuter des requêtes SQL (limité à une opération à la fois)
     status = False
     try:
         cursor.execute("SELECT id from user WHERE username = %s", (username,))
+        # %s := paramètre préparé pour éviter injection SQL
         user_id = cursor.fetchone()
+        # fetchone() récupère la première ligne du résultat de la requête
+        # renvoie None si aucune ligne trouvée, sinon un tuple (valeurs des colonnes)
         user_id = user_id[0]
         if user_id:
             code = code.replace('\n', '\\n')
             cursor.execute("INSERT INTO code (user_id, code, difficulty, time_created) VALUES (%s, %s, %s, %s)", (user_id, code, 1, datetime.now()))
-            con.commit()
+            con.commit() # confirme les modifications dans la base de données
             status = True
     except:
         status = False
@@ -110,6 +149,11 @@ def code_generation_log(username: str, code: str) -> bool:
     return status
 
 def flowchart_generation_log(username: str, code: str) -> bool:
+    '''
+    Fonction de journalisation: commence par remplacer les sauts de ligne pour stockage SQL
+    Stocke user_id, code_id, time_created (horodatage)
+    Retourne un statut de réussite (True si insertion a réussi)
+    '''
     cursor = con.cursor()
     status = False
     try:
