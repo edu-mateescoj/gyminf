@@ -1,5 +1,5 @@
 ''' ici les routes côté serveur; le code Python généré est en format JSON
-Les requêtes sont traitées par le serveur Flask qui répond avec un statut de réussite
+Les requêtes AJAXsont traitées par le serveur Flask qui répond avec un statut de réussite
 FLUX: 
     0.1/ dans db_queries.js sont définies les fonctions AJAX qui préparent les données, utilisent la fonction utilitaire logFactory, 
 envoient les requêtes POST aux routes Flask correspondantes, qui appellent app.py
