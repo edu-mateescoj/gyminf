@@ -1,4 +1,11 @@
 // js/main.js
+/**
+ * @file main.js
+ * Fichier principal orchestrant l'ensemble de l'interface utilisateur.
+ * Gère l'initialisation de l'éditeur, les gestionnaires d'événements pour les boutons,
+ * la configuration de la génération de code, et la communication avec le moteur Pyodide.
+ * Il délègue la logique spécifique au "Défi" au module validation.js.
+ */
 const MAX_CODE_LINES = 30;
 const MAX_TOTAL_VARIABLES_GLOBAL = 20;
 const MIN_POSSIBLE_CODE_LINES = 3;
@@ -198,6 +205,13 @@ document.addEventListener('DOMContentLoaded', function() {
     }
     
     let variableValuesFromExecution = {}; // Pour stocker les valeurs des variables après l'exécution du code
+
+     // --- Éléments DOM pour la section Défi ---
+    const challengeVariablesContainer = document.getElementById('variables-container');
+    const checkAnswersButton = document.getElementById('check-answers-btn');
+    const showSolutionButton = document.getElementById('show-solution-btn');
+    const feedbackModalElement = document.getElementById('feedback-modal');
+    const feedbackModal = feedbackModalElement ? new bootstrap.Modal(feedbackModalElement) : null;
 
     // --- Éléments DOM Globaux pour la Configuration ---
     const difficultyGlobalSelect = document.getElementById('difficulty-level-global');
@@ -975,7 +989,8 @@ document.addEventListener('DOMContentLoaded', function() {
 
 
     // --- Gestionnaire pour "Générer un Code Aléatoire" ---
-    // déjé déclaré: const generateCodeButton = document.getElementById('generate-code-btn');
+    // déjé déclaré generateCodeButton dans lâncienne version
+    const generateCodeButton = document.getElementById('generate-code-btn');
     if (generateCodeButton) {
         generateCodeButton.addEventListener('click', function() {
             //console.log("Bouton 'Générer un Code Aléatoire' cliqué.");
@@ -1247,8 +1262,8 @@ if (codeEditorInstance) {
                 } else {
                     console.warn("Pyodide n'est pas encore prêt pour exécuter le code du défi.");
                     alert("Le moteur Python n'est pas encore prêt. Veuillez patienter.");
-                    const checkAnswersButton = document.getElementById('check-answers-btn');
-                    const showSolutionButton = document.getElementById('show-solution-btn');
+                    // const checkAnswersButton = document.getElementById('check-answers-btn');
+                    // const showSolutionButton = document.getElementById('show-solution-btn');
                     if (checkAnswersButton) checkAnswersButton.disabled = true;
                     if (showSolutionButton) showSolutionButton.disabled = true;
                     return;
@@ -1414,7 +1429,7 @@ if (codeEditorInstance) {
     /**
      * Affiche la modale de feedback avec les résultats de la vérification.
      * @param {Object} feedbackResults - Les résultats de la vérification. Structure: { varName: { studentAnswer: '', correctAnswer: '', isCorrect: true/false }}
-     */
+     * DEPLACEE DANS validation.js
     function showFeedbackModal(feedbackResults) {
         const modalEl = document.getElementById('feedback-modal');
         if (!modalEl) return;
@@ -1468,6 +1483,8 @@ if (codeEditorInstance) {
         const feedbackModalInstance = bootstrap.Modal.getOrCreateInstance(modalEl);
         feedbackModalInstance.show();
     }
+    */
+
 
     // --- Initialisation au chargement de la page ---
 
@@ -1770,7 +1787,7 @@ json.dumps({"variables": _final_vars,
 }
 
 
-
+/* DEPLACÉE DANS validation.js
 function checkStudentAnswers(correctVariableValues) {
     console.log("Vérification des réponses de l'élève...");
     const results = {};
@@ -1852,6 +1869,7 @@ function checkStudentAnswers(correctVariableValues) {
     console.log("Résultats de la vérification:", results);
     return results;
 }
+*/
 
 /**
  * Helper function to get a Python-like string representation for non-basic types.
@@ -1877,7 +1895,10 @@ function reprPythonVal(value) {
     return String(value);
 }
 
-
+/**
+ * 
+ * DEPLACEE dans validation.js
+ 
 function revealCorrectSolution(correctVariableValues) {
     console.log("Révélation de la solution...");
     const inputs = document.querySelectorAll('.student-answer-input');
@@ -1896,6 +1917,8 @@ function revealCorrectSolution(correctVariableValues) {
     if (checkBtn) checkBtn.disabled = true;
     if (showSolBtn) showSolBtn.disabled = true;
 }
+*/
+
 // --- Gestion de la Console et des I/O personnalisées ---
 
 /**
