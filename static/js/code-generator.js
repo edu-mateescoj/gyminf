@@ -1,3 +1,7 @@
+/**
+ * Générateur amélioré de code Python pédagogique
+ * Aligne variables par type et génère une structure cohérente selon les options
+ */
 function generateRandomPythonCode(options) {
     console.log("Début de generateRandomPythonCode avec options :", JSON.parse(JSON.stringify(options)));
 
@@ -202,7 +206,7 @@ function generateRandomPythonCode(options) {
     function ensureListVariablesCount() {
         // Vérifier si le nombre actuel de listes déclarées correspond à l'option demandée
         const targetListCount = options.var_list_count || 0;
-        let currentListCount = declaredVarsByType.list.length;
+        const currentListCount = declaredVarsByType.list.length;
         
         // Si on a déjà assez de listes, ne rien faire
         if (currentListCount >= targetListCount) return;
@@ -223,26 +227,16 @@ function generateRandomPythonCode(options) {
             currentListCount++;
             // S'assurer que la liste est utilisée quelque part dans le code
             ensureListVariableIsUsed(listVar);
+            // ensureVariableIsUsed(listVar, 'list');
         }
     }
-    // Générer des myList.append(random) ou print(myList[0]) conditionnels sur len() > 0 si builtins choisis
-    // pour le cas où la liste est là mais pas *vraiment* utilisée
+    // Générer une liste avec des éléments de types diversifiés
     function ensureListVariableIsUsed(listVarName) {
-        // Vérifier d'abord si la variable est déjà utilisée dans le code sans avoir été déclarée
-        const isUsed = codeLines.some(line => {
-        // Ligne qui n'est pas une déclaration mais contient le nom de variable
-        const isNotDeclaration = !line.trim().startsWith(`${listVarName} =`);
+        // Vérifier si la variable est déjà utilisée dans le code
+        const isUsed = codeLines.some(line => 
+            line.includes(`${listVarName}`) && !line.startsWith(`${listVarName} =`)
+        );
         
-        // Utilisation significative: méthodes de liste, indexation, etc.
-        const isSignificantUse = 
-            line.includes(`${listVarName}.append(`) || 
-            line.includes(`${listVarName}.extend(`) ||
-            line.includes(`${listVarName}[`) ||
-            line.includes(`for `) && line.includes(` in ${listVarName}:`);
-        
-        return isNotDeclaration && line.includes(listVarName) && isSignificantUse;
-    });
-        // Si la variable n'est pas utilisée de façon significative, ajouter une utilisation
         if (!isUsed) {
             const useAdvancedOps = difficulty >= 4 || options.builtin_isinstance || options.builtin_len;
         
@@ -290,6 +284,25 @@ function generateRandomPythonCode(options) {
             }
             // Exécuter une opération aléatoire
             getRandomItem(operations)();
+        }
+    }
+
+    function ensureVariableIsUsed(varName, type) {
+        // Vérifie si la variable est utilisée ailleurs que dans sa propre déclaration.
+        const isUsed = codeLines.some(line => 
+            line.includes(varName) && !line.trim().startsWith(`${varName} =`)
+        );
+
+        if (!isUsed && linesGenerated < targetLines) {
+            let useOperation;
+            // Ajoute une opération simple pour "utiliser" la variable.
+            if (type === 'list' || type === 'str') {
+                useOperation = `print(f"Contenu de ${varName}: {${varName}}")`;
+            } else {
+                 useOperation = generateVariedOperation(type, varName, difficulty);
+            }
+            codeLines.push(useOperation);
+            linesGenerated++;
         }
     }
 
@@ -359,7 +372,13 @@ function generateRandomPythonCode(options) {
         if (options.var_str_count) typesToGenerate.push({ type: 'str', count: options.var_str_count });
         if (options.var_list_count) typesToGenerate.push({ type: 'list', count: options.var_list_count });
         if (options.var_bool_count) typesToGenerate.push({ type: 'bool', count: options.var_bool_count });
- 
+        /**
+        if (options.var_int_count) typesToGenerate.push(...Array(options.var_int_count).fill('int'));
+        if (options.var_float_count) typesToGenerate.push(...Array(options.var_float_count).fill('float'));
+        if (options.var_str_count) typesToGenerate.push(...Array(options.var_str_count).fill('str'));
+        if (options.var_list_count) typesToGenerate.push(...Array(options.var_list_count).fill('list'));
+        if (options.var_bool_count) typesToGenerate.push(...Array(options.var_bool_count).fill('bool'));
+         */
         shuffleArray(typesToGenerate);
 
         // Générer les variables dans l'ordre des types (pas en mélange)
@@ -387,101 +406,173 @@ function generateRandomPythonCode(options) {
             linesGenerated++;
         }
     }
-
-    
-    // Générer les structures de contrôle
-    // un gestionnaire central pour générer des conditions adaptées au contexte
-    function generateCondition(varTypes = ['int', 'bool'], preferExisting = true) {
-        // --- AVEC CONDITIONS PRENANT EN COMPTE STR ET LIST ---
-        const possibleConditions = [];
-
-        // 1. Collecter toutes les conditions possibles au lieu de s'arrêter à la première.
         
-        // Conditions basées sur les booléens
-        if (varTypes.includes('bool') && declaredVarsByType.bool.length > 0 && preferExisting) {
-            declaredVarsByType.bool.forEach(boolVar => {
-                possibleConditions.push(boolVar);
-                possibleConditions.push(`not ${boolVar}`);
-                possibleConditions.push(`True == ${boolVar}`);
-                possibleConditions.push(`${boolVar} == False`);
-                possibleConditions.push(`${boolVar} != True`);
-                possibleConditions.push(`False != ${boolVar}`);                
-                /* déjà essayé mais moche
-                possibleConditions.push(`${boolVar} == ${boolVar} or True`);
-                possibleConditions.push(`${boolVar} == ${boolVar} or False`);
-                */
-            });
-        }
-
-        // Conditions basées sur les listes
-        if (varTypes.includes('list') && declaredVarsByType.list.length > 0 && preferExisting) {
-            const listVar = getRandomItem(declaredVarsByType.list);
-            const compareLength = getRandomInt(0, 3);
-            const compareOp = getRandomItem(['>', '==', '<=']);
-            possibleConditions.push(`len(${listVar}) ${compareOp} ${compareLength}`);
+    // Phase 2: Générer les opérations
+    function generateOperations() {
+        // Plus-Minus est toujours activé
+        if (options.op_plus_minus && linesGenerated < targetLines) {
+            const numVars = [...declaredVarsByType.int, ...declaredVarsByType.float];
             
-            const valueToFind = getRandomInt(1, 10);
-            possibleConditions.push(`${valueToFind} in ${listVar}`);
-        }
-
-        // Conditions basées sur les chaînes
-        if (varTypes.includes('str') && declaredVarsByType.str.length > 0 && preferExisting) {
-            const strVar = getRandomItem(declaredVarsByType.str);
-            possibleConditions.push(`len(${strVar}) > ${getRandomInt(3, 8)}`);
-
-            const charToFind = getRandomItem(['a', 'e', 'i', 'o', 'u', 'y']);
-            possibleConditions.push(`"${charToFind}" in ${strVar}`);
-        }
-
-        // Conditions basées sur les entiers
-        if (varTypes.includes('int') && declaredVarsByType.int.length > 0 && preferExisting) {
-            const intVar = getRandomItem(declaredVarsByType.int);
-            if (varTypes.includes('while_safe')) {
-                possibleConditions.push(`${intVar} > 0`);
-            } else {
-                const compareValue = getRandomInt(-5, 5);
-                const compareOp = getRandomItem(['>', '<', '==', '!=']);
-                possibleConditions.push(`${intVar} ${compareOp} ${compareValue}`);
+            if (numVars.length >= 2) {
+                const target = getRandomItem(numVars);
+                const operand = getRandomItem(numVars.filter(v => v !== target) || numVars);
+                const op = getRandomItem(['+', '-']);
+                
+                codeLines.push(`${target} = ${target} ${op} ${operand}`);
+                linesGenerated++;
             }
         }
+        
+        // Multiplication et Division
+        if (options.op_mult_div_pow && linesGenerated < targetLines) {
+            const numVars = [...declaredVarsByType.int, ...declaredVarsByType.float];
+            
+            if (numVars.length >= 1) {
+                const target = getRandomItem(numVars);
+                const value = getRandomInt(1, 5); // Éviter division par zéro
+                const op = getRandomItem(['*', '/']);
+                
+                codeLines.push(`${target} = ${target} ${op} ${value}`);
+                linesGenerated++;
+            }
+        }
+        
+        // Modulo et division entière
+        if (options.op_modulo_floor && linesGenerated < targetLines && difficulty > 1) {
+            const intVars = declaredVarsByType.int;
+            
+            if (intVars.length >= 1) {
+                const target = getRandomItem(intVars);
+                const value = getRandomInt(1, 5); // Éviter division par zéro
+                const op = getRandomItem(['%', '//']);
+                
+                codeLines.push(`${target} = ${target} ${op} ${value}`);
+                linesGenerated++;
+            }
+        }
+        
+        // Opérateurs logiques
+        if ((options.op_and || options.op_or) && declaredVarsByType.bool.length >= 2 && linesGenerated < targetLines) {
+            const boolVars = declaredVarsByType.bool;
+            const target = getRandomItem(boolVars);
+            const operand = getRandomItem(boolVars.filter(v => v !== target) || boolVars);
+            const op = options.op_and ? 'and' : 'or';
+            
+            codeLines.push(`${target} = ${target} ${op} ${operand}`);
+            linesGenerated++;
+        }
+        
+        if (options.op_not && declaredVarsByType.bool.length >= 1 && linesGenerated < targetLines) {
+            const target = getRandomItem(declaredVarsByType.bool);
+            codeLines.push(`${target} = not ${target}`);
+            linesGenerated++;
+        }
+        
+        // Slicing
+        if ((options.op_slice_ab || options.op_slice_abs) && 
+            (declaredVarsByType.str.length > 0 || declaredVarsByType.list.length > 0) && 
+            linesGenerated < targetLines) {
+            
+            const sliceableVars = [...declaredVarsByType.str, ...declaredVarsByType.list];
+            if (sliceableVars.length > 0) {
+                const varToSlice = getRandomItem(sliceableVars);
+                const resultVarName = generateUniqueVarName(declaredVarsByType.str.includes(varToSlice) ? 'str' : 'list');
+                
+                let sliceExpr;
+                if (options.op_slice_abs) {
+                    sliceExpr = `${varToSlice}[1:4:2]`;
+                } else {
+                    sliceExpr = `${varToSlice}[1:3]`;
+                }
+                
+                codeLines.push(`${resultVarName} = ${sliceExpr}`);
+                allDeclaredVarNames.add(resultVarName);
+                
+                if (declaredVarsByType.str.includes(varToSlice)) {
+                    declaredVarsByType.str.push(resultVarName);
+                } else {
+                    declaredVarsByType.list.push(resultVarName);
+                }
+                
+                linesGenerated++;
+            }
+        }
+    }
+    
+    // EN PLACE : Générer les structures de contrôle
+    // 1. Créer un gestionnaire central pour générer des conditions adaptées au contexte
+    function generateCondition(varTypes = ['int', 'bool'], preferExisting = true) {
+        // Cette fonction génère une condition appropriée selon les types disponibles
+        // et garantit qu'elle ne créera pas de boucle infinie
 
+        // Chercher d'abord dans les variables existantes
         let condition = null;
-        let intVar = null;
-
-        // 2. Choisir une condition au hasard parmi toutes celles collectées
-        if (possibleConditions.length > 0) {
-            condition = getRandomItem(possibleConditions);
+        
+        // Essayer les variables booléennes si demandé
+        if (varTypes.includes('bool') && declaredVarsByType.bool.length > 0 && preferExisting) {
+            const boolVar = getRandomItem(declaredVarsByType.bool);
+            condition = boolVar;
         } 
-        // 3. Si aucune condition n'a pu être créée (fallback), en créer une nouvelle.
+        // Essayer les entiers pour les comparaisons
+        else if (varTypes.includes('int') && declaredVarsByType.int.length > 0 && preferExisting) {
+            const intVar = getRandomItem(declaredVarsByType.int);
+            // Pour while, éviter les conditions toujours vraies - préférer comparaisons décroissantes
+            if (varTypes.includes('while_safe')) {
+                condition = `${intVar} > 0`;
+            } else {
+                const compareValue = getRandomInt(-5, 5);
+                const compareOp = getRandomItem(['>', '<', '==', '!=', '>=', '<=']);
+                condition = `${intVar} ${compareOp} ${compareValue}`;
+            }
+        }
+        // Créer une nouvelle variable si nécessaire
         else {
             if (varTypes.includes('bool')) {
+                // Pour les conditions simples
                 const boolVar = generateUniqueVarName('bool');
-                codeLines.push(`${boolVar} = ${getRandomItem(["True", "False"])}`);
+                const value = getRandomItem(["True", "False"]);
+                codeLines.push(`${boolVar} = ${value}`);
                 declaredVarsByType.bool.push(boolVar);
                 allDeclaredVarNames.add(boolVar);
                 linesGenerated++;
                 condition = boolVar;
             } else if (varTypes.includes('int') || varTypes.includes('while_safe')) {
-                const newIntVar = generateUniqueVarName('int');
-                const value = varTypes.includes('while_safe') ? getRandomInt(3, 5) : getRandomInt(-5, 5);
-                codeLines.push(`${newIntVar} = ${value}`);
-                declaredVarsByType.int.push(newIntVar);
-                allDeclaredVarNames.add(newIntVar);
+                // Pour while ou conditions numériques
+                const intVar = generateUniqueVarName('int');
+                // Pour une boucle while, initialiser avec une valeur positive
+                const value = varTypes.includes('while_safe') ? 
+                    getRandomInt(3, 5) : getRandomInt(-5, 5);
+                codeLines.push(`${intVar} = ${value}`);
+                declaredVarsByType.int.push(intVar);
+                allDeclaredVarNames.add(intVar);
                 linesGenerated++;
-                condition = `${newIntVar} > 0`;
+                
+                if (varTypes.includes('while_safe')) {
+                    condition = `${intVar} > 0`;
+                } else {
+                    const compareOp = getRandomItem(['>', '<', '==', '!=', '>=', '<=']);
+                    const compareValue = getRandomInt(-5, 5);
+                    condition = `${intVar} ${compareOp} ${compareValue}`;
+                }
             }
         }
         
-        // Extraire la variable pour les boucles while si nécessaire
-        if (condition && condition.includes('>')) {
-            intVar = condition.split('>')[0].trim();
-        }
-
-        return { condition, intVar };
+        return {
+            condition, 
+            // Renvoyer aussi la variable utilisée pour les boucles while
+            // afin de pouvoir la décrémenter dans le corps
+            intVar: condition && condition.includes('>') ? 
+                condition.split('>')[0].trim() : null
+        };
     }
     
     function generateControlStructures() {
-   
+        /*
+        // Conditions
+        if (options.main_conditions && options.cond_if && linesGenerated < targetLines - 1) {
+            generateIfStatement();
+        }
+        */
         // Créer un tableau des structures possibles
         const structures = [];
 
@@ -497,7 +588,7 @@ function generateRandomPythonCode(options) {
         if (options.loop_for_str) structures.push('for_str');
         if (options.loop_while) structures.push('while');
     }
-    if (options.main_functions && (options.func_def_simple || options.func_def_a || options.func_def_ab)) {
+    if (options.main_functions) {
         structures.push('function');
     }
     // Mélanger pour un ordre aléatoire
@@ -625,7 +716,7 @@ function generateRandomPythonCode(options) {
                 
                 // Plus de variété dans les opérations du corps de fonction
                 const operations = [];
-                
+
                 if (params.length > 0) {
                     // La première instruction utilise un paramètre, c'est crucial.
                     const firstParam = params[0];
@@ -646,19 +737,14 @@ function generateRandomPythonCode(options) {
                             break;
                             
                         case 'list':
-                            // Initialiser avant toute utilisation
-                            operations.push(`${indent}${localResultVar} = []`);
-
                             // Opérations sur listes - conditionnées par les options ou la difficulté
                             const useAdvancedListOps = contextOptions.difficulty >= 4 || options.builtin_isinstance || options.builtin_len;
                             
                             // Version basique des opérations sur listes (sans len/isinstance)
                             const basicListOps = [
                                 `${indent}${localResultVar}.append(${getRandomInt(1, 5)})`,
-                                `${indent}if ${firstParam}:  # Vérifier que la liste n'est pas vide`,
-                                `${indent}    ${localResultVar} = ${firstParam}[0]`,
-                                `${indent}else:`,
-                                `${indent}    ${localResultVar} = 0`
+                                `${indent}${localResultVar} = [${localResultVar}]`,
+                                `${indent}${localResultVar} = ${firstParam}[0] if ${firstParam} else 0`
                             ];
                             
                             // Version avancée des opérations sur listes (avec len/isinstance)
@@ -674,26 +760,15 @@ function generateRandomPythonCode(options) {
                                 `${indent}else:`,
                                 `${indent}    ${localResultVar} = 0`
                             ];
-                            let selectedOps;
+                            const advancedListOps = getRandomItem([advancedListOps1, advancedListOps2]);
+                            // Utiliser les opérations avancées uniquement si autorisé
                             if (useAdvancedListOps) {
-                                selectedOps = getRandomItem([advancedListOps1, advancedListOps2]);
+                                operations.push(...advancedListOps);
                             } else {
-                                selectedOps = basicListOps;
+                                operations.push(...basicListOps);
                             }
-                            // Ajouter UNIQUEMENT les opérations sélectionnées
-                            selectedOps.forEach(op => operations.push(op));
                             break;
-
-                        case 'bool':
-                            // Cas spécifique pour les booléens pour éviter les opérations arithmétiques non désirées
-                            const boolOps = [
-                                `${indent}${localResultVar} = not ${firstParam}`,
-                                `${indent}${localResultVar} = ${firstParam} and ${getRandomItem(['True', 'False'])}`,
-                                `${indent}${localResultVar} = ${firstParam} or ${getRandomItem(['True', 'False'])}`
-                            ];
-                            operations.push(getRandomItem(boolOps));
-                            break;
-
+                            
                         case 'int':
                         case 'float':
                         default:
@@ -736,16 +811,15 @@ function generateRandomPythonCode(options) {
                 
                 // Ajouter une ou plusieurs opérations intermédiaires selon la difficulté
                 const resultType = params.length > 0 ? paramTypes[0] : 'int'; // Type par défaut
-                const numOperationsTarget = Math.max(1, Math.min(3, Math.floor(contextOptions.difficulty / 2)));
+                const numOperations = Math.max(1, Math.min(3, Math.floor(contextOptions.difficulty / 2)));
             
                 // Instructions intermédiaires adaptées au type du résultat
-                if (operations.length < numOperationsTarget) {
-                    for (let i = 0; i < numOperationsTarget; i++) {
+                for (let i = 0; i < numOperations; i++) {
                     switch (resultType) {
                         case 'str':
                             const strOps = [
                                 `${indent}${localResultVar} += "_modified"`,
-                                `${indent}if len(${localResultVar}) > ${getRandomInt(1, 3)}:`,
+                                `${indent}if len(${localResultVar}) > 3:`,
                                 `${indent}    ${localResultVar} = ${localResultVar}.upper()`,
                                 `${indent}else:`,
                                 `${indent}    ${localResultVar} += "_extended"`
@@ -801,9 +875,9 @@ function generateRandomPythonCode(options) {
                             } else {
                                 operations.push(...numOps.slice(2));
                             }
-                        }
                     }
                 }
+
                 // Ajouter les opérations au corps de la fonction
                 bodyLines.push(...operations);
 
@@ -847,60 +921,92 @@ function generateRandomPythonCode(options) {
     // Génération d'un if (avec else optionnel)
     function generateIfStatement() {
         const indent = safeIndent(indentLevel);
-        
-        // --- REFACTORISATION ---
-        // On utilise maintenant generateCondition pour le IF principal,
-        // ce qui permet d'utiliser des listes et des chaînes, et non plus seulement des booléens/entiers.
-        // Le 'true' indique de préférer une variable existante.
-        const { condition } = generateCondition(['bool', 'int', 'list', 'str'], true);
-
-        // Si aucune condition n'a pu être générée (cas très rare), on abandonne.
-        if (!condition) {
-            return;
+        // Utiliser notre générateur de conditions (préférant bool et int)
+        let { condition } = generateCondition(['bool', 'int'], true);
+        // destructuration d'objet JS ~ "unpacking" de l'objet retourné 
+         
+        // Générer la condition pour le if
+        // Choisir une variable pour la condition selon les types de var disponibles
+        if (declaredVarsByType.bool.length > 0) {
+            // Si on a des booléens, utiliser directement
+            const boolVar = getRandomItem(declaredVarsByType.bool);
+            condition = boolVar;
+        } else if (declaredVarsByType.int.length > 0) {
+            // Si on a des entiers, comparer à une valeur
+            const intVar = getRandomItem(declaredVarsByType.int);
+            const compareValue = getRandomInt(-5, 5);
+            const compareOp = getRandomItem(['>', '<', '==', '!=', '>=', '<=']);
+            condition = `${intVar} ${compareOp} ${compareValue}`;
+        } else {
+            // Fallback: créer un booléen temporaire
+            const tempVar = generateUniqueVarName('bool');
+            const value = getRandomItem(["True", "False"]);
+            codeLines.push(`${indent}${tempVar} = ${value}`); // on indente pas plus ici que le niveau courant car on prépare le bloc if
+            declaredVarsByType.bool.push(tempVar);
+            allDeclaredVarNames.add(tempVar);
+            linesGenerated++;
+            condition = tempVar;
         }
-
         // Générer la ligne if avec la condition
         codeLines.push(`${indent}if ${condition}:`);
+        
         // Augmenter l'indentation pour le corps du if
         indentLevel++;
+
         // Générer le corps du if avec une opération cohérente
         const ifBodyIndent = safeIndent(indentLevel);
         const ifBody = generateAppropriateStatement();
         codeLines.push(`${ifBodyIndent}${ifBody}`);
+        // on sort du bloc if, donc on décrémente l'indentation
         indentLevel--;
+        // Compter les lignes générées jusqu'ici
         let linesAdded = 2; // if + corps
         
-        // On traite la génération du 'elif' et du 'else' de manière indépendante.
-
-        let hasElif = false; // Pour savoir si un elif a été ajouté
-
-        // 1. Gérer le 'elif'
+        // Optionnellement ajouter un elif
         if (options.cond_if_elif) {
-            let elifCondition;
-            let attempts = 0;
-            do {
-                elifCondition = generateCondition(['bool', 'int', 'list', 'str'], true).condition;
-                attempts++;
-            } while (elifCondition === condition && attempts < 5);
-
-            if (elifCondition) {
-                codeLines.push(`${indent}elif ${elifCondition}:`);
+            // Générer une nouvelle condition pour le elif
+            let { elifCondition } = generateCondition(['bool', 'int'], true);
+            
+            // S'assurer que la condition elif est différente
+            if (!elifCondition) {
+                if (declaredVarsByType.bool.length > 0) {
+                    const boolVar = getRandomItem(declaredVarsByType.bool);
+                    elifCondition = `not ${boolVar}`;
+                } else if (declaredVarsByType.int.length > 0) {
+                    const intVar = getRandomItem(declaredVarsByType.int);
+                    const compareValue = getRandomInt(-5, 5);
+                    const compareOp = getRandomItem(['!=', '==', '<=', '>=', '<', '>']);
+                    elifCondition = `${intVar} ${compareOp} ${compareValue}`;
+                } else {
+                    elifCondition = "True"; // Fallback
+                }
+            }
+            
+            codeLines.push(`${indent}elif ${elifCondition}:`);
+            indentLevel++;
+            
+            const elifBodyIndent = safeIndent(indentLevel);
+            const elifBody = generateAppropriateStatement();
+            codeLines.push(`${elifBodyIndent}${elifBody}`);
+            indentLevel--;
+            
+            linesAdded += 2; // elif + corps
+            
+            // Optionnellement ajouter un else après le elif (seulement si elif est activé)
+            if (options.cond_if_elif_else) {
+                codeLines.push(`${indent}else:`);
                 indentLevel++;
                 
-                const elifBodyIndent = safeIndent(indentLevel);
-                const elifBody = generateAppropriateStatement();
-                codeLines.push(`${elifBodyIndent}${elifBody}`);
+                const elseBodyIndent = safeIndent(indentLevel);
+                const elseBody = generateAppropriateStatement();
+                codeLines.push(`${elseBodyIndent}${elseBody}`);
                 indentLevel--;
                 
-                linesAdded += 2;
-                hasElif = true;
+                linesAdded += 2; // else + corps
             }
         }
-        
-        // 2. Gérer le 'else'
-        // Le 'else' peut être ajouté après un 'if' ou un 'elif'.
-        // L'option 'cond_if_elif_else' implique que 'cond_if_else' est aussi souhaité.
-        if (options.cond_if_else || options.cond_if_elif_else) {
+        // Si pas de elif mais un else simple
+        else if (options.cond_if_else) {
             codeLines.push(`${indent}else:`);
             indentLevel++;
             
@@ -909,11 +1015,12 @@ function generateRandomPythonCode(options) {
             codeLines.push(`${elseBodyIndent}${elseBody}`);
             indentLevel--;
             
-            linesAdded += 2;
+            linesAdded += 2; // else + corps
         }
         
+        // Mettre à jour le compteur de lignes avec le total réel
         linesGenerated += linesAdded;
-    }
+}
     
     // Génération d'une boucle for..range
     //  CORPS := "VAR = VAR + ITERATEUR" UNIQUEMENT
@@ -1020,7 +1127,7 @@ function generateRandomPythonCode(options) {
         const indent = safeIndent(indentLevel);
         
         // Générer une condition adaptée pour while
-        const { condition, intVar } = generateCondition(['while_safe', 'int'], false);
+        const { condition, intVar } = generateCondition(['while_safe', 'int'], true);
         
         // Ajouter un compteur de sécurité avant la boucle
         const safetyCounterVar = generateUniqueVarName('int');
@@ -1049,31 +1156,24 @@ function generateRandomPythonCode(options) {
         linesGenerated += 3 + bodyLines.length;
     }
     
-    /**
-     * Orchestre la génération complète d'une fonction Python :
-     * 1. Choisit un nom et des paramètres pertinents en fonction des options.
-     * 2. Détermine si la fonction doit retourner une valeur ou avoir un effet visible (print).
-     * 3. Fait appel à `generateStructureBody` pour créer un corps de fonction cohérent.
-     * 4. Décide si la fonction doit être appelée après sa définition.
-     * 5. Génère l'appel de fonction, en stockant le résultat si nécessaire.
-     */
+    // orchestre la création d'un corps de fonction crédible en passant des options spécifiques à generateStructureBody 
+    // (paramètres, option return, etc...
+    // génère un appel de fonction qui utilise le résultat si la fonction est censée retourner une valeur
     function generateFunction() {
-        // Récupère l'indentation actuelle pour un formatage correct.
         const indent = safeIndent(indentLevel);
-        // Choisit un nom de fonction aléatoire parmi une liste prédéfinie pour plus de réalisme.
         let funcName = getRandomItem(FUNCTION_NAMES);
         let params = [];
         
-        // Détermine le nombre et les noms des paramètres en fonction des options de l'interface.
+        // Déterminer les paramètres selon les options
         if (options.func_def_ab) {
-            // Si l'option 'def f(a, b)' est cochée, génère deux noms de paramètres pertinents.
+            // Pour deux paramètres, utiliser des noms significatifs en fonction du nom de la fonction
             params = chooseAppropriateParameterNames(funcName, 2);
         } else if (options.func_def_a) {
-            // Si l'option 'def f(a)' est cochée, génère un seul nom de paramètre.
+        // Pour un paramètre, utiliser un nom significatif en fonction du nom de la fonction
             params = chooseAppropriateParameterNames(funcName, 1);
         }
         
-        // Déduit le type probable de chaque paramètre à partir de son nom pour générer un corps de fonction logique.
+        // Déterminer le type pour chaque paramètre
         const paramTypes = params.map(param => {
             if (INT_VAR_NAMES.includes(param)) {
                 return 'int';
@@ -1086,104 +1186,109 @@ function generateRandomPythonCode(options) {
             } else if (FLOAT_VAR_NAMES.includes(param)) {
                 return 'float';
             } else {
-                return 'int'; // Type par défaut si le nom n'est pas reconnu.
+                return 'int'; // Type par défaut
             }
         });
 
-        // Génère la ligne de définition de la fonction (ex: "def calculate(a, b):").
+        // Définition de la fonction
         codeLines.push(`${indent}def ${funcName}(${params.join(", ")}):`);
         indentLevel++;
         
-        // --- Logique de décision pour l'utilité de la fonction ---
+        // Décider si la fonction doit avoir un return ou un print interne
+        // mais jamais les deux pour éviter le cas "print(func())" où func imprime déjà
+        const useReturnValue = options.func_return || difficulty >= 5 // || Math.random() < 0.1;
+        // auter approche :
+        // const useReturnValue = options.func_return ? (difficulty >= 3 || Math.random() < 0.7) : false;
 
-        // Par défaut, une fonction retourne une valeur si l'option est cochée ou si la difficulté est élevée.
-        let useReturnValue = options.func_return || difficulty >= 2;
-
-        // Évalue si la fonction est "importante" (avec paramètres, return, etc.) pour décider si on doit l'appeler.
-        const hasParams = params.length > 0;
-        const hasAdvancedFeatures = options.func_def_ab || options.func_op_list || options.func_op_str;
-        const isImportant = useReturnValue || hasAdvancedFeatures || difficulty >= 3;
-        
-        // Décide d'appeler la fonction si elle est jugée importante ou avec une probabilité aléatoire sinon.
-        const shouldCallFunction = isImportant || (hasParams && Math.random() < 0.7) || Math.random() < 0.4;
-
-        // Pour garantir un code pédagogique, si on décide d'appeler la fonction et que l'option 'print'
-        // n'est pas disponible, on force la fonction à retourner une valeur pour que son effet soit visible.
-        if (shouldCallFunction && !options.builtin_print) {
-            useReturnValue = true;
-        }
-
-        // Délègue la création du corps de la fonction à `generateStructureBody`.
+        // Générer un corps de fonction riche avec plusieurs instructions
         const bodyLines = generateStructureBody(indentLevel, 'function', { 
             params, 
-            paramTypes, // Passe les types pour générer des opérations valides.
+            paramTypes,
             difficulty,
-            hasReturn: useReturnValue, // Indique si un 'return' est attendu.
-            hasPrint: !useReturnValue && options.builtin_print, // Un 'print' interne est possible si pas de 'return'.
+            hasReturn: useReturnValue, // faire un appel de fonction provoque le besoin d'un return !!
+            hasPrint: !useReturnValue && options.builtin_print, // le return "interdit" le print pour simplifier gestion de l'appel ensuite
             hasInput: options.builtin_input
         });
         
-        // Ajoute les lignes du corps généré au code final.
+        // Ajouter les lignes du corps au code
         bodyLines.forEach(line => codeLines.push(line));
         indentLevel--;
-        linesGenerated += 1 + bodyLines.length; // Met à jour le compteur de lignes.
+        linesGenerated += 1 + bodyLines.length; // 1 pour la ligne "def" + nombre de lignes du corps
 
+        // Évaluation de l'importance d'appeler la fonction basée sur plusieurs facteurs
+        const hasParams = params.length > 0;
+        const hasAdvancedFeatures = options.func_def_ab || options.func_op_list || options.func_op_str;
+        const isImportant = useReturnValue || hasAdvancedFeatures || difficulty >= 3;
+
+        // Déterminer si on doit appeler la fonction
+        const shouldCallFunction = isImportant || 
+                                (hasParams && Math.random() < 0.7) || 
+                                Math.random() < 0.4;
         
-        // --- Génération de l'appel de la fonction ---
+        if (shouldCallFunction &&linesGenerated < targetLines) {
         
-        // N'appelle la fonction que si la décision a été prise et qu'il reste de la place.
-        if (shouldCallFunction && linesGenerated < targetLines) {
-        
-            // Génère des arguments concrets pour l'appel, correspondant aux types des paramètres.
+            // Générer des arguments du bon type
             const args = params.map((param, index) => {
                 const paramType = paramTypes[index];
-                return ensureVariableExists(paramType);
-           });
+                
+                switch (paramType) {
+                    case 'int':
+                        return getRandomInt(1, 5);
+                    case 'float':
+                        return parseFloat((getRandomInt(1, 5) + Math.random()).toFixed(2));
+                    case 'str':
+                        return `"${param}_${getRandomInt(1, 3)}"`;
+                    case 'list':
+                        return `[${getRandomInt(1, 3)}, ${getRandomInt(4, 6)}, ${getRandomInt(7, 10)}]`;
+                    case 'bool':
+                        return getRandomItem(['True', 'False']);
+                    default:
+                        return getRandomInt(1, 10);
+                }
+            });
             
-            // Comportement différent selon que la fonction retourne une valeur ou non.
+            // Stocker les types des paramètres pour une utilisation ultérieure
+            const argTypes = paramTypes.slice();
+
+            // MODIFICATION: Comportement cohérent selon que la fonction retourne ou affiche
             if (useReturnValue) {
-                // Le type de la variable de résultat doit correspondre au type de ce que la fonction retourne.
-                // On infère le type de retour à partir du type du premier paramètre (meilleure heuristique disponible).
-                const returnType = paramTypes.length > 0 ? paramTypes[0] : 'int';
-                const resultVar = generateUniqueVarName(returnType);
+                // La fonction retourne une valeur, on la stocke dans une variable
+                const resultVar = generateUniqueVarName('int');
                 const callStatement = `${resultVar} = ${funcName}(${args.join(", ")})`;
                 
-                // Enregistre la nouvelle variable de résultat avec le bon type.
+                // Enregistrer la nouvelle variable
                 allDeclaredVarNames.add(resultVar);
-                declaredVarsByType[returnType].push(resultVar);
+                declaredVarsByType.int.push(resultVar);
                 
-                // Ajoute la ligne d'appel et d'affectation.
+                // Ajouter l'appel de fonction
                 codeLines.push(`${indent}${callStatement}`);
                 
-                // Optionnellement, ajoute un 'print' pour afficher le résultat, rendant l'opération visible.
+                // Optionnellement, afficher le résultat avec print
                 if (options.builtin_print || difficulty >= 3) {
                     const formattedArgs = args.map((arg, index) => {
                         const argType = paramTypes[index];
                         return argType === 'str' ? arg : `str(${arg})`;
                     });
                     
-                    // Adapte le message du 'print' à la difficulté.
+                    // Générer un print adapté au niveau de difficulté
                     if (difficulty <= 2) {
                         codeLines.push(`${indent}print("Le résultat de ${funcName} est " + str(${resultVar}))`);
                     } else {
-                         // Vérifier si formattedArgs a des éléments avant de faire le join
-                        const argsDisplay = formattedArgs.length > 0 
-                            ? `"(" + ${formattedArgs.join(' + ", " + ')} + ")"`
-                            : `"()"`;
-                        codeLines.push(`${indent}print("Le résultat de " + "${funcName}" + ${argsDisplay} + " est " + str(${resultVar}))`);
+                        codeLines.push(`${indent}print("Le résultat de " + "${funcName}" + "(" + ${formattedArgs.join(' + ", " + ')} + ") est " + str(${resultVar}))`);
                     }
                     linesGenerated += 2;
                 } else {
                     linesGenerated++;
                 }
             } else {
-                // Si la fonction ne retourne rien (elle a probablement un 'print' interne), on l'appelle simplement.
+                // La fonction fait un print interne, on l'appelle simplement
+                // SANS envelopper cet appel dans un print
                 const callStatement = `${funcName}(${args.join(", ")})`;
                 codeLines.push(`${indent}${callStatement}`);
                 linesGenerated++;
             }
         }
-    }
+    } 
 
     function chooseAppropriateParameterNames(funcName, count) {
         // Paramètres possibles selon la catégorie de fonction
@@ -1214,6 +1319,22 @@ function generateRandomPythonCode(options) {
         return shuffled.slice(0, count);
     }
 
+    // Génération d'une opération simple pour le corps des structures de contrôle
+    function generateSimpleOperation() {
+        // Opérations possibles selon les variables disponibles
+        if (declaredVarsByType.int.length > 0) {
+            const target = getRandomItem(declaredVarsByType.int);
+            return `${target} += 1`;
+        } else if (declaredVarsByType.str.length > 0) {
+            const target = getRandomItem(declaredVarsByType.str);
+            return `${target} = ${target} + "!"`;
+        } else if (declaredVarsByType.bool.length > 0) {
+            const target = getRandomItem(declaredVarsByType.bool);
+            return `${target} = not ${target}`;
+        } else {
+            return "pass";
+        }
+    }
     // Fonction utilitaire pour garantir des indentations valides
     function safeIndent(level) {
         return "    ".repeat(Math.max(0, level));
@@ -1236,6 +1357,21 @@ function generateRandomPythonCode(options) {
         
         // Générer une instruction adaptée au type
         return generateVariedOperation(chosenType, variable, difficulty);
+        /* switch (chosenType) {
+            case 'int':
+                return `${variable} += ${getRandomInt(1, 3)}`;
+            case 'float':
+                return `${variable} *= ${parseFloat((1 + Math.random()).toFixed(2))}`;
+            case 'str':
+                return `${variable} += "_modifié"`;
+            case 'bool':
+                return `${variable} = not ${variable}`;
+            case 'list':
+                return `${variable}.append(${getRandomInt(1, 5)})`;
+            default:
+                return "pass";
+        }
+                */
     }
 
 
@@ -1324,6 +1460,39 @@ function generateRandomPythonCode(options) {
             linesGenerated++;
         }
     }
+
+    function generateAppropriateStatement() {
+        // Cette fonction génère une instruction adaptée au contexte et aux variables disponibles
+        
+        // Déterminer les types de variables disponibles
+        const availableTypes = Object.keys(declaredVarsByType)
+            .filter(type => declaredVarsByType[type].length > 0);
+        
+        if (availableTypes.length === 0) {
+            return "pass  # Aucune variable disponible";
+        }
+        
+        // Choisir un type de variable au hasard parmi ceux disponibles
+        const chosenType = getRandomItem(availableTypes);
+        const variable = getRandomItem(declaredVarsByType[chosenType]);
+        
+        // Générer une instruction adaptée au type
+        switch (chosenType) {
+            case 'int':
+                return `${variable} += ${getRandomInt(1, 3)}`;
+            case 'float':
+                return `${variable} *= ${parseFloat((1 + Math.random()).toFixed(2))}`;
+            case 'str':
+                return `${variable} += "_modifié"`;
+            case 'bool':
+                return `${variable} = not ${variable}`;
+            case 'list':
+                return `${variable}.append(${getRandomInt(1, 5)})`;
+            default:
+                return "pass";
+        }
+    }
+
 
         // Vérification des variables planifiées (nouvelles variables)
         for (const type in plannedVarsByType) {
@@ -1584,24 +1753,19 @@ function generateRandomPythonCode(options) {
             ],
             'str': [
                 // Concaténation avec différentes syntaxes
-                () => `${varName} = " ${getRandomItem(["texte", "donnée", "valeur", "info"])}" + ${varName}`,
+                () => `${varName} += " ${getRandomItem(["texte", "donnée", "valeur", "info"])}"`,
                 () => `${varName} = ${varName} + " ${getRandomItem(["ajout", "extension", "suite"])}"`,
-                () => `${varName} = ${varName} * ${getRandomInt(2, Math.max(2, Math.floor(difficulty / 2) + 1))}  # Répétition de chaîne`,
-                () => `${varName} = ${getRandomInt(2, Math.max(2, Math.floor(difficulty / 2) + 1))} * ${varName}  # Répétition de chaîne`,
                 // Remplacement
-                ...(difficulty >= 3 ? [
-                    () => {
-                        const randomIndex = getRandomInt(0, 2); // Limiter à 3 premiers caractères pour éviter IndexError
-                        return `${varName} = ${varName}.replace(${varName}[${randomIndex}], ${varName}[${randomIndex}].upper())  # Remplace le caractère à l'index ${randomIndex}`;
-                    }
-                ] : []),
+                () => {
+                    const randomIndex = getRandomInt(0, 2); // Limiter à 3 premiers caractères pour éviter IndexError
+                    return `${varName} = ${varName}.replace(${varName}[${randomIndex}], ${varName}[${randomIndex}].upper())  # Remplace le caractère à l'index ${randomIndex}`;
+                },
                 // suppression de caractères
                 () => {
                     const randomIndex = getRandomInt(0, 1); // Éviter de supprimer trop de caractères
                     return `${varName} = ${varName}.replace(${varName}[${randomIndex}], "")  # Supprime un caractère`;
                 },
                 // Avec commentaire
-                () => `${varName} *= ${getRandomInt(2, Math.max(2, Math.floor(difficulty / 2) + 1))}  # Répétition de chaîne`,
                 () => `${varName} += "!!!"  # Ajouter une emphase !!!`,
                 // Opérations conditionnelles
                 ...(difficulty >= 5 ? [() => `${varName} += " (modifié)" if len(${varName}) < 20 else ""`] : []),
@@ -1626,23 +1790,21 @@ function generateRandomPythonCode(options) {
                     () => `${varName}.insert(${getRandomInt(0, declaredVarsByType.list.length - 1)}, ${getRandomInt(-difficulty, +difficulty)})`] : []),
                 // Suppression d'éléments
                 ...(declaredVarsByType.list.length > 0 ? [
-                    () => `if len(${varName}) > 0: ${varName}.pop(0) # Suppression du premier élément`
-                ] : [])
+                    () => `${varName}.remove(${getRandomInt(0, declaredVarsByType.list.length - 1)})  # Suppression d'un élément `] : [])
             ],
             'bool': [
-                // Opérations logiques de base avec valeur booléenne
+                // Inversion de la valeur booléenne
                 () => `${varName} = not ${varName}`,
-                () => `${varName} = ${getRandomItem(['True', 'False'])} or ${getRandomItem(['True', 'False'])}`,
-                () => `${varName} = ${getRandomItem(['True', 'False'])} and ${getRandomItem(['True', 'False'])}`,
-                // comparaison de valeurs aléatoires: confronter vite les élèves aux = et ==
+                // comparaison de valeurs aléatoires
                 () => `${varName} = ${getRandomInt(-difficulty,difficulty)} ${getRandomItem(['==', '!=', '<', '>'])} ${getRandomInt(-difficulty, difficulty)}`,
-                () => `${varName} = ${getRandomItem(['True', 'False'])} ${getRandomItem(['==', '!='])} ${getRandomItem(['True', 'False'])}`,
                 // Opérations logiques de base
                 ...(difficulty >= 2 ? [
                     () => `${varName} = ${getRandomItem(['True', 'False'])} ${getRandomItem(['or','and'])} ${getRandomItem(['True', 'False'])}  # Opération logique`,
-                    () => `${varName} = ${getRandomInt(-difficulty,difficulty)} ${getRandomItem(['==', '!=', '<', '>', '<=', '>='])} ${getRandomInt(-difficulty, difficulty)}`,   
-                    () => `${varName} = ${varName} ${getRandomItem(['or','and'])} ${getRandomItem(['True', 'False'])}  # Opération logique`,
-                    () => `${varName} = ${getRandomItem(['True', 'False'])} ${getRandomItem(['or','and'])} ${varName}  # Opération logique`
+                    () => `${varName} = ${getRandomInt(-difficulty,difficulty)} ${getRandomItem(['==', '!=', '<', '>', '<=', '>='])} ${getRandomInt(-difficulty, difficulty)}`,
+                ]: []),
+                // Opérations logiques
+                ...(difficulty >= 3 ? [
+                    () => `${varName} = ${varName} ${getRandomItem(['or','and'])} ${getRandomItem(['True', 'False'])}  # Opération logique`
                 ]: []), 
                 // Affectation conditionnelle avancée
                 ...(difficulty >= 4 ? [
@@ -1654,19 +1816,9 @@ function generateRandomPythonCode(options) {
                     () => `${varName} = ${varName} + ${getRandomInt(0, 1)}  # Opération arithmétique sur booléen (niveau avancé)`,
                     () => `${varName} = ${getRandomInt(1, 3)} * ${varName}  # Opération arithmétique sur booléen (niveau avancé)`
                 ]: [])
-                ],
-            'float': [
-                () => `${varName} = ${varName} + ${(Math.random() * difficulty + 0.1).toFixed(1)}`,
-                () => `${varName} = ${varName} - ${(Math.random() * difficulty + 0.1).toFixed(1)}`,
-                () => `${varName} = ${varName} * ${(1 + Math.random()).toFixed(1)}`,
-                () => `${varName} = ${varName} / ${(1 + Math.random()).toFixed(1)}`,
-                () => `${varName} += ${(Math.random() * 2 + 0.1).toFixed(1)}`,
-                () => `${varName} -= ${(Math.random() * 2 + 0.1).toFixed(1)}`,
-                ...(difficulty >= 3 ? [
-                    () => `${varName} *= ${(1.5 + Math.random()).toFixed(3)}`,
-                    () => `${varName} /= ${(1.5 + Math.random()).toFixed(3)}`
-                ] : [])
-            ]// + Autres??
+
+                ]
+                // + Autres??
         };
         
         // Vérifier si une opération identique a déjà été générée récemment
@@ -1676,15 +1828,15 @@ function generateRandomPythonCode(options) {
         let attempts = 0;
         
         do {
-            // La logique de difficulté est déjà gérée dans la définition des opérations.
+            // Sélectionner une opération appropriée au niveau de difficulté
             const availableOps = operations[type] || [];
-            if (availableOps.length > 0) {
-                // Choisir une opération aléatoire parmi TOUTES celles qui sont disponibles.
-                operation = getRandomItem(availableOps)();
-            } else {
-                // Fallback si aucune opération n'est disponible pour ce type.
-                operation = `${varName} = ${varName}`;
-            }           
+            const opIndex = Math.min(
+                Math.floor(Math.random() * availableOps.length),
+                Math.floor(difficulty / 2) * 2
+            );
+            
+            operation = availableOps[opIndex] ? availableOps[opIndex]() : `${varName} = ${varName}`;
+            
             // Vérifier si cette opération est identique à la dernière
             isRepeat = window._lastFillerOps && 
                     window._lastFillerOps.length > 0 && 
@@ -1705,43 +1857,37 @@ function generateRandomPythonCode(options) {
 
         // Si l'opération existe déjà dans le code, forcer une variation
         if (exactLineExists) {
-            // Extraction de la valeur numérique actuelle si présente
-            // Utilise une expression régulière qui capture un nombre qui n'est pas entre parenthèses
+            // Extract current numeric value if present
             const currentNumberMatch = operation.match(/\d+(?![^)]*\))/);
             const currentNumber = currentNumberMatch ? parseInt(currentNumberMatch[0]) : null;
-
-            // Extraction de l'opérateur actuel si présent
-            // Recherche des opérateurs arithmétiques avec ou sans signe égal
+            
+            // Extract current operator if present
             const operatorMatch = operation.match(/[+\-*\/\/%]=?/);
             const currentOperator = operatorMatch ? operatorMatch[0] : null;
-
+            
             if (currentNumber !== null) {
-                // Génération d'une nouvelle valeur numérique garantie différente
-                // Évite la répétition en utilisant une boucle do-while
+                // Generate a new number guaranteed to be different
                 let newValue;
                 do {
                     newValue = getRandomInt(1, 5);
                 } while (newValue === currentNumber);
                 
-                // Remplacement du nombre dans la chaîne d'opération
-                // Utilise la même expression régulière pour cibler le remplacement
+                // Replace the number
                 operation = operation.replace(/\d+(?![^)]*\))/, newValue);
             } 
             else if (currentOperator) {
-                // Génération d'un opérateur différent
-                // Sélectionne un nouvel opérateur parmi ceux disponibles, en excluant l'actuel
+                // Generate a different operator
                 const operators = ['+', '-', '*', '//'];
                 const newOperator = getRandomItem(operators.filter(op => op !== currentOperator));
                 operation = operation.replace(currentOperator, newOperator);
             }
             else {
-                // Solution de repli : ajout d'un commentaire unique
-                // Supprime tout commentaire existant et ajoute un identifiant aléatoire
+                // Fallback: add unique comment
                 operation = operation.replace(/\s*#.*$/, '') + 
                     `  # unique_${Math.random().toString(36).substr(2, 5)}`;
             }
         }
-        // Traitement spécifique pour les opérations sur chaînes de caractères
+        // Handle invalid string operations more comprehensively
         if (type === 'str') {
             // Regex pour détecter les opérateurs arithmétiques invalides pour les chaînes (sauf + et *)
             const invalidArithmeticRegex = /([^\w\s"'])\s*=/; // Détecte -=, /=, //=, %=
@@ -1760,51 +1906,22 @@ function generateRandomPythonCode(options) {
                     `${varName} = ${varName}.replace("${chosenLetter}", "${chosenLetter.toUpperCase()}")`,  // Remplacer une lettre aléatoire par sa majuscule
                 ];
                 
-                // pour les difficultés plus élevées, ajouter des opérations plus complexes
+                // For higher difficulty, add more complex string operations
                 if (difficulty >= 3) {
                     replacements.push(`${varName} = ${varName}.upper()`);
                     replacements.push(`${varName} = ${varName}.capitalize()`);
                 }
                 
-                // choisit un replacement random
+                // Choose a random replacement
                 operation = getRandomItem(replacements);
                 
-                // ajout pour expliquer d'où vient la substitution
+                // Add a comment explaining the substitution
                 operation += "  # Opération de chaîne valide";
             }
         }
         return operation; //[type][opIndex]();
     }
 
-     /**
-     * Objectif: garantir qu'au moins une opération est générée pour chaque type de variable
-     * demandé dans les options, pour rendre leur présence plus significative.
-     */
-    function ensureTypeSpecificOperations() {
-        const typesToCheck = [
-            { option: 'var_str_count', type: 'str' },
-            { option: 'var_list_count', type: 'list' },
-            { option: 'var_bool_count', type: 'bool' },
-            { option: 'var_float_count', type: 'float' }
-            // On exclue 'int' car il est déjà très utilisé par défaut
-        ];
-
-        for (const item of typesToCheck) {
-            // Si le type a été demandé et qu'une variable de ce type existe
-            if (options[item.option] > 0 && declaredVarsByType[item.type].length > 0) {
-                // Choisir une variable de ce type
-                const varName = getRandomItem(declaredVarsByType[item.type]);
-                // Générer une opération variée pour elle
-                const operation = generateVariedOperation(item.type, varName, difficulty);
-                
-                // Ajouter l'opération si elle n'est pas déjà présente
-                if (!codeLines.some(line => line.trim() === operation.trim())) {
-                    codeLines.push(operation);
-                    linesGenerated++;
-                }
-            }
-        }
-    }
     ///////////////////////////////////////////////////////////////////////
     // ----------------- EXÉCUTION DE LA GÉNÉRATION ----------------------
 
@@ -1813,11 +1930,10 @@ function generateRandomPythonCode(options) {
     calculateRequiredLines();
     
     // 2. S'assurer que le bon nombre de variables est créé pour chaque type
-    generateInitialVariables(); // 
-    ensureVariablesForOptions(); // 
-    ensureListVariablesCount(); // pour garantir le bon nombre de listes
-    ensureTypeSpecificOperations(); // Assure au moins une opération par type demandé
-   
+    generateInitialVariables(); // ??
+    ensureVariablesForOptions(); // appelle ensureRequiredVariables()
+    ensureListVariablesCount(); // Nouvelle fonction pour garantir le bon nombre de listes
+    
     // 3. Générer les structures de contrôle avec des corps enrichis
     generateControlStructures();
     
@@ -1842,3 +1958,154 @@ function generateRandomPythonCode(options) {
     // Finalement... Retour du code généré ...
     return codeLines.join("\n");
 }
+
+
+/*
+*************************************************************************************************************
+*************************************************************************************************************
+*/
+// pour phase 0: Garantir les variables nécessaires pour les structures
+function ensureVariableForStructure(type, context) {
+    // type: 'condition', 'loop_body', 'function_body'
+    const { declaredVarsByType, allDeclaredVarNames, codeLines, linesGenerated } = context;
+    
+    // Vérifier s'il y a des variables utilisables pour cette structure
+    let hasValidVar = false;
+    
+    switch(type) {
+        case 'condition': 
+        // Une condition a besoin d'un booléen ou d'une variable comparable
+        hasValidVar = declaredVarsByType.bool.length > 0 || declaredVarsByType.int.length > 0;
+        break;
+        case 'loop_body':
+        // Un corps de boucle a besoin d'au moins une variable modifiable
+        hasValidVar = declaredVarsByType.int.length > 0 || declaredVarsByType.list.length > 0;
+        break;
+        case 'function_body':
+        // Une fonction a besoin de variables pour son corps
+        hasValidVar = declaredVarsByType.int.length > 0 || context.funcParams?.length > 0;
+        break;
+    }
+    
+    // Si pas de variable valide, créer une appropriée
+    if (!hasValidVar) {
+        let varType, varValue;
+        
+        switch(type) {
+        case 'condition':
+            varType = 'bool';
+            varValue = 'True';
+            break;
+        case 'loop_body':
+        case 'function_body':
+            varType = 'int';
+            varValue = '0';
+            break;
+        }
+        
+        const varName = generateUniqueVarName(varType);
+        codeLines.push(`${varName} = ${varValue}`);
+        declaredVarsByType[varType].push(varName);
+        allDeclaredVarNames.add(varName);
+        linesGenerated++;
+        
+        return varName;
+    }
+    
+    // Sinon, retourner une variable existante appropriée
+    switch(type) {
+        case 'condition':
+        return declaredVarsByType.bool.length > 0 
+            ? declaredVarsByType.bool[0]
+            : declaredVarsByType.int[0];
+        case 'loop_body':
+        case 'function_body':
+        return declaredVarsByType.int.length > 0 
+            ? declaredVarsByType.int[0] 
+            : declaredVarsByType.list[0];
+    }
+}
+
+function planVariable(type) {
+    const name = generateUniqueVarName(type);
+    allPlannedVarNames.add(name);
+    plannedVarsByType[type].push(name);
+    return name;
+}
+
+function old_declareVariable(name, type, value) {
+    // Générer la ligne de code de l'initialisation
+    codeLines.unshift(`${name} = ${value}`);
+    // Déplacer de "planifiée" à "déclarée" si nécessaire
+    if (allPlannedVarNames.has(name)) {
+        allPlannedVarNames.delete(name);
+        const index = plannedVarsByType[type].indexOf(name); // trouver l'index de la variable planifiée
+        if (index > -1) plannedVarsByType[type].splice(index, 1); // supprimer de la liste planifiée
+    }
+    // Ajouter aux registres des variables déclarées
+    if (!allDeclaredVarNames.has(name)) {
+        allDeclaredVarNames.add(name);
+        declaredVarsByType[type].push(name);
+    }
+    linesGenerated++;
+    return name;
+}
+
+function old_ensureVariableExists(type) {
+    // Si on doit créer une variable, vérifier si on est dans une structure
+    // qui nécessite de l'ajouter AVANT la structure plutôt que dedans
+    
+    // Si on est à un niveau d'indentation > 0, on est dans une structure
+    if (indentLevel > 0) {
+        // Trouver d'abord une variable existante
+        if (declaredVarsByType[type].length > 0) {
+            return getRandomItem(declaredVarsByType[type]);
+        }
+        
+        // Sinon, créer une variable avant la boucle
+        // Sauvegarder la position actuelle dans codeLines
+        const currentPosition = codeLines.length;
+        const name = generateUniqueVarName(type);
+        
+        // Trouver l'endroit où insérer la déclaration 
+        // Logique n°1: juste avant la dernière ligne indentée
+        let insertPosition = currentPosition - 1;
+        while (insertPosition >= 0 && codeLines[insertPosition].startsWith("    ")) {
+            insertPosition--;
+        }
+        
+        // Insérer la déclaration en début de "file" des initialisations
+        codeLines.unshift(`${name} = ${LITERALS_BY_TYPE[type](difficulty)}`);
+        declaredVarsByType[type].push(name);
+        allDeclaredVarNames.add(name);
+        linesGenerated++;
+        
+        return name;
+    }
+    // Si on est à l'extérieur de toute structure, on peut créer la variable normalement
+    // Si on a des variables planifiées et qu'on préfère les utiliser
+    if (preferPlanned && plannedVarsByType[type].length > 0) {
+        const name = getRandomItem(plannedVarsByType[type]);
+        // Créer la variable avec une valeur par défaut
+        return declareVariable(name, type, LITERALS_BY_TYPE[type](difficulty));
+    }
+    // Sinon, créer une nouvelle variable
+    const name = generateUniqueVarName(type);
+    return declareVariable(name, type, LITERALS_BY_TYPE[type](difficulty));
+}
+
+
+/*
+Je voudrai maintenant me concentrer sur l'enrichissement de l'expérience d'apprentissage: 
+Je veux éviter les pass dans les For... in List, je veux ajouter des instructions dans les corps des structures (heuristique: faire que le nombre d'instructions corresponde à 1 +l'arrondi entier de difficulty // 2). Il faudra pour cela 
+Exemple de code généré peu satisfaisant:
+suffix = "hello"
+for char in "world":
+    suffix = suffix + char
+for item2 in [2, 1, 1, -2]:
+    pass
+suffix += " texte"
+suffix += " texte"
+suffix += " texte"
+DAns les optins on avait var_str_count: 2, var_list_count: 2, donc le nombre de listes apparaissant dans le code généré est insuffisant
+*/

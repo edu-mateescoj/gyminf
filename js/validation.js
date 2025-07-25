@@ -71,12 +71,17 @@ function populateChallengeInputs(correctVariableValues, container) {
  * @param {HTMLElement} container - L'élément conteneur des inputs à réinitialiser.
  */
 function resetChallengeInputs(container) {
-    if (container) {
-        container.innerHTML = `
-            <div class="col-12 text-center text-muted">
-                <p><i class="fas fa-code me-2"></i>Lancer le diagramme et les défis pour voir les variables...</p>
-            </div>`;
+    if (!container) {
+        console.error("Le conteneur pour les variables du défi est introuvable.");
+        return;
     }
+    container.innerHTML = ''; // Vider le conteneur pour toute nouvelle population
+
+    // Message par défaut
+    container.innerHTML = `
+        <div class="col-12 text-center text-muted">
+            <p><i class="fas fa-code me-2"></i>Lancer le diagramme et les défis pour voir les variables...</p>
+        </div>`;
 }
 
 /**
@@ -152,7 +157,7 @@ function revealCorrectSolution(correctVariableValues) {
  * @returns {{content: string, allCorrect: boolean}} Un objet contenant le HTML du contenu et un booléen indiquant si tout est correct.
  */
 function buildFeedbackModalContent(results) {
-    let contentHtml = '<table class="table table-bordered table-hover"><thead><tr><th>Variable</th><th>Votre Réponse</th><th>Réponse Correcte</th><th class="text-center">Statut</th></tr></thead><tbody>';
+    let contentHtml = '<table class="table table-bordered table-hover"><thead><tr><th>Variable</th><th>Votre Réponse</th><th class="text-center">Résultat</th></tr></thead><tbody>';
     let allCorrect = true;
 
     if (Object.keys(results).length === 0) {
@@ -172,7 +177,6 @@ function buildFeedbackModalContent(results) {
             <tr class="${res.isCorrect ? 'table-success' : 'table-danger'}">
                 <td><strong>${varName}</strong></td>
                 <td><code>${res.studentAnswer || '<i>(vide)</i>'}</code></td>
-                <td><code>${res.correctAnswer}</code></td>
                 <td class="text-center align-middle">${statusIcon}</td>
             </tr>
         `;
