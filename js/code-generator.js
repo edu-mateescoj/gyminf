@@ -225,6 +225,14 @@ function generateRandomPythonCode(options) {
             ensureListVariableIsUsed(listVar);
         }
     }
+    /** 
+     * Assure qu'une variable de liste est utilisée dans le code.
+     * Si la variable n'est pas utilisée de manière significative, ajoute une opération conditionnelle
+     * pour l'utiliser, comme un append ou un print.
+     * @param {string} listVarName - Le nom de la variable de liste à vérifier.
+     * @modifies {codeLines} - Modifie le tableau global codeLines en y ajoutant des opérations.
+     * @returns {void}
+    */
     // Générer des myList.append(random) ou print(myList[0]) conditionnels sur len() > 0 si builtins choisis
     // pour le cas où la liste est là mais pas *vraiment* utilisée
     function ensureListVariableIsUsed(listVarName) {
@@ -240,6 +248,7 @@ function generateRandomPythonCode(options) {
             line.includes(`${listVarName}[`) ||
             line.includes(`for `) && line.includes(` in ${listVarName}:`);
         
+        //
         return isNotDeclaration && line.includes(listVarName) && isSignificantUse;
     });
         // Si la variable n'est pas utilisée de façon significative, ajouter une utilisation
@@ -298,6 +307,12 @@ function generateRandomPythonCode(options) {
         return LITERALS_BY_TYPE[type](difficulty);
     }
     
+    /**
+     * Génère une liste diversifiée d'éléments.
+     * @param {Array<string>} allowedTypes - Les types de données autorisés pour les éléments de la liste.
+     * @param {number} difficulty - Le niveau de difficulté pour la génération des éléments.
+     * @returns {string} - Une représentation en chaîne de la liste générée.
+     */
     function generateDiverseList(allowedTypes, difficulty) {
         // Déterminer la taille de la liste en fonction de la difficulté
         const size = getRandomInt(2, Math.min(5, 2 + difficulty));
@@ -323,11 +338,9 @@ function generateRandomPythonCode(options) {
             // Pour une liste homogène, utiliser toujours le même type
             // Pour une liste hétérogène, alterner entre les types sélectionnés
             const currentType = isHomogeneous ? typesToUse[0] : typesToUse[i % typesToUse.length];
-            
             // Générer une valeur du type approprié
             items.push(generateValueOfType(currentType, difficulty));
         }
-        
         return `[${items.join(', ')}]`;
     }
 
@@ -387,11 +400,13 @@ function generateRandomPythonCode(options) {
             linesGenerated++;
         }
     }
-
-    
-    // Générer les structures de contrôle
-    // un gestionnaire central pour générer des conditions adaptées au contexte
-    function generateCondition(varTypes = ['int', 'bool'], preferExisting = true) {
+    /**
+     * Génère une condition basée sur les variables disponibles.
+     * @param {Array<string>} varTypes - Les types de variables à prendre en compte.
+     * @param {boolean} preferExisting - Indique s'il faut privilégier les variables existantes.
+     * @returns {string|null} - La condition générée ou null si aucune condition n'est trouvée.
+     */
+    function generateCondition(varTypes = ['int', 'bool', 'str', 'list'], preferExisting = true) {
         // --- AVEC CONDITIONS PRENANT EN COMPTE STR ET LIST ---
         const possibleConditions = [];
 
