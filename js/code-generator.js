@@ -407,7 +407,7 @@ function generateRandomPythonCode(options) {
      * @returns {string|null} - La condition générée ou null si aucune condition n'est trouvée.
      */
     function generateCondition(varTypes = ['int', 'bool', 'str', 'list'], preferExisting = true) {
-        // --- AVEC CONDITIONS PRENANT EN COMPTE STR ET LIST ---
+        // --- AVEC CONDITIONS PRENANT EN COMPTE DIFFERENTS TYPES ---
         const possibleConditions = [];
 
         // 1. Collecter toutes les conditions possibles au lieu de s'arrêter à la première.
@@ -420,7 +420,8 @@ function generateRandomPythonCode(options) {
                 possibleConditions.push(`True == ${boolVar}`);
                 possibleConditions.push(`${boolVar} == False`);
                 possibleConditions.push(`${boolVar} != True`);
-                possibleConditions.push(`False != ${boolVar}`);                
+                possibleConditions.push(`False != ${boolVar}`);
+                possibleConditions.push(`(${getRandomItem(possibleConditions)} ${getRandomItem(['and', 'or'])} ${getRandomItem(possibleConditions)})`);
                 /* déjà essayé mais moche
                 possibleConditions.push(`${boolVar} == ${boolVar} or True`);
                 possibleConditions.push(`${boolVar} == ${boolVar} or False`);

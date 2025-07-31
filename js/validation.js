@@ -104,12 +104,17 @@ function checkStudentAnswers(correctVariableValues) {
         const studentAnswerRaw = inputElement ? inputElement.value.trim() : "";
         const correctAnswer = correctVariableValues[varName];
         
-        // Tentative de parser la réponse de l'élève pour gérer les types (nombres, booléens, listes)
         let studentAnswerParsed;
         try {
-            // JSON.parse est un bon moyen de gérer les nombres, booléens, et tableaux/listes.
-            // On met en minuscule pour que "True" ou "False" soit valide.
-            studentAnswerParsed = JSON.parse(studentAnswerRaw.toLowerCase());
+            // Cas spécial pour les booléens : exiger True/False (syntaxe Python)
+            if (correctAnswer === true && studentAnswerRaw === "True") {
+                studentAnswerParsed = true;
+            } else if (correctAnswer === false && studentAnswerRaw === "False") {
+                studentAnswerParsed = false;
+            } else {
+                // Pour les autres types, utiliser JSON.parse mais sans mettre en minuscule
+                studentAnswerParsed = JSON.parse(studentAnswerRaw);
+            }
         } catch (e) {
             // Si JSON.parse échoue, on traite la réponse comme une chaîne de caractères.
             studentAnswerParsed = studentAnswerRaw;
