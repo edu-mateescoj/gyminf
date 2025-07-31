@@ -105,21 +105,36 @@ function checkStudentAnswers(correctVariableValues) {
         const correctAnswer = correctVariableValues[varName];
         
         let studentAnswerParsed;
+        let answerToParse = studentAnswerRaw;
+        // Normaliser les chaînes AVANT toute autre vérification
+        // Si l'élève a entré une chaîne avec des apostrophes, on la convertit en chaîne JSON valide (avec guillemets).
+        if (answerToParse.startsWith("'") && answerToParse.endsWith("'")) {
+            const innerContent = answerToParse.slice(1, -1).replace(/"/g, '\\"');
+            answerToParse = `"${innerContent}"`;
+        }
         try {
-            // Cas spécial pour les booléens : exiger True/False (syntaxe Python)
-            if (correctAnswer === true && studentAnswerRaw === "True") {
-                studentAnswerParsed = true;
-            } else if (correctAnswer === false && studentAnswerRaw === "False") {
-                studentAnswerParsed = false;
+            // **Logique améliorée : Isoler la vérification des booléens**
+            if (typeof correctAnswer === 'boolean') {
+                // Si la réponse attendue est un booléen, on n'accepte QUE la syntaxe Python.
+                if (answerToParse === 'True') {
+                    studentAnswerParsed = true;
+                } else if (answerToParse === 'False') {
+                    studentAnswerParsed = false;
+                } else {
+                    // Toute autre chaîne (y compris "true" ou "false") est incorrecte.
+                    // On assigne la chaîne brute pour que la comparaison échoue.
+                    studentAnswerParsed = answerToParse;
+                }
             } else {
-                // Pour les autres types, utiliser JSON.parse mais sans mettre en minuscule
-                studentAnswerParsed = JSON.parse(studentAnswerRaw);
+                // Pour tous les autres types, on utilise JSON.parse.
+                studentAnswerParsed = JSON.parse(answerToParse);
             }
         } catch (e) {
-            // Si JSON.parse échoue, on traite la réponse comme une chaîne de caractères.
-            studentAnswerParsed = studentAnswerRaw;
+            // Si JSON.parse échoue (ex: l'élève a tapé `world` sans guillemets),
+            // on considère la valeur brute comme une chaîne.
+            studentAnswerParsed = answerToParse;
         }
-
+        
         // Comparaison robuste en utilisant la sérialisation JSON
         const isCorrect = JSON.stringify(studentAnswerParsed) === JSON.stringify(correctAnswer);
 
@@ -131,8 +146,9 @@ function checkStudentAnswers(correctVariableValues) {
 
         results[varName] = {
             studentAnswer: studentAnswerRaw,
-            correctAnswer: JSON.stringify(correctAnswer),
-            isCorrect: isCorrect
+            // correctAnswer: JSON.stringify(correctAnswer),
+            correctAnswer: formatForPythonDisplay(correctAnswer),
+            isCorrect: isCorrect 
         };
     });
 
@@ -148,7 +164,7 @@ function revealCorrectSolution(correctVariableValues) {
     Object.keys(correctVariableValues).forEach(varName => {
         const inputElement = document.getElementById(`var-input-${varName}`);
         if (inputElement) {
-            inputElement.value = JSON.stringify(correctVariableValues[varName]);
+            inputElement.value = formatForPythonDisplay(correctVariableValues[varName]);
             inputElement.classList.remove('is-valid', 'is-invalid');
             // Ajout d'une classe 'is-info' (style custom à prévoir si besoin) pour indiquer que la solution a été révélée
             inputElement.classList.add('is-info'); 
@@ -208,4 +224,23 @@ function buildFeedbackModalContent(results) {
     }
 
     return { content: contentHtml, allCorrect: allCorrect };
+}
+/**
+ * Formate une valeur JavaScript pour un affichage syntaxiquement correct en Python.
+ * Gère les booléens (True/False) et la valeur nulle (None), y compris dans des structures.
+ * @param {*} value - La valeur à formater.
+ * @returns {string} La représentation de la valeur en Python.
+ */
+function formatForPythonDisplay(value) {
+    // JSON.stringify gère bien les nombres, les chaînes (avec "") et la structure des listes/objets.
+    let stringValue = JSON.stringify(value);
+
+    // On remplace ensuite les littéraux JavaScript par leurs équivalents Python.
+    // Les expressions régulières avec \b (limite de mot) sont sûres et ne modifieront pas
+    // les chaînes de caractères qui contiendraient "true", "false" ou "null".
+    stringValue = stringValue.replace(/\btrue\b/g, 'True');
+    stringValue = stringValue.replace(/\bfalse\b/g, 'False');
+    stringValue = stringValue.replace(/\bnull\b/g, 'None');
+
+    return stringValue;
 }
