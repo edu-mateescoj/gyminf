@@ -173,8 +173,10 @@
                         </div>
                                         
                         <!-- Section Mode Avancé -->
-                        <div class="advanced-mode-container d-flex justify-content-between align-items-center">
+                         <!-- ajouté la classe d-none pour masquer le mode avancé par défaut -->
+                        <div class="advanced-mode-container d-flex justify-content-between align-items-center d-none">
                             <div>
+                                <!-- ajouter l'attribut checked pour faire comme si la case était cochée par défaut -->
                                 <input type="checkbox" class="form-check-input me-1" id="advanced-mode">
                                 <label class="form-check-label fw-bold small" for="advanced-mode">
                                     <i class="fas fa-cogs me-1"></i> Mode avancé
