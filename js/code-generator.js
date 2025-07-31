@@ -417,12 +417,19 @@ function generateRandomPythonCode(options) {
             declaredVarsByType.bool.forEach(boolVar => {
                 possibleConditions.push(boolVar);
                 possibleConditions.push(`not ${boolVar}`);
-                possibleConditions.push(`True == ${boolVar}`);
+                possibleConditions.push(`True != ${boolVar}`);
                 possibleConditions.push(`${boolVar} == False`);
-                possibleConditions.push(`${boolVar} != True`);
+                possibleConditions.push(`${boolVar} == True`);
                 possibleConditions.push(`False != ${boolVar}`);
-                possibleConditions.push(`(${getRandomItem(possibleConditions)} ${getRandomItem(['and', 'or'])} ${getRandomItem(possibleConditions)})`);
-                /* déjà essayé mais moche
+                if (possibleConditions.length >= 2) {
+                    const firstCond = getRandomItem(possibleConditions);
+                    let secondCond;
+                    do {
+                        secondCond = getRandomItem(possibleConditions);
+                    } while (secondCond === firstCond);
+                    
+                    possibleConditions.push(`(${firstCond}) ${getRandomItem(['and', 'or'])} (${secondCond})`);
+                }/* déjà essayé mais moche
                 possibleConditions.push(`${boolVar} == ${boolVar} or True`);
                 possibleConditions.push(`${boolVar} == ${boolVar} or False`);
                 */
@@ -438,6 +445,7 @@ function generateRandomPythonCode(options) {
             
             const valueToFind = getRandomInt(1, 10);
             possibleConditions.push(`${valueToFind} in ${listVar}`);
+            possibleConditions.push(`${valueToFind} not in ${listVar}`);
         }
 
         // Conditions basées sur les chaînes
@@ -447,6 +455,7 @@ function generateRandomPythonCode(options) {
 
             const charToFind = getRandomItem(['a', 'e', 'i', 'o', 'u', 'y']);
             possibleConditions.push(`"${charToFind}" in ${strVar}`);
+            possibleConditions.push(`"${charToFind}" not in ${strVar}`);
         }
 
         // Conditions basées sur les entiers
