@@ -616,6 +616,7 @@ function generateRandomPythonCode(options) {
                         bodyLines.push(`${indent}${generateVariedOperation(targetType, targetVar, structureDifficulty).replace(/;$/, '')}`);
                         // défensif: supprimer les ";" de JS si ils arrivent à passer
                     }
+
                 }
                 break;
             }
@@ -897,8 +898,6 @@ function generateRandomPythonCode(options) {
         
         // On traite la génération du 'elif' et du 'else' de manière indépendante.
 
-        let hasElif = false; // Pour savoir si un elif a été ajouté
-
         // 1. Gérer le 'elif'
         if (options.cond_if_elif) {
             let elifCondition;
@@ -918,7 +917,6 @@ function generateRandomPythonCode(options) {
                 indentLevel--;
                 
                 linesAdded += 2;
-                hasElif = true;
             }
         }
         
