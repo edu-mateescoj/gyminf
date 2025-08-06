@@ -247,7 +247,7 @@ function generateRandomPythonCode(options) {
             line.includes(`${listVarName}.extend(`) ||
             line.includes(`${listVarName}[`) ||
             line.includes(`for `) && line.includes(` in ${listVarName}:`);
-        
+            // A AJOUTER line.includes(`len(${listVarName})`
         //
         return isNotDeclaration && line.includes(listVarName) && isSignificantUse;
     });

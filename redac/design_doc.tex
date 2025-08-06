@@ -1,0 +1,181 @@
+% filepath: design_doc_gyminf.tex
+\documentclass[a4paper, 11pt]{article}
+\usepackage[french]{babel}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{geometry}
+\usepackage{hyperref}
+\usepackage{minted}
+\usepackage{enumitem}
+\usepackage{tcolorbox}
+
+\geometry{a4paper, top=2.5cm, bottom=2.5cm, left=2.5cm, right=2.5cm}
+\hypersetup{
+    colorlinks=true,
+    linkcolor=blue,
+    filecolor=magenta,      
+    urlcolor=cyan,
+}
+
+\title{Document de Conception : Générateur de Code Python Pédagogique}
+\author{Julien Mateesco}
+\date{\today}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+Ce document décrit la conception et l'architecture du module \texttt{code-generator.js}, 
+le cœur du système de génération de code Python pour l'outil d'apprentissage GymInf. 
+L'objectif est de justifier les choix de conception qui permettent de produire un code à la fois aléatoire, 
+syntaxiquement correct, et pédagogiquement pertinent, 
+en réponse aux contraintes d'un environnement entièrement \textit{front-end}.
+\end{abstract}
+
+\section{Objectifs et Contexte}
+
+L'objectif principal du générateur est de fournir des extraits de code Python variés et adaptés à des fins d'apprentissage, et valides pour pouvoir donner lieu à l'évaluation réelle des variables. 
+Le système doit opérer dans le navigateur de l'utilisateur sans dépendre d'un serveur, ce qui impose des contraintes 
+de performance et d'architecture.
+
+\subsection{Principes Directeurs}
+La conception repose sur trois piliers fondamentaux :
+\begin{itemize}
+    \item \textbf{Contrôle Pédagogique :} L'utilisateur (enseignant) doit pouvoir sélectionner précisément les constructions syntaxiques (variables, opérations, structures de contrôle, fonctions) à inclure.
+    \item \textbf{Variété et Aléatoire :} Chaque génération doit produire un code unique pour garantir une source inépuisable d'exercices.
+    \item \textbf{Cohérence et Robustesse :} Le code généré doit toujours être syntaxiquement valide et sémantiquement plausible, évitant les opérations illogiques ou triviales.
+\end{itemize}
+
+\section{Architecture Générale}
+
+Le générateur est une fonction principale, \texttt{generateRandomPythonCode(options)}, qui orchestre un processus de génération en plusieurs phases séquentielles. Cette approche garantit que les prérequis de chaque étape sont satisfaits avant de passer à la suivante, évitant ainsi les erreurs en cascade.
+
+\subsection{Flux d'Exécution Séquentiel}
+Le processus est décomposé en phases logiques, exécutées dans cet ordre :
+
+\begin{enumerate}[label=\arabic*.]
+    \item \textbf{Phase de Préparation :}
+    \begin{itemize}
+        \item \texttt{calculateRequiredLines()} : Calcule le nombre minimal de lignes et de variables requis pour satisfaire les options de l'utilisateur (ex: une boucle \texttt{for} nécessite au moins 2 lignes et une variable).
+        \item \texttt{generateInitialVariables()} : Déclare un ensemble de base de variables en fonction des options de types et de nombre.
+        \item \texttt{ensureVariablesForOptions()} : Garantit que les variables nécessaires pour les structures de contrôle (ex: un \texttt{bool} pour un \texttt{if}) existent, en en créant si besoin.
+    \end{itemize}
+
+    \item \textbf{Phase de Génération des Structures :}
+    \begin{itemize}
+        \item \texttt{generateControlStructures()} : Orchestre la création des structures de contrôle (\texttt{if}, \texttt{for}, \texttt{while}) et des fonctions (\texttt{def}) dans un ordre aléatoire.
+        \item Chaque fonction de structure (ex: \texttt{generateForRangeLoop}) délègue la création de son contenu à \texttt{generateStructureBody()}. Cette dernière utilise le contexte pour générer des opérations pertinentes (ex: utiliser la variable d'itération dans le corps d'une boucle).
+    \end{itemize}
+
+    \item \textbf{Phase de Finalisation et d'Enrichissement :}
+    \begin{itemize}
+        \item \texttt{ensureAllVariablesAreUsed()} : Parcourt toutes les variables déclarées et ajoute une opération les utilisant si elles n'ont pas encore été mobilisées, assurant ainsi qu'aucune variable n'est "morte".
+        \item \texttt{addFiller()} : Si le nombre de lignes cible n'est pas atteint, cette fonction est appelée en boucle pour ajouter des opérations variées jusqu'à atteindre la longueur désirée.
+        \item \texttt{finalVariableCheck()} : Une dernière vérification pour s'assurer que toutes les variables planifiées sont bien déclarées, ajoutant une initialisation par défaut au début du code si nécessaire.
+    \end{itemize}
+\end{enumerate}
+
+\section{Conceptions et Compromis Clés}
+
+\subsection{Gestion de la Variété : \texttt{generateVariedOperation}}
+Le défi principal est d'éviter la monotonie. La fonction centrale \texttt{generateVariedOperation} est conçue pour cela.
+\begin{itemize}
+    \item \textbf{Conception :} Elle contient un catalogue d'opérations possibles pour chaque type de données, avec des variantes conditionnées par le niveau de difficulté.
+    \item \textbf{Compromis :} Plutôt que de générer des opérations purement aléatoires (risquant des non-sens comme \texttt{"a" - "b"}), nous utilisons des "templates" d'opérations valides. Cela réduit la liberté créative mais garantit la correction syntaxique et sémantique.
+    \item \textbf{Justification :} La robustesse et la pertinence pédagogique priment sur la créativité absolue du code généré.
+\end{itemize}
+
+\subsection{Gestion des Dépendances : L'approche "Ensure"}
+De nombreuses options ont des prérequis (ex: une boucle \texttt{for..in list} nécessite une variable de type liste).
+\begin{itemize}
+    \item \textbf{Conception :} Une série de fonctions "ensure" est appelée durant la phase de préparation pour vérifier l'état actuel et créer les ressources manquantes (ex: \texttt{ensureVariableExists} ou \texttt{ensureListVariablesCount}).
+    \item \textbf{Compromis :} Cette approche est plus verbeuse qu'une génération "au fil de l'eau", mais elle découple la logique de création des prérequis de la logique de génération des structures.
+    \item \textbf{Justification :} Cela rend le code plus maintenable. Si la logique de génération d'une boucle change, il n'est pas nécessaire de modifier la manière dont ses dépendances sont créées.
+\end{itemize}
+
+\subsection{Gestion de la Complexité : Le paramètre \texttt{difficulty}}
+Le niveau de difficulté influence de multiples aspects de la génération.
+\begin{itemize}
+    \item \textbf{Conception :} Le paramètre \texttt{difficulty} est passé à presque toutes les fonctions de génération. Il est utilisé pour :
+        \begin{itemize}
+            \item Déterminer la plage des valeurs numériques (\texttt{getValueRange}).
+            \item Débloquer des opérations plus complexes dans \texttt{generateVariedOperation}.
+            \item Augmenter le nombre d'instructions dans les corps de boucle via la fonction \texttt{generateStructureBody}.
+        \end{itemize}
+    \item \textbf{Justification :} L'utilisation d'un seul paramètre global pour la difficulté simplifie l'interface et le code, tout en offrant un contrôle suffisant sur la complexité du résultat.
+\end{itemize}
+
+\section{Critiques Anticipées et Réponses}
+
+\begin{tcolorbox}[colback=red!5!white,colframe=red!75!black,title=Critiques Académiques Potentielles]
+    \begin{enumerate}
+        \item \textbf{Critique : Le code généré manque de "sens" ou d'intentionnalité. Il ressemble à une suite d'opérations aléatoires plutôt qu'à un algorithme résolvant un problème.}
+        \begin{itemize}
+            \item \textbf{Réponse Argumentée :} C'est un compromis fondamental et assumé. L'objectif de l'outil n'est pas de générer des solutions à des problèmes complexes, mais de fournir des extraits de code ciblés pour l'apprentissage de la \textbf{syntaxe} et de la \textbf{sémantique locale} (l'effet d'une seule ligne ou d'un petit bloc). La fonction \texttt{chooseAppropriateParameterNames} et les opérations contextuelles dans \texttt{generateStructureBody} sont des tentatives pour injecter une plausibilité sémantique, mais l'objectif principal reste la maîtrise des constructions du langage, pas la conception algorithmique.
+        \end{itemize}
+        \vspace{1em}
+
+        \item \textbf{Critique : La génération basée sur des templates et des listes de noms de variables prédéfinis limite la créativité et ne prépare pas les élèves à la résolution de problèmes authentiques.}
+        \begin{itemize}
+            \item \textbf{Réponse Argumentée :} L'outil se positionne au début du spectre de l'apprentissage, correspondant aux phases "Predict" et "Run" du modèle PRIMM. À ce stade, la familiarisation avec des formes idiomatiques et des noms de variables conventionnels (\texttt{i}, \texttt{count}, \texttt{items}) est un objectif pédagogique en soi. La créativité et la résolution de problèmes authentiques interviennent dans les phases ultérieures ("Investigate", "Modify", "Make"), que l'outil supporte en permettant à l'élève de modifier librement le code généré. Le générateur fournit donc un "échafaudage" stable sur lequel l'élève peut ensuite construire.
+        \end{itemize}
+        \vspace{1em}
+
+        \item \textbf{Critique : L'approche par phases séquentielles et la gestion manuelle des dépendances sont complexes et pourraient être remplacées par un système plus déclaratif ou basé sur des contraintes.}
+        \begin{itemize}
+            \item \textbf{Réponse Argumentée :} Un solveur de contraintes ou un système déclaratif serait en effet une approche plus élégante sur le plan théorique. Cependant, étant donné la contrainte d'un environnement \textit{full front-end} en JavaScript, l'implémentation d'un tel système serait extrêmement complexe et potentiellement lente. L'approche impérative par phases, bien que plus verbeuse, est performante, déterministe dans son comportement, et plus facile à déboguer et à maintenir avec les outils standards du développement web. C'est un choix pragmatique privilégiant la faisabilité et la performance dans le contexte technologique imposé.
+        \end{itemize}
+    \end{enumerate}
+\end{tcolorbox}
+
+\section{Comparaison de Différentes Approches de Génération de Code}
+\subsection{L'approche actuelle impérative:}
+\begin{minted}{JS}
+function generateRandomPythonCode(options) \{
+// Étape 1 : Calculer les besoins
+calculateRequiredLines(options);
+// Étape 2 : Créer des variables
+generateInitialVariables(options);
+// Étape 3 : S'assurer que les prérequis sont là
+ensureVariablesForOptions(options);
+// Étape 4 : Créer les structures
+generateControlStructures(options);
+// ... etc.
+\}
+\end{minted}
+
+\subsection{Une approche déclarative:}
+\begin{minted}{JS}
+// On ne fait que décrire le résultat final
+const codeDescription = {
+    targetLines: 20,
+    difficulty: 3,
+    mustContain: ['if', 'for_list'],
+    mustUseVariables: ['int', 'list'],
+    allVariablesMustBeUsed: true,
+    noInfiniteLoops: true
+};
+
+// Le système se charge de trouver un code qui respecte cette description
+const generatedCode = declarativeGenerator.generate(codeDescription);
+\end{minted}
+Le système pourrait alors explorer l'espace des programmes possibles et en trouver un qui respecte toutes les contraintes spécifiées, ou à défaut proposer une solution approximative.
+
+\subsection{Une approche par solveur de contraintes:}
+La génération de code pourrait être modélisée comme un problème de contraintes :
+
+Les variables : Chaque ligne de code potentielle, chaque nom de variable, chaque valeur littérale.
+
+Les contraintes : 
+\begin{itemize}
+    \item contrainte\_longueur : Le nombre total de lignes doit être entre 15 et 20.
+    \item contrainte\_syntaxe : Si l'option if est cochée, le code doit contenir au moins un bloc if.
+    \item contrainte\_dépendance : Si un bloc for..in..list existe, alors une variable de type list doit exister et être déclarée avant la boucle.
+    \item contrainte\_unicité : Deux variables ne peuvent pas avoir le même nom.
+    \item contrainte\_utilisation : Chaque variable déclarée doit apparaître au moins une fois dans une expression après sa déclaration.
+    \item contrainte\_terminaison : Le programme doit se terminer par une instruction de retour ou une sortie.
+    \item contrainte\_sémantique : Les opérations doivent être logiques (ex: ne pas soustraire deux chaînes de caractères).
+\end{itemize}
+Le solveur de contraintes recevrait toutes ces règles et tenterait de "construire" un programme valide qui les respecte toutes.
+
+\end{document}
