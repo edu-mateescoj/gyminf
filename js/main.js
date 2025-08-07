@@ -62,6 +62,7 @@ let isEditorEditable = false;
 var codeEditorInstance;
 let variableValuesFromExecution = {}; // Pour stocker les valeurs des variables après l'exécution du code
 let lastDiagramAstDump = ""; // Pour la synchronisation diagramme/code
+let lastLoggedCanonicalCode = ""; // Stocke le dernier code normalisé qui a été journalisé
 
 // --- Variables DOM globales (déclarées ici pour être accessibles partout) ---
 let difficultyGlobalSelect;
@@ -630,8 +631,9 @@ async function getAstDumpFromCode(code) {
         const pyScript = `
 import ast
 try:
-    cfg_instance = ControlFlowGraph(user_python_code)
-    result = ast.dump(cfg_instance.tree)
+    # On ne fait que parser, pas besoin de générer le graphe complet ici.
+    tree = ast.parse(user_python_code)
+    result = ast.dump(tree)
 except Exception:
     result = None # Retourne None si le code est syntaxiquement invalide
 result
@@ -1384,43 +1386,81 @@ document.addEventListener('DOMContentLoaded', function() {
     const runCodeButton = document.getElementById('run-code-btn');
     if (runCodeButton) {
         runCodeButton.addEventListener('click', async function() {
-            console.log("Bouton 'Lancer le diagramme et les défis' cliqué.");
+            console.log("Bouton 'Lancer...' cliqué. Processus unifié démarré.");
             if (!codeEditorInstance) {
                 console.error("L'instance de CodeMirror n'est pas disponible.");
                 alert("Erreur : L'éditeur de code n'est pas initialisé.");
                 return;
             }
-            const currentCode = codeEditorInstance.getValue();
+            // Le code brut de l'éditeur est notre seule source de vérité.
+           const originalCode = codeEditorInstance.getValue();
+            // const currentCode = codeEditorInstance.getValue();
+            // const currentCode = originalCode.replace(/^\s*#.*$/gm, '').trim(); // Enlève les commentaires et espaces inutiles
+             
+             // 1. APPEL UNIFIÉ :
+            // Un seul appel asynchrone pour obtenir le diagramme, le code normalisé, et le dump de l'AST.
+            let processingResults;
             try {
                 if (typeof triggerFlowchartUpdate === 'function') {
-                    await triggerFlowchartUpdate();
+                    // On s'attend à ce que triggerFlowchartUpdate retourne un objet :
+                    // { mermaid: "...", canonicalCode: "...", ast_dump: "..." }
+                    processingResults = await triggerFlowchartUpdate();
                 } else {
                     throw new Error("La fonction triggerFlowchartUpdate n'est pas définie.");
                 }
             } catch (e) {
                 console.error("Erreur lors de la mise à jour du diagramme de flux:", e);
                 alert("Erreur : Impossible de mettre à jour le diagramme de flux. Veuillez vérifier la console pour plus de détails.");
-                return;
+                return; // Arrêter le processus en cas d'échec critique.
             }
-            try {
-                if (pyodide) {
-                    const astDump = await getAstDumpFromCode(currentCode);
-                    if (astDump) {
-                        lastDiagramAstDump = astDump;
-                        console.log("lastDiagramAstDump mis à jour avec succès.");
-                    } else {
-                        lastDiagramAstDump = "";
+
+            // 2. JOURNALISATION INTELLIGENTE :
+            // On ne journalise que si le code a structurellement changé.
+            if (processingResults && processingResults.canonicalCode) {
+                const canonicalCode = processingResults.canonicalCode;
+                
+                if (canonicalCode !== lastLoggedCanonicalCode) {
+                    console.log("Changement structurel détecté. Journalisation des deux versions du code.");
+                    
+                    // La fonction de log est maintenant appelée avec les deux versions du code.
+                    if (typeof flowchartIsGenerated === 'function') {
+                        flowchartIsGenerated(originalCode, canonicalCode); 
                     }
+                    
+                    // Mettre à jour la référence pour éviter les logs redondants.
+                    lastLoggedCanonicalCode = canonicalCode;
+                } else {
+                    console.log("Aucun changement structurel. Journalisation ignorée.");
+                }
+            }
+
+            // 3. MISE À JOUR DE L'AST POUR LA SYNCHRONISATION DE L'UI :
+            // On utilise pas seulement le dump AST déjà récupéré lors de l'appel unifié. On a besoin d'un deuxième appel `await getAstDumpFromCode(originalCode)`pour obtenir le dump AST de référence!
+            // C'est crucial pour que le listener 'onchange' ait une référence valide à comparer.
+            try {
+                const astDump = await getAstDumpFromCode(originalCode);
+                if (astDump) {
+                    lastDiagramAstDump = astDump;
+                    console.log("lastDiagramAstDump mis à jour après exécution réussie.");
+                } else {
+                    // Si le traitement a échoué, on réinitialise le dump de référence.
+                    lastDiagramAstDump = "";
+                    console.warn("Le code exécuté est syntaxiquement invalide, le dump AST de référence est invalidé.");
                 }
             } catch (e) {
-                console.warn("Impossible de mettre à jour le dump AST de référence:", e);
                 lastDiagramAstDump = "";
+                console.error("Erreur critique lors de la mise à jour du dump AST de référence:", e);
             }
+            
+
+            // 4. EXÉCUTION DU DÉFI :
+            // Mettre l'UI en état "par défaut" avant de lancer le défi.
             setDiagramAndChallengeCardState("default");
             try {
                 variableValuesFromExecution = {};
                 if (typeof pyodide !== 'undefined' && pyodide) {
-                     variableValuesFromExecution = await runAndTraceCodeForChallenge(currentCode, pyodide);
+                     // On exécute le code original de l'éditeur pour le défi.
+                     variableValuesFromExecution = await runAndTraceCodeForChallenge(originalCode, pyodide);
                 } else {
                     console.warn("Pyodide n'est pas encore prêt pour exécuter le code du défi.");
                     alert("Le moteur Python n'est pas encore prêt. Veuillez patienter.");
@@ -1428,12 +1468,15 @@ document.addEventListener('DOMContentLoaded', function() {
                     if (showSolutionButton) showSolutionButton.disabled = true;
                     return;
                 }
+                
+                // Mettre à jour l'interface du défi avec les résultats.
                 if (typeof populateChallengeInputs === 'function') {
                     populateChallengeInputs(variableValuesFromExecution, challengeVariablesContainer);
                 }
                 const hasVariables = Object.keys(variableValuesFromExecution).length > 0;
                 if (checkAnswersButton) checkAnswersButton.disabled = !hasVariables;
                 if (showSolutionButton) showSolutionButton.disabled = !hasVariables;
+
             } catch (error) {
                 console.error("Erreur lors de l'exécution du code pour le défi:", error);
                 const container = document.getElementById('variables-container');

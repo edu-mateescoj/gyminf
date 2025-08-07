@@ -97,10 +97,10 @@ async function generateFlowchartFromCode(pythonCode) {
 
     if (!pythonCode || pythonCode.trim() === "") {
         console.warn("Aucun code Python fourni pour générer le diagramme.");
-        return ""; // Important pour que displayFlowchart affiche le message "Aucun diagramme"
+        return { mermaid: "", canonicalCode: "" }; // Important pour que displayFlowchart affiche le message "Aucun diagramme"
     }
 
-    console.log("Génération du diagramme pour le code :", pythonCode);
+    console.log("Génération unifiée (diagramme + code canonique)...");
     setLoadingState(true); // Afficher le chargement pendant la génération du diagramme
 
     try {
@@ -110,11 +110,11 @@ async function generateFlowchartFromCode(pythonCode) {
         pyodide.globals.set("user_python_code", pythonCode);
 
         // Script Python à exécuter dans Pyodide pour utiliser la classe CFG.
-        var pythonRunnerScript = `
+        const pythonRunnerScript = `
 import ast # S'assurer qu'ast est importé si ce n'est pas déjà fait
 # La classe ControlFlowGraph est déjà définie par l'exécution de cfgPythonScript lors de initPyodideAndLoadScript
 
-mermaid_output = ""
+output_dict = {}
 error_message = ""
 try:
     # Récupérer le code utilisateur passé depuis JavaScript
@@ -124,28 +124,22 @@ try:
     #    Le __init__ de ControlFlowGraph fait ast.parse(current_code) et initialise les structures.
     cfg_instance = ControlFlowGraph(current_code) 
     
-    # Lancer la visite à partir de la racine de l'AST (le module) pour construire le CFG interne (remplir self.nodes, self.edges, etc.)
-    #    cfg_instance.tree est déjà initialisé par le __init__
-    cfg_instance.visit(cfg_instance.tree, None) # Le parent initial est None
+    # Appel de la nouvelle méthode unifiée qui exécute la visite, la génération Mermaid et la normalisation du code.
+    # Ceci remplace les appels séparés à .visit() et .to_mermaid() pour optimiser les performances.
+    output_dict = cfg_instance.process_and_get_results()
     
-    # Obtenir la sortie Mermaid
-    mermaid_output = cfg_instance.to_mermaid()
-
-    if mermaid_output is None: # Sécurité supplémentaire
-        mermaid_output = "graph TD\\n    error_node[Erreur: to_mermaid a retourné None en Python]"  
-
 except Exception as e:
     import traceback
     error_message = f"Erreur Python lors de la génération du CFG: {type(e).__name__}: {str(e)}\\n{traceback.format_exc()}"
     print(error_message) # Afficher dans la console Pyodide (visible dans la console du navigateur)
+    # Créer un dictionnaire d'erreur cohérent avec la sortie normale
+    output_dict = {"mermaid": "", "canonical_code": "", "error": error_message}
 
-# Renvoyer la sortie Mermaid (ou une chaîne vide si erreur) et le message d'erreur
-# Ces variables seront accessibles depuis JavaScript via pyodide.globals.get()
-output_dict = {"mermaid": mermaid_output, "error": error_message}
+# Renvoyer le dictionnaire complet à JavaScript
 output_dict # C'est le dict retourné à JS
 `;
         // Exécuter le script runner
-        var resultProxy = await pyodide.runPythonAsync(pythonRunnerScript);
+        const resultProxy = await pyodide.runPythonAsync(pythonRunnerScript);
         // Convertir le résultat en objet JS. Si c'est un Map, il faut le traiter comme tel.
         var outputData;
         if (typeof resultProxy.toJs === 'function') {
@@ -166,31 +160,23 @@ output_dict # C'est le dict retourné à JS
         }
         resultProxy.destroy(); // Libérer la mémoire du proxy
         setLoadingState(false); // Masquer le chargement après la génération
-        console.log("Résultat de la génération du diagramme:", outputData); // DEBUG
-        
+         
         // Vérifier si une erreur a été capturée dans le script Python
-        var pythonError = outputData.error; // Accès comme propriété d'objet
-        var mermaidStringFromPython = outputData.mermaid; // Accès comme propriété d'objet
-
-        if (pythonError) { // Vérifier s'il y a une erreur Python
-            console.error("Erreur Python détaillée:", pythonError);
-            var flowchartDivDisplay = document.getElementById('flowchart');
+        if (outputData.error) {
+            console.error("Erreur Python détaillée:", outputData.error);
+            const flowchartDivDisplay = document.getElementById('flowchart');
             if (flowchartDivDisplay) {
-                var preFormattedError = pythonError.replace(/\\n/g, '<br>');
-                flowchartDivDisplay.innerHTML = '<div class="alert alert-warning" role="alert"><strong>Erreur Python lors de la génération du diagramme :</strong><br><pre style="white-space: pre-wrap; word-break: break-all;">' + preFormattedError + '</pre></div>';
+                const preFormattedError = String(outputData.error).replace(/\\n/g, '<br>');
+                flowchartDivDisplay.innerHTML = '<div class="alert alert-warning" role="alert"><strong>Erreur Python lors de la génération :</strong><br><pre style="white-space: pre-wrap; word-break: break-all;">' + preFormattedError + '</pre></div>';
             }
-            return null; // Indiquer une erreur
+            return null; // Indiquer une erreur à la fonction appelante
         }
 
-        //DEBUG messages erreur avec retours undefined
-        console.log("Chaîne Mermaid générée par Python:", mermaidStringFromPython); // LOG 1
-        console.log("Type de output.mermaid:", typeof mermaidStringFromPython); // LOG 2
-        
-        // S'assurer que output.mermaid est une chaîne. Si Python retourne None, output.mermaid sera null.
-        var returnValue = typeof mermaidStringFromPython === 'string' ? mermaidStringFromPython : "graph TD\n    py_ret_not_str[Erreur: Python n'a pas retourné une chaîne pour Mermaid]";
-        console.log("Valeur retournée par generateFlowchartFromCode:", returnValue); // LOG 3
-        console.log("Type de la valeur retournée:", typeof returnValue); // LOG 4
-        return returnValue;
+       // Retourner l'objet avec les deux résultats si tout s'est bien passé
+        return {
+            mermaid: outputData.mermaid,
+            canonicalCode: outputData.canonical_code
+        };
 
     } catch (error) {
         console.error("Erreur JavaScript lors de l'appel à Pyodide pour générer le diagramme:", error);
@@ -313,11 +299,24 @@ async function triggerFlowchartUpdate() {
     var currentCode = codeEditorInstance.getValue();
 
     if (currentCode) {
-        var mermaidString = await generateFlowchartFromCode(currentCode);
-        // displayFlowchart gère maintenant null et les chaînes vides
-        await displayFlowchart(mermaidString, 'flowchart');
+        // 1. On appelle la fonction et on stocke l'objet complet dans "results"
+        var results = await generateFlowchartFromCode(currentCode);
+
+        // 2. On vérifie que l'objet "results" existe ET qu'il contient bien la propriété "mermaid"
+        if (results && results.mermaid) {
+            // 3. On passe uniquement la propriété "mermaid" à la fonction d'affichage
+            await displayFlowchart(results.mermaid, 'flowchart');
+        } else {
+            // Gérer le cas où la génération a échoué et n'a rien retourné de valide
+            await displayFlowchart("", 'flowchart');
+        }
+        
+        // 4. On retourne l'objet complet pour que main.js puisse l'utiliser
+        return results;
+
     } else {
         // Effacer le diagramme si pas de code
         await displayFlowchart("", 'flowchart');
+        return null; // Retourner null si pas de code
     }
 }

@@ -3,7 +3,11 @@ from typing import List, Dict, Set, Tuple, Optional
 
 class ControlFlowGraph:
     def __init__(self, code: str):
-        self.tree = ast.parse(code)
+        try:
+            self.tree = ast.parse(code)
+        except SyntaxError as e:
+            self.syntax_error = e
+            self.tree = None
         self.nodes: List[Tuple[str, str]] = [] # Liste des tuples (node_id, label)
         self.edges: Set[Tuple[str, str, str]] = set() # Ensemble des tuples (from_node, to_node, label)
         self.node_counter = 0 # Compteur pour générer des ID de nœuds uniques
@@ -31,6 +35,28 @@ class ControlFlowGraph:
         # Ex: "my_string" -> (ast.Constant, "chaîne")
         self.variable_assignments: Dict[str, Tuple[type, Any]] = {}
 
+    def process_and_get_results(self) -> dict:
+        """
+        Méthode centrale qui génère le diagramme ET le code normalisé.
+        """
+        if self.tree is None:
+            return {
+                "mermaid": "graph TD\n    error[Code syntaxiquement invalide]",
+                "canonical_code": f"# Erreur de syntaxe:\n# {getattr(self, 'syntax_error', 'Erreur inconnue')}",
+                "error": str(getattr(self, 'syntax_error', 'Erreur inconnue'))
+            }
+
+        self.visit(self.tree, None)
+        mermaid_string = self.to_mermaid()
+        canonical_code_string = ast.unparse(self.tree)
+
+        return {
+            "mermaid": mermaid_string,
+            "canonical_code": canonical_code_string,
+            "ast_dump": ast.dump(self.tree),
+            "error": None
+        }
+        
     def get_node_id(self) -> str:
         """Génère un nouvel ID de nœud unique et l'ajoute à la portée de fonction actuelle si applicable."""
         self.node_counter += 1
