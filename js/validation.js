@@ -69,19 +69,30 @@ function populateChallengeInputs(correctVariableValues, container) {
 /**
  * Réinitialise la section "Défi" à son état par défaut.
  * @param {HTMLElement} container - L'élément conteneur des inputs à réinitialiser.
+ * @param {string|null} [reason=null] - La raison optionnelle de la réinitialisation ('outdated' ou null).
  */
-function resetChallengeInputs(container) {
+function resetChallengeInputs(container, reason = null) {
     if (!container) {
         console.error("Le conteneur pour les variables du défi est introuvable.");
         return;
     }
     container.innerHTML = ''; // Vider le conteneur pour toute nouvelle population
 
-    // Message par défaut
-    container.innerHTML = `
+    let message = "";
+    if (reason === "outdated") {
+        // Message spécifique si le code est périmé
+        message = `
+        <div class="col-12 text-center text-danger">
+            <p><i class="fas fa-exclamation-triangle me-2"></i>Le code a été TROP modifié. Cliquez sur "Lancer..." pour mettre à jour le défi, ou annulez vos modifications manuelles.</p>
+        </div>`;
+    } else {
+        // Message par défaut
+        message = `
         <div class="col-12 text-center text-muted">
             <p><i class="fas fa-code me-2"></i>Lancer le diagramme et les défis pour voir les variables...</p>
         </div>`;
+    }
+    container.innerHTML = message;
 }
 
 /**

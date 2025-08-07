@@ -651,6 +651,8 @@ result
 function setDiagramAndChallengeCardState(state) {
     const diagramCard = document.getElementById('flowchart')?.closest('.card');
     const challengeCard = document.getElementById('variables-container')?.closest('.card');
+    const checkBtn = document.getElementById('check-answers-btn');
+    const showSolBtn = document.getElementById('show-solution-btn');
 
     [diagramCard, challengeCard].forEach(card => {
         if (!card) return;
@@ -674,6 +676,9 @@ function setDiagramAndChallengeCardState(state) {
         runBtn.classList.remove('btn-danger', 'btn-success');
         if (state === "outdated") {
             runBtn.classList.add('btn-danger');
+            if (checkBtn) checkBtn.disabled = true;
+            if (showSolBtn) showSolBtn.disabled = true;
+            resetChallengeInputs(challengeVariablesContainer, "outdated"); // On passe l'état pour un message personnalisé
         } else {
             runBtn.classList.add('btn-success');
         }
@@ -1359,7 +1364,19 @@ document.addEventListener('DOMContentLoaded', function() {
             if (currentAstDump !== lastDiagramAstDump) {
                 setDiagramAndChallengeCardState("outdated");
             } else {
+                // Le code est redevenu identique à la dernière version exécutée.
                 setDiagramAndChallengeCardState("default");
+                
+                // --- RESTAURATION DE L'ÉTAT DU DÉFI ---
+                // Si on a des valeurs de la dernière exécution, on restaure l'affichage.
+                if (Object.keys(variableValuesFromExecution).length > 0) {
+                    if (typeof populateChallengeInputs === 'function') {
+                        populateChallengeInputs(variableValuesFromExecution, challengeVariablesContainer);
+                    }
+                    if (checkAnswersButton) checkAnswersButton.disabled = false;
+                    if (showSolutionButton) showSolutionButton.disabled = false;
+                }
+                // --- FIN DE LA RESTAURATION ---
             }
         });
     }
