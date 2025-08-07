@@ -659,7 +659,7 @@ class ControlFlowGraph:
     def visit_While(self, node: ast.While, parent_id: str) -> List[str]: 
         """Visite une boucle 'while' AST."""
         condition_text = ast.unparse(node.test).replace('"', '"')
-        while_decision_id = self.add_node(f"While {condition_text}", node_type="Decision")
+        while_decision_id = self.add_node(f"{condition_text}", node_type="Decision")
         self.add_edge(parent_id, while_decision_id)
         
         # La branche "False" (terminaison normale) part de while_decision_id.
