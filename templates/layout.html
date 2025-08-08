@@ -22,9 +22,13 @@
     <script src="https://cdn.jsdelivr.net/npm/mermaid@10.2.4/dist/mermaid.min.js"></script>
     
     <!-- Inclusion du CSS personnalisé -->
+    <!--
     <link rel="stylesheet" href="../static/css/styles.css">
+-->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
      
     <!-- Favicon à insérer ici -->
+
     <style>
         /* nouveautés */
         #func-builtins-options-wrapper .row {
@@ -598,12 +602,25 @@
     </div>
 </div>
 
-        <!-- JavaScript  -->
+        <!-- JavaScript VERSION LOCALE -->
+        <!--
         <script src="../static/js/codes-exemples.js"></script>
         <script src="../static/js/code-generator.js"></script>
         <script src="../static/js/flowchart-generator.js"></script>
         <script src="../static/js/validation.js"></script>
         <script src="../static/js/main.js"></script>
+-->
+        <!-- JavaScript VERSION BACKEND -->
+        <script src="{{ url_for('static', filename='js/codes-exemples.js') }}"></script>
+        <script src="{{ url_for('static', filename='js/code-generator.js') }}"></script>
+        <script src="{{ url_for('static', filename='js/flowchart-generator.js') }}"></script>
+        <script src="{{ url_for('static', filename='js/validation.js') }}"></script>
+        <script src="{{ url_for('static', filename='js/db_queries.js') }}"></script>
+        <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+
+    
+    
+    
     </main>
 
     <!-- Pied de page -->

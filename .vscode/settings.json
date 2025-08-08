@@ -1,5 +1,21 @@
 {
     "git.useIntegratedAskPass": true,
     "liveServer.settings.port": 5501,
-    "python.analysis.typeCheckingMode": "standard"
+    "python.analysis.typeCheckingMode": "standard",
+    "sqltools.connections": [
+        {
+            "mysqlOptions": {
+                "authProtocol": "default",
+                "enableSsl": "Disabled"
+            },
+            "previewLimit": 50,
+            "server": "localhost",
+            "port": 3306,
+            "driver": "MariaDB",
+            "name": "GYMINF_POC local",
+            "database": "GYMINF_POC",
+            "username": "root",
+            "password": "root"
+        }
+    ]
 }

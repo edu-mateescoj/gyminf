@@ -175,7 +175,8 @@ output_dict # C'est le dict retourné à JS
        // Retourner l'objet avec les deux résultats si tout s'est bien passé
         return {
             mermaid: outputData.mermaid,
-            canonicalCode: outputData.canonical_code
+            canonicalCode: outputData.canonical_code,
+            ast_dump: outputData.ast_dump
         };
 
     } catch (error) {

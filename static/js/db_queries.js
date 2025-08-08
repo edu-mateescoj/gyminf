@@ -25,23 +25,65 @@
 // maintenabilité avec log_enum.CODE_GENERATION même si "code_generation" renommée
 // + sécurité + auto-complétion dans l'IDE
 const log_enum = Object.freeze({ // fige les paires clé-valeur pour éviter modifications/ajouts/suppressions
-    CODE_GENERATION: 'code_generation', 
-    FLOWCHART_GENERATION: 'flowchart_generation',
+    GENERATION: 'generation', // NOUVEAU: Pour le code généré
+    // CODE_GENERATION: 'code_generation', 
+    FLOWCHART_GENERATION: 'flowchart_generation', // Pour le code exécuté (flowchart+défi)
     VERIFY_ANSWERS: 'verify_answers',
-    CHECK_SOLUTION: 'check_solution'
+    CHECK_SOLUTION: 'reveal_solution'
 });
 
+// ---- ANCIENNES FONCTIONS
+/**
 function codeIsGenerated(code) { // appelée par main.js quand événements pertinents définissant l'input 'code'(génération + chargement + édition)
     let body = JSON.stringify({code: code});
     logFactory(log_enum.CODE_GENERATION, body);
 }
 
 
-function flowchartIsGenerated() { // appelé par layout.html au clique sur "run-code-btn"
-    let code = lastLoadedCode; // fourni par main.js
-    let body = JSON.stringify({code: code});
+function flowchartIsGenerated() { // MODIFIÉ
+    // On envoie les deux versions du code au backend.
+    // Le backend décidera quoi en faire. AVANT, il n'utilisait que l'original.
+    let body = JSON.stringify({
+        code: originalCode, 
+        canonical_code: canonicalCode
+    });
     logFactory(log_enum.FLOWCHART_GENERATION, body);
 }
+*/
+
+// --- NOUVELLES FONCTIONS ---
+
+/**
+ * Journalise le code Python initialement généré par l'outil.
+ * @param {string} code - Le code Python généré.
+ * @param {number} difficulty - Le niveau de difficulté sélectionné.
+ */
+function logGeneratedCode(code, difficulty) {
+    console.log("DEBUG - logGeneratedCode appelée avec difficulté:", difficulty);
+    let body = JSON.stringify({
+        code: code,
+        difficulty: difficulty
+    });
+    logFactory(log_enum.GENERATION, body);
+}
+
+/**
+ * Journalise le code qui a été exécuté pour générer le flowchart et le défi.
+ * Ce code peut avoir été modifié manuellement par l'élève.
+ * @param {string} originalCode - Le code brut de l'éditeur.
+ * @param {string} canonicalCode - La version normalisée du code par AST.
+ * @param {number} difficulty - Le niveau de difficulté associé.
+ */
+function logExecutedCode(originalCode, canonicalCode, difficulty) {
+    console.log("DEBUG - logExecutedCode appelée avec difficulté:", difficulty);
+    let body = JSON.stringify({
+        code: originalCode, 
+        canonical_code: canonicalCode,
+        difficulty: difficulty
+    });
+    logFactory(log_enum.FLOWCHART_GENERATION, body);
+}
+
 
 /** fonction utilitaire centrale! point de passage obligatoire pour toute communication avec le backend 
  * Détermine l'URL cible en fonction du type de log,
@@ -51,29 +93,42 @@ function flowchartIsGenerated() { // appelé par layout.html au clique sur "run-
 function logFactory(type, body) {
     let log_url = ""
     switch (type) {
-        case log_enum.CODE_GENERATION:
-            log_url = '/code_generation';
+        case log_enum.GENERATION:
+            log_url = '/log/generation'; // AVANT '/code_generation';
             break;
         case log_enum.FLOWCHART_GENERATION:
-            log_url = '/flowchart_generation';
+            log_url = '/log/flowchart_generation'; // AVANT '/flowchart_generation';
             break;
         default:
             log_url = null;
     }
-    console.log(log_url);
+
     if (log_url != null) {
+        console.log(`Envoi d'une requête de log vers: ${log_url}`);
         fetch(log_url, { // envoie une requête POST au serveur Flask, données au format JSON
             method: 'POST',
             headers: {'Content-Type': 'application/json'},
-            body: body
+            body: body,
+            // CORRECTION CRITIQUE : On demande au navigateur d'inclure les cookies (pour la session).
+            credentials: 'same-origin' 
         })
-            .then(response => response.json()) // convertit la réponse en JSON
-            .then(data => { // traite la réponse du serveur
-                if (data.status === 'success') {
-                    console.log('Success');
-                } else {
-                    console.log('DB INSERT failed: ' + data);
-                }
-            });
+        .then(response => {
+            console.log(`DÉBUG - Statut de la réponse:`, response.status);
+            if (!response.ok) {
+                throw new Error(`Erreur HTTP ${response.status}: ${response.statusText}`);
+            }
+            return response.json();
+        })
+        .then(data => {
+            console.log('DÉBUG - Réponse du serveur:', data);
+            if (data.status !== 'success') {
+                console.error(`Échec de la journalisation: ${data.message}`);
+            }
+        })
+        .catch(error => {
+            console.error('DÉBUG - Erreur de communication avec le serveur:', error);
+        });
+    } else {
+        console.error("DÉBUG - URL invalide, aucune requête envoyée pour le type:", type);
     }
 }

@@ -7,10 +7,22 @@ CREATE TABLE IF NOT EXISTS user (
     password VARCHAR(255) NOT NULL
 );
 
+-- NOUVELLE TABLE pour stocker uniquement le code généré initialement
+CREATE TABLE IF NOT EXISTS generation (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    user_id INT,
+    script TEXT,
+    difficulty INT,
+    time_created DATETIME,
+    FOREIGN KEY (user_id) REFERENCES user(id)
+);
+
+-- TABLE MODIFIÉE
 CREATE TABLE IF NOT EXISTS code (
     ID INT AUTO_INCREMENT PRIMARY KEY,
     user_id INT NOT NULL,
-    code VARCHAR(511) NOT NULL,
+    code TEXT,
+    canonical_code TEXT,
     difficulty INT NOT NULL,
     time_created DATETIME NOT NULL,
 
@@ -34,7 +46,7 @@ CREATE TABLE IF NOT EXISTS diagram (
     ON UPDATE CASCADE
 );
 
-CREATE TABLE IF NOT EXISTS check_solution (
+CREATE TABLE IF NOT EXISTS reveal_solution (
     id INT AUTO_INCREMENT PRIMARY KEY,
     user_id INT NOT NULL,
     code_id INT NOT NULL,
@@ -70,7 +82,7 @@ CREATE TABLE IF NOT EXISTS answer (
     check_answer_id INT NOT NULL,
     var_name VARCHAR(50) NOT NULL,
     prediction VARCHAR(50),
-    correctness BOOLEAN DEFAULT FALSE
+    correctness BOOLEAN DEFAULT FALSE,
 
     FOREIGN KEY (check_answer_id) REFERENCES check_answer(id)
     ON DELETE CASCADE

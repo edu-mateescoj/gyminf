@@ -1219,8 +1219,12 @@ document.addEventListener('DOMContentLoaded', function() {
             if(codeEditorInstance) codeEditorInstance.setValue(newGeneratedCode);
             memorizeLoadedCode(newGeneratedCode);
             setDiagramAndChallengeCardState("default");
-            // CORRECTION: La fonction `codeIsGenerated` n'existe pas. Nous la retirons.
-            // codeIsGenerated(newGeneratedCode);
+            
+            // NOUVEL APPEL DE LOG: On journalise le code qui vient d'être généré.
+            if (typeof logGeneratedCode === 'function') {
+                const difficulty = parseInt(difficultyGlobalSelect.value, 10);
+                logGeneratedCode(newGeneratedCode, difficulty);
+            }
 
             var flowchartDisplayArea = document.getElementById('flowchart');
             if (flowchartDisplayArea) flowchartDisplayArea.innerHTML = '<p class="text-center text-muted mt-3">Nouveau code généré. Cliquez sur "Lancer..."</p>';
@@ -1422,9 +1426,12 @@ document.addEventListener('DOMContentLoaded', function() {
                 if (canonicalCode !== lastLoggedCanonicalCode) {
                     console.log("Changement structurel détecté. Journalisation des deux versions du code.");
                     
-                    // La fonction de log est maintenant appelée avec les deux versions du code.
-                    if (typeof flowchartIsGenerated === 'function') {
-                        flowchartIsGenerated(originalCode, canonicalCode); 
+                    // On récupère la difficulté au moment de l'exécution.
+                    const difficulty = parseInt(difficultyGlobalSelect.value, 10);
+
+                    // APPEL MODIFIÉ: On utilise la nouvelle fonction avec tous les arguments.
+                    if (typeof logExecutedCode === 'function') {
+                        logExecutedCode(originalCode, canonicalCode, difficulty); 
                     }
                     
                     // Mettre à jour la référence pour éviter les logs redondants.
@@ -1435,24 +1442,17 @@ document.addEventListener('DOMContentLoaded', function() {
             }
 
             // 3. MISE À JOUR DE L'AST POUR LA SYNCHRONISATION DE L'UI :
-            // On utilise pas seulement le dump AST déjà récupéré lors de l'appel unifié. On a besoin d'un deuxième appel `await getAstDumpFromCode(originalCode)`pour obtenir le dump AST de référence!
-            // C'est crucial pour que le listener 'onchange' ait une référence valide à comparer.
-            try {
-                const astDump = await getAstDumpFromCode(originalCode);
-                if (astDump) {
-                    lastDiagramAstDump = astDump;
-                    console.log("lastDiagramAstDump mis à jour après exécution réussie.");
-                } else {
-                    // Si le traitement a échoué, on réinitialise le dump de référence.
-                    lastDiagramAstDump = "";
-                    console.warn("Le code exécuté est syntaxiquement invalide, le dump AST de référence est invalidé.");
-                }
-            } catch (e) {
+            // CORRECTION : On supprime l'appel redondant et on utilise le dump AST
+            // déjà récupéré lors de l'appel unifié. C'est la clé de la fiabilité.
+            if (processingResults && processingResults.ast_dump) {
+                lastDiagramAstDump = processingResults.ast_dump;
+                console.log("lastDiagramAstDump mis à jour via le processus unifié.");
+            } else {
+                // Si le traitement a échoué ou n'a pas retourné de dump, on réinitialise la référence.
                 lastDiagramAstDump = "";
-                console.error("Erreur critique lors de la mise à jour du dump AST de référence:", e);
+                console.warn("Impossible de mettre à jour le dump AST de référence via le processus unifié.");
             }
             
-
             // 4. EXÉCUTION DU DÉFI :
             // Mettre l'UI en état "par défaut" avant de lancer le défi.
             setDiagramAndChallengeCardState("default");
