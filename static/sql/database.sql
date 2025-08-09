@@ -61,11 +61,13 @@ CREATE TABLE IF NOT EXISTS reveal_solution (
     ON UPDATE CASCADE
 );
 
-CREATE TABLE IF NOT EXISTS check_answer (
+CREATE TABLE IF NOT EXISTS verify_answer (
     id INT AUTO_INCREMENT PRIMARY KEY,
     user_id INT NOT NULL,
     code_id INT NOT NULL,
     time_created DATETIME NOT NULL,
+    predictions JSON,
+    correctness JSON,
 
     FOREIGN KEY (user_id) REFERENCES user(id)
     ON DELETE CASCADE
@@ -75,7 +77,6 @@ CREATE TABLE IF NOT EXISTS check_answer (
     ON DELETE CASCADE
     ON UPDATE CASCADE
 );
-
 
 CREATE TABLE IF NOT EXISTS answer (
     id INT AUTO_INCREMENT PRIMARY KEY,
@@ -87,4 +88,12 @@ CREATE TABLE IF NOT EXISTS answer (
     FOREIGN KEY (check_answer_id) REFERENCES check_answer(id)
     ON DELETE CASCADE
     ON UPDATE CASCADE
+);
+
+CREATE TABLE IF NOT EXISTS load_event (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    user_id INT NOT NULL,
+    example_name VARCHAR(255) NOT NULL,
+    timestamp DATETIME DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (user_id) REFERENCES user(id)
 );

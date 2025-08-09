@@ -63,6 +63,7 @@ var codeEditorInstance;
 let variableValuesFromExecution = {}; // Pour stocker les valeurs des variables après l'exécution du code
 let lastDiagramAstDump = ""; // Pour la synchronisation diagramme/code
 let lastLoggedCanonicalCode = ""; // Stocke le dernier code normalisé qui a été journalisé
+let currentChallengeCodeId = null; // Pour stocker l'ID du code de défi actuel
 
 // --- Variables DOM globales (déclarées ici pour être accessibles partout) ---
 let difficultyGlobalSelect;
@@ -1266,6 +1267,10 @@ document.addEventListener('DOMContentLoaded', function() {
                 const exampleIndex = parseInt(this.dataset.exampleIndex);
                 const selectedExample = PREDEFINED_EXAMPLES[exampleIndex];
                 if (selectedExample && codeEditorInstance) {
+                    
+                    if (typeof logLoadExample === 'function') {
+                        logLoadExample(selectedExample.name);
+                    }
                     lastDiagramAstDump = "";
                     codeEditorInstance.setValue(selectedExample.code);
                     memorizeLoadedCode(selectedExample.code);
@@ -1431,7 +1436,17 @@ document.addEventListener('DOMContentLoaded', function() {
 
                     // APPEL MODIFIÉ: On utilise la nouvelle fonction avec tous les arguments.
                     if (typeof logExecutedCode === 'function') {
-                        logExecutedCode(originalCode, canonicalCode, difficulty); 
+                        try {
+                            // CORRECTION : On attend le résultat de la journalisation.
+                            const logResult = await logExecutedCode(originalCode, canonicalCode, difficulty); 
+                            if (logResult && logResult.code_id) {
+                                // On stocke l'ID du code qui vient d'être créé.
+                                currentChallengeCodeId = logResult.code_id;
+                                console.log(`Défi initialisé avec code_id: ${currentChallengeCodeId}`);
+                            }
+                        } catch (e) {
+                            console.error("Erreur lors de la journalisation du code exécuté:", e);
+                        }
                     }
                     
                     // Mettre à jour la référence pour éviter les logs redondants.
@@ -1496,8 +1511,17 @@ document.addEventListener('DOMContentLoaded', function() {
     if (checkAnswersButton) {
         checkAnswersButton.addEventListener('click', function() {
             console.log("Bouton 'Vérifier les réponses' cliqué.");
-            if (typeof checkStudentAnswers === 'function' && typeof buildFeedbackModalContent === 'function' && feedbackModal) {
+            if (typeof checkStudentAnswers === 'function' 
+                && typeof buildFeedbackModalContent === 'function' && feedbackModal) {
                 const results = checkStudentAnswers(variableValuesFromExecution);
+
+                if (typeof logVerifyAnswers === 'function') {
+                if (currentChallengeCodeId) {
+                    logVerifyAnswers(results, currentChallengeCodeId);
+                } else {
+                    console.warn("Impossible de journaliser la vérification : aucun code_id de défi n'est disponible.");
+                }
+            }
                 const feedbackData = buildFeedbackModalContent(results);
                 const feedbackContentElement = document.getElementById('feedback-modal-content');
                 if (feedbackContentElement) {
@@ -1513,6 +1537,16 @@ document.addEventListener('DOMContentLoaded', function() {
     if (showSolutionButton) {
         showSolutionButton.addEventListener('click', function() {
             console.log("Bouton 'Révéler la solution' cliqué.");
+
+            // CORRECTION : On utilise l'ID du défi en cours.
+            if (typeof logRevealSolution === 'function') {
+                if (currentChallengeCodeId) {
+                    logRevealSolution(currentChallengeCodeId);
+                } else {
+                    console.warn("Impossible de journaliser la révélation : aucun code_id de défi n'est disponible.");
+                }
+            }
+
             if (typeof revealCorrectSolution === 'function') {
                 revealCorrectSolution(variableValuesFromExecution);
             } else {
