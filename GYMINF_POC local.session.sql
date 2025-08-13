@@ -1,1 +1,1 @@
-SELECT * FROM users;
+DESCRIBE TABLES;

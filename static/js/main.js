@@ -49,7 +49,7 @@ const loopsOptionsHTML_Base = `
     </div>`;
 const functionsOptionsHTML_Base = `
     <div class="d-flex flex-column gap-1">
-        <div class="form-check form-check-inline"><input class="form-check-input" type="checkbox" id="func-def-simple"><label class="form-check-label small" for="func-def-simple">def f()</label></div>
+        <div class="form-check form-check-inline"><input class="form-check-input" type="checkbox" id="func-def-simple"><label class="form-check-label small" for="func-def-simple">def</label></div>
         <div class="form-check form-check-inline"><input class="form-check-input" type="checkbox" id="func-def-a"><label class="form-check-label small" for="func-def-a">def f(a)</label></div>
         <div class="form-check form-check-inline"><input class="form-check-input" type="checkbox" id="func-return"><label class="form-check-label small" for="func-return">return</label></div>
         <div class="form-check form-check-inline" id="func-builtins-main-container"></div>

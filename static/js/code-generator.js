@@ -1154,8 +1154,8 @@ function generateRandomPythonCode(options) {
         
         // --- Génération de l'appel de la fonction ---
         
-        // N'appelle la fonction que si la décision a été prise et qu'il reste de la place.
-        if (shouldCallFunction && linesGenerated < targetLines) {
+        // N'appelle la fonction que si la décision a été prise
+        if (shouldCallFunction ) { //&& linesGenerated < targetLines
         
             // Génère des arguments concrets pour l'appel, correspondant aux types des paramètres.
             const args = params.map((param, index) => {

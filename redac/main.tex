@@ -26,6 +26,7 @@
 \usetikzlibrary{shapes.geometric, arrows, positioning, automata, arrows.meta}
 \usepackage{adjustbox}          % Pour ajuster des boîtes (comme vos figures)
 
+
 % --- MISE EN FORME DU TEXTE ET TABLEAUX ---
 \usepackage{enumitem}           % Pour personnaliser les listes
 \setlist[itemize,1]{label=\textbullet}
@@ -35,6 +36,7 @@
 \usepackage{tabularx,array,booktabs}
 \usepackage{float}
 \usepackage{pifont}             % pour styliser les bullets
+\usepackage{caption}
 
 % --- MISE EN FORME DU CODE (MINTED) ---
 % Nécessite Python + Pygments installés et la compilation avec l'option -shell-escape
@@ -77,22 +79,31 @@
 \maketitle
 
 \begin{abstract}
-Ce rapport présente un outil-auteur et sa réalisation faite dans le cadre du programme de formation GymInf. L'outil propose principalement quatre fonctionnalités :\begin{itemize}
-    \item[\ding{51}] un générateur automatique (infinie) de code Python valide et de niveau pédagogique adapté aux besoins définis par l'utilisateur, exécuté dans le navigateur \textit{full front-end}.
-    \item[\ding{51}] un traducteur de code Python en flowchart, exécuté et affiché dans le navigateur \textit{full front-end}.
-    \item[\ding{51}] la constitution sur serveur d'une base de données enregistrant les codes Python et les interactions élèves correspondantes, laissant la possibilité de suivre individuellement l'évolution des élèves dans leurs interactions avec les codes proposés et les questions correspondantes.
+Ce rapport présentera un outil-auteur et sa réalisation, faite dans le cadre du programme de formation GymInf. L'outil existe et propose principalement quatre fonctionnalités :
+\begin{itemize}
+    \item[\ding{51}] un générateur automatique (infini) de code Python valide et de niveau pédagogique adapté aux besoins définis par l'utilisateur, exécuté dans le navigateur \textit{full front-end}.
+    \item[\ding{51}] un traducteur de code Python en flowchart, exécuté et affiché dans le navigateur \textit{full front-end}, et modifiable par l'utilisateur.
     \item[\ding{51}] le questionnement des élèves sur les valeurs des variables à l'issue du code proposé, avec la rétroaction réussite/échec correspondante, ainsi qu'une simulation de console d'exécution, dans le navigateur \textit{full front-end}.
-\end{itemize}   
-Ce rapport présentera les contextes (professionnel, personnel, pédagogique et pratique) qui ont présidé à la réalisation de cet outil, son architecture logique et donnera plus de détails sur les contributions essentielles que sont: \begin{enumerate}
-    \item le générateur Javascript de codes Python tournant dans le navigateur, aléatoires mais contrôlables et de niveau pédagogique
-    \item le traducteur de code Python en un rendu graphique \textit{flowchart} dans le navigateur.
-\end{enumerate} 
-\par
+    \item[\ding{51}] la constitution sur serveur d'une base de données enregistrant les codes Python générés et les interactions élèves correspondantes, laissant la possibilité de suivre individuellement l'évolution des élèves dans leurs interactions avec les codes proposés.
 
+\end{itemize}   
+Nous présenterons d'abord les contextes (professionnel, personnel, pédagogique et pratique) qui ont présidé à la réalisation de cet outil prévu pour être utilisé en classe à très brève échéance, ainsi que son architecture logique. Nous alternerons donc entre les côtés technique et fonctionnel. Le travail de développement informatique prenant une coloration didactique, nous donnerons une description logicielle de l'ensemble, ne fournissant des détails d'implémentation que sur les contributions essentielles que sont: \begin{enumerate}
+    \item le générateur Javascript de codes Python tournant dans le navigateur, aléatoires mais contrôlables et de niveau pédagogique
+    \item le traducteur de code Python en graphique \textit{flowchart} rendu dans le navigateur.
+\end{enumerate} 
+\par En raison de contraintes de temps, le dispositif n'a pas pu être passé en classe, toutefois les ambitions assumées de notre projet se situent:
+\begin{itemize}
+    \item chez les élèves, en développant leurs compétences stratégiques en les exerçant à une traduction entre syntaxe textuelle Python, syntaxe graphique flowchart et la sémantique associée
+    \item pour la relation enseignants - apprenants, en proposant un outil-auteur adaptable et capable de proposer des codes prédéfinis par l'enseignant doublé d'un système de suivi des interactions élèves pour permettre à l'enseignant d'apporter une rétroaction différenciée au niveau individuel
+    \item chez les enseignants, en proposant un outil évolutif sur lequel collaborer et donnant les moyens de développer une expertise didactique.
+\end{itemize}
+Dans un monde marqué simultanément par la massification de l'apprentissage de la programmation à tous les élèves de filière secondaire académique (gymnasiale, générale) et par une disparition progressive de la pratique de l'écriture de code comme compétence humaine socialement valorisée, il semble d'autant plus urgent de proposer des "outils conviviaux" (au sens d'Ivan Illich \textit{Tools for conviviality}, 1973) susceptibles de redonner aux futurs citoyens une capacité d'agir dans notre monde numérique.
 \end{abstract}
 
+\clearpage
 \tableofcontents
 
+\clearpage
 \section{Introduction}
 D'où vient le projet.
 
@@ -172,7 +183,7 @@ Ces objectifs apparaissent comme des conclusions ($\Rightarrow$) de la section p
     La première option aurait été en contradiction avec le point précédent, qui cherche à inciter l'investigation chez les élèves! aussi c'est la seconde option qui a été choisie.
 \end{enumerate}
 
-\subsubsection{Un générateur de codes Python, de questions pertinentes, de valeurs \& erreurs attendues}
+\subsubsection{Un générateur de codes Python, de questions pertinentes, de valeurs \& \texorpdfstring{\sout{d'erreurs attendues}}{d'erreurs attendues}}
 \begin{enumerate}
     
     \item Besoin de choisir les constructions utilisées dans la génération du script qui servira de support à l'exercice \par $\Rightarrow$ besoin de fixer maintenant les types (de base) à utiliser ? Si possible une approche modulaire (très \textit{méta}) capable de s'adapter à l'ajout de fonctionnalités ultérieures (facile à dire...)
@@ -193,20 +204,20 @@ Ces objectifs apparaissent comme des conclusions ($\Rightarrow$) de la section p
     
 \end{enumerate}
 
-\subsection{Applications similaires}
-L'application présentée dans ce travail de mémoire diffère des applications existantes par son panachage unique (à ma connaissance) de plusieurs aspects, proposant aux enseignants d'investir en un seul outil les dimensions Predict, Run, Investigate Modify de l'approche PRIMM d'introduction à la programmation :
+\subsection{Applications similaires et sources d'inspiration}
+L'objectif poursuivi a été de proposer aux enseignants d'investir en un seul outil les dimensions Predict, Run, Investigate et Modify de l'approche PRIMM d'introduction à la programmation. \par L'application présentée dans ce travail de mémoire diffère des applications existantes par son panachage unique (à ma connaissance) de plusieurs aspects :
 \begin{itemize}
     \item le travail demandé aux élèves, \textbf{de lecture et traçage systématique de code, avec traduction de la syntaxe en flux sémantique}, alors que les outils connus actuellement demandent généralement d'écrire du code
     \item le caractère \textbf{automatique}, aléatoire et infini, contrôlable mais non éditorialisé
-    \item la possibilité d'alterner entre les langages Python et flowchart, en ayant à l'écran les noms théoriques des éléments syntaxiques
-    \item la possibilité de tracer le parcours des élèves, leurs réussites/échecs, leur ténacité
+    \item la possibilité d'alterner entre \textbf{les langages Python et flowchart}, en ayant à l'écran les noms théoriques des éléments syntaxiques
+    \item la possibilité avec la version serveur de tracer \textbf{le parcours des élèves} (leur investissement, leur ténacité, etc.), leurs \underline{réussites/échecs individuels avec une granularité fine} (au niveau de la valeur de chaque variable) \underline{sans bloquer les élèves face à un échec!}
 \end{itemize} .
 
 \subsubsection{Des outils auteurs}
 Les outils auteurs sont des logiciels permettant à des non-développeurs (souvent des enseignants ou des concepteurs pédagogiques) de créer des contenus d'apprentissage interactifs sans écrire de code. Ils proposent généralement des modèles d'activités (quiz, glisser-déposer, etc.) à assembler.
 
 \begin{description}
-    \item[Exemple : H5P] \url{https://h5p.org/} (consulté le 5 août 2025) \\
+    \item[Exemple : H5P] \url{https://h5p.org/} (consulté le 5 août 2025)
     \item[Exemple : moodle] \url{https://moodle.com/} (consulté le 5 août 2025) \\
     H5P et moodle sont des frameworks open-source très populaires qui permettent de créer une grande variété de contenus interactifs directement intégrables dans des plateformes existantes. L'enseignant choisit un type d'activité (ex: "Fill in the Blanks") et remplit des champs de formulaire pour créer l'exercice.
     
@@ -241,9 +252,9 @@ Ces plateformes sont des écosystèmes complets qui intègrent un IDE en ligne, 
     Replit est une plateforme en ligne extrêmement puissante qui fournit un IDE collaboratif dans le cloud pour des dizaines de langages. Elle permet aux enseignants de créer des classes, de distribuer des devoirs avec des tests unitaires pour l'auto-correction, et aux élèves de développer et d'héberger des projets complets.
 
     \item[Exemple : Codex (La Forge Numérique)] \url{https://codex.forge.apps.education.fr/} (consulté le 5 août 2025) \\
-    Codex est une plateforme d'exercices et d'évaluation développée pour les écoles du secondaire II. Elle permet aux enseignants de créer des épreuves de programmation sécurisées, où les élèves soumettent leur code qui est ensuite évalué par des tests automatiques dans un environnement contrôlé.
+    Codex est une plateforme d'exercices et d'évaluation développée pour les écoles du secondaire (lycée français). Elle permet aux enseignants de créer des épreuves de programmation sécurisées, où les élèves soumettent leur code qui est ensuite évalué par des tests automatiques dans un environnement contrôlé.
     
-    \item[Différenciation :] Notre application est volontairement \textbf{plus légère, plus ciblée sur l'expérimentation autonome par l'élève et axée sur la formation plutôt que l'évaluation}. Contrairement à Replit ou Codex, qui sont des solutions lourdes, basées sur une infrastructure client-serveur et requérant des comptes, notre outil peut fonctionner comme une application web statique, sans serveur d'exécution grâce à Pyodide, donc anonyme, et conçue pour une tâche unique : générer un exercice ponctuel. Il n'a pas vocation à gérer un cours ou à organiser des examens, mais à fournir une ressource formative que l'enseignant peut intégrer dans son propre cheminement.
+    \item[Différenciation :] Notre application est volontairement \textbf{plus légère, plus ciblée sur l'expérimentation autonome par l'élève et axée sur la formation plutôt que l'évaluation}. Contrairement à Replit ou Codex, qui sont des solutions lourdes, forcément basées sur une infrastructure client-serveur et requérant des comptes, notre outil peut fonctionner comme une application web statique, sans serveur d'exécution grâce à Pyodide, donc anonyme, et conçue pour une tâche unique : générer des exercices ponctuels. Il n'a pas vocation à gérer un cours ou à organiser des examens, mais à fournir une ressource formative que l'enseignant peut intégrer dans son propre cheminement.
 \end{description}
 
 \subsubsection{Des défis pédagogiques}
@@ -262,22 +273,61 @@ Ces sites proposent des collections de problèmes ou "défis" de programmation q
     \item[Différenciation :] La démarche pédagogique est inversée. Sur ces plateformes, le \textbf{problème est fourni} et l'élève doit \textbf{produire le code}. Dans notre application, le \textbf{code est fourni} et l'élève doit \textbf{analyser son comportement} (ex: prédire la valeur finale des variables). L'objectif n'est pas de tester la capacité à concevoir un algorithme, mais de renforcer la compréhension de la sémantique des constructions du langage. De plus, le contenu de notre outil est généré dynamiquement selon les besoins de l'enseignant, alors que les défis de ces plateformes sont des problèmes fixes (éventuellement créés par la communauté).
 \end{description}
 
-En conclusion, la multitude des ressources pédagogiques disponibles est une source inépuisable d'inspiration
+\subsubsection{Des sources d'inspiration}
+A citer également :
+\begin{itemize}
+    \item La source d'inspiration pour l'utilisation du \textit{Control Flow Graph} de Python fourni par le module \code{ast} :  \url{https://www.fuzzingbook.org/html/GrammarFuzzer.html}
+    \item Un papier universitaire présentant une initiative de génération automatique d'exercices dans le cadre de l'apprentissage de la programmation : \url{https://arxiv.org/abs/2205.11304}
+    \item Un générateur de scripts Python, totalement aléatoire et intégrant un très grand nombre d'éléments syntaxiques : \url{https://github.com/radomirbosak/random-ast}
+    \item Le célèbre visualiseur d'exécution de bouts de codes : \url{https://pythontutor.com/}
+\end{itemize} 
+\par En conclusion, la multitude des ressources pédagogiques disponibles est une source inépuisable d'inspiration, et de possible évolution, pour une prochaine version de l'outil proposant une génération sémantique (\textit{TBC}...)
 
 \clearpage
 \section{Présentation générale de l'application}
-Dans cette partie sera présentée d'abord l'interface utilisateur, puis l'architecture globale et enfin les choix technologiques
-\begin{itemize}
-    \item Présentation UI
-    \item \sout{Présentation des fonctionnalités}
-    \item Présentation technos utilisées
-\end{itemize}
+Dans cette partie : l'interface, l'architecture interne et les choix technologiques. \\
 
+% On ouvre une minipage qui ne sera pas coupée.
+\begin{minipage}{\textwidth}
 \subsection{L'UI: la page \textit{Front end}}
-\subsubsection{Les objets graphiques}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.99\textwidth, keepaspectratio]{app_vide.png}
+    \caption{Présentation générale de l'application, vierge}
+    \label{app_vide}
+\end{figure}
+\end{minipage}
+
+\clearpage
+\begin{minipage}{\textwidth}
 \subsubsection{Les interactions entre objets : entre les \textit{cards}, entre les \textit{divs}...}
 
+\begin{figure}[H]
+    
+    \centering
+    \includegraphics[width=0.8\textwidth, keepaspectratio]{app_choix.png}
+    \captionof{figure}{Présentation des éléments de choix de génération ou de chargement}
+    \label{app_choix}
+\end{figure}
+
+\begin{itemize}
+    \item Les \textit{checkboxes} de choix des éléments syntaxiques s'affichent lorsque la \textit{card} est sélectionnée (si 'Ctrl' est sélectionnée, il y a forcément un 'if' et si 'Func' est sélectionnée, le code généré montrera au moins une 'def' de fonction).
+    \item Certains choix de \textit{checkboxes} en impliquent d'autres (exemple: si 'elif:\_else' est sélectionné, le générateur de code fonctionnera forcément comme si un 'if:\_elif' avait aussi été sélectionné) $\Rightarrow$ l'interface rend visible cette logique
+    \item Certains choix de structures rendent plus naturels certains choix de types de variables: l'interface rend l'utilisateur attentif par ajout d'une classe bootstrap sur l'élément concerné
+\end{itemize}
+
+\end{minipage}
+
+\begin{figure}
+    \centering
+    \includegraphics[width=\textwidth, keepaspectratio]{app_choix_def.png}
+    \caption{Présentation des éléments de choix}
+    \label{app_choix_def}
+\end{figure}
+
 \subsection{L'architecture globale (en coulisse)}
+
 \subsubsection{Résumé en 4 phrases}
 Le fonctionnement du générateur repose sur une interaction entre l'interface utilisateur (HTML - CSS - JavaScript) permettant de définir les options et le moteur de génération de code (JavaScript) qui écrit sur la page dans l'éditeur de script CodeMirror. 
 \par Le fonctionnement du visualiseur flowchart se base lui sur cette chaîne de code générée, pour la traduire en un AST (Python fourni par l'environnement Pyodide) pour en extraire une sémantique traduite en une syntaxe Mermaid passée au navigateur pour être rendue sous forme graphique par Mermaid.js  
@@ -352,7 +402,14 @@ Le processus global peut se schématiser comme ceci: (voir page suivante selon p
 \subsubsection{Le navigateur: CodeMirror, Mermaid-js, Bootstrap et Font-Awesome}
 \subsubsection{Pyodide: environnement Python pour le navigateur}
 \subsubsection{L'extension \textit{serveur}: requêtes AJAX (JS) traitées par Flask (Python)}
+\begin{enumerate}
+    \item Les événements enregistrés en BDD (journalisés)
+    \item La sécurité : confidentialité et anonymat
+\end{enumerate}
+Les événements enregistrés en BDD (journalisés): generation d'un code.
+Amélioration UX : méthode P-R-G: POST-REDIRECT-GET pratique standard pour éviter le problème de soumission multiple des formulaires et ce qui rend donc l'application plus robuste face aux comportements des utilisateurs comme le rafraîchissement de page ou l'utilisation du bouton "retour" du navigateur.
 
+\clearpage
 \section{Présentation de la génération automatique du code}
 C'est la branche gauche dans la figure \ref{fig:architecture}.
 
@@ -687,8 +744,15 @@ if (addedOperations.has(operation)) {
     
 \end{enumerate}
 
-
+\clearpage
 \section{Présentation détaillée du traducteur automatique de code en logigramme}
+
+\subsection{L'AST Python: théorie et PyCFG.py de \textit{Fuzzingbook}}
+
+\subsection{Philosophie poursuivie}
+
+\subsection{L'implémentation MyCFG.py}
+
 La classe Python \code{ControlFlowGraph} est le composant central pour la transformation du code Python généré (une chaine) en un \textit{flowchart} (une chaine Mermaid rendue graphiquement par l'interface).
 
 \subsection*{\methodname{\_\_init\_\_}}
@@ -1274,19 +1338,36 @@ La classe Python \code{ControlFlowGraph} est le composant central pour la transf
 \end{figure}
 \newpage
 
+\clearpage
+\section{Présentation de la version serveur: gestion des utilisateurs et base de données des interactions élèves}
+
+\begin{enumerate}
+    \item Une base de données à vocation didactique
+    \item Une base de données à vocation pédagogique
+    \item Une base de données qui est utilisée: recherche d'optimisations pour améliorer l'expérience utilisateur
+\end{enumerate}
+
+vocation didactique : des données exploitables $\Rightarrow$ fiables et assez riches...
+
+vocation pédagogique : gestion des utilisateurs, fiable et éthique, pour être capable de donner rétroaction individuelle en traçant parcours élève...
+
+\subsection{Défi : gérer l'état de l'interface (conditions de concurrence : imprévisibilité)}
+
+\subsubsection{Problèmes identifiés}
+\subsubsection{La solution implémentée}
+
+\clearpage
 \section{Discussions et conclusions}
 
-
 \subsection{Critiques Anticipées... et Réponses}
+Les objections qui pourraient être faites: expliciter des choix assumés, notes des limitations actuelles dont les solutions ont déjà été pensées et non encore implémentées, des approches alternatives (en cours de recherche ou à l'état complètement hypothétitque)
 
 \subsection{Travaux pour améliorer l'approche actuelle}
 
-
-
 \begin{itemize}
-
-    \item[\ding{108}] Enrichir les questions des "Défis": 
+    \item Enrichir les types d'exercices et la section "Défis": 
     \begin{enumerate}
+        \item Proposer une option "Debug" qui génère des codes invalides, avec des boucles infinies ou syntaxiquement incorrects, appelant les élèves à identifier les erreurs selon leur type.
         \item Des questions qualitatives qui peuvent être ouvertes ou fermées par menu déroulant : Quels sont les types des variables ? (les types étant à récupérer depuis le générateur de code).
         \item Des questions quantitatives \textit{in situ} : Combien de passages dans la boucle ? Combien de passages à tel point du code ?
         \item Des questions mobilisant des concepts théoriques : Telle boucle du code est-elle bornée ? 
@@ -1297,13 +1378,13 @@ La classe Python \code{ControlFlowGraph} est le composant central pour la transf
     \item Améliorer les rétroactions pour le bouton "Vérifier":
     \begin{enumerate}
         \item Utiliser la réponse élève pour l'analyser au regard des erreurs attendues pour donner des indices (cf. litérature didactique)
-        \item 
+        \item Ajouter des \textit{tooltips} (visibles en survolant l'espace de réponse avec le pointeur souris) pour donner des indications de réponses ou des bonnes questions à se poser, pour baliser le travail des élèves
     \end{enumerate}
     
-    \item Améliorer l'interface pour augmenter l'engagement:
+    \item Améliorer l'interface pour renforcer l'engagement :
     \begin{enumerate}
         \item Rendre le \textit{flowchart} cliquable pour un meilleur rendu smartphone
-        \item Améliorer la \textit{responsiveness}
+        \item Améliorer la \textit{responsiveness}, notamment les espaces horisontaux pris par les cartes en haut de page
         \item Utiliser des "combines addictives" pour faire revenir les \textit{users}
     \end{enumerate}
 
@@ -1315,12 +1396,12 @@ La classe Python \code{ControlFlowGraph} est le composant central pour la transf
     \item Éléments syntaxiques Python à implémenter : 
     \begin{enumerate}
         \item le \textit{break} à connecter au nœud terminal de sa boucle
-        \item les \texttt{try: except: else: finally:}, les \texttt{Raise}, les \texttt{Assert}, ...
+        \item les \code{try: except: else: finally:}, les \code{Raise}, les \code{Assert}, ...
         \item Un traitement des annotations de type ?
         \item un traitement de la récursion ?
     \end{enumerate}
     
-    \item numéroter les nœuds graphique selon \texttt{lineno} pour visualiser correspondance syntaxe $\thicksim$ sémantique
+    \item numéroter les nœuds graphique selon \texttt{lineno} pour visualiser correspondance syntaxe $\Leftrightarrow$ sémantique
     
     \item colorer les flèches "True / False" resp. Bleu/Rouge
     
