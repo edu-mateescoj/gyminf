@@ -51,8 +51,7 @@
 \setlist[itemize,2]{label=-}
 \usepackage{ulem}   % Pour barrer du texte (\sout)
 \usepackage{longtable}
-\usepackage{tabularx,array,booktabs}
-\usepackage{adjustbox}
+\usepackage{tabularx,booktabs}
 \usepackage{float}
 \usepackage{pifont} % pour styliser les bullets
 \usepackage{caption}
@@ -62,7 +61,12 @@
 \usepackage{minted} 
 % L'option [outputdir=build] pour la compilation en local
 
-\usepackage{csquotes}           % Gestion avancée des guillemets (A CHARGER APRES MINTED)
+\usepackage{csquotes} % Gestion avancée des guillemets (A CHARGER APRES MINTED)
+
+\usepackage[backend=biber,style=apa,sorting=none]{biblatex}
+\DeclareLanguageMapping{french}{french-apa}
+\addbibresource{ref.bib}
+\let\cite\parencite
 
 % --- LIENS HYPERTEXTE ET COULEURS PERSONNALISÉES ---
 \usepackage{hyperref}
@@ -185,40 +189,26 @@ Nos objectifs fonctionnels apparaissent comme des conclusions de la section pré
 
 \subsubsection{Besoin d'un générateur de code et de questions pertinentes}
 
-niveau débutant, classes hétérogènes : des exercices de lecture de code, justifié par taxonomie, de difficulté variable pour à la fois différencier dans la classe, et accompagner la progression de la classe
+Au niveau débutant, les classes sont hétérogènes. Nous visons donc des \emph{exercices de lecture de code} fondés sur la taxonomie des tâches au premier échelon, de difficulté \emph{ajustable} pour différencier au sein du groupe et accompagner sa progression. L’outil doit aussi \emph{décharger l’enseignant} avec : une génération automatique,un déploiement simple, un contrôle fin des paramètres.
+\\
+Du côté de l’élève (dimension ``Predict''), il faut recevoir programmatiquement un script Python, l’afficher dans une fenêtre avec \emph{coloration syntaxique} et \emph{numérotation des lignes}, afin de soutenir la lecture analytique. L’aléa doit être \emph{contrôlé} pour garantir une plus-value pédagogique: on \emph{choisit} explicitement les constructions à inclure dans le script, on \emph{règle} des variables didactiques (nombre de variables, domaine de valeurs, longueur totale), et on \emph{fixe} les types à utiliser. Nous nous limitons volontairement aux \emph{types de base} utiles au début de l’apprentissage; nous renonçons à la simulation de programmes réalistes'' au profit de \emph{fragments signifiants}. Les noms de variables sont \emph{cohérents avec leurs types} pour donner une apparence plausible et guider l’inférence de l’élève.
 
-aider les enseignants : outil automatique, facile à déployer et à contrôler en classe
-
-solliciter les élèves dans la dimension ```Predict'' : besoin de recevoir du code Python de façon programmatique, une fenêtre pour l'afficher, avec coloration syntaxique et numérotation des lignes (aides pédagogiques)
-
-contrôler l'aléa pour assurer une plus-value pédagogique 
-\par $\Rightarrow$ choisir les constructions utilisées dans la génération du script qui servira de support à l'exercice
-\par $\Rightarrow$ adapter différentes variables didactiques définissant le niveau de difficulté : nombres de variales, valeurs possibles des variables, nombre de lignes de code
-\par $\Rightarrow$ besoin de fixer les types à utiliser 
-\par $\Rightarrow$ limitation aux types de base, utiles pédagogiquement 
-\par $\Rightarrow$ abandonner l'idée de générer des programmes réalistes
-\par $\Rightarrow$ des noms de variables cohérents avec leurs types pour simuler des bouts de programmes qui ont une apparence réaliste
-
-Du point de vue de l'implémentation technique: besoin de réception des choix utilisateurs par l'UI pour les passer à la génération des scripts aléatoires; 
+Techniquement, l’interface collecte les \emph{choix utilisateurs} et les transmet au \emph{générateur} qui produit un script conforme: c’est le point d’entrée de tout le flux.
 
 \subsubsection{Besoin d'une sorte d'éditeur Python en ligne}
-solliciter les élèves dans les dimensions ``Run'' et ``Investigate'' : un outil permettant d'interpréter Python de niveau débutant, ne visant pas la richesse syntaxique
 
-un outil permettant de tester l'élève de façon adaptée aux objectifs contrôlables par l'enseignant : besoin de poser des questions qui s'adaptent automatiquement au code proposé, et permettant de donner une rétroaction instantanée à l'élève
-\par $\Rightarrow$ Besoin d'interactions entre le DOM et l'interprétation du code Python: retour des valeurs attendues vers la page; lecture des réponses élèves pour comparaison avec les valeurs attendues; affichage du feedback approprié selon étape précédente.
-
-pour engager tous les élèves, y compris néophytes et aficionados : à la fois Un affichage "joli" et ressemblant aux \textit{IDE} que rencontreront les élèves les plus motivés, et pouvant supporter des fonctionnalités que ceux-ci rencontreront ensuite et qui peuvent être utiles dans un cadre pédagogique, comme l'aplatissement de blocs voire l'auto-complétion.
-
-solliciter les élèves dans les dimensions ``Investigate'' et ``Modify'' : besoin d'enregistrer le script sur un support (un bouton \code{Download} de sauvegarde) $+$ Possibilité de revenir au script généré (un bouton \code{Reload}) annulant les modifications apportées par l'élève depuis la génération..
+Pour solliciter les dimensions ``Run'' et ``Investigate'', nous utilisons un interprète Python \emph{centré débutants} (sans viser l’exhaustivité syntaxique) et un éditeur qui \emph{teste l’élève} en cohérence avec les objectifs déclarés par l’enseignant. Les questions se \emph{calent automatiquement} sur le code proposé et une \emph{rétroaction immédiate} est fournie. Cela suppose des \emph{échanges DOM $\leftrightarrow$ exécution}: renvoi vers la page des \emph{valeurs attendues}, lecture des \emph{réponses élèves}, comparaison, puis affichage d’un \emph{feedback} adapté.
+\\
+Pour engager à la fois néophytes et aficionados, l’éditeur offre un \emph{rendu familier} type appli web ou IDE avec des aides activables (aplatissement de blocs, éventuellement auto-complétion) utiles dans un cadre pédagogique.\\ Enfin, pour ``Investigate'' et ``Modify'', l’élève peut \emph{sauvegarder} (\code{Download}) son script et \emph{revenir} au script initial (\code{Reload}) afin d’annuler ses modifications depuis la génération.
 
         
 \subsubsection{Un rendu logigramme}
-Le soutien visuel paraît approprié pour aider des élèves dans leur découverte de leur premier langage de programmation textuelle. Le logigramme est un objectif d'apprentissage curriculaire en soi, au même titre que des pseudo-codes. De façon à proposer un soutien visuel le logigramme parait donc un choix naturel car il matérialise le flux d'exécution logique du programme. Un outil proposant des bouts de code Python et leur représentation logigramme a le défaut de mettre au même niveau deux langages qui n'ont pas le même statut : un seul est un langage de programmation ! mais nous faisons l'hypothèse que c'est le prix à payer pour pouvoir entrainer de façcon systématique les élèves à cet exercice particulier qui est de passer d'une syntaxe à l'autre.
+Le soutien visuel paraît approprié pour aider des élèves dans leur découverte de leur premier langage de programmation textuelle. Le logigramme est un objectif d'apprentissage curriculaire en soi, au même titre que des pseudo-codes. De façon à proposer un soutien visuel le logigramme parait donc un choix naturel car il matérialise le flux d'exécution logique du programme. Un outil proposant des bouts de code Python et leur représentation logigramme a le défaut de mettre au même niveau deux langages qui n'ont pas le même statut : un seul est un langage de programmation ! mais nous faisons l'hypothèse que c'est le prix à payer pour pouvoir entraîner de façon systématique les élèves à cet exercice particulier qui est de passer d'une syntaxe à l'autre.
 Pour créer le rendu logigramme pour des codes valides, deux options étaient a priori envisageables:\begin{itemize}
-    \item \textbf{Soit} à la génération du script, logigramme statique (plus facile car le rendu logigramme est encapsulé avec la génération du code)
+    \item \textbf{Soit} à la génération du script, un logigramme statique (plus facile car le rendu logigramme est encapsulé avec la génération du code)
     \item \textbf{Soit} dynamique, modifiable en continu avec le code Python modifiable (ce qui alourdit l'UI qui devient moins lisible).
     \end{itemize}
-La première option aurait été en contradiction avec le point précédent, qui cherche à inciter l'investigation chez les élèves! aussi c'est la seconde option qui a été choisie.
+La première option aurait été en contradiction avec l’objectif d’\emph{investigation} et de \emph{modification} active ! aussi c'est la seconde option qui a été choisie. Le résultat est un couplage direct entre \emph{code affiché} et \emph{logigramme}—le support visuel se met à jour avec le script modifié, ce qui renforce l’activité de lecture, de prédiction et de vérification.
 
 
 \subsection{Applications similaires et sources d'inspiration}
@@ -808,7 +798,7 @@ Comment est assurée la correspondance entre les types ? et comment se fait-il q
 \item \textbf{Choix d'un nom de paramètre sémantique} (cf. \href{https://github.com/edu-mateescoj/gyminf/blob/main/static/js/code-generator.js#L1083}{ligne 1083}) : Évidemment la génération de la fonction commence avec un choix de nom, parmi une liste maintenue en constante pour assurer une cohérence sémantique (un verbe d’action, choisi au hasard parmi FUNCTION\_NAMES). Le processus commence donc véritablement par l’appel à \methodname{chooseAppropriateParameterNames}. Cette fonction ne choisit pas des noms au hasard, mais dans des listes thématiques (ex: dataParams = ['data', 'items', 'elements', ...], mathParams = ['x', 'y', ...]).  Pour une fonction nommée \code{build}, elle pourrait sélectionner un nom dans la liste \code{utilParams}, comme \code{flag}. Le tableau \code{params} contient maintenant \code{['flag']}.
 
 \item \textbf{Inférence du type à partir du nom (\#1099)} : Le générateur parcourt le tableau \code{params}. Il trouve que le nom \code{flag} est inclus dans la constante \code{BOOL\_VAR\_NAMES}. Il en déduit que le type attendu est \vartype{bool}.
-\begin{minted}{js}
+\begin{minted}{javascript}
 // #1100
 const paramTypes = params.map(param => {
 // ...
@@ -827,7 +817,7 @@ const paramTypes = params.map(param => {
 Après la logique de décision d'appeler ou non la fonction (\#1120-1138) et la génération du corps de la fonction (\#1139-1152), le générateur va dans notre exemple préparer l'appel.
 \begin{enumerate}
 \item \textbf{Sélection d'un argument du bon type (\#1168)} : Le code parcourt le tableau \code{paramTypes} qu'il a créé précédemment.
-\begin{minted}{js}
+\begin{minted}{javascript}
 // #1161
 const args = params.map((param, index) => {
 const paramType = paramTypes[index]; // Récupère le type planifié ('bool')
@@ -955,7 +945,7 @@ L'architecture de \code{MyCFG.py} est guidée par une philosophie centrée sur l
 \begin{figure}[H]
     \centering
     \includegraphics[width=0.3\textwidth]{FqKSJ.jpg}
-    \caption{idée de flowchart "for each" \cite{FqKSJ.jpg}}
+    \caption{idée de flowchart "for each" \cite{FqKSJ}}
     \label{foreach_flowchart}
 \end{figure}
 
@@ -1438,7 +1428,7 @@ Un pré-requis pour cette approche est de disposer d'une base de codes ``organiq
 \subsubsection*{A quoi ressemblerait une approche déclarative}
 On ne ferait que décrire le résultat final. Le système se chargerait de trouver un code qui respecte cette description:
  
- \begin{minted}{JS}
+ \begin{minted}{javascript}
 const codeDescription = {
     targetLines: 20,
     difficulty: 3,
@@ -1710,7 +1700,7 @@ Cette section détaille le fonctionnement interne des fonctions principales du s
         \item Retourne des items séparés par des ', ' selon les allowedTypes et la difficulty passés en paramètres
         \item Selon la difficulté choisie, calule une taille et définit aléatoirement si la liste sera homogène (pour difficulté 1 à 3 ou 70\% de proba) ou non
         \item Dans le cas hétérogène, choisit le type courant à utiliser de façon non aléatoire par 
-\begin{minted}{js}
+\begin{minted}{javascript}
 typesToUse[i % typesToUse.length] 
 \end{minted}
 pour générer la valeur de l'item courant par appel à \texttt{generateValueOfType}
@@ -1728,7 +1718,7 @@ pour générer la valeur de l'item courant par appel à \texttt{generateValueOfT
         \item[Signature:] \code{(\param{listVarName}: \vartype{string}) -> \rettype{void}}
         \item[Description:] S'assure qu'une liste est active dans le code. Elle analyse les lignes existantes pour détecter une "utilisation significative" (une boucle sur cette liste, un accès à une de ses valeurs par indexation [i], ou un appel à une méthode \code{append} ou \code{extend}). Si aucune n'est trouvée, elle ajoute une opération simple comme un \code{.append()} pour illustrer concrètement l'usage d'une liste.
         \textit{Note d'implémentation :} Utilise un tableau de \jsfunc{fonctions anonymes} pour pouvoir générer des blocs de code potentiellement multi-lignes.  Ci-dessous un exemple réel d'utilisation, suivi d'explications sur ce tableau:
-\begin{minted}{js}
+\begin{minted}{javascript}
 const operations = [];
 operations.push(() => {                 
     // Opération basique toujours disponible
@@ -1788,7 +1778,7 @@ Cette technique permet à chaque fonction anonyme de générer un/des morceaux d
         \item Explications sur le mapping contextOptions passé en paramètre : c'est le moyen de passer un ensemble de paramètres spécifiques au contexte (exemples: le nom de la variable de boucle loopVar, ou si un return est attendu) à la fonction generateStructureBody, sans avoir à lister une dizaine de paramètres dans sa signature!
         \item Le cas function est le context le plus complexe évidemment: la fonction se base sur le type du premier paramètre pour ajouter des opérations adaptées, écrites manuellement chacune dans l'objectif de proposer aux élèves des syntaxes variées et valides pour des opérations sur 'str', 'list', 'bool' et 'int'|'float'.
         \item Les cas des boucles 'for' utilisent une première instruction basique typique (addition d'un entier pour une variable dans un range, ajout d'un caractère pour une variable parcourant une chaine) suivie d'instructions choisies aléatoirement. Pour l'instruction basique de début de corps de boucle 'for\_range' nous avons au contraire été amenés à pallier la forte probabilité de répétition d'instructions identiques en ajoutant la génération d'un commentaire improbable, pour assurer l'unicité de chacune des lignes:
-        \begin{minted}{js}
+        \begin{minted}{javascript}
 // Vérifier si cette opération est déjà présente dans le corps
 if (addedOperations.has(operation)) {
     // Ajouter un commentaire unique pour la rendre différente
@@ -1881,7 +1871,7 @@ Requiert du code Python syntaxiquement valide pour fonctionner (ex: expressions 
 \hline
 \textbf{Sortie / Visualisation} & 
 Génère une chaine en syntaxe Mermaid (un DOT language similaire à Graphviz) mieux adaptée pour un rendu Web il me semble: plus facile à maintenir & 
-Génère du DOT-Graphviz: infrastrucutre plus lourde! à décortiquer pour rendre un Mermaid\_{JS} mais visualisation avancée, couleurs et styles selon le flot \\
+Génère du DOT-Graphviz: infrastrucutre plus lourde! à décortiquer pour rendre un Mermaid.js mais visualisation avancée, couleurs et styles selon le flot \\
 \hline
 \textbf{Gros Pour} & 
 plus souple = plus proche de ce qui est fait en classe ; infrastructure légère & 
@@ -2526,7 +2516,7 @@ lastDiagramAstDump = "";
 C'est l'équivalent de dire : "Attention, le diagramme qui était affiché n'a plus aucune valeur. Il n'y a plus de référence valide."
 2) Rendre le \texttt{change} Handler plus "Intelligent"
 Le gestionnaire codeEditorInstance.on('change', ...) a maintenant une nouvelle instruction au tout début de son code :
-\begin{minted}{Javascript}
+\begin{minted}{javascript}
 if (!lastDiagramAstDump) {
     setDiagramAndChallengeCardState("default");
     return; // Arrête-toi ici !
@@ -2713,6 +2703,10 @@ function ensureVariableExists(type, preferPlanned = false) {
 
 
 \clearpage
+\printbibliography
+
+\clearpage
+ALTERNATIVE
 \begin{thebibliography}{99}
 
 \bibitem[Illich, 1973]{Illich} Illich I. (1973). \textit{Tools for conviviality}. (dans le domaine public, disponible sur Internet)
@@ -2825,7 +2819,7 @@ https://doi.org/10.1145/3231711
 
 \bibitem[Page GitHub de Rahul Gopinath]{rahulgopinath} Gopinath, R. \textit{Page personnelle}. En ligne, \url{https://github.com/rahulgopinath/rahulgopinath.github.io} (consulté en 2024)
 
-\bibitem[Flowchart For\_Each]{FqKSJ.jpg} Discussion sur Stackoverflow. \url{https://stackoverflow.com/questions/20580028/flowchart-for-each-loop-loop-without-variable-increment}
+\bibitem[Flowchart For\_Each]{FqKSJ} Discussion sur Stackoverflow. \url{https://stackoverflow.com/questions/20580028/flowchart-for-each-loop-loop-without-variable-increment}
 
 \end{thebibliography}
 
