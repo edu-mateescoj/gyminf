@@ -1215,14 +1215,12 @@ class ControlFlowGraph:
 
 ############### Choisir le code à tester ###############
 import exemples
-selected_code = '''enabled = True
-y = 1
-def build(flag):
-    output = not flag
-    return output
-found = build(enabled)
-print("Le résultat de " + "build" + "(" + str(enabled) + ")" + " est " + str(found))
-''' #exemples.focus
+selected_code = '''x = 1
+if x > 0:
+    y = 1
+else:
+    y = -1
+print(y)''' #exemples.focus
 ########################################################
 
 # --- Génération et Affichage ---
@@ -1230,8 +1228,15 @@ print(f"--- Code Python analysé ---")
 print(selected_code)
 
 cfg = ControlFlowGraph(selected_code)
+
 # Lance la visite à partir de la racine de l'AST (le module)
 cfg.visit(cfg.tree, None) # Le parent initial est None
+
+print("\n--- CFG : les noeuds ---")
+print(cfg.nodes)
+print("--- CFG : les arêtes ---")
+print(cfg.edges)
+
 print("--- L'arbre par ast.dump du cfg.tree:")
 print(ast.dump(cfg.tree))
 

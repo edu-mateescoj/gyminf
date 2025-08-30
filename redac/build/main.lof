@@ -1,0 +1,19 @@
+\babel@toc {french}{}\relax 
+\contentsline {figure}{\numberline {1}{\ignorespaces Présentation générale de l'application, vierge}}{13}{figure.caption.6}%
+\contentsline {figure}{\numberline {2}{\ignorespaces Flowchart d'un code avec appel d'une fonction 'f(a)' \& 'return'}}{14}{figure.caption.8}%
+\contentsline {figure}{\numberline {3}{\ignorespaces "Défi Élève" avec appel de fonction 'return'. La variable locale est bien absente.}}{14}{figure.caption.9}%
+\contentsline {figure}{\numberline {4}{\ignorespaces Présentation des choix de génération}}{15}{figure.caption.10}%
+\contentsline {figure}{\numberline {5}{\ignorespaces Identification des éléments de choix pour la création d'un exercice}}{16}{figure.caption.11}%
+\contentsline {figure}{\numberline {6}{\ignorespaces Architecture résumée de l'exerciseur automatique}}{17}{figure.caption.12}%
+\contentsline {figure}{\numberline {7}{\ignorespaces Architecture fonctionnelle du générateur de code. Le processus suit quatre phases séquentielles, chacune invoquant un ensemble de fonctions spécifiques pour planifier, générer et finaliser le code.}}{19}{figure.caption.13}%
+\contentsline {figure}{\numberline {8}{\ignorespaces Diagramme de flux de la logique de la fonction \textit {generateFunction}.}}{22}{figure.caption.19}%
+\contentsline {figure}{\numberline {9}{\ignorespaces Exemple de flowchart "for each" \blx@tocontentsinit {0}\BLTXAPAifInParensTF {\nptextcite }{\parencitei }{for_each_exemple}}}{32}{figure.caption.28}%
+\contentsline {figure}{\numberline {10}{\ignorespaces Copie d'écran d'une partie de logigramme visualisant une boucle ``for ... str''}}{32}{figure.caption.28}%
+\contentsline {figure}{\numberline {11}{\ignorespaces Comparaison de notre ``for ... in <str>'' avec un exemple de ``for each''}}{32}{figure.caption.28}%
+\contentsline {figure}{\numberline {12}{\ignorespaces Génération du logigramme: Business Process Model des appels et des objets retournés}}{34}{figure.caption.30}%
+\contentsline {figure}{\numberline {13}{\ignorespaces Présentation générale de l'application, vierge}}{36}{figure.caption.31}%
+\contentsline {figure}{\numberline {14}{\ignorespaces L'UI : événements journalisés}}{37}{figure.caption.32}%
+\contentsline {figure}{\numberline {15}{\ignorespaces Diagramme Entité Relations complet de GYMINF\_POC}}{38}{figure.caption.33}%
+\contentsline {figure}{\numberline {16}{\ignorespaces Diagramme BPMN du flux de journalisation des actions utilisateur}}{40}{figure.caption.34}%
+\contentsline {figure}{\numberline {17}{\ignorespaces Présentation générale de l'application, vierge}}{43}{figure.caption.39}%
+\contentsline {figure}{\numberline {18}{\ignorespaces L'UI : événements journalisés}}{43}{figure.caption.40}%

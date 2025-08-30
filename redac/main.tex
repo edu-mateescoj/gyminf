@@ -1,6 +1,7 @@
 %%% pour la compilation en local 
 %%% !TeX program = XeLaTeX
 %%% !TeX options = -shell-escape
+%%% !BIB program = biber
 
 \documentclass[11pt,a4paper]{article}
 
@@ -57,9 +58,7 @@
 \usepackage{caption}
 
 % --- MISE EN FORME DU CODE (MINTED) ---
-% Nécessite Python + Pygments installés et la compilation avec l'option -shell-escape
-\usepackage{minted} 
-% L'option [outputdir=build] pour la compilation en local
+\usepackage[outputdir=build]{minted}
 
 \usepackage{csquotes} % Gestion avancée des guillemets (A CHARGER APRES MINTED)
 
@@ -880,17 +879,160 @@ Cette cascade de choix aléatoires mais contraints produit un code qui est à ch
 \clearpage
 \section{Présentation du traducteur automatique de code en logigramme}
 
-Le langage Python, comme de nombreux langages de haut niveau, fournit un module intégré, \code{ast}, qui permet de décomposer le code source en une structure arborescente appelée Arbre Syntaxique Abstrait (Abstract Syntax Tree - AST). Cet arbre est une représentation hiérarchique du code qui ignore les détails syntaxiques superflus (comme les parenthèses ou les commentaires) pour se concentrer sur la structure logique du programme. Chaque nœud de l'AST correspond à une construction du langage : une assignation, une condition, une boucle, un appel de fonction, etc. \\
+Le choix du langage Python comme support d'apprentissage de la programmation tient à sa lisibilité 
+et à sa large adoption en milieu scolaire.
+Or le langage Python, comme d'autres langages de haut niveau, fournit un module intégré, 
+\code{ast}, qui permet de décomposer du code source Python en une structure arborescente appelée 
+Arbre de Syntaxe Abstraite (AST). On entend et lit souvent \textit{Arbre Syntaxique Abstrait} 
+mais l'arbre n'a rien d'abstrait aussi nous dirons AST pour Abstract Syntax Tree. Cet arbre est
+ une représentation hiérarchique du code qui ignore les détails syntaxiques superflus pour l'exécution
+  (comme les parenthèses ou les commentaires) pour se concentrer sur la structure logique du programme. 
+  Chaque nœud de l'AST correspond à une construction du langage : une assignation, une condition, une boucle,
+   un appel de fonction, etc. \\
 
-Dans le contexte de l'apprentissage de la programmation, la visualisation des structures de contrôle est un outil pédagogique fondamental. Nous faisons l'hypothèse que le passage d'un langage à un autre est un travail stimulant les compétences qui forment la si élusive \textit{pensée computationnelle}. Le logigramme, ou diagramme de flux, ou \textit{flowchart} offre une représentation graphique - certes plus intuitive - de l'algorithmique sous-jacente à un programme, mais il est constitué d'éléments syntaxiques à apprendre. Chaque élément syntaxique Python n'a pas sa correspondance un-pour-un dans la syntaxe logigramme, et la finalité du logigramme est de rendre compte de l'exécution du flux de contrôle \textbf{logique} du programme. \\
+Dans le contexte de l'apprentissage de la programmation, la visualisation des structures de contrôle est un 
+outil pédagogique fondamental. Nous faisons l'hypothèse que le passage d'un langage à un autre est un travail 
+stimulant les compétences qui forment la si élusive \textit{pensée computationnelle}. Le logigramme, ou 
+diagramme de flux, ou \textit{flowchart} offre une représentation graphique - certes plus intuitive - de 
+l'algorithmique sous-jacente à un programme, mais il est constitué d'éléments syntaxiques à apprendre. 
+Chaque élément syntaxique Python n'a pas sa correspondance un-pour-un dans la syntaxe logigramme, et la finalité du logigramme est de rendre compte de l'exécution du flux de contrôle \textbf{logique} du programme. \\
 Notre implémentation \code{MyCFG.py} est conçue pour analyser du code source Python fournie sous forme de chaîne, construire un graphe de flux de contrôle (\textit{CFG, pour Control Flow Graph}, et le traduire en une syntaxe de diagramme Mermaid. L'objectif principal est de fournir un retour visuel immédiat aux apprenants dans un environnement d'exercice interactif, en mettant l'accent sur la clarté pédagogique plutôt que sur une analyse exhaustive de tous les aspects du langage.
 
-\subsection{L'AST Python : théorie et inspirations}
+\subsection{L'AST Python}
+Pour traduire un programme textuel en un CFG, il est nécessaire d'en extraire la structure logique. Plutôt que de recourir à une analyse fragile basée sur des expressions régulières, nous avons adopté une approche robuste et standard en informatique : l'analyse de l'AST.
 
-Pour traduire un programme textuel en un CFG, il est nécessaire d'en extraire la structure logique. Plutôt que de recourir à une analyse fragile basée sur des expressions régulières, nous avons adopté une approche robuste et standard en informatique : l'analyse de l'Arbre de Syntaxe Abstraite (AST). On entend et lit souvent \textit{Arbre Syntaxique Abstrait} mais l'arbre n'a rien d'abstrait.
+\subsection{AST, CFG, et logigramme}
+La génération d'un logigramme à partir d'un code source est un processus de traduction qui transforme une 
+représentation purement syntaxique en une représentation sémantique du flux d'exécution. Notre module 
+\code{MyCFG.py} opère cette traduction. Détaillons les fondements théoriques de cette transformation et illustrons 
+comment notre implémentation l'a concrétisée.
+\hline
+Prenons un code minimal:
+\begin{minted}{python}
+x = 1
+if x > 0:
+    y = 1
+else:
+    y = -1
+print(y)
+\end{minted}
+Lorsqu'un interpréteur Python lit un script, sa première étape est de le \textit{parser} (analyser syntaxiquement). 
+Ce processus convertit la chaîne de caractères brute en cette structure de données hiérarchique qu'est l'AST.
+Le \code{dump} de l'AST pour ce code minimal est :
+\begin{verbatim}
+    Module(body=[Assign(targets=[Name(id='x', ctx=Store())], value=Constant(value=1)), If(test=Compare(left=Name(id='x', ctx=Load()), ops=[Gt()], comparators=[Constant(value=0)]), body=[Assign(targets=[Name(id='y', ctx=Store())], value=Constant(value=1))], orelse=[Assign(targets=[Name(id='y', ctx=Store())], value=UnaryOp(op=USub(), operand=Constant(value=1)))]), Expr(value=Call(func=Name(id='print', ctx=Load()), args=[Name(id='y', ctx=Load())], keywords=[]))], type_ignores=[])
+\end{verbatim}
+que nous préférons immédiatement représenter d'une façon plus humaine, plus lisible car déjà arborescente. 
+On voit bien que le Module de l'AST est la racine. Elle contient une liste d'instructions (body) qui sont soit des
+ affectations (Assign), soit une condition (If) ou un appel de fonction (Expr avec Call).
+\begin{verbatim}
+    Module(
+  body=[
+    Assign(
+      targets=[
+        Name(id='x', ctx=Store())],
+      value=Constant(value=1)),
+    If(
+      test=Compare(
+        left=Name(id='x', ctx=Load()),
+        ops=[
+          Gt()],
+        comparators=[
+          Constant(value=0)]),
+      body=[
+        Assign(
+          targets=[
+            Name(id='y', ctx=Store())],
+          value=Constant(value=1))],
+      orelse=[
+        Assign(
+          targets=[
+            Name(id='y', ctx=Store())],
+          value=UnaryOp(
+            op=USub(),
+            operand=Constant(value=1)))]),
+    Expr(
+      value=Call(
+        func=Name(id='print', ctx=Load()),
+        args=[
+          Name(id='y', ctx=Load())],
+        keywords=[]))],
+  type_ignores=[])
+\end{verbatim}
+Cette arborescence pourra être résumée sous une forme presque lisible ci-dessous :
+\begin{verbatim}
+Module
+├─ Assign: Name('x', Store) := Constant(1)
+├─ If (test: Compare(Name('x', Load) > Constant(0)))
+│  ├─ Assign: Name('y', Store) := Constant(1)
+│  ├─ else:
+│  └─ Assign: Name('y', Store) := UnaryOp(-, Constant(1))
+└─ Expr: Call(Name('print', Load), [Name('y', Load)])
+\end{verbatim}
+Cette dernière écriture de l'AST est lisible car elle fait apparaitre des noeuds qui structurent notre lecture mais
+chacun de ces noeuds correspondent à une construction syntaxique du langage. Chaque nœud a des attributs qui décrivent ses 
+composants (ex. \code{targets}, \code{value} pour une affectation).
+Cet arbre est une description parfaite de \textit{ce qu'est} le code, mais pas de \textit{comment il s'exécute}. 
+Par exemple, il ne montre pas explicitement que la branche \code{orelse} est une alternative à la branche 
+\code{body}, ni que l'exécution continue après la structure \code{If}. \par  L'AST est une représentation statique et 
+hiérarchique. Le CFG, quant à lui, est une représentation graphique du flux d'exécution.
+On a vu que l'AST était un arbre : c'est un graphe non dirigés, acyclique et connexe (les éléments sont tous reliés).
+Comme l'illustre l'implémentation \code{PyCFG.py} de \textit{The Fuzzing Book}, un CFG est un graphe dirigé, non
+connexe et potentiellement cyclique (dès qu'une itération est présente) où :
+\begin{itemize}
+    \item Les \textbf{nœuds} représentent des blocs d'instructions exécutés séquentiellement sans branchement.
+    \item Les \textbf{arêtes} représentent les transferts de contrôle (sauts) entre ces blocs.
+\end{itemize}
+Tant que le CFG fourni par le module ast de Python n'a pas été ``visité'' il est vide:
+\begin{verbatim}
+--- CFG : les noeuds ---
+[]
+--- CFG : les arêtes ---
+set()
+\end{verbatim}
+Une fois la ``visite'' effectuée on a construit un CFG :
+\begin{verbatim}
+    --- CFG : les noeuds ---
+[('node01', 'Start'), ('node02', 'x = 1'), ('node03', 'x > 0'), ('node04', 'y = 1'), ('node05', 'y = -1'), ('node06', '.'), ('node07', 'print(y)'), ('node08', 'End')]
+--- CFG : les arêtes ---
+{('node02', 'node03', ''), ('node04', 'node06', ''), ('node03', 'node05', 'Non'), ('node06', 'node07', ''), ('node03', 'node04', 'Oui'), ('node01', 'node02', ''), ('node07', 'node08', ''), ('node05', 'node06', '')}
+\end{verbatim}
+On dira que le CFG est l'ensemble de ces noeuds et de ces arêtes : il rend explicite la notion de \textbf{flux},
+ il n'est plus hiérarchique mais séquentiel, avec des branches et des fusions, qu'il nous appartient de visualiseur
+ pour l'élève.
 
+\subsection{Pourquoi PyCFG (Fuzzing Book) était utile mais insuffisant pour nos objectifs}
+\paragraph{Apports de PyCFG :}
+\begin{itemize}
+\item Démonstration claire de la \textbf{construction d’un CFG à partir de l’AST} (\textit{The Fuzzing Book} \cite{fuzzingbook}).
+\item Base technique pour le parcours \textit{visitor}, gestion des blocs, arêtes et séquences.
+\end{itemize}
+
+\paragraph{Limites pour l’usage pédagogique visé (et adaptation \code{MyCFG.py}).}
+\begin{itemize}
+\item \textbf{Granularité trop bas niveau}: PyCFG reflète étroitement la syntaxe (blocs techniques), alors que 
+nous visons des \textbf{concepts algorithmiques} lisibles (\code{Process}/\code{Decision}/\code{Junction}/\code{IoOperation}).
+\item \textbf{Absence de nœuds de jonction} explicites pour la convergence visuelle des branches ; 
+\code{MyCFG} insère des \code{Junction} dédiés, pour réduire la charge cognitive en fournissant à l'élève des repères 
+visuels clairs et pour visuellement éviter les croisements illisibles au moment du rendu par l'algorithme Mermaid.
+\item \textbf{Sortie Graphviz} : adaptée à la recherche mais moins \textit{portable web} ; nous ciblons \textbf{Mermaid}
+ pour un rendu immédiat dans le navigateur, sans dépendances serveur pour cette partie du projet.
+\item \textbf{Sémantique pédagogique ajoutée par MyCFG} : typage léger des I/O en conformité avaec ce qui est fait
+en classe, des libellés plus ``human-friendly'', une séparation en \code{subgraph} pour séparer le flux principal
+des définitions de fonctions, ce que PyCFG ne vise pas.
+\item \textbf{Contrôle de la ``verbosité'' par MyCFG} : heuristiques pour condenser les expressions (ex. 
+conditions courtes, noms de variables) afin d'essayer de garder le diagramme lisible.
+\end{itemize}
+
+\paragraph{Conclusion :} PyCFG fournit l’ossature algorithmique ; \code{MyCFG.py} ajoute une \textbf{couche sémantique
+ et ergonomique} nécessaire à un \textit{retour visuel immédiat et didactique} pour les élèves, directement dans 
+ le navigateur via Pyodide + Mermaid, conformément à l'objectif de traduction du code dans le navigateur.
+
+ 
 \subsubsection{Le choix de l'AST comme source de vérité}
-Le module \code{ast} de la bibliothèque standard Python permet de transformer une chaîne de code source en une structure arborescente (l'AST) qui représente sans ambiguïté les relations entre les différentes instructions. Ce choix présente plusieurs avantages déterminants :
+Le module \code{ast} de la bibliothèque standard Python permet déjà de transformer une chaîne de code source en une 
+structure arborescente (l'AST) qui représente sans ambiguïté les relations entre les différentes instructions. 
+Ce choix présente plusieurs avantages déterminants :
 \begin{itemize}
     \item \textbf{Robustesse :} L'analyseur de Python fait le travail complexe de validation de la syntaxe. Notre traducteur opère sur une structure déjà validée.
     \item \textbf{Précision sémantique :} L'AST ne représente pas le texte, mais sa signification. Un nœud \code{ast.For} est distinct d'un nœud \code{ast.While}, et nous pouvons exploiter cette distinction pour analyser l'arbre, même si leur rendu textuel est arbitraire et peut varier d'une implémentation à l'autre.  
@@ -900,8 +1042,17 @@ Le module \code{ast} de la bibliothèque standard Python permet de transformer u
 \subsubsection{Le \textit{template} (patron de conception) "Visiteur"}
 Pour parcourir l'AST, nous utilisons le patron de conception \textit{Visiteur}. La classe \code{ControlFlowGraph} implémente une méthode \code{visit(node, parent\_id)} qui agit comme un répartiteur. Selon le type du nœud AST visité (ex: \code{ast.If}), elle délègue le traitement à une méthode spécialisée (ex: \code{visit\_If}). Cette approche structure le code de manière claire et alignée sur la grammaire du langage Python.
 
-Notre approche s'inspire de projets académiques et open-source qui exploitent l'AST pour l'analyse de code, notamment les travaux présentés dans \textit{The Fuzzing Book} par Zeller et al. \cite{fuzzingbook}, qui démontrent la construction d'un CFG à partir d'un AST. De même, la documentation \textit{Green Tree Snakes} \cite{greentreesnakes} illustre la puissance de la manipulation et de la visite de l'AST pour des tâches d'analyse statique. Notre \code{MyCFG.py} adopte une philosophie similaire en utilisant le patron de conception \textit{Visiteur} pour parcourir l'AST. Une méthode de visite spécifique est implémentée pour chaque type de nœud AST pertinent, permettant de traduire progressivement la structure du code en une structure de graphe composée de nœuds et d'arêtes.
-\clearpage
+Notre approche s'inspire de projets académiques et open-source qui exploitent l'AST pour l'analyse de code, 
+notamment les travaux présentés dans \textit{The Fuzzing Book} par Zeller et al. \cite{fuzzingbook}, qui 
+démontrent la construction d'un CFG à partir d'un AST. De même, la documentation \textit{Green Tree Snakes} 
+\cite{greentreesnakes} illustre la puissance de la manipulation et de la visite de l'AST pour des tâches 
+d'analyse statique. Notre \code{MyCFG.py} adopte une philosophie similaire en utilisant le patron de conception 
+\textit{Visiteur} pour parcourir l'AST. Une méthode de visite spécifique est implémentée pour chaque type de 
+nœud AST pertinent, permettant de traduire progressivement la structure du code en une structure de graphe 
+composée de nœuds et d'arêtes.
+
+
+ \clearpage
 \subsection{Vocabulaire AST et sémantique des nœuds du CFG}
 
 La traduction d'un AST en un CFG implique une cartographie entre les nœuds syntaxiques de l'AST et les nœuds sémantiques du logigramme. Nous avons défini un ensemble de types de nœuds internes à notre graphe, chacun correspondant à un ou plusieurs types de nœuds AST et représentant un concept algorithmique distinct. Le tableau \ref{tab:node-types} détaille cette correspondance pour les éléments actuellement implémentés dans \code{MyCFG.py}.
@@ -944,9 +1095,20 @@ L'architecture de \code{MyCFG.py} est guidée par une philosophie centrée sur l
 \paragraph{Représentation pédagogique des boucles.} Pour les boucles \code{for}, une attention particulière a été portée à la représentation. Plutôt qu'un simple nœud de décision, nous avons choisi de décomposer la boucle en une structure plus détaillée inspirée des logigrammes classiques (voir figure \ref{foreach_flowchart} : un test initial de vacuité de l'itérable ("des éléments sont ils présents dans la structure sur laquelle itérer"?), l'initialisation de la variable d'itération (l'itérateur), l'exécution du corps, un test de continuation, et la mise à jour de la variable. 
 \begin{figure}[H]
     \centering
-    \includegraphics[width=0.3\textwidth]{FqKSJ.jpg}
-    \caption{idée de flowchart "for each" \cite{FqKSJ}}
-    \label{foreach_flowchart}
+    \begin{subfigure}{0.45\textwidth}
+         \centering
+         \includegraphics[width=0.3\textwidth]{FqKSJ.jpg}
+        \caption{Exemple de flowchart "for each" \cite{for_each_exemple}}
+        \label{fig:foreach_flowchart}
+    \end{subfigure}
+    \begin{subfigure}{0.45\textwidth}
+        \centering
+        \includegraphics[width=0.3\textwidth]{for_str_screenshot.png}
+        \caption{Copie d'écran d'une partie de logigramme visualisant une boucle ``for ... str''}
+        \label{fig:for_str_screenshot}
+    \end{subfigure}
+    \caption{Comparaison de notre ``for ... in <str>'' avec un exemple de ``for each''}
+    \label{fig:deux_for}
 \end{figure}
 
 Cette décomposition, bien que plus verbeuse, vise à rendre le mécanisme d'itération plus explicite pour l'apprenant. Une heuristique est également utilisée pour décrire la nature de l'itérable (chaîne, liste, variable, etc.) et de ses éléments (caractère, nombre, etc.) en langage naturel. C'est peut être encore un peu trop verbeux malgré l'attention qui a été porté pour réduire la longueur des chaînes (exemples: utiliser les ' plutôt que les ", couper les longues chaines et les faire suivre de ``...'')
@@ -2704,123 +2866,5 @@ function ensureVariableExists(type, preferPlanned = false) {
 
 \clearpage
 \printbibliography
-
-\clearpage
-ALTERNATIVE
-\begin{thebibliography}{99}
-
-\bibitem[Illich, 1973]{Illich} Illich I. (1973). \textit{Tools for conviviality}. (dans le domaine public, disponible sur Internet)
-
-\bibitem[Foucault, 1975]{Foucault} Foucault M. (1975)  \textit{Surveiller et punir : Naissance de la prison}.  Gallimard
-
-\bibitem[Deleuze, 1986]{Deleuze} Deleuze G. (1986). \textit{Foucault}. Les Éditions de Minuit.
-
-\bibitem[Qian, Lehman, 2017]{Qian_Lehman_2017} 
-Qian Y., Lehman J. (2017). Students’ Misconceptions and Other Difficulties in Introductory Programming: A Literature Review. \textit{ACM Trans. Comput. Educ. 18, 1, Article 1 (October 2017)} \url{https://dl.acm.org/doi/10.1145/3077618}
-
-\bibitem[Wenger, 1998]{wenger} 
-Wenger, E. (1998).\textit{Communities of practice: Learning, meaning, and identity}. Cambridge University Press. \url{https://doi.org/10.1017/CBO9780511803932}
-
-\bibitem{Papert, 1980} Papert, S. (1980). \textit{Mindstorms: Children, Computers, and Powerful Ideas}. Basic Books.
-
-\bibitem[Messer, 2023]{messer2023} 
-Messer, M., Brown, N.C.C., Kölling, M., \& Shi, M. (2023). Automated Grading 
-and Feedback Tools for Programming Education: A Systematic Review. \textit{arXiv preprint} 
-arXiv:2306.11722.
-
-\bibitem[Zimmermann, 2024]{zimmermann2024} Zimmermann, A. E., King, E. E., \& Bose, D. D. (2024). Effectiveness 
-and Utility of Flowcharts on Learning in a Classroom Setting: A Mixed-Methods Study. 
-\textit{American Journal of Pharmaceutical Education, 88}(1), 100591.
-
-
-\bibitem[Crews, Zielger, 98]{CrewsZielger98}Crews, T., Ziegler, U. (1998) The flowchart interpreter for introductory programming courses, FIE '98. \textit{28th Annual Frontiers in Education Conference. Moving from 'Teacher-Centered' to 'Learner-Centered' Education. Conference Proceedings (Cat. No.98CH36214), Tempe, AZ, USA, 1998, pp. 307-312 vol.1}, \url{doi: 10.1109/FIE.1998.736854}.
-
-
-\bibitem[Sentance,2017]{Sentance2017WiPSCE}
-Sentance, S., \& Waite, J. (2017).
-PRIMM: Exploring pedagogical approaches for teaching text-based programming in school.
-In \textit{Proceedings of the 12th Workshop on Primary and Secondary Computing Education (WiPSCE '17)} (pp.~113--114).
-New York, NY: ACM.
-https://doi.org/10.1145/3137065.3137084
-
-\bibitem[Sentance, 2019]{Sentance2019CSE}
-Sentance, S., Waite, J., \& Kallia, M. (2019).
-Teaching computer programming with PRIMM: A sociocultural perspective.
-\textit{Computer Science Education}, \textit{29}(2--3), 136--176.
-\url{https://doi.org/10.1080/08993408.2019.1608781}
-
-\bibitem[Anderson, Krathwohl,2001]{AndersonKrathwohl2001}
-Anderson, L. W., \& Krathwohl, D. R. (Eds.). (2001).
-\textit{A taxonomy for learning, teaching, and assessing: A revision of Bloom's taxonomy of educational objectives}.
-New York, NY: Longman.
-
-\bibitem[Krathwohl, 2002]{Krathwohl2002} Krathwohl, D. R. (2002). A revision of Bloom's taxonomy: An overview. \textit{Theory Into Practice}, \textit{41}(4), 212--218. \url{https://doi.org/10.1207/s15430421tip4104_2}
-
-\bibitem[Fuller, 2007]{Fuller2007}
-Fuller, U., Johnson, C. G., Ahoniemi, T., Cukierman, D., Hernan-Losada, I., Jackova, J., Lahtinen, E., Lewis, T. L., McGee Thompson, D., Riedesel, C., \& Thompson, E. (2007).
-Developing a computer science-specific learning taxonomy.
-\textit{ACM SIGCSE Bulletin}, \textit{39}(4), 152--170.
-\url{https://doi.org/10.1145/1345375.1345438}
-
-\bibitem[Hattie, Timperley, 2007]{HattieTimperley2007}
-Hattie, J., \& Timperley, H. (2007).
-The power of feedback.
-\textit{Review of Educational Research}, \textit{77}(1), 81--112. \url{https://doi.org/10.3102/003465430298487}
-
-\bibitem[Shute, 2008]{Shute2008}
-Shute, V. J. (2008).
-Focus on formative feedback.
-\textit{Review of Educational Research}, \textit{78}(1), 153--189. \url{https://doi.org/10.3102/0034654307313795}
-
-\bibitem[Black, Wiliam, 1998]{BlackWiliam1998}
-Black, P., \& Wiliam, D. (1998).
-Inside the black box: Raising standards through classroom assessment.
-\textit{Phi Delta Kappan}, \textit{80}(2), 139--148.
-
-\bibitem[Parker, Garcia, Kao, 2022]{ACES} Parker, M., Garcia, L., Kao, Y. (2022). A Pair of ACES: An Analysis of Isomorphic Questions on an Elementary Computing Assessment.
-\textit{Association for Computing Machinery} 
-\url{https://doi.org/10.1145/3501385.3543979}
-
-\bibitem[Sovietov, 2022]{sovietov} 
-Sovietov, P. (2022). Automatic Generation of Programming Exercises. \textit{Institute of Information Technologies MIREA – Russian technological university Moscow, Russia - sovetov@mirea.ru} 10.48550/arXiv.2205.11304. 
-
-\bibitem[Keuning, 2018]{Keuning2018}
-Keuning, H., Jeuring, J., \& Heeren, B. (2018).
-A systematic literature review of automated feedback generation for programming exercises.
-\textit{ACM Transactions on Computing Education}, \textit{19}(1), 1--43.
-https://doi.org/10.1145/3231711
-
-\bibitem[Altman, Musk, 2015]{email} Révélations mises au jour lors du procès opposant Elon Musk à OpenAi et son PDG (Sam Altman):
-\begin{quote}
-    \textbf{On Jun 24, 2015, at 10:24 AM, Sam Altman wrote:}
-
-1) The mission would be to create the first general Al and use it for individual empowerment—ie, the distributed version of the future that seems the safest. More generally, safety should be a first-class requirement.
-\end{quote} Cité dans la presse en novembre 2024. \url{https://www.businessinsider.com/emails-between-sam-altman-elon-musk-kicked-off-openai-2024-11} (consulté en août 2025).
-
-\bibitem[www.didask.com]{didask} Didask. (n.d.). \textit{Qu'est-ce qu'un outil auteur ? - Le guide complet}. Recopié de \url{https://www.didask.com (consulté en 2025)}.
-
-\bibitem[Doc officielle Pyodide]{pyodide} Pyodide Development Team. (2023). \textit{Pyodide Documentation}. Récupéré de \url{https://pyodide.org} (consulté en 2024).
-
-\bibitem[Doc officielle CodeMirror]{codemirror6} Haverbeke, M. (2021). \textit{CodeMirror 6 Documentation}. Récupéré de \url{https://codemirror.net/6/} (consulté en 2024).
-
-\bibitem[Doc officielle CodeMirror]{ace} Ace Editor. (n.d.). \textit{Ace - The High Performance Code Editor for the Web}. Récupéré de \url{https://ace.c9.io} (consulté en 2024, finalement abandonné au profit de CodeMirror).
-
-\bibitem[Doc officielle Skulp]{skulpt} \url{https://skulpt.org/} (consulté en 2024, finalement abandonné au profit de Pyodide uniquement).
-
-\bibitem[Doc officielle Brython]{brython} \url{https://brython.info/} (consulté en 2024, finalement abandonné au profit de Pyodide uniquement).
-
-\bibitem[Doc offielle Python ast]{python-ast} Python Software Foundation. (2023). \textit{Python Documentation: ast --- Abstract Syntax Trees}. Extrait de \url{https://docs.python.org/3/library/ast.html} (consulté en 2024).
-
-\bibitem[Doc offielle Python dis]{python-dis} Python Software Foundation. (2023). \textit{Python Documentation: dis --- Disassembler for Python bytecode}. Extrait de \url{https://docs.python.org/3/library/dis.html} (consulté en 2024).
-
-\bibitem[Kluyver, 2012]{greentreesnakes} Kluyver, T. (2012). \textit{Green Tree Snakes: Getting to and from ASTs}. Documentation en ligne, \url{https://greentreesnakes.readthedocs.io} (consulté en 2024).
-
-\bibitem[Zeller, 2022]{fuzzingbook} Zeller, A. et al. (2022). \textit{The Fuzzing Book} – Chapitre "Fuzzing with Grammars". En ligne, \url{https://www.fuzzingbook.org} (consulté en 2024).
-
-\bibitem[Page GitHub de Rahul Gopinath]{rahulgopinath} Gopinath, R. \textit{Page personnelle}. En ligne, \url{https://github.com/rahulgopinath/rahulgopinath.github.io} (consulté en 2024)
-
-\bibitem[Flowchart For\_Each]{FqKSJ} Discussion sur Stackoverflow. \url{https://stackoverflow.com/questions/20580028/flowchart-for-each-loop-loop-without-variable-increment}
-
-\end{thebibliography}
 
 \end{document}

@@ -17,5 +17,24 @@
             "username": "root",
             "password": "root"
         }
+    ],
+"latex-workshop.latex.tools": [
+  {
+    "name": "latexmk_lua",
+    "command": "latexmk",
+    "args": [
+      "-lualatex",
+      "-shell-escape",
+      "-synctex=1",
+      "-interaction=nonstopmode",
+      "-file-line-error",
+      "-outdir=build",
+      "%DOC%"
     ]
+  }
+],
+"latex-workshop.latex.recipes": [
+  { "name": "latexmk (lualatex)", "tools": ["latexmk_lua"] }
+],
+"latex-workshop.latex.outDir": "build"
 }

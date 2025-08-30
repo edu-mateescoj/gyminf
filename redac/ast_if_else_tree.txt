@@ -1,0 +1,7 @@
+Module
+├─ Assign: Name('x', Store) := Constant(1)
+├─ If (test: Compare(Name('x', Load) > Constant(0)))
+│  ├─ Assign: Name('y', Store) := Constant(1)
+│  ├─ else:
+│  └─ Assign: Name('y', Store) := UnaryOp(-, Constant(1))
+└─ Expr: Call(Name('print', Load), [Name('y', Load)])

@@ -1,0 +1,32 @@
+Module(
+  body=[
+    Assign(
+      targets=[
+        Name(id='x', ctx=Store())],
+      value=Constant(value=1)),
+    If(
+      test=Compare(
+        left=Name(id='x', ctx=Load()),
+        ops=[
+          Gt()],
+        comparators=[
+          Constant(value=0)]),
+      body=[
+        Assign(
+          targets=[
+            Name(id='y', ctx=Store())],
+          value=Constant(value=1))],
+      orelse=[
+        Assign(
+          targets=[
+            Name(id='y', ctx=Store())],
+          value=UnaryOp(
+            op=USub(),
+            operand=Constant(value=1)))]),
+    Expr(
+      value=Call(
+        func=Name(id='print', ctx=Load()),
+        args=[
+          Name(id='y', ctx=Load())],
+        keywords=[]))],
+  type_ignores=[])
