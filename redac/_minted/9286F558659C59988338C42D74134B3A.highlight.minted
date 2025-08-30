@@ -1,0 +1,7 @@
+\begin{MintedVerbatim}[commandchars=\\\{\}]
+\PYG{p}{\PYGZob{}}
+\PYG{+w}{  }\PYG{n+nt}{\PYGZdq{}code\PYGZdq{}}\PYG{p}{:}\PYG{+w}{ }\PYG{l+s+s2}{\PYGZdq{}\PYGZsh{} code avec modif\PYGZbs{}nenabled = True\PYGZbs{}n...\PYGZdq{}}\PYG{p}{,}
+\PYG{+w}{  }\PYG{n+nt}{\PYGZdq{}canonical\PYGZus{}code\PYGZdq{}}\PYG{p}{:}\PYG{+w}{ }\PYG{l+s+s2}{\PYGZdq{}enabled = True\PYGZbs{}ny = 1\PYGZbs{}n\PYGZbs{}ndef build(flag):\PYGZbs{}n...\PYGZdq{}}\PYG{p}{,}
+\PYG{+w}{  }\PYG{n+nt}{\PYGZdq{}difficulty\PYGZdq{}}\PYG{p}{:}\PYG{+w}{ }\PYG{l+m+mi}{3}
+\PYG{p}{\PYGZcb{}}
+\end{MintedVerbatim}

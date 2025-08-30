@@ -1,0 +1,10 @@
+\begin{MintedVerbatim}[commandchars=\\\{\}]
+\PYG{n}{enabled} \PYG{o}{=} \PYG{k+kc}{True}
+\PYG{n}{y} \PYG{o}{=} \PYG{l+m+mi}{1}
+
+\PYG{k}{def}\PYG{+w}{ }\PYG{n+nf}{build}\PYG{p}{(}\PYG{n}{flag}\PYG{p}{):}
+    \PYG{n}{output} \PYG{o}{=} \PYG{o+ow}{not} \PYG{n}{flag}
+    \PYG{k}{return} \PYG{n}{output}
+\PYG{n}{found} \PYG{o}{=} \PYG{n}{build}\PYG{p}{(}\PYG{n}{enabled}\PYG{p}{)}
+\PYG{n+nb}{print}\PYG{p}{(}\PYG{l+s+s1}{\PYGZsq{}Le résultat de \PYGZsq{}} \PYG{o}{+} \PYG{l+s+s1}{\PYGZsq{}build\PYGZsq{}} \PYG{o}{+} \PYG{l+s+s1}{\PYGZsq{}(\PYGZsq{}} \PYG{o}{+} \PYG{n+nb}{str}\PYG{p}{(}\PYG{n}{enabled}\PYG{p}{)} \PYG{o}{+} \PYG{l+s+s1}{\PYGZsq{})\PYGZsq{}} \PYG{o}{+} \PYG{l+s+s1}{\PYGZsq{} est \PYGZsq{}} \PYG{o}{+} \PYG{n+nb}{str}\PYG{p}{(}\PYG{n}{found}\PYG{p}{))}
+\end{MintedVerbatim}

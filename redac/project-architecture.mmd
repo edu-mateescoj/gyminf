@@ -1,0 +1,52 @@
+flowchart LR
+  %% Architecture globale (fichiers + liens)
+  classDef srv fill:#e6f7ff,stroke:#8ac7ff,stroke-width:2px;
+  classDef doc fill:#eee,stroke:#aaa,stroke-dasharray: 5 3;
+  classDef ext fill:#fff,stroke:#bbb,stroke-dasharray: 5 3;
+
+  subgraph Client[Navigateur HTML+JS]
+    L[layout.html]
+    M[main.js]
+    CG[code-generator.js]
+    FG[flowchart-generator.js]
+    V[validation.js]
+    DQ[db_queries.js]
+    CM[(CodeMirror)]:::ext
+    MM[(Mermaid.js)]:::ext
+  end
+
+  subgraph Pyodide[Navigateur Pyodide]
+    MY[MyCFG.py ControlFlowGraph]
+  end
+
+  subgraph Server[Serveur Flask]
+    APP[app.py]:::srv
+  end
+
+  subgraph DB[Base de donnees]
+    SQL[(MySQL)]
+  end
+
+
+  %% Chargements client
+  APP -->|render_template| L
+  L --> CG
+  L --> FG
+  L --> V
+  L --> DQ
+  L --> M
+
+  %% Orchestration
+  M -->|generateRandomPythonCode| CG
+  M -->|logGeneratedCode| DQ
+  M -->|triggerFlowchartUpdate| FG
+  M --> CM
+
+  %% Pyodide & CFG
+  FG -->|process_and_get_results via Pyodide| MY
+  FG --> MM
+  M -->|populate/check answers| V
+
+  %% Logs serveur
+  DQ -->|POST /log/...| APP
+  APP -->|INSERT/SELECT| SQL

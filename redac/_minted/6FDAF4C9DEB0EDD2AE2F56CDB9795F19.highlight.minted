@@ -1,0 +1,8 @@
+\begin{MintedVerbatim}[commandchars=\\\{\}]
+\PYG{k}{INSERT}\PYG{+w}{ }\PYG{k}{INTO}\PYG{+w}{ }\PYG{n}{code}\PYG{+w}{ }\PYG{p}{(}\PYG{n}{user\PYGZus{}id}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{code}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{canonical\PYGZus{}code}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{difficulty}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{time\PYGZus{}created}\PYG{p}{)}
+\PYG{k}{VALUES}\PYG{+w}{ }\PYG{p}{(}\PYG{l+m+mi}{1}\PYG{p}{,}
+\PYG{+w}{        }\PYG{l+s+s1}{\PYGZsq{}\PYGZsh{} code avec modif...\PYGZbs{}n...\PYGZsq{}}\PYG{p}{,}
+\PYG{+w}{        }\PYG{l+s+s1}{\PYGZsq{}enabled = True\PYGZbs{}ny = 1\PYGZbs{}n...\PYGZsq{}}\PYG{p}{,}
+\PYG{+w}{        }\PYG{l+m+mi}{3}\PYG{p}{,}
+\PYG{+w}{        }\PYG{n}{NOW}\PYG{p}{());}
+\end{MintedVerbatim}

@@ -1,0 +1,6 @@
+\begin{MintedVerbatim}[commandchars=\\\{\}]
+\PYG{k}{if}\PYG{+w}{ }\PYG{p}{(}\PYG{o}{!}\PYG{n+nx}{lastDiagramAstDump}\PYG{p}{)}\PYG{+w}{ }\PYG{p}{\PYGZob{}}
+\PYG{+w}{    }\PYG{n+nx}{setDiagramAndChallengeCardState}\PYG{p}{(}\PYG{l+s+s2}{\PYGZdq{}default\PYGZdq{}}\PYG{p}{);}
+\PYG{+w}{    }\PYG{k}{return}\PYG{p}{;}\PYG{+w}{ }\PYG{c+c1}{// Arrête\PYGZhy{}toi ici !}
+\PYG{p}{\PYGZcb{}}
+\end{MintedVerbatim}

@@ -1215,7 +1215,14 @@ class ControlFlowGraph:
 
 ############### Choisir le code à tester ###############
 import exemples
-selected_code = exemples.focus
+selected_code = '''enabled = True
+y = 1
+def build(flag):
+    output = not flag
+    return output
+found = build(enabled)
+print("Le résultat de " + "build" + "(" + str(enabled) + ")" + " est " + str(found))
+''' #exemples.focus
 ########################################################
 
 # --- Génération et Affichage ---
@@ -1225,13 +1232,14 @@ print(selected_code)
 cfg = ControlFlowGraph(selected_code)
 # Lance la visite à partir de la racine de l'AST (le module)
 cfg.visit(cfg.tree, None) # Le parent initial est None
-
+print("--- L'arbre par ast.dump du cfg.tree:")
 print(ast.dump(cfg.tree))
 
+print("--- L'export Mermaid ---")
 print(cfg.to_mermaid())
 print("\n--- Mermaid Généré ---")
 
-'''# Affiche les noeuds et arêtes pour le débogage
+# Affiche les noeuds et arêtes pour le débogage
 print("\n--- Noeuds (ID, Label) ---")
 for n in cfg.nodes:
      print(n)
@@ -1240,7 +1248,8 @@ for e in sorted(list(cfg.edges)): # Trié pour la lisibilité
      print(e)
 print("\n--- Noeuds Terminaux ---")
 print(cfg.terminal_nodes)
-print("\n--- Fin des impressions CFG ---")'''
+print("\n--- Fin des impressions CFG ---")
+
 # Test la version Python 3.9+ avec ast.unparse
 print(ast.unparse(ast.parse(selected_code)))
 

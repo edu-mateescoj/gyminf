@@ -1,0 +1,34 @@
+\begin{MintedVerbatim}[commandchars=\\\{\}]
+\PYG{k+kd}{function}\PYG{+w}{ }\PYG{n+nx}{ensureVariableExists}\PYG{p}{(}\PYG{n+nx}{type}\PYG{p}{,}\PYG{+w}{ }\PYG{n+nx}{preferPlanned}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{k+kc}{false}\PYG{p}{)}\PYG{+w}{ }\PYG{p}{\PYGZob{}}
+\PYG{+w}{    }\PYG{c+c1}{// Si on est dans une structure (indentLevel \PYGZgt{} 0)}
+\PYG{+w}{    }\PYG{k}{if}\PYG{+w}{ }\PYG{p}{(}\PYG{n+nx}{indentLevel}\PYG{+w}{ }\PYG{o}{\PYGZgt{}}\PYG{+w}{ }\PYG{l+m+mf}{0}\PYG{p}{)}\PYG{+w}{ }\PYG{p}{\PYGZob{}}
+\PYG{+w}{        }\PYG{c+c1}{// Trouver d\PYGZsq{}abord une variable existante}
+\PYG{+w}{        }\PYG{k}{if}\PYG{+w}{ }\PYG{p}{(}\PYG{n+nx}{declaredVarsByType}\PYG{p}{[}\PYG{n+nx}{type}\PYG{p}{].}\PYG{n+nx}{length}\PYG{+w}{ }\PYG{o}{\PYGZgt{}}\PYG{+w}{ }\PYG{l+m+mf}{0}\PYG{p}{)}\PYG{+w}{ }\PYG{p}{\PYGZob{}}
+\PYG{+w}{            }\PYG{k}{return}\PYG{+w}{ }\PYG{n+nx}{getRandomItem}\PYG{p}{(}\PYG{n+nx}{declaredVarsByType}\PYG{p}{[}\PYG{n+nx}{type}\PYG{p}{]);}
+\PYG{+w}{        }\PYG{p}{\PYGZcb{}}
+
+\PYG{+w}{        }\PYG{c+c1}{// Sinon, créer une variable AVANT la structure}
+\PYG{+w}{        }\PYG{k+kd}{const}\PYG{+w}{ }\PYG{n+nx}{name}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{n+nx}{generateUniqueVarName}\PYG{p}{(}\PYG{n+nx}{type}\PYG{p}{);}
+\PYG{+w}{        }\PYG{k+kd}{const}\PYG{+w}{ }\PYG{n+nx}{currentPosition}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{n+nx}{codeLines}\PYG{p}{.}\PYG{n+nx}{length}\PYG{p}{;}
+
+\PYG{+w}{        }\PYG{c+c1}{// Trouver l\PYGZsq{}endroit où insérer la déclaration}
+\PYG{+w}{        }\PYG{k+kd}{let}\PYG{+w}{ }\PYG{n+nx}{insertPosition}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{n+nx}{currentPosition}\PYG{+w}{ }\PYG{o}{\PYGZhy{}}\PYG{+w}{ }\PYG{l+m+mf}{1}\PYG{p}{;}
+\PYG{+w}{        }\PYG{k}{while}\PYG{+w}{ }\PYG{p}{(}\PYG{n+nx}{insertPosition}\PYG{+w}{ }\PYG{o}{\PYGZgt{}=}\PYG{+w}{ }\PYG{l+m+mf}{0}\PYG{+w}{ }\PYG{o}{\PYGZam{}\PYGZam{}}
+\PYG{+w}{               }\PYG{n+nx}{codeLines}\PYG{p}{[}\PYG{n+nx}{insertPosition}\PYG{p}{].}\PYG{n+nx}{startsWith}\PYG{p}{(}\PYG{l+s+s2}{\PYGZdq{}    \PYGZdq{}}\PYG{p}{))}\PYG{+w}{ }\PYG{p}{\PYGZob{}}
+\PYG{+w}{            }\PYG{n+nx}{insertPosition}\PYG{o}{\PYGZhy{}\PYGZhy{}}\PYG{p}{;}
+\PYG{+w}{        }\PYG{p}{\PYGZcb{}}
+
+\PYG{+w}{        }\PYG{c+c1}{// Insérer la déclaration à cet endroit}
+\PYG{+w}{        }\PYG{n+nx}{codeLines}\PYG{p}{.}\PYG{n+nx}{splice}\PYG{p}{(}\PYG{n+nx}{insertPosition}\PYG{+w}{ }\PYG{o}{+}\PYG{+w}{ }\PYG{l+m+mf}{1}\PYG{p}{,}\PYG{+w}{ }\PYG{l+m+mf}{0}\PYG{p}{,}
+\PYG{+w}{            }\PYG{l+s+sb}{`}\PYG{l+s+si}{\PYGZdl{}\PYGZob{}}\PYG{n+nx}{name}\PYG{l+s+si}{\PYGZcb{}}\PYG{l+s+sb}{ = }\PYG{l+s+si}{\PYGZdl{}\PYGZob{}}\PYG{n+nx}{LITERALS\PYGZus{}BY\PYGZus{}TYPE}\PYG{p}{[}\PYG{n+nx}{type}\PYG{p}{](}\PYG{n+nx}{difficulty}\PYG{p}{)}\PYG{l+s+si}{\PYGZcb{}}\PYG{l+s+sb}{`}\PYG{p}{);}
+\PYG{+w}{        }\PYG{n+nx}{declaredVarsByType}\PYG{p}{[}\PYG{n+nx}{type}\PYG{p}{].}\PYG{n+nx}{push}\PYG{p}{(}\PYG{n+nx}{name}\PYG{p}{);}
+\PYG{+w}{        }\PYG{n+nx}{allDeclaredVarNames}\PYG{p}{.}\PYG{n+nx}{add}\PYG{p}{(}\PYG{n+nx}{name}\PYG{p}{);}
+\PYG{+w}{        }\PYG{n+nx}{linesGenerated}\PYG{o}{++}\PYG{p}{;}
+
+\PYG{+w}{        }\PYG{k}{return}\PYG{+w}{ }\PYG{n+nx}{name}\PYG{p}{;}
+\PYG{+w}{    }\PYG{p}{\PYGZcb{}}
+
+\PYG{+w}{    }\PYG{c+c1}{// Comportement normal hors structures}
+\PYG{+w}{    }\PYG{c+c1}{// ...}
+\PYG{p}{\PYGZcb{}}
+\end{MintedVerbatim}

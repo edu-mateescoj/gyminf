@@ -78,18 +78,6 @@ CREATE TABLE IF NOT EXISTS verify_answer (
     ON UPDATE CASCADE
 );
 
-CREATE TABLE IF NOT EXISTS answer (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    check_answer_id INT NOT NULL,
-    var_name VARCHAR(50) NOT NULL,
-    prediction VARCHAR(50),
-    correctness BOOLEAN DEFAULT FALSE,
-
-    FOREIGN KEY (check_answer_id) REFERENCES check_answer(id)
-    ON DELETE CASCADE
-    ON UPDATE CASCADE
-);
-
 CREATE TABLE IF NOT EXISTS load_event (
     id INT AUTO_INCREMENT PRIMARY KEY,
     user_id INT NOT NULL,

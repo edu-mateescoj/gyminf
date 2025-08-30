@@ -1,0 +1,33 @@
+flowchart LR
+  
+  subgraph JS[Navigateur JS]
+    M[main.js]
+    CG[code-generator.js]
+    FG[flowchart-generator.js]
+    V[validation.js]
+    DQ[db_queries.js]
+    CM[(CodeMirror)]
+    MM[(Mermaid.js)]
+  end
+
+  subgraph Pyodide[Pyodide]
+    PY[(Pyodide runtime)]
+    MY[MyCFG.py ControlFlowGraph]
+  end
+
+
+  %% Orchestration
+  M -->|generateRandomPythonCode| CG
+  M -->|logGeneratedCode| DQ
+  M -->|triggerFlowchartUpdate| FG
+  M -->|populateChallengeInputs / checkAnswers| V
+  M --> CM
+
+  %% Flowchart + defis
+  FG -->|initPyodideAndLoadScript| PY
+  FG -->|process_and_get_results| MY
+  MY -->|mermaid + canonical + challenges| FG
+  FG --> MM
+
+  %% Journalisation complémentaire
+  M -->|logExecutedCode / logFlowchart| DQ

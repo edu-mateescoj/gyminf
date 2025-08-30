@@ -1,0 +1,12 @@
+\begin{MintedVerbatim}[commandchars=\\\{\}]
+\PYG{c+c1}{\PYGZsh{} code avec modif}
+\PYG{n}{enabled} \PYG{o}{=} \PYG{k+kc}{True}  \PYG{c+c1}{\PYGZsh{} affectation, bool}
+\PYG{n}{y} \PYG{o}{=} \PYG{l+m+mi}{1}           \PYG{c+c1}{\PYGZsh{} type int}
+\PYG{k}{def}\PYG{+w}{ }\PYG{n+nf}{build}\PYG{p}{(}\PYG{n}{flag}\PYG{p}{):}
+    \PYG{n}{output} \PYG{o}{=} \PYG{o+ow}{not} \PYG{n}{flag}
+    \PYG{k}{return} \PYG{n}{output}
+\PYG{c+c1}{\PYGZsh{} appel de fonction avec paramètre:}
+\PYG{n}{found} \PYG{o}{=} \PYG{n}{build}\PYG{p}{(}\PYG{n}{enabled}\PYG{p}{)}
+\PYG{c+c1}{\PYGZsh{} affichage :}
+\PYG{n+nb}{print}\PYG{p}{(}\PYG{l+s+s2}{\PYGZdq{}Le résultat de \PYGZdq{}} \PYG{o}{+} \PYG{l+s+s2}{\PYGZdq{}build\PYGZdq{}} \PYG{o}{+} \PYG{l+s+s2}{\PYGZdq{}(\PYGZdq{}} \PYG{o}{+} \PYG{n+nb}{str}\PYG{p}{(}\PYG{n}{enabled}\PYG{p}{)} \PYG{o}{+} \PYG{l+s+s2}{\PYGZdq{})\PYGZdq{}} \PYG{o}{+} \PYG{l+s+s2}{\PYGZdq{} est \PYGZdq{}} \PYG{o}{+} \PYG{n+nb}{str}\PYG{p}{(}\PYG{n}{found}\PYG{p}{))}
+\end{MintedVerbatim}

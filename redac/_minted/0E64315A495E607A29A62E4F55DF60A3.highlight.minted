@@ -1,0 +1,7 @@
+\begin{MintedVerbatim}[commandchars=\\\{\}]
+\PYG{p}{\PYGZob{}}
+\PYG{+w}{  }\PYG{n+nt}{\PYGZdq{}status\PYGZdq{}}\PYG{p}{:}\PYG{+w}{ }\PYG{l+s+s2}{\PYGZdq{}success\PYGZdq{}}\PYG{p}{,}
+\PYG{+w}{  }\PYG{n+nt}{\PYGZdq{}message\PYGZdq{}}\PYG{p}{:}\PYG{+w}{ }\PYG{l+s+s2}{\PYGZdq{}Code exécuté et diagramme journalisés.\PYGZdq{}}\PYG{p}{,}
+\PYG{+w}{  }\PYG{n+nt}{\PYGZdq{}code\PYGZus{}id\PYGZdq{}}\PYG{p}{:}\PYG{+w}{ }\PYG{l+m+mi}{42}
+\PYG{p}{\PYGZcb{}}
+\end{MintedVerbatim}

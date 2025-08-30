@@ -1,0 +1,7 @@
+\begin{MintedVerbatim}[commandchars=\\\{\}]
+\PYG{c+c1}{// \PYGZsh{}1161}
+\PYG{k+kd}{const}\PYG{+w}{ }\PYG{n+nx}{args}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{n+nx}{params}\PYG{p}{.}\PYG{n+nx}{map}\PYG{p}{((}\PYG{n+nx}{param}\PYG{p}{,}\PYG{+w}{ }\PYG{n+nx}{index}\PYG{p}{)}\PYG{+w}{ }\PYG{p}{=\PYGZgt{}}\PYG{+w}{ }\PYG{p}{\PYGZob{}}
+\PYG{k+kd}{const}\PYG{+w}{ }\PYG{n+nx}{paramType}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{n+nx}{paramTypes}\PYG{p}{[}\PYG{n+nx}{index}\PYG{p}{];}\PYG{+w}{ }\PYG{c+c1}{// Récupère le type planifié (\PYGZsq{}bool\PYGZsq{})}
+\PYG{k}{return}\PYG{+w}{ }\PYG{n+nx}{ensureVariableExists}\PYG{p}{(}\PYG{n+nx}{paramType}\PYG{p}{);}\PYG{+w}{ }\PYG{c+c1}{// Demande explicitement une variable de ce type !}
+\PYG{p}{\PYGZcb{});}
+\end{MintedVerbatim}

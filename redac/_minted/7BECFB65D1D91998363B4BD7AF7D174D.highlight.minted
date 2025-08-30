@@ -1,0 +1,9 @@
+\begin{MintedVerbatim}[commandchars=\\\{\}]
+\PYG{c+c1}{// \PYGZsh{}1100}
+\PYG{k+kd}{const}\PYG{+w}{ }\PYG{n+nx}{paramTypes}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{n+nx}{params}\PYG{p}{.}\PYG{n+nx}{map}\PYG{p}{(}\PYG{n+nx}{param}\PYG{+w}{ }\PYG{p}{=\PYGZgt{}}\PYG{+w}{ }\PYG{p}{\PYGZob{}}
+\PYG{c+c1}{// ...}
+\PYG{p}{\PYGZcb{}}\PYG{+w}{ }\PYG{k}{else}\PYG{+w}{ }\PYG{k}{if}\PYG{+w}{ }\PYG{p}{(}\PYG{n+nx}{BOOL\PYGZus{}VAR\PYGZus{}NAMES}\PYG{p}{.}\PYG{n+nx}{includes}\PYG{p}{(}\PYG{n+nx}{param}\PYG{p}{))}\PYG{+w}{ }\PYG{p}{\PYGZob{}}
+\PYG{k}{return}\PYG{+w}{ }\PYG{l+s+s1}{\PYGZsq{}bool\PYGZsq{}}\PYG{p}{;}\PYG{+w}{ }\PYG{c+c1}{// \PYGZlt{}\PYGZhy{}\PYGZhy{} Le type \PYGZsq{}bool\PYGZsq{} est inféré pour \PYGZsq{}flag\PYGZsq{}}
+\PYG{p}{\PYGZcb{}}\PYG{+w}{ }\PYG{c+c1}{// ...}
+\PYG{p}{\PYGZcb{});}
+\end{MintedVerbatim}
