@@ -56,6 +56,7 @@
 \usepackage{float}
 \usepackage{pifont} % pour styliser les bullets
 \usepackage{caption}
+\usepackage{subcaption}
 
 % --- MISE EN FORME DU CODE (MINTED) ---
 \usepackage[outputdir=build]{minted}
@@ -144,14 +145,12 @@ Nous présenterons d'abord les contextes qui ont présidé à la réalisation de
 \\
 Le présent rapport n'a pas vocation à être un mode d'emploi ou une documentation technique exhaustive, mais une explication des fonctionnalités implémentées et des choix qui ont été faits.
 \vspace{2cm}
-  % Pied de page uniquement sur la page de garde
-  \pagestyle{fancy}
-  \fancyhf{}
-  \fancyfoot[L]{\small \textbf{Superviseur :} Patrick Wang, HEP Lausanne}
-  \fancyfoot[R]{\small \textbf{Juré expert :} Micha Hersch, HEP Lausanne, Gymnase de Renens}
-
 
 \end{abstract}
+\\
+\textbf{Superviseur :} Patrick Wang, HEP Lausanne
+\textbf{Juré expert :} Micha Hersch, HEP Lausanne, Gymnase de Renens
+
 \end{titlepage}
 \clearpage
 \pagestyle{plain}
@@ -185,14 +184,14 @@ De façon générale, plusieurs raisons de refuser d'inciter les élèves à uti
     \end{enumerate}
 Maintenant dans une perspective d'\textit{empowerment}, telle que les fournisseurs d'IA nous le promettent \cite{email}, une précision nous semble importante : déléguer l'interaction maître-élève à une machine et déléguer l'observation et la ``compréhension'' de l'erreur élève à une machine prive l'enseignant de la possibilité de développer son expertise didactique
  Plus spécifiquement, pour notre cas d'usage qui est la génération aléatoire d'exercices par les élèves, adapté aux besoins pédagogiques, une solution acceptable par principe aurait été la distillation d'un gros modèle produit dans des conditions \textit{fair-trade}, assez frugale pour tourner sur un serveur interne à l'école, mais c'est un autre sujet qui ne rentre pas dans le cadre de ce travail. \\ Mettre dans les mains des élèves un outil basé sur l'API d'un modèle commercial, performant mais en voie de monétisation, reste inconcevable tant cela enfreindrait mes principes que je viens de mentionner ci-dessus, en exposant les élèves au risque d'être instrumentalisés dans le processus de monétisation des IA génératives.
- 
+ \\
 \par Les ambitions qui ont guidé mon projet se situent:
 \begin{itemize}
     \item \textbf{Chez les élèves} : en leur proposant une traduction de la syntaxe textuelle Python en une syntaxe graphique logigramme, en les exerçant à la traduction d'une syntaxe à l'autre comme un entraînement; en les invitant à se faire une image mentale de la sémantique associée pour tracer la valeur des variables. Ces savoirs syntaxiques et conceptuels sont les premières étapes à mobiliser pour la résolution de nouveaux problèmes. Nous formulons donc l'espoir que notre outil contribuera au développement de leurs compétences stratégiques.
     \item \textbf{Pour la relation enseignants - apprenants}, en mettant à libre disposition un outil-auteur adaptable et capable de proposer des codes prédéfinis par l'enseignant doublé d'un système de journalisation des interactions élèves qui a le potentiel de permettre à l'enseignant un suivi très fin des élèves pour pouvoir apporter une rétroaction différenciée jusqu'au niveau individuel.
     \item \textbf{Chez les enseignants} : en proposant à la communauté enseignante un outil évolutif, nous cherchons à inviter les collègues à la collaboration pour améliorer le projet, et à l'échange sur leurs pratiques. Nous nous situons dans l'esprit de la constitution d'une ``communauté de pratique'' \cite{wenger} \item \textbf{Chez les enseignants} : en refusant de déléguer la rétroaction élève à un LLM d'IA générative et en donnant les moyens aux enseignants d'évaluer immédiatement et à long terme l'efficacité de leur action enseignante, notre espoir est de donner les moyens de développer une expertise didactique à des experts informatiques qui s'adressent maintenant à des apprenants culturellement très éloignés.
 \end{itemize}
-Maintenant que nous avons défini le cadre social, voyons tout d'abord d'où vient le projet, en alternant les points de vue : professionnel, personnel, pédagogique et pratique.
+\\Maintenant que nous avons défini le cadre social, voyons tout d'abord d'où vient le projet, en alternant les points de vue : professionnel, personnel, pédagogique et pratique.
 
 \subsection{Éléments de contexte}
 Notre démarche tire son essence dans un but : aider les enseignants chargés de faire découvrir la programmation textuelle à des élèves débutants et culturellement aux antipodes. Situons donc ici le public cible et l'environnement concerné afin de justifier les objectifs poursuivis dans la création de notre outil. 
@@ -226,26 +225,26 @@ Nos objectifs fonctionnels apparaissent comme des conclusions de la section pré
 
 \subsubsection{Besoin d'un générateur de code et de questions pertinentes}
 
-Au niveau débutant, les classes sont hétérogènes. Nous visons donc des \emph{exercices de lecture de code} fondés sur la taxonomie des tâches au premier échelon, de difficulté \emph{ajustable} pour différencier au sein du groupe et accompagner sa progression. L'outil doit aussi \emph{décharger l'enseignant} avec : une génération automatique,un déploiement simple, un contrôle fin des paramètres.
+Au niveau débutant, les classes sont hétérogènes. Nous visons donc des exercices de lecture de code fondés sur la taxonomie des tâches au premier échelon, de difficulté ajustable pour différencier au sein du groupe et accompagner sa progression. L'outil doit aussi décharger l'enseignant avec : une génération automatique,un déploiement simple, un contrôle fin des paramètres.
 \\
-Du côté de l'élève (dimension ``Predict''), il faut recevoir programmatiquement un script Python, l'afficher dans une fenêtre avec \emph{coloration syntaxique} et \emph{numérotation des lignes}, afin de soutenir la lecture analytique. L'aléa doit être \emph{contrôlé} pour garantir une plus-value pédagogique: on \emph{choisit} explicitement les constructions à inclure dans le script, on \emph{règle} des variables didactiques (nombre de variables, domaine de valeurs, longueur totale), et on \emph{fixe} les types à utiliser. Nous nous limitons volontairement aux \emph{types de base} utiles au début de l'apprentissage; nous renonçons à la simulation de programmes réalistes'' au profit de \emph{fragments signifiants}. Les noms de variables sont \emph{cohérents avec leurs types} pour donner une apparence plausible et guider l'inférence de l'élève.
+Du côté de l'élève (dimension ``Predict''), il faut recevoir programmatiquement un script Python, l'afficher dans une fenêtre avec coloration syntaxique et numérotation des lignes, afin de soutenir la lecture analytique. L'aléa doit être contrôlé pour garantir une plus-value pédagogique: on choisit explicitement les constructions à inclure dans le script, on règle des variables didactiques (nombre de variables, domaine de valeurs, longueur totale), et on fixe les types à utiliser. Nous nous limitons volontairement aux types de base utiles au début de l'apprentissage; nous renonçons à la simulation de programmes réalistes'' au profit de fragments signifiants. Les noms de variables sont cohérents avec leurs types pour donner une apparence plausible et guider l'inférence de l'élève.
 
-Techniquement, l'interface collecte les \emph{choix utilisateurs} et les transmet au \emph{générateur} qui produit un script conforme: c'est le point d'entrée de tout le flux.
+Techniquement, l'interface collecte les choix utilisateurs et les transmet au générateur qui produit un script conforme: c'est le point d'entrée de tout le flux.
 
 \subsubsection{Besoin d'une sorte d'éditeur Python en ligne}
 
-Pour solliciter les dimensions ``Run'' et ``Investigate'', nous utilisons un interprète Python \emph{centré débutants} (sans viser l'exhaustivité syntaxique) et un éditeur qui \emph{teste l'élève} en cohérence avec les objectifs déclarés par l'enseignant. Les questions se \emph{calent automatiquement} sur le code proposé et une \emph{rétroaction immédiate} est fournie. Cela suppose des \emph{échanges DOM $\leftrightarrow$ exécution}: renvoi vers la page des \emph{valeurs attendues}, lecture des \emph{réponses élèves}, comparaison, puis affichage d'un \emph{feedback} adapté.
+Pour solliciter les dimensions ``Run'' et ``Investigate'', nous utilisons un interprète Python centré débutants (sans viser l'exhaustivité syntaxique) et un éditeur qui teste l'élève en cohérence avec les objectifs déclarés par l'enseignant. Les questions se calent automatiquement sur le code proposé et une rétroaction immédiate est fournie. Cela suppose des échanges DOM $\leftrightarrow$ exécution}: renvoi vers la page des valeurs attendues}, lecture des réponses élèves}, comparaison, puis affichage d'un feedback adapté.
 \\
-Pour engager à la fois néophytes et aficionados, l'éditeur offre un \emph{rendu familier} type appli web ou IDE avec des aides activables (aplatissement de blocs, éventuellement auto-complétion) utiles dans un cadre pédagogique.\\ Enfin, pour ``Investigate'' et ``Modify'', l'élève peut \emph{sauvegarder} (\code{Download}) son script et \emph{revenir} au script initial (\code{Reload}) afin d'annuler ses modifications depuis la génération.
+Pour engager à la fois néophytes et aficionados, l'éditeur offre un rendu familier type appli web ou IDE avec des aides activables (aplatissement de blocs, éventuellement auto-complétion) utiles dans un cadre pédagogique.\\ Enfin, pour ``Investigate'' et ``Modify'', l'élève peut sauvegarder (\code{Download}) son script et revenir au script initial (\code{Reload}) afin d'annuler ses modifications depuis la génération.
 
         
 \subsubsection{Un rendu logigramme}
 Le soutien visuel paraît approprié pour aider des élèves dans leur découverte de leur premier langage de programmation textuelle. Le logigramme est un objectif d'apprentissage curriculaire en soi, au même titre que des pseudo-codes. De façon à proposer un soutien visuel le logigramme parait donc un choix naturel car il matérialise le flux d'exécution logique du programme. Un outil proposant des bouts de code Python et leur représentation logigramme a le défaut de mettre au même niveau deux langages qui n'ont pas le même statut : un seul est un langage de programmation ! mais nous faisons l'hypothèse que c'est le prix à payer pour pouvoir entraîner de façon systématique les élèves à cet exercice particulier qui est de passer d'une syntaxe à l'autre.
 Pour créer le rendu logigramme pour des codes valides, deux options étaient a priori envisageables:\begin{itemize}
-    \item \textbf{Soit} à la génération du script, un logigramme statique (plus facile car le rendu logigramme est encapsulé avec la génération du code)
-    \item \textbf{Soit} dynamique, modifiable en continu avec le code Python modifiable (ce qui alourdit l'UI qui devient moins lisible).
+    \item \textbf{Soit à la génération du script, un logigramme statique (plus facile car le rendu logigramme est encapsulé avec la génération du code)
+    \item \textbf{Soit dynamique, modifiable en continu avec le code Python modifiable (ce qui alourdit l'UI qui devient moins lisible).
     \end{itemize}
-La première option aurait été en contradiction avec l'objectif d'\emph{investigation} et de \emph{modification} active ! aussi c'est la seconde option qui a été choisie. Le résultat est un couplage direct entre \emph{code affiché} et \emph{logigramme}—le support visuel se met à jour avec le script modifié, ce qui renforce l'activité de lecture, de prédiction et de vérification.
+La première option aurait été en contradiction avec l'objectif d'\emph{investigation} et de \emph{modification} active ! aussi c'est la seconde option qui a été choisie. Le résultat est un couplage direct entre code affiché et logigramme — le support visuel se met à jour avec le script modifié, ce qui renforce l'activité de lecture, de prédiction et de vérification.
 
 
 \subsection{Applications similaires et sources d'inspiration}
@@ -565,7 +564,7 @@ Enfin, un \textit{back-end} de l'application a été créé par Flask pour enreg
 
 
 \clearpage
-\section{Présentation de la génération automatique du code}
+\section{Présentation de la génération automatique et aléatoire de code Python valide}
 L'objectif poursuivi est multiple : aider les élèves débutants en proposant des exercices de lecture de code, automatique et à l'infini, de niveau variable et contrôlable ; aider leurs enseignants en les déchargeant de cette charge mentale avec un outil en ligne. La plus-value pédagogique de notre outil dépend de la pertinence des codes proposés, car ceux-ci formeront le support aux exercices proposés aux élèves, c'est donc le cœur de la solution !
 
 \subsection{Objectifs et principes directeurs du générateur}
@@ -1305,15 +1304,15 @@ Contrairement à \code{PyCFG.py} de \textit{Fuzzing Book} qui traduit une boucle
 Voici concrètement un exemple de rendu graphique d'une boucle ``for'' parcourant une chaîne, mis en regard d'une structure théorique ``for each''.
 \begin{figure}[H]
     \centering
-    \begin{subfigure}{0.45\textwidth}
+    \begin{subfigure}{t}{0.45\textwidth}
          \centering
-         \includegraphics[width=0.3\textwidth]{FqKSJ.jpg}
-        \caption{Exemple de flowchart "for each" \cite{for_each_exemple}}
+         \includegraphics[width=\linewidth, keepaspectratio]{FqKSJ.jpg}
+        \caption{Exemple de flowchart "for each"}}
         \label{fig:foreach_flowchart}
-    \end{subfigure}
-    \begin{subfigure}{0.45\textwidth}
+    \end{subfigure}\hfill
+    \begin{subfigure}{t}{0.45\textwidth}
         \centering
-        \includegraphics[width=0.3\textwidth]{for_str_screenshot.png}
+        \includegraphics[width=\linewidth, keepaspectratio]{for_str_screenshot.png}
         \caption{Copie d'écran d'une partie de logigramme visualisant une boucle ``for ... str''}
         \label{fig:for_str_screenshot}
     \end{subfigure}
@@ -1699,7 +1698,7 @@ La conception d'un environnement d'apprentissage interactif et instrumenté comm
 
 
 \clearpage
-\section{Travaux futurs, discussions et conclusions}
+\section{Travaux futurs et discussions}
  Certaines limitations sont connues et nous en ferons une liste ci-dessous. Certaines sont en cours de résolution. Aussi, dans l'attente de voir l'outil utilisé en classe, nous pouvons indiquer dans quelles directions notre outil semble orienter de prochaines recherches.
 
 \subsection{Des orientations de recherche qui pourraient être soutenues par notre outil}
@@ -1842,9 +1841,8 @@ Le solveur de contraintes recevrait toutes ces règles et tenterait de ``constru
 Eu égard à son aspect certificatif ce travail mobilise une diversité de compétences, mettant en oeuvre des apprentissage variés (développement web, POO Python, base de données relationnnelles, modèle client - serveur), ce qui apporte une première justification au parcours de formation GymInf qu'il vient clôturer.\\
 Je crois que mon projet a du potentiel dans une démarche de pédagogie active, notamment dans le cadre de l'approche PRIMM, mais il reste à le soumettre aux pairs pour améliorations et à le tester dans de multiples classes à grande échelle pour en valider l'efficacité pédagogique et la pertinence des données collectées. alors seulement je pourrai dire que j'ai apporté ma pierre à l'édifice dans la constitution d'une communauté \textit{scientifique} de praticiens de la pédagogie de l'informatique. \\
 Aussi je crois que l'intérêt principal de mon outil n'est pas de permettre aux élèves de se réapproprier leur apprentissage en leur offrant des outils adaptés à leurs besoins et à leur niveau (ce qu'ils pourraient faire par ailleurs), mais surtout de permettre aux enseignants d'analyser les erreurs et de construire des indicateurs pertinents pour aller au-delà de l'observation des \textit{students misconceptions}.\\
-Je pense que l'enjeu principal dans l'enseignement de la programmation est l'\textit{empowerment} des débutants qui se tiennent à l'écart \textit{socio-culturellement} alors que les IA génératives donnent maintenant cette faculté de décupler un minimum de savoirs pour une puissance de productivité inouïe. Le code n'est pas seulement une technique : c'est une super-puissance que chacun peut apprendre pour imaginer, créer et agir dans le monde numérique. »
-
-\'A la suite de Littman \cite{codetojoy} je crois que découvrir un peu de programmation, c'est ouvrir une porte vers l'autonomie, l'inventivité et la joie de façonner le futur. L'apprentissage de la programmation n'est pas une fin en soi, mais une ouverture : celle d'une capacité accrue à participer, à innover et à s'approprier un langage pour penser, créer et agir dans une société traversée par le numérique.
+Je pense que l'enjeu principal dans l'enseignement de la programmation est l'\textit{empowerment} de débutants qui s'en tiennent à l'écart \textit{socio-culturellement} alors que les IA génératives donnent maintenant cette faculté de décupler un minimum de savoirs pour une puissance de productivité inouïe.\\
+\'A la suite de Littman \cite{codetojoy} je crois que découvrir un peu de programmation, c'est ouvrir une porte vers l'autonomie, l'inventivité et la joie de façonner le futur. Le code n'est pas seulement une technique : c'est une super-puissance que chacun peut apprendre pour imaginer, créer et agir dans le monde numérique. L'apprentissage de la programmation n'est donc pas une fin en soi, mais une ouverture : celle d'une capacité accrue à participer, à innover et à s'approprier un langage pour penser, créer et agir dans une société traversée par le numérique.
 
 
 \subsection*{Remerciements}
@@ -2239,13 +2237,13 @@ La classe Python \code{ControlFlowGraph} est le composant central pour la transf
     \begin{itemize}
         \item \var{tree}: \vartype{ast.Module}. L'arbre syntaxique abstrait (AST) généré à partir du \param{code} source. C'est la structure de base que les méthodes de visite parcourront.
         
-        \item \var{nodes}: \vartype{List[Tuple[str, str]]}. Liste de tuples, où chaque tuple représente un nœud du CFG sous la forme \code{(node\_id, label)}. \code{node\_id} est un identifiant unique et \code{label} est le texte affiché dans la forme (rectangulaire ou autres). Seuls les nœuds de jonctino, techniques, n'ont pas ce texte.
+        \item \var{nodes}: \vartype{List[Tuple[str, str]]}. Liste de tuples, où chaque tuple représente un nœud du CFG sous la forme \code{(node\_id, label)}. \code{node\_id} est un identifiant unique et \code{label} est le texte affiché dans la forme (rectangulaire ou autres). Seuls les nœuds de jonctino, techniques, n'ont pas ce texte mais juste un point.
         
         \item \var{edges}: \vartype{Set[Tuple[str, str, str]]}. Ensemble de tuples représentant les arêtes du CFG. Chaque tuple est de la forme \code{(from\_node\_id, to\_node\_id, label)}, où \code{label} est le texte affiché sur l'arête (peut être vide). Utiliser un ensemble évite les arêtes dupliquées.
         
         \item \var{node\_counter}: \vartype{int}. Compteur entier utilisé par \code{get\_node\_id} pour générer des identifiants de nœuds uniques (par exemple, "node01", "node02"). Initialisé à 0.
         
-        \item \var{loop\_stack}: \vartype{List[Tuple[str, str, str]]}. Pile utilisée pour gérer le contexte des boucles imbriquées. Chaque élément est un tuple \code{(continue\_target\_id, break\_target\_id, retest\_target\_id)} stockant les ID des nœuds cibles pour les instructions \code{continue}, \code{break}, et pour le retour au test de la condition de boucle. NB: les \code{break} ne sont pas encore bien implémentés même si l'arête est générée!
+        \item \var{loop\_stack}: \vartype{List[Tuple[str, str, str]]}. Pile utilisée pour gérer le contexte des boucles imbriquées. Chaque élément est un tuple \code{(continue\_target\_id, break\_target\_id, retest\_target\_id)} stockant les ID des nœuds cibles pour les instructions \code{continue}, \code{break}, et pour le retour au test de la condition de boucle. NB: les \code{break} sont gérés en marquant leur nœud comme terminal, sans créer d'arête de saut explicite vers la sortie de la boucle.
         
         \item \var{node\_labels}: \vartype{Dict[str, str]}. Dictionnaire associant un \code{node\_id} à son \code{label} textuel. Permet un accès rapide au label d'un nœud.
         
@@ -2253,7 +2251,7 @@ La classe Python \code{ControlFlowGraph} est le composant central pour la transf
         
         \item \var{node\_types}: \vartype{Dict[str, str]}. Dictionnaire associant un \code{node\_id} à son type sémantique (par exemple, "Process", "Decision", "StartEnd", "Junction"). Utilisé pour le style dans le rendu Mermaid, en évitant d'utiliser des mots-clés déjà pris.
         
-        \item \var{\_function\_scope\_stack}: \vartype{List[Set[str]]}. Pile interne pour gérer les portées des fonctions (imbriquées ou non). La \textbf{"portée d'une fonction" fait ici référence à l'ensemble des nœuds du graphe de flux de contrôle (CFG) qui sont générés} lors de l'analyse du corps de cette fonction spécifique. La principale utilité est de permettre à la méthode \code{connect\_finals\_to\_end} de fonctionner correctement. Quand on est à la fin de la visite d'une fonction (dans \code{visit\_FunctionDef}), on veut s'assurer que tous les chemins d'exécution à l'intérieur de cette fonction qui n'ont pas explicitement de successeur (fins de chemin implicites ou nœuds Return) soient connectés au nœud End {NomFonction} de cette fonction spécifique, et non au End du module. Cela permet d'identifier quels nœuds appartiennent à quelle fonction pour les regrouper visuellement dans des \code{subgraph} distincts. Chaque élément de la liste est un ensemble d'ID de nœuds appartenant à une portée de fonction spécifique. Lorsqu'on commence à visiter une fonction (visit\_FunctionDef), un nouvel ensemble vide (set()) est poussé sur cette pile. \textbf{Explications}: Chaque fois qu'un nouveau nœud CFG est créé (get\_node\_id) pendant que cette fonction est en cours de visite (c'est-à-dire, pendant que son ensemble est au sommet de la pile), l'ID de ce nouveau nœud est ajouté à cet ensemble au sommet de la pile. Cela gère correctement les fonctions imbriquées : si func\_A contient func\_B, lors de la visite de func\_A, son scope est sur la pile. Quand visit\_FunctionDef est appelée pour func\_B, un nouveau scope pour func\_B est poussé par-dessus celui de func\_A. Les nœuds de func\_B vont dans le scope de func\_B. Quand la visite d'une fonction est terminée, son ensemble d'ID de nœuds est retiré (poppé) de la pile et stocké dans \code{self.all\_function\_scopes} (qui conserve tous les scopes de fonction finalisés). La dernière portée de la liste est la plus interne.
+        \item \var{\_function\_scope\_stack}: \vartype{List[Set[str]]}. Pile interne pour gérer les portées des fonctions (imbriquées ou non). La \textbf{"portée d'une fonction" fait ici référence à l'ensemble des nœuds du graphe de flux de contrôle (CFG) qui sont générés} lors de l'analyse du corps de cette fonction spécifique. La principale utilité est de permettre à la méthode \code{connect\_finals\_to\_end} de fonctionner correctement. Quand on est à la fin de la visite d'une fonction (dans \code{visit\_FunctionDef}), on veut s'assurer que tous les chemins d'exécution à l'intérieur de cette fonction qui n'ont pas explicitement de successeur (fins de chemin implicites ou nœuds Return) soient connectés au nœud End {NomFonction} de cette fonction spécifique, et non au End du module. Cela permet d'identifier quels nœuds appartiennent à quelle fonction pour les regrouper visuellement dans des \code{subgraph} distincts. Chaque élément de la liste est un ensemble d'ID de nœuds appartenant à une portée de fonction spécifique. Lorsqu'on commence à visiter une fonction (visit\_FunctionDef), un nouvel ensemble vide (set()) est poussé sur cette pile. \textbf{Explications}: Chaque fois qu'un nouveau nœud CFG est créé (get\_node\_id) pendant que cette fonction est en cours de visite (c'est-à-dire, pendant que son ensemble est au sommet de la pile), l'ID de ce nouveau nœud est ajouté à cet ensemble au sommet de la pile. Cela gère correctement les fonctions imbriquées : si func\_A contient func\_B, lors de la visite de func\_A, son scope est sur la pile. Quand visit\_FunctionDef est appelée pour func\_B, un nouveau scope pour func\_B est poussé par-dessus celui de func\_A. Les nœuds de func\_B vont dans le scope de func\_B. Quand la visite d'une fonction est terminée, son ensemble d'ID de nœuds est retiré (poppé) de la pile et stocké dans \code{function\_subgraph\_nodes} (qui conserve tous les scopes de fonction finalisés). La dernière portée de la liste est la plus interne.
         
         \item \var{function\_subgraph\_nodes}: \vartype{Dict[str, Set[str]]}. Dictionnaire stockant, pour chaque nom de fonction, l'ensemble des ID de nœuds qui lui appartiennent. Utilisé par \code{to\_mermaid} pour créer les sous-graphes.
         
@@ -2402,7 +2400,7 @@ La classe Python \code{ControlFlowGraph} est le composant central pour la transf
 
 \subsection*{\methodname{visit\_FunctionDef}}
 \begin{description}
-    \item[Signature:] \code{(visit\_FunctionDef(self, node: \vartype{ast.FunctionDef}, parent\_id: \vartype{Optional[str]}) -> \rettype{None})}
+    \item[Signature:] \code{(visit\_FunctionDef(self, node: \vartype{ast.FunctionDef}, parent\_id: \vartype{Optional[str]}) -> \rettype{List[srt]})}
     \item[Description:] Gère la visite d'un nœud de définition de fonction (\code{ast.FunctionDef}). Crée une nouvelle portée de fonction, puis les nœuds "Start NomFonction" et "End NomFonction" pour le corps de cette fonction. Visite le corps de la fonction. Collecte tous les ID de nœuds créés dans cette portée, les stocke dans \var{self.function\_subgraph\_nodes} pour le rendu en sous-graphe, puis dépile la portée. Connecte les points de sortie normaux du corps et les nœuds "Return" au nœud "End NomFonction" de cette fonction. Ne s'insère pas dans le flux du parent et retourne une liste vide. Appelée par \code{visit\_Module} ou par un autre \code{visit\_FunctionDef} (pour les fonctions imbriquées).
     \item[Paramètres:]
     \begin{itemize}
@@ -2417,14 +2415,14 @@ La classe Python \code{ControlFlowGraph} est le composant central pour la transf
         \item \var{node\_id} (dans la boucle de connexion): \vartype{str}. Un ID de nœud de \var{body\_normal\_exit\_nodes}.
         \item \var{current\_function\_node\_ids}: \vartype{Set[str]}. Ensemble des ID de nœuds appartenant à la fonction en cours, récupéré de \var{self.\_function\_scope\_stack} avant le \code{pop()}.
         \item Modifie \var{self.\_function\_scope\_stack} (push et pop).
-        \item Modifie le \vartype{Dict} \var{self.function\_subgraph\_nodes} en y ajoutant une entrée pour la clé \code{node.name} ayant pour valeur \var{current\_function\_node\_ids}.
+        \item Modifie le \code{Dict} \var{self.function\_subgraph\_nodes} en y ajoutant une entrée pour la clé \code{node.name} ayant pour valeur les \var{current\_function\_node\_ids}.
     \end{itemize}
 \end{description}
 
 \subsection*{\methodname{visit\_If}}
 \begin{description}
     \item[Signature:] \code{(visit\_If(self, node: \vartype{ast.If}, parent\_id: \vartype{str}) -> \rettype{List[str]}: \var{final\_exit\_nodes\_after\_if})}
-    \item[Description:] Gère la visite d'une instruction conditionnelle \code{if} (\code{ast.If}). Crée un nœud de décision pour la condition. Visite ensuite la branche \code{body} (si elle existe) et la branche \code{orelse} (si elle existe, qui peut être un \code{else} ou un \code{elif}). Labellise les arêtes sortant du nœud de décision avec "True" et "False" (ou les labels appropriés pour \code{elif}). Retourne une liste des ID de nœuds de sortie de la structure \code{if} globale, qui seront potentiellement fusionnés par \code{visit\_body}. Appelée par \code{visit\_body} lorsqu'une instruction \code{if} est rencontrée.
+    \item[Description:] Gère la visite d'une instruction conditionnelle \code{if} (\code{ast.If}). Crée un nœud de décision pour la condition. Visite ensuite la branche \code{body} (si elle existe) et la branche \code{orelse} (si elle existe, qui peut être un \code{else} ou un \code{elif}). Labellise les arêtes sortant du nœud de décision avec "Oui" et "Non" (ou les labels appropriés pour \code{elif}). Retourne une liste des ID de nœuds de sortie de la structure \code{if} globale, qui seront potentiellement fusionnés par \code{visit\_body}. Appelée par \code{visit\_body} lorsqu'une instruction \code{if} est rencontrée.
     \item[Paramètres:]
     \begin{itemize}
         \item \param{node}: \vartype{ast.If}. Le nœud AST de l'instruction \code{if}.
@@ -2445,15 +2443,14 @@ La classe Python \code{ControlFlowGraph} est le composant central pour la transf
         \item \var{false\_branch\_exits}: \vartype{List[str]}. Liste des ID de nœuds de sortie de la branche \code{orelse}.
         \item \var{nodes\_after\_false\_branch}: \vartype{Set[str]}. Ensemble des ID de nœuds existants après avoir visité la branche \code{orelse}.
         \item \var{new\_nodes\_in\_false\_branch}: \vartype{List[str]}. Liste triée des ID de nœuds créés spécifiquement dans la branche \code{orelse}.
-        \item Modifie \var{self.edges} pour ajouter/supprimer des arêtes lors de la labellisation. Plus précisément, une arête \var{(if\_decision\_id, true\_branch\_first\_node\_id, "")} a été créée par le premier appel à \code{visit()} dans \code{visit\_body}. Nous la supprimons ici pour la recréer avec le label "True", respectivement pour le label "False".
+        \item Modifie \var{self.edges} pour ajouter/supprimer des arêtes lors de la labellisation. Plus précisément, une arête \var{(if\_decision\_id, true\_branch\_first\_node\_id, "")} a été créée par le premier appel à \code{visit()} dans \code{visit\_body}. Nous la supprimons ici pour la recréer avec le label "Oui", respectivement pour le label "Non".
     \end{itemize}
 \end{description}
 
 \subsection*{\methodname{visit\_For}}
 \begin{description}
     \item[Signature:] \code{(visit\_For(self, node: \vartype{ast.For}, parent\_id: \vartype{str}) -> \rettype{List[str]})}
-    \item[Description:] Gère la visite d'une boucle \code{for} (\code{ast.For}). Pour satisfaire la volonté d'une représentation plus sémantique (initialisation, condition, incrémentation) on distingue les cas \code{for ... in range(...)} du cas d'un itérable générique (traité par \code{\_visit\_for\_generic\_iterable}). Gère la visite du corps de la boucle et de la clause \code{orelse} (si présente). Met à jour \var{self.loop\_stack}. Retourne les points de sortie de la boucle. Appelée par \code{visit\_body}.
-    \item[Paramètres:]
+    \item[Description:] Gère la visite d'une boucle \code{for}. Contrairement à une approche minimale, cette méthode construit une représentation pédagogique détaillée du mécanisme d'itération. Elle appelle d'abord \code{\_get\_iterable\_description} pour analyser l'itérable (s'agit-il d'une liste, d'une chaîne, d'un \code{range()}, etc.). Ensuite, elle crée une séquence de nœuds : un test initial de vacuité (sauf pour les itérables manifestement non vides), un nœud pour l'initialisation de la variable d'itération, un nœud de test de continuation, et un nœud pour la mise à jour de la variable. Le corps de la boucle est inséré entre l'initialisation et le test de continuation. Cette structure vise à rendre le flux de la boucle \code{for} explicite.    \item[Paramètres:]
     \begin{itemize}
         \item \param{node}: \vartype{ast.For}. Le nœud AST de la boucle \code{for}.
         \item \param{parent\_id}: \vartype{str}. L'ID du nœud CFG parent.
@@ -2490,40 +2487,9 @@ La classe Python \code{ControlFlowGraph} est le composant central pour la transf
     \end{itemize}
 \end{description}
 
-\subsection*{\methodname{\_visit\_for\_generic\_iterable}}
-\begin{description}
-    \item[Signature:] \code{(\_visit\_for\_generic\_iterable(self, node: \vartype{ast.For}, parent\_id: \vartype{str}, iterator\_variable\_str: \vartype{str}) -> \rettype{List[str]})}
-    \item[Description:] Méthode pour gérer les boucles \code{for} avec des itérables autres que \code{range()}. Crée un unique nœud de décision pour la boucle. Gère le corps et la clause \code{orelse}. Met à jour \var{self.loop\_stack}. Appelée par \code{visit\_For}.
-    \item[Paramètres:]
-    \begin{itemize}
-        \item \param{node}: \vartype{ast.For}. Le nœud AST de la boucle \code{for}.
-        \item \param{parent\_id}: \vartype{str}. L'ID du nœud CFG parent.
-        \item \param{iterator\_variable\_str}: \vartype{str}. Nom de la variable d'itération.
-    \end{itemize}
-    \item[Variables locales/modifiées:]
-    \begin{itemize}
-        \item \var{iterable\_text} (renommée de \var{iterable\_label}): \vartype{str}. Texte de l'itérable.
-        \item \var{loop\_decision\_label}: \vartype{str}. Label du nœud de décision.
-        \item \var{loop\_decision\_id}: \vartype{str}. ID du nœud de décision.
-        \item \var{loop\_overall\_exit\_points}: \vartype{List[str]}. Points de sortie de la boucle.
-        \item \var{iteration\_branch\_first\_node\_id} (renommée de \var{iteration\_branch\_start\_node}): \vartype{Optional[str]}. ID du premier nœud du corps.
-        \item \var{nodes\_before\_body}: \vartype{Set[str]}.
-        \item \var{body\_exit\_nodes}: \vartype{List[str]}.
-        \item \var{nodes\_after\_body}: \vartype{Set[str]}.
-        \item \var{new\_nodes\_in\_body}: \vartype{List[str]}.
-        \item \var{exit\_node} (dans la boucle): \vartype{str}.
-        \item \var{terminated\_branch\_first\_node\_id} (renommée de \var{terminated\_branch\_start\_node}): \vartype{Optional[str]}. ID du premier nœud de \code{orelse}.
-        \item \var{nodes\_before\_orelse}: \vartype{Set[str]}.
-        \item \var{orelse\_exit\_nodes}: \vartype{List[str]}.
-        \item \var{nodes\_after\_orelse}: \vartype{Set[str]}.
-        \item \var{new\_nodes\_in\_orelse}: \vartype{List[str]}.
-        \item Modifie \var{self.loop\_stack} (push et pop).
-        \item Modifie \var{self.edges}.
-    \end{itemize}
-\end{description}
 
 \begin{description}
-    \item[Explication des modifications du 28/05/25:]
+    \item[Explication des modifications du 28/05/25 d'unification des boucles ``for'':]
 \end{description}
 
 \begin{enumerate}
@@ -2833,54 +2799,55 @@ AsyncAwait & \texttt{ast.AsyncFunctionDef}, \texttt{ast.Await}, \texttt{ast.Asyn
 
 \newpage
 
-\subsection{Documentation des modifs UI du 24/06/25}
-Défis rencontrés : \begin{itemize}
+\subsection{Petit scénario explicatif de la concurrence par la métaphore de la "course" (race condition):}
+Objectifs poursuivis : 
+\begin{itemize}
     \item Garantir que l'état visuel de l'interface reflète toujours de manière fiable la synchronisation entre le code dans l'éditeur et le diagramme affiché, à la condition que le flowchart soit effectivement modifié (pas pour les changement cosmétiques, non sémantiques); 
     \item L'état "périmé" (outdated) n'a de sens que s'il y a un diagramme de référence à comparer. Si nous rechargeons le code, nous invalidons de fait le diagramme précédent.
     \item Arriver à un code plus cohérent qui élimine la "condition de concurrence" (race condition) qui se produit lorsque des estionnaires d'événements accèdent à - et manipulent - l'état visuel des bordures, et que le résultat final dépend de l'ordre, imprévisible, dans lequel ils s'exécutent. 
 \end{itemize}
 
-\textbf{Petit scénario explicatif de la concurrence par la métaphore de la "course" (race condition):}
-1. Le problème avec le bouton 'reload':
-Le "coureur" n°1 démarre : Le gestionnaire d'événement du bouton reload-code-btn est appelé.
-Le "coureur" n°1 agit : Il exécute la ligne codeEditorInstance.setValue(lastLoadedCode).
-Le "coureur" n°2 est déclenché : L'action setValue déclenche immédiatement l'événement change de l'éditeur de code. Le gestionnaire codeEditorInstance.on('change', ...) se met en route.
-Le "coureur" n°2 agit :
-Il récupère le nouveau code.
-Il calcule son AST.
-Il le compare à lastDiagramAstDump, qui contient toujours l'AST de l'ancien code (celui d'avant le rechargement).
-La comparaison échoue ! Les AST sont différents.
-Le "coureur" n°2 conclut donc que le diagramme est périmé et appelle setDiagramAndChallengeCardState("outdated"). Les bordures deviennent rouges.
-Le "coureur" n°1 termine sa course : Après que le "coureur" n°2 a fini, le gestionnaire du bouton "Reload" reprend et exécute sa dernière ligne : setDiagramAndChallengeCardState("default").
-Le Résultat ? Le plus souvent, le "coureur" n°2 (le change handler) était plus rapide ou son effet visuel s'appliquait en dernier, laissant les bordures rouges. Le résultat était imprévisible et dépendait du timing du navigateur. C'était une course, et le mauvais coureur gagnait.
-2. LA solution: pas faire courir les processus plus vite, mais changer les règles de la course pour qu'elle devienne une coopération orchestrée.
-1) Invalider l'État de Référence en Premier
-Dans le nouveau code du reload-code-btn, la toute première chose que nous faisons est :
-lastDiagramAstDump = "";
-C'est l'équivalent de dire : "Attention, le diagramme qui était affiché n'a plus aucune valeur. Il n'y a plus de référence valide."
-2) Rendre le \texttt{change} Handler plus "Intelligent"
-Le gestionnaire codeEditorInstance.on('change', ...) a maintenant une nouvelle instruction au tout début de son code :
+\textbf{Le problème initial avec le bouton 'reload' : une course entre deux gestionnaires d'événements}\\
+Le "coureur" n°1 démarre : Le gestionnaire d'événement du bouton reload-code-btn est appelé.\\
+Le "coureur" n°1 agit : Il exécute la ligne codeEditorInstance.setValue(lastLoadedCode).\\
+Le "coureur" n°2 est déclenché : L'action setValue déclenche immédiatement l'événement change de l'éditeur de code. Le gestionnaire codeEditorInstance.on('change', ...) se met en route.\\
+Le "coureur" n°2 agit :\\
+Il récupère le nouveau code.\\
+Il calcule son AST.\\
+Il le compare à lastDiagramAstDump, qui contient toujours l'AST de l'ancien code (celui d'avant le rechargement).\\
+La comparaison échoue ! Les AST sont différents.\\
+Le "coureur" n°2 conclut donc que le diagramme est périmé et appelle setDiagramAndChallengeCardState("outdated"). Les bordures deviennent rouges.\\
+Le "coureur" n°1 termine sa course : Après que le "coureur" n°2 a fini, le gestionnaire du bouton "Reload" reprend et exécute sa dernière ligne : setDiagramAndChallengeCardState("default").\\
+Le Résultat ? Le plus souvent, le "coureur" n°2 (le change handler) était plus rapide ou son effet visuel s'appliquait en dernier, laissant les bordures rouges. Le résultat était imprévisible et dépendait du timing du navigateur. C'était une course, et le mauvais coureur gagnait.\\
+\textbf{LA solution: pas faire courir les processus plus vite, mais changer les règles de la course pour qu'elle devienne une coopération orchestrée.}\\
+1) Invalider l'État de Référence en Premier\\
+Dans le nouveau code du reload-code-btn, la toute première chose que nous faisons est :\\
+\code{lastDiagramAstDump = "";}\\
+C'est l'équivalent de dire : ``Attention, le diagramme qui était affiché n'a plus aucune valeur. Il n'y a plus de référence valide.''\\
+2) Rendre le \texttt{change} Handler plus "Intelligent"\\
+Le gestionnaire codeEditorInstance.on('change', ...) a maintenant une nouvelle instruction au tout début de son code :\\
 \begin{minted}{javascript}
 if (!lastDiagramAstDump) {
     setDiagramAndChallengeCardState("default");
     return; // Arrête-toi ici !
 }
 \end{minted}
-i.e. "Avant de faire quoi que ce soit, vérifie s'il existe un diagramme de référence valide. Si lastDiagramAstDump est vide, le diagramme est invalidé. Ton seul travail est de t'assurer que les bordures sont bleues (default) et de t'arrêter immédiatement. Ne continue pas la comparaison des AST."
+i.e. ``Avant de faire quoi que ce soit, vérifie s'il existe un diagramme de référence valide. Si lastDiagramAstDump est vide, le diagramme est invalidé. Ton seul travail est de t'assurer que les bordures sont bleues (default) et de t'arrêter immédiatement. Ne continue pas la comparaison des AST.''
 
-Continuons la métaphore avec des "coopérateurs" et non des coureurs concurrents:
-Le "coopérateur" n°1 démarre : Le gestionnaire du reload-code-btn est appelé.
-Le "coopérateur" n°1 prépare le terrain : Il exécute immédiatement lastDiagramAstDump = "". L'état de référence est maintenant invalidé. C'est le passage de témoin.
-Le "coopérateur" n°1 continue : Il appelle codeEditorInstance.setValue(lastLoadedCode).
-Le "coopérateur" n°2 est déclenché : L'événement change est émis.
-Le "coopérateur" n°2 lit les instructions :
-Il entre dans sa logique et sa première question est : if (!lastDiagramAstDump).
-La réponse est VRAI ! Le "coopérateur" n°1 a bien invalidé la variable.
-Il exécute donc setDiagramAndChallengeCardState("default") (les bordures deviennent bleues) et s'arrête net grâce au return.
-Fin de l'opération : Le gestionnaire change a terminé son travail correctement. Le gestionnaire reload termine aussi. Le résultat final est stable, prévisible et correct : les bordures sont bleues.
+Continuons la métaphore avec des "coopérateurs" et non des coureurs concurrents:\\
+Le "coopérateur" n°1 démarre : Le gestionnaire du reload-code-btn est appelé.\\
+Le "coopérateur" n°1 prépare le terrain : Il exécute immédiatement lastDiagramAstDump = "". L'état de référence est maintenant invalidé. C'est le passage de témoin.\\
+Le "coopérateur" n°1 continue : Il appelle codeEditorInstance.setValue(lastLoadedCode).\\
+Le "coopérateur" n°2 est déclenché : L'événement change est émis.\\
+Le "coopérateur" n°2 lit les instructions :\\
+Il entre dans sa logique et sa première question est : if (!lastDiagramAstDump).\\
+La réponse est VRAI ! Le "coopérateur" n°1 a bien invalidé la variable.\\
+Il exécute donc setDiagramAndChallengeCardState("default") (les bordures deviennent bleues) et s'arrête net grâce au return.\\
+Fin de l'opération : Le gestionnaire change a terminé son travail correctement. Le gestionnaire reload termine aussi. Le résultat final est stable, prévisible et correct : les bordures sont bleues.\\
 
-Bref, la liste des modis effectuées:
+Bref, la liste des modis effectuées pour arriver à ces objectifs :\\
 \begin{enumerate}
+
     \item setDiagramAndChallengeCardState(state) :
     \begin{itemize}
         \item Légèrement modifiée pour être plus robuste : elle retire d'abord toutes les classes de bordure potentielles (border-danger, border-info, etc.) ainsi que la classe border de base, avant de réappliquer les bonnes. Cela évite d'avoir plusieurs classes de bordure en même temps.
@@ -2919,132 +2886,6 @@ Sa logique a été affinée :
     \end{itemize}
     \end{enumerate}
 \newpage
-
-\subsection{Documentation des modifs \texttt{code-generator.js} du 30/06/25}
-
-\subsection{Principales fonctions de génération }
-
-Implémentées actuellement:
-\begin{longtable}{p{5cm}p{10cm}}
-\toprule
-\textbf{Fonction} & \textbf{Description} \\
-\midrule
-\texttt{generateRandomPythonCode} & Fonction principale de génération qui orchestre tout le processus \\
-\texttt{calculateRequiredLines} & Calcule le nombre minimum de lignes nécessaires \\
-\texttt{ensureVariablesForOptions} & Crée les variables demandées par l'utilisateur \\
-\texttt{ensureRequiredVariables} & Garantit que les variables nécessaires aux structures sont présentes \\
-\texttt{generateControlStructures} & Génère les structures de contrôle (if, boucles, fonctions) \\
-\texttt{generateIfStatement} & Génère une structure conditionnelle if/elif/else \\
-\texttt{generateForRangeLoop} & Génère une boucle for avec range() \\
-\texttt{generateForListLoop} & Génère une boucle for parcourant une liste \\
-\texttt{generateForStrLoop} & Génère une boucle for parcourant une chaîne \\
-\texttt{generateWhileLoop} & Génère une boucle while \\
-\texttt{generateFunction} & Génère une définition de fonction \\
-\texttt{addFiller} & Ajoute des opérations simples pour atteindre le nombre de lignes cible \\
-\bottomrule
-\end{longtable}
-
-Actuellement abandonnées:
-\begin{longtable}{p{5cm}p{10cm}}
-\toprule
-\textbf{Fonction} & \textbf{Description} \\
-\midrule
-\texttt{generateSimpleOperation} & Fonction qui écrit un minimum de code \\
-\texttt{planVariable} & Fonction de gestion de la présence des variables nécessaires \\
-\texttt{ensureVariableForStructure} & Fonction qui crée les variables demandées par les structures sélectionnées \\
-\texttt{finalVariableCheck} & ... \\
-\texttt{availableForVariables} & variable de stockage  \\
-\bottomrule
-\end{longtable}
-
-\subsection{Stratégie actuelle de gestion des variables}
-La gestion des variables est encore problématique, c'est l'un des aspects les plus complexes du générateur. Elle repose sur plusieurs mécanismes:
-
-\begin{itemize}
-    \item Les variables sont stockées dans \texttt{declaredVarsByType}, un objet qui les classe par type
-    \item Un ensemble \texttt{allDeclaredVarNames} permet de vérifier l'unicité des noms
-    \item Les variables planifiées mais non encore déclarées sont stockées dans \texttt{plannedVarsByType}
-    \item Des fonctions utilitaires générent des noms uniques et des valeurs appropriées
-\end{itemize}
-
-Résultat: plusieurs problèmes !
-\begin{enumerate}
-    \item \textbf{Problème d'indentation déjà mentionné}: La fonction \texttt{ensureVariableExists()} ne respecte pas l'indentation courante lors de la création de variables dans des structures de contrôle.
-    
-    \item \textbf{Fonctions redondantes}: Plusieurs fonctions coexistent avec des rôles similaires:
-    \begin{itemize}
-        \item \texttt{finalVariableCheck()} n'est finalement jamais appelée dans le flux d'exécution actuel
-        \item \texttt{ensureVariableForStructure()} redondante avec \texttt{ensureVariableExists()}
-        \item \texttt{generateSimpleOperation()} similaire à \texttt{generateAppropriateStatement()}
-        \item \texttt{generateVariables()} et \texttt{ensureVariablesForOptions()} ont des rôles qui se chevauchent
-    \end{itemize}
-    
-    \item \textbf{Variables inutilisées}: \texttt{availableForVariables} est calculée mais jamais utilisée
-    
-    \item \textbf{Distinction confuse}: La distinction entre variables "déclarées" et "planifiées" qui était prévue n'est pas toujours clairement respectée dans le code
-\end{enumerate}
-
-\subsection{Solutions proposées}
-
-Pour résoudre ces problèmes, les modifications suivantes sont recommandées:
-
-\begin{enumerate}
-    \item \textbf{Correction de \texttt{ensureVariableExists()}}: Modifier cette fonction pour qu'elle tienne compte de l'indentation courante et ajoute les variables avant les structures de contrôle:
-    
-    \begin{minted}{javascript}
-function ensureVariableExists(type, preferPlanned = false) {
-    // Si on est dans une structure (indentLevel > 0)
-    if (indentLevel > 0) {
-        // Trouver d'abord une variable existante
-        if (declaredVarsByType[type].length > 0) {
-            return getRandomItem(declaredVarsByType[type]);
-        }
-        
-        // Sinon, créer une variable AVANT la structure
-        const name = generateUniqueVarName(type);
-        const currentPosition = codeLines.length;
-        
-        // Trouver l'endroit où insérer la déclaration
-        let insertPosition = currentPosition - 1;
-        while (insertPosition >= 0 && 
-               codeLines[insertPosition].startsWith("    ")) {
-            insertPosition--;
-        }
-        
-        // Insérer la déclaration à cet endroit
-        codeLines.splice(insertPosition + 1, 0, 
-            `${name} = ${LITERALS_BY_TYPE[type](difficulty)}`);
-        declaredVarsByType[type].push(name);
-        allDeclaredVarNames.add(name);
-        linesGenerated++;
-        
-        return name;
-    }
-    
-    // Comportement normal hors structures
-    // ...
-}
-    \end{minted}
-    
-    \item \textbf{Simplification des fonctions de gestion des variables}:
-    \begin{itemize}
-        \item Supprimer \texttt{finalVariableCheck()} et intégrer sa logique dans \texttt{ensureRequiredVariables()}
-        \item Remplacer \texttt{ensureVariableForStructure()} par des appels à \texttt{ensureVariableExists()}
-        \item Unifier \texttt{generateSimpleOperation()} et \texttt{generateAppropriateStatement()}
-        \item Clarifier les rôles de \texttt{generateVariables()} et \texttt{ensureVariablesForOptions()}
-    \end{itemize}
-    
-    \item \textbf{Nettoyage des variables inutilisées}: Supprimer \texttt{availableForVariables} ou l'utiliser effectivement dans le code
-    
-    \item \textbf{Clarification de la distinction entre variables déclarées et planifiées}:
-    \begin{itemize}
-        \item Documenter clairement le cycle de vie des variables
-        \item Utiliser systématiquement \texttt{declareVariable()} pour passer une variable de "planifiée" à "déclarée"
-        \item Vérifier que toutes les variables planifiées sont bien déclarées avant la fin de la génération
-    \end{itemize}
-\end{enumerate}
-
-
 
 \clearpage
 \printbibliography

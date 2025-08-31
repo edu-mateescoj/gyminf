@@ -829,25 +829,6 @@
       \verb https://greentreesnakes.readthedocs.io
       \endverb
     \endentry
-    \entry{for_each_exemple}{online}{}{}
-      \field{sortinit}{2}
-      \field{sortinithash}{8b555b3791beccb63322c22f3320aa9a}
-      \field{extradatescope}{labelyear}
-      \field{labeldatesource}{}
-      \field{labeltitlesource}{title}
-      \field{title}{Flowchart for-each loop (Stack Overflow discussion)}
-      \field{urlday}{24}
-      \field{urlmonth}{8}
-      \field{urlyear}{2025}
-      \field{year}{2013}
-      \field{urldateera}{ce}
-      \verb{urlraw}
-      \verb https://stackoverflow.com/questions/20580028/flowchart-for-each-loop-loop-without-variable-increment
-      \endverb
-      \verb{url}
-      \verb https://stackoverflow.com/questions/20580028/flowchart-for-each-loop-loop-without-variable-increment
-      \endverb
-    \endentry
     \entry{pyodide}{online}{}{}
       \name{author}{1}{}{%
         {{un=0,uniquepart=base,hash=007df87d4199093772f417849fdf8f08}{%
@@ -1804,25 +1785,6 @@
       \endverb
       \verb{url}
       \verb https://greentreesnakes.readthedocs.io
-      \endverb
-    \endentry
-    \entry{for_each_exemple}{online}{}{}
-      \field{sortinit}{2}
-      \field{sortinithash}{8b555b3791beccb63322c22f3320aa9a}
-      \field{extradatescope}{labelyear}
-      \field{labeldatesource}{}
-      \field{labeltitlesource}{title}
-      \field{title}{Flowchart for-each loop (Stack Overflow discussion)}
-      \field{urlday}{24}
-      \field{urlmonth}{8}
-      \field{urlyear}{2025}
-      \field{year}{2013}
-      \field{urldateera}{ce}
-      \verb{urlraw}
-      \verb https://stackoverflow.com/questions/20580028/flowchart-for-each-loop-loop-without-variable-increment
-      \endverb
-      \verb{url}
-      \verb https://stackoverflow.com/questions/20580028/flowchart-for-each-loop-loop-without-variable-increment
       \endverb
     \endentry
     \entry{pyodide}{online}{}{}
