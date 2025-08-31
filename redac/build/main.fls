@@ -517,10 +517,6 @@ INPUT C:\Users\install\AppData\Local\Programs\MiKTeX\tex\latex\biblatex\lbx\fren
 INPUT C:\Users\install\AppData\Local\Programs\MiKTeX\tex\latex\biblatex\lbx\french.lbx
 OUTPUT c:\Users\install\gyminf\redac\build\main.bcf
 OUTPUT c:\Users\install\gyminf\redac\build\main.bcf
-INPUT c:\Users\install\gyminf\redac\build\main.bbl
-INPUT c:\Users\install\gyminf\redac\build\main.bbl
-INPUT c:\Users\install\gyminf\redac\build\main.bbl
-INPUT c:\Users\install\gyminf\redac\build\main.bbl
 INPUT .\main.out
 INPUT .\main.out
 INPUT .\main.out
@@ -529,10 +525,9 @@ OUTPUT c:\Users\install\gyminf\redac\build\main.pdf
 OUTPUT c:\Users\install\gyminf\redac\build\main.pdf
 OUTPUT c:\Users\install\gyminf\redac\build\main.out
 OUTPUT c:\Users\install\gyminf\redac\build\main.out
-INPUT C:\Users\install\AppData\Local\MiKTeX\fonts\map\pdftex\pdftex.map
-INPUT C:\Users\install\AppData\Local\MiKTeX\luatex-cache\generic\fonts\otl\lmroman12-regular.luc
 INPUT C:\Users\install\AppData\Local\MiKTeX\luatex-cache\generic\fonts\otl\lmroman17-regular.luc
 INPUT C:\Users\install\AppData\Local\MiKTeX\luatex-cache\generic\fonts\otl\lmroman12-bold.luc
+INPUT C:\Users\install\AppData\Local\MiKTeX\luatex-cache\generic\fonts\otl\lmroman12-regular.luc
 INPUT C:\Users\install\AppData\Local\MiKTeX\luatex-cache\generic\fonts\otl\lmroman7-regular.luc
 INPUT C:\Users\install\AppData\Local\MiKTeX\luatex-cache\generic\fonts\otl\lmroman5-regular.luc
 INPUT C:\Users\install\AppData\Local\Programs\MiKTeX\fonts\tfm\public\cm\cmmi10.tfm
@@ -578,6 +573,7 @@ INPUT C:\Users\install\AppData\Local\Programs\MiKTeX\fonts\tfm\public\cm\cmr5.tf
 INPUT C:\Users\install\AppData\Local\Programs\MiKTeX\fonts\tfm\adobe\zapfding\pzdr.tfm
 INPUT C:\Users\install\AppData\Local\Programs\MiKTeX\fonts\tfm\adobe\zapfding\pzdr.tfm
 INPUT C:\Users\install\AppData\Local\MiKTeX\luatex-cache\generic\fonts\otl\lmroman10-italic.luc
+INPUT C:\Users\install\AppData\Local\MiKTeX\fonts\map\pdftex\pdftex.map
 INPUT .\main.toc
 INPUT .\main.toc
 INPUT C:\Users\install\AppData\Local\MiKTeX\luatex-cache\generic\fonts\otl\lmroman8-regular.luc
@@ -626,12 +622,12 @@ OUTPUT c:\Users\install\gyminf\redac\build\main.lof
 OUTPUT c:\Users\install\gyminf\redac\build\main.lof
 OUTPUT c:\Users\install\gyminf\redac\build\main.lot
 OUTPUT c:\Users\install\gyminf\redac\build\main.lot
-INPUT C:\Users\install\AppData\Local\MiKTeX\luatex-cache\generic\fonts\otl\lmromancaps10-regular.luc
 INPUT C:\Users\install\AppData\Local\MiKTeX\luatex-cache\generic\fonts\otl\lmroman10-bolditalic.luc
 INPUT .\app_vide_zones.png
 INPUT .\app_vide_zones.png
 INPUT .\app_vide_zones.png
 INPUT .\app_vide_zones.png
+INPUT C:\Users\install\AppData\Local\MiKTeX\luatex-cache\generic\fonts\otl\lmromancaps10-regular.luc
 INPUT .\Flowchart_def-f-a-return.png
 INPUT .\Flowchart_def-f-a-return.png
 INPUT .\Flowchart_def-f-a-return.png

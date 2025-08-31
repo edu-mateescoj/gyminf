@@ -99,7 +99,7 @@
 \let\labelitemi\labelitemii
 
 % --- INFORMATIONS DU DOCUMENT ---
-\title{\textbf{Conception et implémentation d'un exerciseur automatique pour l'enseignement de la programmation}} \\[5mm] Rapport de projet GymInf
+\title{\textbf{Conception et implémentation d'un exerciseur automatique pour l'enseignement de la programmation} \\[5mm] Rapport de projet GymInf}
 \author{Julien Mateesco}
 %footnote 'sous la direction de', juré expert
 \date{8 septembre 2025}
@@ -119,15 +119,7 @@
 
 \begin{titlepage}
 
-  % AVEC LOGO ???
-  \begin{center}
-    % \includegraphics[height=1.6cm]{logo.pdf}\par\vspace{0.4cm}
-    {\Large ?? UniFr , HEP ?}
-  \end{center}
-
 \maketitle
-
-\thispagestyle{cover}
 
 \begin{abstract}
 Ce rapport présentera un outil-auteur et sa réalisation, faite dans le cadre du programme de formation GymInf, répondant à la question ``comment soutenir l'apprentissage par la méthode PRIMM de la programmation Python chez les débutants, avec visualisation logigrammme''. L'outil existe, visible sous \url{https://github.com/edu-mateescoj/gyminf} et propose principalement quatre fonctionnalités :
@@ -142,13 +134,13 @@ Nous présenterons d'abord les contextes qui ont présidé à la réalisation de
     \item le traducteur Javascript de code Python en graphique logigramme rendu dans le navigateur par Mermaid
     \item le serveur Flask (Python) enregistrant les interactions élèves face aux codes proposés pour construire une base de données didactiques. 
 \end{enumerate}
-\\
+\vspace{2cm}
 Le présent rapport n'a pas vocation à être un mode d'emploi ou une documentation technique exhaustive, mais une explication des fonctionnalités implémentées et des choix qui ont été faits.
 \vspace{2cm}
 
 \end{abstract}
-\\
-\textbf{Superviseur :} Patrick Wang, HEP Lausanne
+
+\textbf{Superviseur :} Patrick Wang, HEP Lausanne\\
 \textbf{Juré expert :} Micha Hersch, HEP Lausanne, Gymnase de Renens
 
 \end{titlepage}
@@ -233,11 +225,9 @@ Techniquement, l'interface collecte les choix utilisateurs et les transmet au g�
 
 \subsubsection{Besoin d'une sorte d'éditeur Python en ligne}
 
-Pour solliciter les dimensions ``Run'' et ``Investigate'', nous utilisons un interprète Python centré débutants (sans viser l'exhaustivité syntaxique) et un éditeur qui teste l'élève en cohérence avec les objectifs déclarés par l'enseignant. Les questions se calent automatiquement sur le code proposé et une rétroaction immédiate est fournie. Cela suppose des échanges DOM $\leftrightarrow$ exécution}: renvoi vers la page des valeurs attendues}, lecture des réponses élèves}, comparaison, puis affichage d'un feedback adapté.
+Pour solliciter les dimensions ``Run'' et ``Investigate'', nous utilisons un interprète Python centré débutants (sans viser l'exhaustivité syntaxique) et un éditeur qui teste l'élève en cohérence avec les objectifs déclarés par l'enseignant. Les questions se calent automatiquement sur le code proposé et une rétroaction immédiate est fournie. Cela suppose des échanges DOM $\leftrightarrow$ exécution: renvoi vers la page des valeurs attendues , lecture des réponses élèves , comparaison, puis affichage d'un feedback adapté.
 \\
 Pour engager à la fois néophytes et aficionados, l'éditeur offre un rendu familier type appli web ou IDE avec des aides activables (aplatissement de blocs, éventuellement auto-complétion) utiles dans un cadre pédagogique.\\ Enfin, pour ``Investigate'' et ``Modify'', l'élève peut sauvegarder (\code{Download}) son script et revenir au script initial (\code{Reload}) afin d'annuler ses modifications depuis la génération.
-
-        
 \subsubsection{Un rendu logigramme}
 Le soutien visuel paraît approprié pour aider des élèves dans leur découverte de leur premier langage de programmation textuelle. Le logigramme est un objectif d'apprentissage curriculaire en soi, au même titre que des pseudo-codes. De façon à proposer un soutien visuel le logigramme parait donc un choix naturel car il matérialise le flux d'exécution logique du programme. Un outil proposant des bouts de code Python et leur représentation logigramme a le défaut de mettre au même niveau deux langages qui n'ont pas le même statut : un seul est un langage de programmation ! mais nous faisons l'hypothèse que c'est le prix à payer pour pouvoir entraîner de façon systématique les élèves à cet exercice particulier qui est de passer d'une syntaxe à l'autre.
 Pour créer le rendu logigramme pour des codes valides, deux options étaient a priori envisageables:\begin{itemize}
@@ -814,9 +804,8 @@ Le diagramme ci-dessous \ref{fig:genfunc_flow} illustre la séquence de décisio
 
 
 \begin{description}
-    \item[Méthodes et fonctions, avec ou sans argument] Les enseignants peuvent avoir la volonté de présenter la définition des fonctions séparément de leur appel, ou la volonté de présenter séparément les fonctions avec ou sans argument, aussi il nous est apparu important de séparer ces différents éléments dans notre interface: le choix 'func' implique que le code définisse une fonction ce qui équivaut au choix 'def f()', mais 'return' et 'def f(a)' sont les options utlisateurs qui permettront de configurer la génération de code impliquant ces éléments.\par
-    Assurer que les fonctions définies ne sont pas juste des blocs de code "morts", mais qu'elles sont activement utilisées, est une propriété importante d'un bon programme. Toutefois, nous nous autorisons une certaine probabilité (paramétrable) de produire de tels codes "morts" avec des fonctions définies mais non appelées. Nous nous situons en effet au niveau de l'apprentissage de la programmation, et nous faisons l'hypothèse que susciter l'interrogation chez l'apprenant est quelque chose de productif. Nous pensons qu'il est intéressant que l'élève soit confronté à la conception naïve que le code de la fonction s'exécute dès l'écriture de sa définition, par exemple. C'est pour ça qu'il nous a semblé très important de proposer un éditeur de code dans le navigateur pour que l'élève, éventuellement guidé par l'enseignant, puisse modifier le code généré et interagir avec lui en rajoutant des print() ou des appels de fonction. Notre effort a donc porté sur comment faire pour que les fonctions définies par le générateur ne soient pas inutiles.
-    
+    \item[Méthodes et fonctions, avec ou sans argument] Les enseignants peuvent avoir la volonté de présenter la définition des fonctions séparément de leur appel, ou la volonté de présenter séparément les fonctions avec ou sans argument, aussi il nous est apparu important de séparer ces différents éléments dans notre interface: le choix 'func' implique que le code définisse une fonction ce qui équivaut au choix 'def f()', mais 'return' et 'def f(a)' sont les options utlisateurs qui permettront de configurer la génération de code impliquant ces éléments.
+    \par Assurer que les fonctions définies ne sont pas juste des blocs de code "morts", mais qu'elles sont activement utilisées, est une propriété importante d'un bon programme. Toutefois, nous nous autorisons une certaine probabilité (paramétrable) de produire de tels codes "morts" avec des fonctions définies mais non appelées. Nous nous situons en effet au niveau de l'apprentissage de la programmation, et nous faisons l'hypothèse que susciter l'interrogation chez l'apprenant est quelque chose de productif. Nous pensons qu'il est intéressant que l'élève soit confronté à la conception naïve que le code de la fonction s'exécute dès l'écriture de sa définition, par exemple. C'est pour ça qu'il nous a semblé très important de proposer un éditeur de code dans le navigateur pour que l'élève, éventuellement guidé par l'enseignant, puisse modifier le code généré et interagir avec lui en rajoutant des print() ou des appels de fonction. Notre effort a donc porté sur comment faire pour que les fonctions définies par le générateur ne soient pas inutiles.
     \item[Éviter les fonctions inutiles] Si la fonction retourne une valeur (\code{useReturnValue} est true), cocher \code{builtin\_print} permet au générateur d'ajouter une ligne supplémentaire pour afficher ce résultat (le print(resultat)). Si \code{builtin\_print} n'est pas cochée, le générateur sait qu'il ne peut pas rendre l'effet d'une fonction visible via un print. Pour éviter de générer un appel de fonction "invisible" (ce qui pourrait être perçu comme pédagogiquement inutile), il va forcer \code{useReturnValue} à true. Ainsi, l'appel se fera obligatoirement avec une affectation (resultat = ma\_fonction(...)), rendant l'opération traçable pour l'élève.
     \item[Exemple] Reprenons ce code ci-dessous, généré aléatoirement avec les options 'def' \& 'def f(a)' \& 'return'.
 \end{description}
@@ -831,7 +820,7 @@ print("Le résultat de " + "build" + "(" + str(enabled) + ")" + " est " + str(fo
 \end{minted}
 
 Comment est assurée la correspondance entre les types ? et comment se fait-il que le type de la valeur de retour a un nom cohérent avec le nom de la variable ? Cette cohérence n'est pas le fruit du hasard, mais d'une chaîne logique délibérée en deux étapes qui se déroule entièrement au sein de la fonction \textit{generateFunction}. La correspondance entre le type attendu par la fonction (ici celui de \code{flag}) et le type de la variable passée en argument (ici celui de \code{enabled}) est assurée par le fait que le générateur planifie d'abord les types des paramètres lors de la définition, puis utilise ce plan pour générer à la fois la définition, le corps et pour choisir les arguments lors de l'appel. \\ Nous allons détailler le processus en traçant l'appel à \methodname{generateFunction} toujours pour notre exemple de code généré ci-dessus :
-\subsubsection*{Étape 1 : Planification de la fonction et génération de sa définition)}
+\subsubsection*{Étape 1 : Planification de la fonction et génération de sa définition}
 \begin{enumerate}
 \item \textbf{Choix d'un nom de paramètre sémantique} (cf. \href{https://github.com/edu-mateescoj/gyminf/blob/main/static/js/code-generator.js#L1083}{ligne 1083}) : Évidemment la génération de la fonction commence avec un choix de nom, parmi une liste maintenue en constante pour assurer une cohérence sémantique (un verbe d'action, choisi au hasard parmi FUNCTION\_NAMES). Le processus commence donc véritablement par l'appel à \methodname{chooseAppropriateParameterNames}. Cette fonction ne choisit pas des noms au hasard, mais dans des listes thématiques (ex: dataParams = ['data', 'items', 'elements', ...], mathParams = ['x', 'y', ...]).  Pour une fonction nommée \code{build}, elle pourrait sélectionner un nom dans la liste \code{utilParams}, comme \code{flag}. Le tableau \code{params} contient maintenant \code{['flag']}.
 
@@ -852,11 +841,11 @@ const paramTypes = params.map(param => {
 \end{enumerate}
 
 \subsubsection*{Étape 2 : Génération de l'appel de la fonction (utilisation du plan)}
-Après la logique de décision d'appeler ou non la fonction (\#1120-1138) et la génération du corps de la fonction (\#1139-1152), le générateur va dans notre exemple préparer l'appel.
+Après la logique de décision d'appeler ou non la fonction (\href{https://github.com/edu-mateescoj/gyminf/blob/main/static/js/code-generator.js#L1120}{ligne 1120}) et la génération du corps de la fonction (\#1139-1152), le générateur va dans notre exemple préparer l'appel.
 \begin{enumerate}
 \item \textbf{Sélection d'un argument du bon type (\#1168)} : Le code parcourt le tableau \code{paramTypes} qu'il a créé précédemment.
 \begin{minted}{javascript}
-// #1161
+//\#1161
 const args = params.map((param, index) => {
 const paramType = paramTypes[index]; // Récupère le type planifié ('bool')
 return ensureVariableExists(paramType); // Demande explicitement une variable de ce type !
@@ -918,33 +907,15 @@ Cette cascade de choix aléatoires mais contraints produit un code qui est à ch
 \clearpage
 \section{Présentation du traducteur automatique de code en logigramme}
 
-Le choix du langage Python comme support d'apprentissage de la programmation tient à sa lisibilité 
-et à sa large adoption en milieu scolaire.
-Or le langage Python, comme d'autres langages de haut niveau, fournit un module intégré, 
-\code{ast}, qui permet de décomposer du code source Python en une structure arborescente appelée 
-Arbre de Syntaxe Abstraite (AST). On entend et lit souvent \textit{Arbre Syntaxique Abstrait} 
-mais l'arbre n'a rien d'abstrait aussi nous dirons AST pour Abstract Syntax Tree. Cet arbre est
- une représentation hiérarchique du code qui ignore les détails syntaxiques superflus pour l'exécution
-  (comme les parenthèses ou les commentaires) pour se concentrer sur la structure logique du programme. 
-  Chaque nœud de l'AST correspond à une construction du langage : une assignation, une condition, une boucle,
-   un appel de fonction, etc. \\
-
-Dans le contexte de l'apprentissage de la programmation, la visualisation des structures de contrôle est un 
-outil pédagogique fondamental. Nous faisons l'hypothèse que le passage d'un langage à un autre est un travail 
-stimulant les compétences qui forment la si élusive \textit{pensée computationnelle}. Le logigramme, ou 
-diagramme de flux, ou \textit{flowchart} offre une représentation graphique - certes plus intuitive - de 
-l'algorithmique sous-jacente à un programme, mais il est constitué d'éléments syntaxiques à apprendre. 
-Chaque élément syntaxique Python n'a pas sa correspondance un-pour-un dans la syntaxe logigramme, et la finalité du logigramme est de rendre compte de l'exécution du flux de contrôle \textbf{logique} du programme. \\
-Notre implémentation \code{MyCFG.py} est conçue pour analyser du code source Python fournie sous forme de chaîne, construire un graphe de flux de contrôle (\textit{CFG, pour Control Flow Graph}, et le traduire en une syntaxe de diagramme Mermaid. L'objectif principal est de fournir un retour visuel immédiat aux apprenants dans un environnement d'exercice interactif, en mettant l'accent sur la clarté pédagogique plutôt que sur une analyse exhaustive de tous les aspects du langage.
-
+Le choix du langage Python comme support d'apprentissage de la programmation tient à sa lisibilité et à sa large adoption en milieu scolaire. Or le langage Python, comme d'autres langages de haut niveau, fournit un module intégré, \code{ast}, qui permet de décomposer du code source Python en une structure arborescente appelée Arbre de Syntaxe Abstraite (AST). On entend et lit souvent \textit{Arbre Syntaxique Abstrait} mais l'arbre n'a rien d'abstrait aussi nous dirons AST pour Abstract Syntax Tree. Cet arbre est une représentation hiérarchique du code qui ignore les détails syntaxiques superflus pour l'exécution (comme les parenthèses ou les commentaires) pour se concentrer sur la structure logique du programme. Chaque nœud de l'AST correspond à une construction du langage : une assignation, une condition, une boucle, un appel de fonction, etc. \\
+Dans le contexte de l'apprentissage de la programmation, la visualisation des structures de contrôle est un outil pédagogique fondamental. Nous faisons l'hypothèse que le passage d'un langage à un autre est un travail stimulant les compétences qui forment la si élusive \textit{pensée computationnelle}. Le logigramme, ou diagramme de flux, ou \textit{flowchart} offre une représentation graphique - certes plus intuitive - de l'algorithmique sous-jacente à un programme, mais il est constitué d'éléments syntaxiques à apprendre. Chaque élément syntaxique Python n'a pas sa correspondance un-pour-un dans la syntaxe logigramme, et la finalité du logigramme est de rendre compte de l'exécution du flux de contrôle \textbf{logique} du programme. \\
+Notre implémentation \code{MyCFG.py} est conçue pour analyser du code source Python fournie sous forme de chaîne, construire une représentation interne en graphe de flux de contrôle (\textit{CFG, pour Control Flow Graph}), et le traduire en une syntaxe de diagramme Mermaid. L'objectif principal est de fournir un retour visuel immédiat aux apprenants dans un environnement d'exercice interactif, en mettant l'accent sur la clarté pédagogique plutôt que sur une analyse exhaustive de tous les aspects du langage.\\
+La pertinence du module ast de Python pour cette tâche de traduction et sa disponibilité dans l'environnnement Pyodide ont justifié le recours à cette approche, puisque le code est source Python est produit et affiché purement dans le navigateur, uniquement par Javascript. \\ Nous allons maintenant détailler les principes théoriques qui sous-tendent cette traduction, puis expliquer comment notre implémentation concrétise ces principes. 
 \subsection{L'AST Python}
 Pour traduire un programme textuel en un CFG, il est nécessaire d'en extraire la structure logique. Plutôt que de recourir à une analyse fragile basée sur des expressions régulières, nous avons adopté une approche robuste et standard en informatique : l'analyse de l'AST.
 
 \subsection{AST, CFG, et logigramme}
-La génération d'un logigramme à partir d'un code source est un processus de traduction qui transforme une 
-représentation purement syntaxique en une représentation sémantique du flux d'exécution. Notre module 
-\code{MyCFG.py} opère cette traduction. Détaillons les fondements théoriques de cette transformation et illustrons 
-comment notre implémentation l'a concrétisée.
+La génération d'un logigramme à partir d'un code source est un processus de traduction qui transforme une représentation purement syntaxique en une représentation sémantique du flux d'exécution. Notre module \code{MyCFG.py} opère cette traduction. Détaillons les fondements théoriques de cette transformation et illustrons comment notre implémentation l'a concrétisée.
 \hline
 Prenons un code minimal:
 \begin{minted}{python}
@@ -955,15 +926,11 @@ else:
     y = -1
 print(y)
 \end{minted}
-Lorsqu'un interpréteur Python lit un script, sa première étape est de le \textit{parser} (analyser syntaxiquement). 
-Ce processus convertit la chaîne de caractères brute en cette structure de données hiérarchique qu'est l'AST.
-Le \code{dump} de l'AST pour ce code minimal est :
+Lorsqu'un interpréteur Python lit un script, sa première étape est de le \textit{parser} (analyser syntaxiquement). Ce processus convertit la chaîne de caractères brute en cette structure de données hiérarchique qu'est l'AST. Le \code{dump} de l'AST pour ce code minimal est :
 \begin{verbatim}
     Module(body=[Assign(targets=[Name(id='x', ctx=Store())], value=Constant(value=1)), If(test=Compare(left=Name(id='x', ctx=Load()), ops=[Gt()], comparators=[Constant(value=0)]), body=[Assign(targets=[Name(id='y', ctx=Store())], value=Constant(value=1))], orelse=[Assign(targets=[Name(id='y', ctx=Store())], value=UnaryOp(op=USub(), operand=Constant(value=1)))]), Expr(value=Call(func=Name(id='print', ctx=Load()), args=[Name(id='y', ctx=Load())], keywords=[]))], type_ignores=[])
 \end{verbatim}
-que nous préférons immédiatement représenter d'une façon plus humaine, plus lisible car déjà arborescente. 
-On voit bien que le Module de l'AST est la racine. Elle contient une liste d'instructions (body) qui sont soit des
- affectations (Assign), soit une condition (If) ou un appel de fonction (Expr avec Call).
+que nous préférons immédiatement représenter d'une façon plus humaine, plus lisible car déjà arborescente. On voit bien que le Module de l'AST est la racine. Elle contient une liste d'instructions (body) qui sont soit des affectations (Assign), soit une condition (If) ou un appel de fonction (Expr avec Call).
 \begin{verbatim}
     Module(
   body=[
@@ -1008,16 +975,7 @@ Module
 │  └─ Assign: Name('y', Store) := UnaryOp(-, Constant(1))
 └─ Expr: Call(Name('print', Load), [Name('y', Load)])
 \end{verbatim}
-Cette dernière écriture de l'AST est lisible car elle fait apparaitre des noeuds qui structurent notre lecture mais
-chacun de ces noeuds correspondent à une construction syntaxique du langage. Chaque nœud a des attributs qui décrivent ses 
-composants (ex. \code{targets}, \code{value} pour une affectation).
-Cet arbre est une description parfaite de \textit{ce qu'est} le code, mais pas de \textit{comment il s'exécute}. 
-Par exemple, il ne montre pas explicitement que la branche \code{orelse} est une alternative à la branche 
-\code{body}, ni que l'exécution continue après la structure \code{If}. \par  L'AST est une représentation statique et 
-hiérarchique. Le CFG, quant à lui, est une représentation graphique du flux d'exécution.
-On a vu que l'AST était un arbre : c'est un graphe non dirigés, acyclique et connexe (les éléments sont tous reliés).
-Comme l'illustre l'implémentation \code{PyCFG.py} de \textit{The Fuzzing Book}, un CFG est un graphe dirigé, non
-connexe et potentiellement cyclique (dès qu'une itération est présente) où :
+Cette dernière écriture de l'AST est lisible car elle fait apparaitre des noeuds qui structurent notre lecture mais chacun de ces noeuds correspondent à une construction syntaxique du langage. Chaque nœud a des attributs qui décrivent ses composants (ex. \code{targets}, \code{value} pour une affectation). Cet arbre est une description parfaite de \textit{ce qu'est} le code, mais pas de \textit{comment il s'exécute}. Par exemple, il ne montre pas explicitement que la branche \code{orelse} est une alternative à la branche \code{body}, ni que l'exécution continue après la structure \code{If}. \par  L'AST est une représentation statique et hiérarchique. Le CFG, quant à lui, est une représentation graphique du flux d'exécution. On a vu que l'AST était un arbre : c'est un graphe non dirigés, acyclique et connexe (les éléments sont tous reliés). Comme l'illustre l'implémentation \code{PyCFG.py} de \textit{The Fuzzing Book}, un CFG est un graphe dirigé, non connexe et potentiellement cyclique (dès qu'une itération est présente) où :
 \begin{itemize}
     \item Les \textbf{nœuds} représentent des blocs d'instructions exécutés séquentiellement sans branchement.
     \item Les \textbf{arêtes} représentent les transferts de contrôle (sauts) entre ces blocs.
@@ -1036,37 +994,34 @@ Une fois notre ``visite'' effectuée (cf. ci-dessous) on aura construit un CFG :
 --- CFG : les arêtes ---
 {('node02', 'node03', ''), ('node04', 'node06', ''), ('node03', 'node05', 'Non'), ('node06', 'node07', ''), ('node03', 'node04', 'Oui'), ('node01', 'node02', ''), ('node07', 'node08', ''), ('node05', 'node06', '')}
 \end{verbatim}
-On dira que le CFG est l'ensemble de ces noeuds et de ces arêtes : il rend explicite la notion de \textbf{flux},
- il n'est plus hiérarchique mais séquentiel, avec des branches et des fusions, qu'il nous appartient de visualiseur
- pour l'élève.
+On dira que le CFG est l'ensemble de ces noeuds et de ces arêtes : il rend explicite la notion de \textbf{flux}, il n'est plus hiérarchique mais séquentiel, avec des branches et des fusions, qu'il nous appartient de visualiseur pour l'élève.
 
 \subsection{Pourquoi PyCFG (Fuzzing Book) était utile mais insuffisant pour nos objectifs}
+Au moment d'ajouter à mon projet la fonctionnalité ``visualisation du logigramme d'un code source'', je n'ai tout simplement pas trouvé d'outil s'exécutant dans le navigateur et que j'aurai pu exploiter ! L'implémentation mise en avant dans \textit{The Fuzzing Book} a été l'inspiration séminale pour cette partie de mon projet.
 \paragraph{Apports de PyCFG :}
 \begin{itemize}
-\item Démonstration claire de la \textbf{construction d'un CFG à partir de l'AST} (\textit{The Fuzzing Book} \cite{fuzzingbook}).
-\item Base technique pour le parcours \textit{visitor}, gestion des blocs, arêtes et séquences.
+    \item Démonstration claire de la \textbf{construction d'un CFG à partir de l'AST} (\textit{The Fuzzing Book} \cite{fuzzingbook}).
+    \item Base technique pour le parcours \textit{visitor}, gestion des blocs, arêtes et séquences.
 \end{itemize}
 
 \paragraph{Limites pour l'usage pédagogique visé (et adaptation \code{MyCFG.py}).}
 \begin{itemize}
-\item \textbf{Granularité trop bas niveau}: PyCFG reflète étroitement la syntaxe (blocs techniques), alors que 
-nous visons des \textbf{concepts algorithmiques} lisibles (\code{Process}/\code{Decision}/\code{Junction}/\code{IoOperation}).
-\item \textbf{Absence de nœuds de jonction} explicites pour la convergence visuelle des branches ; 
-\code{MyCFG} insère des \code{Junction} dédiés, pour réduire la charge cognitive en fournissant à l'élève des repères 
-visuels clairs et pour visuellement éviter les croisements illisibles au moment du rendu par l'algorithme Mermaid.
-\item \textbf{Sortie Graphviz} : adaptée à la recherche mais moins \textit{portable web} ; nous ciblons \textbf{Mermaid}
- pour un rendu immédiat dans le navigateur, sans dépendances serveur pour cette partie du projet.
-\item \textbf{Sémantique pédagogique ajoutée par MyCFG} : typage léger des I/O en conformité avaec ce qui est fait
-en classe, des libellés plus ``human-friendly'', une séparation en \code{subgraph} pour séparer le flux principal
-des définitions de fonctions, ce que PyCFG ne vise pas.
-\item \textbf{Contrôle de la ``verbosité'' par MyCFG} : heuristiques pour condenser les expressions (ex. 
-conditions courtes, noms de variables) afin d'essayer de garder le diagramme lisible.
+    \item \textbf{Granularité trop bas niveau}: PyCFG reflète étroitement la syntaxe (blocs techniques), alors que nous visons des \textbf{concepts algorithmiques} lisibles (\code{Process}/\code{Decision}/\code{Junction}/\code{IoOperation}).
+    \item \textbf{Absence de nœuds de jonction} explicites pour la convergence visuelle des branches ; \code{MyCFG} insère des \code{Junction} dédiés, pour réduire la charge cognitive en fournissant à l'élève des repères 
+    visuels clairs et pour visuellement éviter les croisements illisibles au moment du rendu par l'algorithme Mermaid.
+    \item \textbf{Sortie Graphviz} : adaptée à la recherche mais moins \textit{portable web} ; nous ciblons \textbf{Mermaid} pour un rendu immédiat dans le navigateur, sans dépendances serveur pour cette partie du projet.
+    \item \textbf{Sémantique pédagogique ajoutée par MyCFG} : typage léger des I/O en conformité avaec ce qui est fait en classe, des libellés plus ``human-friendly'', une séparation en \code{subgraph} pour séparer le flux principal des définitions de fonctions, ce que PyCFG ne vise pas.
+    \item \textbf{Contrôle de la ``verbosité'' par MyCFG} : heuristiques pour condenser les expressions (ex. conditions courtes, noms de variables) afin d'essayer de garder le diagramme lisible.
 \end{itemize}
 
-\paragraph{Conclusion :} PyCFG fournit l'ossature algorithmique ; \code{MyCFG.py} ajoute une \textbf{couche sémantique
- et ergonomique} nécessaire à un \textit{retour visuel immédiat et didactique} pour les élèves, directement dans 
- le navigateur via Pyodide + Mermaid, conformément à l'objectif de traduction du code dans le navigateur.
-
+\paragraph{Conclusion :} PyCFG fournit l'ossature algorithmique ; \code{MyCFG.py} ajoute une \textbf{couche sémantique et ergonomique} nécessaire à un \textit{retour visuel immédiat et didactique} pour les élèves, directement dans le navigateur via Pyodide + Mermaid, conformément à l'objectif de traduction du code dans le navigateur.
+En guise d'exemple de ce qu'apporte mon implémentation, voici un logigramme rendu dans le navigateur par Mermaid.js à partir de la chaine de texte en syntaxe Mermaid produite par MyCFG.py :
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.8\textwidth, keepaspectratio]{noeud_jonction.png}
+    \caption{Apport d'une aide visuelle à la lecture des logigrammes}
+    \label{fig_jonctions}
+\end{figure} 
  
 \subsubsection{Le choix de l'AST comme source de vérité}
 Le module \code{ast} de la bibliothèque standard Python permet déjà de transformer une chaîne de code source en une 
@@ -1074,13 +1029,13 @@ structure arborescente (l'AST) qui représente sans ambiguïté les relations en
 Ce choix présente plusieurs avantages déterminants :
 \begin{itemize}
     \item \textbf{Robustesse :} L'analyseur de Python fait le travail complexe de validation de la syntaxe. Notre traducteur opère sur une structure déjà validée.
-    \item \textbf{Précision sémantique :} L'AST ne représente pas le texte, mais sa signification. Un nœud \code{ast.For} est distinct d'un nœud \code{ast.While}, et nous pouvons exploiter cette distinction pour analyser l'arbre, même si leur rendu textuel est arbitraire et peut varier d'une implémentation à l'autre.  
+    \item \textbf{Précision sémantique :} L'AST ne représente pas le texte, mais sa structure. Un nœud \code{ast.For} est distinct d'un nœud \code{ast.While}, et nous pouvons exploiter cette distinction pour analyser l'arbre et sa signification, même si leur rendu textuel est arbitraire et peut varier d'une implémentation à l'autre.  
     \item \textbf{Extensibilité :} L'approche est modulaire. Pour supporter une nouvelle construction du langage (par exemple, \code{try...except}), il suffit d'ajouter une méthode pour traiter le nœud AST correspondant (\code{ast.Try}), sans impacter le reste du code, implémentée dans l'approche "visiteur".
 \end{itemize}
 
 \subsubsection{Le \textit{template} (patron de conception) "Visiteur"}
 Pour parcourir l'AST, nous utilisons le patron de conception \textit{Visiteur}. La classe \code{ControlFlowGraph} implémente une méthode \code{visit(node, parent\_id)} qui agit comme un répartiteur. Selon le type du nœud AST visité (ex: \code{ast.If}), elle délègue le traitement à une méthode spécialisée (ex: \code{visit\_If}). Cette approche structure le code de manière claire et alignée sur la grammaire du langage Python.
-
+\\
 Notre approche s'inspire de projets académiques et open-source qui exploitent l'AST pour l'analyse de code, 
 notamment les travaux déjà mentionnés, présentés dans \textit{The Fuzzing Book} par Zeller et al. \cite{fuzzingbook}, qui 
 démontrent la construction d'un CFG à partir d'un AST. De même, la documentation \textit{Green Tree Snakes} 
@@ -1106,12 +1061,12 @@ Le processus, orchestré par la méthode principale \code{visit}, fonctionne com
 
 \subsection{Mon implémentation \textit{MyCFG.py}}
 
-Pour rappel l'architecture de \code{MyCFG.py} est guidée par une philosophie centrée sur l'objectif pédagogique. Plutôt que de viser une représentation exhaustive de tous les mécanismes d'exécution de Python (comme la gestion des exceptions, les définitions en compréhension ou l'asynchronisme), notre implémentation se concentre sur les constructions algorithmiques fondamentales enseignées aux débutants.
+Pour rappel l'architecture de \code{MyCFG.py} est guidée par une philosophie centrée sur l'objectif pédagogique : plutôt que de viser une représentation exhaustive de tous les mécanismes d'exécution de Python (comme la gestion des exceptions, les définitions en compréhension ou l'asynchronisme), notre implémentation se concentre sur les constructions algorithmiques fondamentales enseignées aux débutants, pour en révéler la logique.
 
 \paragraph{Séparation des préoccupations.} La classe \code{ControlFlowGraph} est conçue en trois phases distinctes :
 \begin{enumerate}
     \item \textbf{Initialisation et Parsing :} Le constructeur (\code{\_\_init\_\_}) prend le code source en entrée et utilise \code{ast.parse()} pour générer l'AST. La gestion des erreurs de syntaxe est effectuée à ce stade précoce, avec un retour immédiat si le code est syntaxiquement invalide. Ne sont pas capturées ici les erreurs sémantiques (exemple: l'utilisation dans une syntaxe Python valide de variables non initialisées)
-    \item \textbf{Construction du Graphe (Visite de l'AST) :} La méthode \code{visit} et ses sous-méthodes spécialisées (\code{visit\_If}, \code{visit\_For}, etc.) parcourent l'AST. Cette phase ne fait qu'ajouter des nœuds et des arêtes aux structures de données internes (\code{self.nodes}, \code{self.edges}). C'est ici que la logique de traduction de la syntaxe en flux de contrôle est implémentée. Une caractéristique clé est l'ajout de nœuds de \textbf{jonction} structurels, qui ne correspondent à aucun nœud AST mais sont essentiels pour représenter la convergence des flux de manière claire, notamment après les blocs conditionnels.
+    \item \textbf{Construction du Graphe (Visite de l'AST) :} La méthode \code{visit} et ses sous-méthodes spécialisées (\code{visit\_If}, \code{visit\_For}, etc.) parcourent l'AST. Cette phase ne fait qu'ajouter des nœuds et des arêtes aux structures de données internes (\code{self.nodes}, \code{self.edges}). C'est ici que la logique de traduction de la syntaxe en flux de contrôle est implémentée. Une caractéristique clé est l'ajout de nœuds de \textbf{jonction} structurels, qui ne correspondent à aucun nœud AST mais sont essentiels pour représenter la convergence des flux de manière plus claire pour l'élève, notamment après les blocs conditionnels, et pour simplifier le travail de l'algorithme Mermaid.js en évitant un rendu final avec des arêtes visuellement mal formées.
     \item \textbf{Sérialisation en Mermaid :} La méthode \code{to\_mermaid} lit les structures de données internes (nœuds et arêtes) et génère la chaîne de caractères finale au format Mermaid. Cette séparation garantit que la logique de construction du graphe est indépendante du format de sortie final.
 \end{enumerate}
 Ce qu'il faut bien comprendre est la distinction entre le parcours structurel de l'AST du programme qui construit le CFG et le parcours suivant qui sérialise ce CFG en une chaîne Mermaid. Le premier parcours est guidé par la syntaxe du langage Python, tandis que le second est guidé par les besoins de visualisation.
@@ -1119,7 +1074,7 @@ L'ambivalence vient du fait que j'ai choisi le même vocabulaire pour désigner 
 
 \subsection{Vocabulaire AST et sémantique des nœuds du CFG}
 
-La traduction d'un AST en un CFG implique une cartographie entre les nœuds syntaxiques de l'AST et les nœuds sémantiques du logigramme. Nous avons défini un ensemble de types de nœuds internes à notre graphe, chacun correspondant à un ou plusieurs types de nœuds AST et représentant un concept algorithmique distinct. Le tableau \ref{tab:node-types} détaille cette correspondance pour les éléments actuellement implémentés dans \code{MyCFG.py} pour lever l'ambiguïté introduite par l'emploi des mêmes termes ``noeuds'' et ``visite'' pour des choses différentes.
+La traduction d'un AST en un CFG implique une cartographie entre les nœuds syntaxiques de l'AST et les nœuds sémantiques du logigramme. Nous avons défini un ensemble de types de nœuds internes à notre graphe (i.e. propres à mon implémentation ControlFlowGraph), chacun correspondant à un ou plusieurs types de nœuds AST et représentant un concept algorithmique distinct. Le tableau \ref{tab:node-types} détaille cette correspondance pour les éléments actuellement implémentés dans \code{MyCFG.py} pour lever l'ambiguïté introduite par l'emploi des mêmes termes ``noeuds'' et ``visite'' pour des choses différentes.
 
 \begin{longtable}{| p{3cm} | p{4cm} | p{8cm} |}
 \caption{Correspondance des Types de Nœuds Internes, Nœuds AST et Sémantique}\label{tab:node-types}\\
@@ -1130,7 +1085,7 @@ La traduction d'un AST en un CFG implique une cartographie entre les nœuds synt
 \hline
 \endfoot
 \hline
-\multicolumn{3}{r}{\small\slshape Table suite en page suivante} \\
+\multicolumn{3}{r}{\small\slshape} \\
 \hline
 \endlastfoot
 % --- Types Implémentés --- & & \\ \hline
@@ -1217,9 +1172,9 @@ Mes définitions de structures utilisées dans ce cadre sont essentiellement:
         \item Pour une instruction simple, c'est le \code{parent\_id} (une chaîne de caractères) passé à \code{visit()}. Il représente le nœud CFG précédent auquel le nouveau nœud doit être connecté.
         \item Pour un bloc d'instructions, c'est la liste \code{entry\_node\_ids} passée à \code{visit_body()}. C'est une liste car un bloc peut être atteint a priori depuis plusieurs chemins 
     \end{itemize}
-    \item \textbf{Point de sortie :} valeure de retour de \code{visit()} et \code{visit_body()}
+    \item \textbf{Point de sortie :} valeure de retour de \code{visit()} et \code{visit\_body()}
     \begin{itemize}
-        \item Chaque appel à \code{visit()} ou \code{visit_body()} retourne une liste d'identifiants de nœuds. C'est à partir de ces nœuds que le flux continuera. Une liste est nécessaire car une structure comme un if/else produit naturellement plusieurs points de sortie. 
+        \item Chaque appel à \code{visit()} ou \code{visit\_body()} retourne une liste d'identifiants de nœuds. C'est à partir de ces nœuds que le flux continuera. Une liste est nécessaire car une structure comme un if/else produit naturellement plusieurs points de sortie. 
     \end{itemize}
 \end{itemize}
 \\Reprenons l'exemple minimal montré supra pour tracer le flux d'appels et la transmission des points d'entrée/sortie:
@@ -1290,10 +1245,7 @@ Dans mon implémentation MyCFG.py, cette récursivité vient naturellement par l
 Contrairement à \code{PyCFG.py} de \textit{Fuzzing Book} qui traduit une boucle \code{for} en une structure \code{while}
  équivalente, notre approche dans \code{MyCFG.py} vise une \textbf{explicitation pédagogique}.
  
-\paragraph{Représentation pédagogique des boucles.} Pour les boucles \code{for}, une attention particulière a été portée
- à la représentation. Plutôt qu'un simple nœud de décision, nous avons choisi de décomposer la boucle en une structure
-  plus détaillée inspirée des logigrammes classiques (voir figure \ref{fig:deux_for}.
-  La méthode \code{visit\_For} ne crée pas un simple nœud de décision, mais décompose la sémantique de l'itération en plusieurs étapes distinctes, chacune représentée par un nœud :
+\paragraph{Représentation pédagogique des boucles.} Pour les boucles \code{for}, une attention particulière a été portée à la représentation. Plutôt qu'un simple nœud de décision, nous avons choisi de décomposer la boucle en une structure plus détaillée inspirée des logigrammes classiques (voir figure \ref{fig:deux_for}. La méthode \code{visit\_For} ne crée pas un simple nœud de décision, mais décompose la sémantique de l'itération en plusieurs étapes distinctes, chacune représentée par un nœud :
 \begin{itemize}
     \item Un test initial : "L'itérable est-il vide ?"
     \item Une initialisation : "Prendre le premier élément"
@@ -1320,12 +1272,10 @@ Voici concrètement un exemple de rendu graphique d'une boucle ``for'' parcouran
     \label{fig:deux_for}
 \end{figure}
 
-Cette décomposition, bien que plus verbeuse, vise à rendre le mécanisme d'itération plus explicite pour l'apprenant, faisant abstraction des constructions internes et méthodes \code{has_next}. 
-Une heuristique est également utilisée pour décrire la nature de l'itérable (chaîne, liste, variable, etc.) et 
-de ses éléments (caractère, nombre, etc.) en langage naturel. C'est peut être encore un peu trop verbeux malgré
- l'attention qui a été porté pour réduire la longueur des chaînes (couper les longues chaines et les faire suivre de ``...'').
+Cette décomposition, bien que plus verbeuse, vise à rendre le mécanisme d'itération plus explicite pour l'apprenant, faisant abstraction des constructions internes et méthodes \code{has_next}. Une heuristique est également utilisée pour décrire la nature de l'itérable (chaîne, liste, variable, etc.) et 
+de ses éléments (caractère, nombre, etc.) en langage naturel. C'est peut être encore un peu trop verbeux malgré l'attention qui a été porté pour réduire la longueur des chaînes (couper les longues chaines et les faire suivre de ``...'').
 
-\paragraph{Robustesse et limitations.} L'implémentation actuelle gère les structures de contrôle de base (\code{if}/\code{else}, \code{for}, \code{while}), les assignations, les appels de fonction, et les sauts (\code{break}, \code{continue}, \code{return}). Elle ne gère pas encore les constructions plus avancées comme la gestion des exceptions (\code{try}/\code{except}/\code{finally}), les contextes (\code{with}), les classes, ou les fonctionnalités asynchrones. Cette limitation est suffisante pour couvrir un sous-ensemble du langage pertinent pour les exercices du niveau des élèves, de débutant à intermédiaire.
+\paragraph{Robustesse et alignement curriculaire.} L'implémentation actuelle gère les structures de contrôle de base (\code{if}/\code{else}, \code{for}, \code{while}), les assignations, les appels de fonction, et les sauts (\code{break}, \code{continue}, \code{return}). Elle ne gère pas encore les constructions plus avancées comme la gestion des exceptions (\code{try}/\code{except}/\code{finally}), les contextes (\code{with}), les classes, ou les fonctionnalités asynchrones. Cette limitation est suffisante pour couvrir un sous-ensemble du langage pertinent pour les exercices du niveau des élèves, de débutant à intermédiaire.
 
 \subsection{Fonctionnement de l'application pour la traduction de codes en logigramme}
 
@@ -1688,7 +1638,7 @@ La conception d'un environnement d'apprentissage interactif et instrumenté comm
         \addlinespace
 
         4 & \textbf{Latence de l'Analyse Côté Client.}
-            Comment minimiser la lenteur perçue par l'utilisateur due aux multiples appels asynchrones (\code{await}) nécessaires à Pyodide pour analyser le code ?
+            Comment minimiser la lenteur perçue par l'utilisateur due aux multiples appels asynchrones (\code{await}) à Pyodide, rendus nécessaires en raison de la solution ci-dessus de dé-duplication (à chaque événement 'change' de l'éditeur pour analyser le code) 
             & \textbf{Appel Unifié à Pyodide.}
             Au lieu de multiples appels \code{await} pour chaque artefact, une méthode centrale en Python, \code{process\_and\_get\_results()}, est appelée une seule fois. Elle orchestre en une passe le parsing, la construction du graphe, et la génération de tous les artefacts nécessaires (\code{mermaid}, \code{canonicalCode}, \code{ast\_dump}), qui sont retournés dans un unique objet. \\
         
@@ -1714,27 +1664,25 @@ Dans quelle mesure :\begin{itemize}
 \end{itemize}
 
 
-\subsection{Des idées abandonnées par manque de temps}
+\subsection{Des idées abandonnées car en contradiction avec la nature du projet}
 \begin{enumerate}
-    \item Contrôler l'aléa en utilisant un ensemble de \textit{templates} à remplir pour chaque classe d'exercices à générer (plutôt qu'une approche grammaticale du langage) $\Rightarrow$ Idée alternative pour faire d'un script un véritable exercice: prédéfinir les questions à poser aux élèves selon le \textit{template} choisi (\textit{aka} la classe d'exercices)\par Exemples: "Quel est le nombre de passages dans la boucle?" si une boucle est choisie, "Combien de fois le bloc $xyz$ a-t-il été exécuté?" si des boucles imbriquées ont été choisies, etc. 
+    \item Contrôler l'aléa en utilisant un ensemble de cases à remplir pour chaque classe d'exercices à générer (plutôt qu'un générateur de code) $\Rightarrow$ Idée alternative pour faire d'un script un véritable exercice: prédéfinir les questions à poser aux élèves selon le \textit{template} choisi (\textit{aka} la classe d'exercices)\par Exemples: "Quel est le nombre de passages dans la boucle?" si une boucle est choisie, "Combien de fois le bloc $xyz$ a-t-il été exécuté?" si des boucles imbriquées ont été choisies, etc. 
     
     \item Générer les valeurs attendues simultanément aux \textit{erreurs attendues} signifiantes afin de pouvoir fournir un feedback à valeur ajoutée $\Rightarrow$ Idée plus radicale: se limiter à des affectations de valeurs (les questions aux élèves se limiteraient à "Valeur de x = ...", "valeur de y = ...")
 
     \item Préparer des questions "Comment serait modifiée la valeur si ... \textit{(ici la modification à prévoir)} ?" en plus, pour renforcer/tester la compréhension.
     
     \item Ouvrir la possibilité de générer un script invalide \textbf{exprès} comme variable didactique $\Rightarrow$ besoin de contrôler quelles sont les erreurs permises (Division par zéro? Index Error? etc.) 
-    
-    \item La génération d'exercices "Chercher l'erreur", y compris erreurs sémantiques et/ou syntaxiques? Un intérêt pédagogique avéré (le débogage) mais secondaire par rapport à mes objectifs curriculaires.
 \end{enumerate}
 
 
-\subsection{Travaux pour améliorer l'approche actuelle}
+\subsection{Travaux pour augmenter l'approche actuelle sans la dénaturer}
 Les améliorations envisagées sont d'ordre quantitatif (ajouts d'éléments) et qualitatif.
 
 \begin{itemize}
     \item Enrichir les types d'exercices et la section "Défis": 
     \begin{enumerate}
-        \item Proposer une option "Debug" qui génère des codes invalides, avec des boucles infinies ou syntaxiquement incorrects, appelant les élèves à identifier les erreurs selon leur type.
+        \item Proposer une option "Debug" qui génère des codes invalides, avec des boucles infinies ou syntaxiquement incorrects, appelant les élèves à identifier les erreurs selon leur type y compris erreurs sémantiques. Un intérêt pédagogique avéré (le débogage) mais secondaire par rapport à mes objectifs curriculaires.
         \item Des questions qualitatives qui peuvent être ouvertes ou fermées par menu déroulant : Quels sont les types des variables ? (les types étant à récupérer depuis le générateur de code).
         \item Des questions quantitatives \textit{in situ} : Combien de passages dans la boucle ? Combien de passages à tel point du code ?
         \item Des questions mobilisant des concepts théoriques : Telle boucle du code est-elle bornée ? 
@@ -1842,7 +1790,7 @@ Eu égard à son aspect certificatif ce travail mobilise une diversité de comp�
 Je crois que mon projet a du potentiel dans une démarche de pédagogie active, notamment dans le cadre de l'approche PRIMM, mais il reste à le soumettre aux pairs pour améliorations et à le tester dans de multiples classes à grande échelle pour en valider l'efficacité pédagogique et la pertinence des données collectées. alors seulement je pourrai dire que j'ai apporté ma pierre à l'édifice dans la constitution d'une communauté \textit{scientifique} de praticiens de la pédagogie de l'informatique. \\
 Aussi je crois que l'intérêt principal de mon outil n'est pas de permettre aux élèves de se réapproprier leur apprentissage en leur offrant des outils adaptés à leurs besoins et à leur niveau (ce qu'ils pourraient faire par ailleurs), mais surtout de permettre aux enseignants d'analyser les erreurs et de construire des indicateurs pertinents pour aller au-delà de l'observation des \textit{students misconceptions}.\\
 Je pense que l'enjeu principal dans l'enseignement de la programmation est l'\textit{empowerment} de débutants qui s'en tiennent à l'écart \textit{socio-culturellement} alors que les IA génératives donnent maintenant cette faculté de décupler un minimum de savoirs pour une puissance de productivité inouïe.\\
-\'A la suite de Littman \cite{codetojoy} je crois que découvrir un peu de programmation, c'est ouvrir une porte vers l'autonomie, l'inventivité et la joie de façonner le futur. Le code n'est pas seulement une technique : c'est une super-puissance que chacun peut apprendre pour imaginer, créer et agir dans le monde numérique. L'apprentissage de la programmation n'est donc pas une fin en soi, mais une ouverture : celle d'une capacité accrue à participer, à innover et à s'approprier un langage pour penser, créer et agir dans une société traversée par le numérique.
+\'{A} la suite de Littman \cite{codetojoy} je crois que découvrir un peu de programmation, c'est ouvrir une porte vers l'autonomie, l'inventivité et la joie de façonner le futur. Le code n'est pas seulement une technique : c'est une super-puissance que chacun peut apprendre pour imaginer, créer et agir dans le monde numérique. L'apprentissage de la programmation n'est donc pas une fin en soi, mais une ouverture : celle d'une capacité accrue à participer, à innover et à s'approprier un langage pour penser, créer et agir dans une société traversée par le numérique.
 
 
 \subsection*{Remerciements}
@@ -2756,7 +2704,7 @@ La classe Python \code{ControlFlowGraph} est le composant central pour la transf
 
 \subsection*{\methodname{\_get\_mermaid\_node\_shape}}
 \begin{description}
-    \item[Signature:] \code{(\_get\_mermaid\_node\_shape(self, node\_type: \vartype{str}, label: \vartype{str}) -> \rettype{Tuple[str, str]})}
+    \item[Signature:] \code{(\_get\_mermaid\_node\_shape(self, node\_type: str, label: str) -> Tuple[str, str])}
     \item[Description:] Méthode utilitaire privée appelée par \code{to\_mermaid}. Retourne un tuple contenant les chaînes de caractères pour les délimiteurs d'ouverture et de fermeture de la forme d'un nœud Mermaid, en fonction de son \param{node\_type} et de son \param{label} (utilisé pour rendre les jonctions sans label plus petites).
     \item[Paramètres:]
     \begin{itemize}

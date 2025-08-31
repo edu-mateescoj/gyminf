@@ -1,4 +1,4 @@
-This is LuaHBTeX, Version 1.22.0 (MiKTeX 25.4) (format=lualatex 2025.8.30)  31 AUG 2025 16:19
+This is LuaHBTeX, Version 1.22.0 (MiKTeX 25.4) (format=lualatex 2025.8.30)  31 AUG 2025 17:53
  system commands enabled.
  file:line:error style messages enabled.
 **c:/Users/install/gyminf/redac/main.tex
@@ -1569,34 +1569,6 @@ Package uniquecounter Info: New unique counter `rerunfilecheck' on input line 2
 \Hy@SectionHShift=\skip102
 )
 Package hyperref Info: Option `colorlinks' set `true' on input line 86.
-
-
-c:/Users/install/gyminf/redac/main.tex:102: LaTeX Error: There's no line here t
-o end.
-
-See the LaTeX manual or LaTeX Companion for explanation.
-Type  H <return>  for immediate help.
- ...                                              
-                                                  
-l.102 ...nseignement de la programmation}} \\[5mm]
-                                                   Rapport de projet GymInf
-Your command was ignored.
-Type  I <command> <return>  to replace it with another command,
-or  <return>  to continue without it.
-
-
-c:/Users/install/gyminf/redac/main.tex:102: LaTeX Error: Missing \begin{documen
-t}.
-
-See the LaTeX manual or LaTeX Companion for explanation.
-Type  H <return>  for immediate help.
- ...                                              
-                                                  
-l.102 ...eignement de la programmation}} \\[5mm] R
-                                                  apport de projet GymInf
-You're in trouble here.  Try typing  <return>  to proceed.
-If that doesn't work, type  X <return>  to quit.
-
 Package french.ldf Info: Setting StandardItemizeEnv=true for
 (french.ldf)             compatibility with enumitem package,
 (french.ldf)             reported on input line 118.
@@ -1607,7 +1579,7 @@ Package csquotes Info: Checking for multilingual support...
 Package csquotes Info: ... found 'babel' package.
 Package csquotes Info: Adjusting default style.
 Package csquotes Info: Redefining alias 'default' -> 'french'.
-(c:/Users/install/gyminf/redac/build/main.aux)
+ (c:/Users/install/gyminf/redac/build/main.aux)
 \openout1 = main.aux
 
 LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 118.
@@ -1781,75 +1753,32 @@ Package biblatex Info: Automatic encoding selection.
 
 \openout5 = main.bcf
 Package biblatex Info: Trying to load bibliographic data...
-Package biblatex Info: ... file 'main.bbl' found.
- (c:/Users/install/gyminf/redac/build/main.bbl)
+Package biblatex Info: ... file 'main.bbl' not found.
+
+No file main.bbl.
 Package biblatex Info: Reference section=0 on input line 118.
 Package biblatex Info: Reference segment=0 on input line 118.
 Package hyperref Info: Link coloring ON on input line 118.
- (./main.out) (./main.out)
+(./main.out) (./main.out)
 \@outlinefile=\write6
 
 \openout6 = main.out
-
-
-[1
-
-{C:/Users/install/AppData/Local/MiKTeX/fonts/map/pdftex/pdftex.map}]
-
-
-warning  (pdf backend): ignoring duplicate destination with the name 'page.1'
-[1]
-c:/Users/install/gyminf/redac/main.tex:130: Undefined control sequence.
-<argument> \undefinedpagestyle 
-                               
-l.130 \thispagestyle{cover}
-                           
-The control sequence at the end of the top line
-of your error message was never \def'ed. If you have
-misspelled it (e.g., `\hobx'), type `I' and the correct
-spelling (e.g., `I\hbox'). Otherwise just continue,
-and I'll forget about whatever was undefined.
-
-LaTeX Font Info:    Trying to load font information for U+msa on input line 133
+LaTeX Font Info:    Trying to load font information for U+msa on input line 125
 .
+
 (C:/Users/install/AppData/Local/Programs/MiKTeX/tex/latex/amsfonts/umsa.fd
 File: umsa.fd 2013/01/14 v3.01 AMS symbols A
 )
-LaTeX Font Info:    Trying to load font information for U+msb on input line 133
+LaTeX Font Info:    Trying to load font information for U+msb on input line 125
 .
 
 (C:/Users/install/AppData/Local/Programs/MiKTeX/tex/latex/amsfonts/umsb.fd
 File: umsb.fd 2013/01/14 v3.01 AMS symbols B
 )
 
-c:/Users/install/gyminf/redac/main.tex:146: LaTeX Error: There's no line here t
-o end.
+[1
 
-See the LaTeX manual or LaTeX Companion for explanation.
-Type  H <return>  for immediate help.
- ...                                              
-                                                  
-l.146 L
-       e présent rapport n'a pas vocation à être un mode d'emploi ou une ...
-Your command was ignored.
-Type  I <command> <return>  to replace it with another command,
-or  <return>  to continue without it.
-
-
-c:/Users/install/gyminf/redac/main.tex:151: LaTeX Error: There's no line here t
-o end.
-
-See the LaTeX manual or LaTeX Companion for explanation.
-Type  H <return>  for immediate help.
- ...                                              
-                                                  
-l.151 \textbf
-             {Superviseur :} Patrick Wang, HEP Lausanne
-Your command was ignored.
-Type  I <command> <return>  to replace it with another command,
-or  <return>  to continue without it.
-
-
+{C:/Users/install/AppData/Local/MiKTeX/fonts/map/pdftex/pdftex.map}]
 
 [2] (./main.toc
 
@@ -1875,14 +1804,20 @@ No file main.lot.
 
 warning  (pdf backend): ignoring duplicate destination with the name 'page.2'
 [2]
-Overfull \hbox (5.22679pt too wide) in paragraph at lines 185--188
-\TU/lmr/m/n/10.95 Main-te-nant dans une pers-pec-tive d’\TU/lmr/m/it/10.95 em-
-po-werment\TU/lmr/m/n/10.95 , telle que les four-nis-seurs d’IA nous le pro-me
-ttent ([]\TU/lmr/m/sc/10.95 Business
- []
+
+LaTeX Warning: Citation 'Illich' on page 3 undefined on input line 163.
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 185--188
+LaTeX Warning: Citation 'Foucault' on page 3 undefined on input line 165.
+
+
+LaTeX Warning: Citation 'Deleuze' on page 3 undefined on input line 165.
+
+
+LaTeX Warning: Citation 'email' on page 3 undefined on input line 177.
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 177--180
 
  []
 
@@ -1892,63 +1827,91 @@ Underfull \hbox (badness 10000) in paragraph at lines 185--188
 
 ]
 
-c:/Users/install/gyminf/redac/main.tex:194: LaTeX Error: There's no line here t
+LaTeX Warning: Citation 'wenger' on page 4 undefined on input line 184.
+
+
+c:/Users/install/gyminf/redac/main.tex:186: LaTeX Error: There's no line here t
 o end.
 
 See the LaTeX manual or LaTeX Companion for explanation.
 Type  H <return>  for immediate help.
  ...                                              
                                                   
-l.194 \\M
+l.186 \\M
          aintenant que nous avons défini le cadre social, voyons tout d'abo...
 Your command was ignored.
 Type  I <command> <return>  to replace it with another command,
 or  <return>  to continue without it.
 
 
+LaTeX Warning: Citation 'Sentance2017WiPSCE' on page 4 undefined on input line 
+207.
 
-[4]
-Overfull \hbox (32.2989pt too wide) in paragraph at lines 217--218
-[]\TU/lmr/m/n/10.95 Hy-po-thèse : in-té-rêt de la re-pré-sen-ta-tion lo-gi-g
-ramme (\TU/lmr/m/it/10.95 flow-chart\TU/lmr/m/n/10.95 ) comme moyen d’ap-pren-
-tis-sage ([]\TU/lmr/m/sc/10.95 Zimmermann
+
+LaTeX Warning: Citation 'Sentance2019CSE' on page 4 undefined on input line 207
+.
+
+
+Overfull \hbox (75.73755pt too wide) in paragraph at lines 207--208
+[]\TU/lmr/m/n/10.95 Hy-po-thèse fon-da-trice, ap-puyée par la lit-té-ra-ture : la per-ti-nence de la m
+é-tho-do-lo-gie PRIMM ([])
  []
 
-c:/Users/install/gyminf/redac/main.tex:236: Too many }'s.
-l.236 ...changes DOM $\leftrightarrow$ exécution}
-                                                  : renvoi vers la page des ...
-You've closed more groups than you opened.
-Such booboos are generally harmless, so keep going.
 
-c:/Users/install/gyminf/redac/main.tex:236: Too many }'s.
-l.236 ...envoi vers la page des valeurs attendues}
-                                                  , lecture des réponses é...
-You've closed more groups than you opened.
-Such booboos are generally harmless, so keep going.
 
-c:/Users/install/gyminf/redac/main.tex:236: Too many }'s.
-l.236 ...tendues}, lecture des réponses élèves}
-                                                  , comparaison, puis affich...
-You've closed more groups than you opened.
-Such booboos are generally harmless, so keep going.
+[4]
+
+LaTeX Warning: Citation 'messer2023' on page 5 undefined on input line 208.
+
+
+LaTeX Warning: Citation 'zimmermann2024' on page 5 undefined on input line 209.
+
+
+
+LaTeX Warning: Citation 'CrewsZielger98' on page 5 undefined on input line 209.
+
+
+
+Overfull \hbox (68.41203pt too wide) in paragraph at lines 209--210
+[]\TU/lmr/m/n/10.95 Hy-po-thèse : in-té-rêt de la re-pré-sen-ta-tion lo-gi-g
+ramme (\TU/lmr/m/it/10.95 flow-chart\TU/lmr/m/n/10.95 ) comme moyen d’ap-pren-
+tis-sage ([]),
+ []
+
+
+LaTeX Warning: Citation 'AndersonKrathwohl2001' on page 5 undefined on input li
+ne 210.
+
+
+LaTeX Warning: Citation 'Fuller2007' on page 5 undefined on input line 210.
+
+
+LaTeX Warning: Citation 'HattieTimperley2007' on page 5 undefined on input line
+ 211.
+
+
+LaTeX Warning: Citation 'Shute2008' on page 5 undefined on input line 211.
 
 
 
 [5]
 Runaway argument?
 {Soit à la génération du script, un logigramme statique (plus faci\ETC.
-c:/Users/install/gyminf/redac/main.tex:1310: Paragraph ended before \text@comma
+c:/Users/install/gyminf/redac/main.tex:1262: Paragraph ended before \text@comma
 nd was complete.
 <to be read again> 
                    \par 
-l.1310 ...aption{Exemple de flowchart "for each"}}
+l.1262 ...aption{Exemple de flowchart "for each"}}
                                                   
 I suspect you've forgotten a `}', causing me to apply this
 control sequence to too much text. How can we recover?
 My plan is to forget the whole thing and hope for the best.
 
 
-Overfull \hbox (25.48418pt too wide) in paragraph at lines 1310--1310
+LaTeX Warning: Citation 'didask' on page 6 undefined on input line 1262.
+
+
+Overfull \hbox (25.48418pt too wide) in paragraph at lines 1262--1262
 [][][]$\TU/lmr/m/n/10.95 https://openclassrooms.com/fr/courses/7168871-[]apprene
 z-[]les-[]bases-[]du-[]langage-[]python$[][] 
  []
@@ -1959,10 +1922,20 @@ z-[]les-[]bases-[]du-[]langage-[]python$[][]
 
 [7]
 
+LaTeX Warning: Citation 'Altadmri_Brown_2015' on page 8 undefined on input line
+ 1262.
+
+
+
 [8]
 
+LaTeX Warning: Citation 'SilentTeacher' on page 9 undefined on input line 1262.
+
+
+
+
 [9]
-Underfull \hbox (badness 10000) in paragraph at lines 1310--1310
+Underfull \hbox (badness 10000) in paragraph at lines 1262--1262
 
  []
 
@@ -1971,32 +1944,32 @@ Underfull \hbox (badness 10000) in paragraph at lines 1310--1310
 [10
 
 ]
-<app_vide_zones.png, id=547, 660.21657pt x 552.56438pt>
+<app_vide_zones.png, id=505, 660.21657pt x 552.56438pt>
 File: app_vide_zones.png Graphic file (type png)
 <use app_vide_zones.png>
-Package luatex.def Info: app_vide_zones.png  used on input line 1310.
+Package luatex.def Info: app_vide_zones.png  used on input line 1262.
 (luatex.def)             Requested size: 507.03093pt x 424.37135pt.
 
-Overfull \hbox (27.37498pt too wide) in paragraph at lines 1310--1310
+Overfull \hbox (27.37498pt too wide) in paragraph at lines 1262--1262
 []$[]$ 
  []
 
 Runaway argument?
  enabled = True y = 1 def build(flag): output = not flag return outpu\ETC.
-c:/Users/install/gyminf/redac/main.tex:1310: Paragraph ended before \FV@BeginSc
+c:/Users/install/gyminf/redac/main.tex:1262: Paragraph ended before \FV@BeginSc
 anning was complete.
 <to be read again> 
                    \par 
-l.1310 ...aption{Exemple de flowchart "for each"}}
+l.1262 ...aption{Exemple de flowchart "for each"}}
                                                   
 I suspect you've forgotten a `}', causing me to apply this
 control sequence to too much text. How can we recover?
 My plan is to forget the whole thing and hope for the best.
 
-<Flowchart_def-f-a-return.png, id=548, 581.92406pt x 421.575pt>
+<Flowchart_def-f-a-return.png, id=506, 581.92406pt x 421.575pt>
 File: Flowchart_def-f-a-return.png Graphic file (type png)
 <use Flowchart_def-f-a-return.png>
-Package luatex.def Info: Flowchart_def-f-a-return.png  used on input line 1310.
+Package luatex.def Info: Flowchart_def-f-a-return.png  used on input line 1262.
 
 (luatex.def)             Requested size: 409.72125pt x 296.83087pt.
 
@@ -2004,27 +1977,27 @@ Package luatex.def Info: Flowchart_def-f-a-return.png  used on input line 1310.
 [11
 
 <./app_vide_zones.png>]
-<Defi_Console_def-f-a-return.png, id=560, 694.84593pt x 331.2375pt>
+<Defi_Console_def-f-a-return.png, id=519, 694.84593pt x 331.2375pt>
 File: Defi_Console_def-f-a-return.png Graphic file (type png)
 <use Defi_Console_def-f-a-return.png>
-Package luatex.def Info: Defi_Console_def-f-a-return.png  used on input line 13
-10.
+Package luatex.def Info: Defi_Console_def-f-a-return.png  used on input line 12
+62.
 (luatex.def)             Requested size: 409.72125pt x 195.31216pt.
 
-Underfull \hbox (badness 10000) in paragraph at lines 1310--1310
+Underfull \hbox (badness 10000) in paragraph at lines 1262--1262
 
  []
 
 
 
 [12<./Flowchart_def-f-a-return.png><./Defi_Console_def-f-a-return.png>]
-<ui_choix.png, id=569, 1011.78pt x 429.10312pt>
+<ui_choix.png, id=528, 1011.78pt x 429.10312pt>
 File: ui_choix.png Graphic file (type png)
 <use ui_choix.png>
-Package luatex.def Info: ui_choix.png  used on input line 1310.
+Package luatex.def Info: ui_choix.png  used on input line 1262.
 (luatex.def)             Requested size: 409.72125pt x 173.76616pt.
 
-Overfull \hbox (27.37498pt too wide) in paragraph at lines 1310--1310
+Overfull \hbox (27.37498pt too wide) in paragraph at lines 1262--1262
 []$[]$ 
  []
 
@@ -2033,37 +2006,46 @@ Overfull \hbox (27.37498pt too wide) in paragraph at lines 1310--1310
 [13
 
 <./ui_choix.png>]
-<app_choix_def.png, id=575, 963.6pt x 542.025pt>
+<app_choix_def.png, id=534, 963.6pt x 542.025pt>
 File: app_choix_def.png Graphic file (type png)
 <use app_choix_def.png>
-Package luatex.def Info: app_choix_def.png  used on input line 1310.
+Package luatex.def Info: app_choix_def.png  used on input line 1262.
 (luatex.def)             Requested size: 512.14963pt x 288.09067pt.
 
-Overfull \hbox (27.37498pt too wide) in paragraph at lines 1310--1310
+Overfull \hbox (27.37498pt too wide) in paragraph at lines 1262--1262
 []$[]$ 
  []
+
+
+LaTeX Warning: Citation 'codemirror6' on page 14 undefined on input line 1262.
+
+
+LaTeX Warning: Citation 'skulpt' on page 14 undefined on input line 1262.
+
+
+LaTeX Warning: Citation 'brython' on page 14 undefined on input line 1262.
 
 
 
 [14
 
 <./app_choix_def.png>]
-Underfull \hbox (badness 10000) in paragraph at lines 1310--1310
+Underfull \hbox (badness 10000) in paragraph at lines 1262--1262
 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 1310--1310
+Underfull \hbox (badness 10000) in paragraph at lines 1262--1262
 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 1310--1310
+Underfull \hbox (badness 10000) in paragraph at lines 1262--1262
 
  []
 
 
-Overfull \hbox (27.37498pt too wide) in paragraph at lines 1310--1310
+Overfull \hbox (27.37498pt too wide) in paragraph at lines 1262--1262
 []$[]$ 
  []
 
@@ -2072,32 +2054,32 @@ Overfull \hbox (27.37498pt too wide) in paragraph at lines 1310--1310
 [15]
 
 LaTeX Warning: Reference `fig:proposed_architecture_v3' on page 16 undefined on
- input line 1310.
+ input line 1262.
 
 
-Overfull \hbox (65.0035pt too wide) in paragraph at lines 1310--1310
+Overfull \hbox (65.0035pt too wide) in paragraph at lines 1262--1262
 []\TU/lmr/m/n/10.95 La gé-né-ra-tion d’un exer-cice suit un flux contrôl
 é, or-ches-tré par la fonc-tion [][][][][][]
  []
 
 
-Overfull \hbox (36.90703pt too wide) in paragraph at lines 1310--1310
+Overfull \hbox (36.90703pt too wide) in paragraph at lines 1262--1262
 \TU/lmr/m/n/10.95 pré-dé-fi-nies par type, puis les struc-tures de contrôle. Les fonc-tions comme [][][][][][]
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 1310--1310
+Underfull \hbox (badness 10000) in paragraph at lines 1262--1262
 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 1310--1310
+Underfull \hbox (badness 10000) in paragraph at lines 1262--1262
 
  []
 
 
 LaTeX Warning: Reference `fig:architecture' on page 16 undefined on input line 
-1310.
+1262.
 
 
 
@@ -2106,225 +2088,225 @@ LaTeX Warning: Reference `fig:architecture' on page 16 undefined on input line
 ]
 
 [17]
-c:/Users/install/gyminf/redac/main.tex:1310: Illegal parameter number in definit
+c:/Users/install/gyminf/redac/main.tex:1262: Illegal parameter number in definit
 ion of \Hy@tempa.
 <to be read again> 
                    L
-l.1310 ...aption{Exemple de flowchart "for each"}}
+l.1262 ...aption{Exemple de flowchart "for each"}}
                                                   
 You meant to type ## instead of #, right?
 Or maybe a } was forgotten somewhere earlier, and things
 are all screwed up? I'm going to assume that you meant ##.
 
-c:/Users/install/gyminf/redac/main.tex:1310: Illegal parameter number in definit
+c:/Users/install/gyminf/redac/main.tex:1262: Illegal parameter number in definit
 ion of \Hy@tempa.
 <to be read again> 
                    L
-l.1310 ...aption{Exemple de flowchart "for each"}}
+l.1262 ...aption{Exemple de flowchart "for each"}}
                                                   
 You meant to type ## instead of #, right?
 Or maybe a } was forgotten somewhere earlier, and things
 are all screwed up? I'm going to assume that you meant ##.
 
-c:/Users/install/gyminf/redac/main.tex:1310: Illegal parameter number in definit
+c:/Users/install/gyminf/redac/main.tex:1262: Illegal parameter number in definit
 ion of \Hy@tempa.
 <to be read again> 
                    L
-l.1310 ...aption{Exemple de flowchart "for each"}}
+l.1262 ...aption{Exemple de flowchart "for each"}}
                                                   
 You meant to type ## instead of #, right?
 Or maybe a } was forgotten somewhere earlier, and things
 are all screwed up? I'm going to assume that you meant ##.
 
-c:/Users/install/gyminf/redac/main.tex:1310: Illegal parameter number in definit
+c:/Users/install/gyminf/redac/main.tex:1262: Illegal parameter number in definit
 ion of \Hy@tempa.
 <to be read again> 
                    L
-l.1310 ...aption{Exemple de flowchart "for each"}}
+l.1262 ...aption{Exemple de flowchart "for each"}}
                                                   
 You meant to type ## instead of #, right?
 Or maybe a } was forgotten somewhere earlier, and things
 are all screwed up? I'm going to assume that you meant ##.
 
-c:/Users/install/gyminf/redac/main.tex:1310: Illegal parameter number in definit
+c:/Users/install/gyminf/redac/main.tex:1262: Illegal parameter number in definit
 ion of \Hy@tempa.
 <to be read again> 
                    L
-l.1310 ...aption{Exemple de flowchart "for each"}}
+l.1262 ...aption{Exemple de flowchart "for each"}}
                                                   
 You meant to type ## instead of #, right?
 Or maybe a } was forgotten somewhere earlier, and things
 are all screwed up? I'm going to assume that you meant ##.
 
-c:/Users/install/gyminf/redac/main.tex:1310: Illegal parameter number in definit
+c:/Users/install/gyminf/redac/main.tex:1262: Illegal parameter number in definit
 ion of \Hy@tempa.
 <to be read again> 
                    L
-l.1310 ...aption{Exemple de flowchart "for each"}}
+l.1262 ...aption{Exemple de flowchart "for each"}}
                                                   
 You meant to type ## instead of #, right?
 Or maybe a } was forgotten somewhere earlier, and things
 are all screwed up? I'm going to assume that you meant ##.
 
-c:/Users/install/gyminf/redac/main.tex:1310: Illegal parameter number in definit
+c:/Users/install/gyminf/redac/main.tex:1262: Illegal parameter number in definit
 ion of \Hy@tempa.
 <to be read again> 
                    L
-l.1310 ...aption{Exemple de flowchart "for each"}}
+l.1262 ...aption{Exemple de flowchart "for each"}}
                                                   
 You meant to type ## instead of #, right?
 Or maybe a } was forgotten somewhere earlier, and things
 are all screwed up? I'm going to assume that you meant ##.
 
-c:/Users/install/gyminf/redac/main.tex:1310: Illegal parameter number in definit
+c:/Users/install/gyminf/redac/main.tex:1262: Illegal parameter number in definit
 ion of \Hy@tempa.
 <to be read again> 
                    L
-l.1310 ...aption{Exemple de flowchart "for each"}}
+l.1262 ...aption{Exemple de flowchart "for each"}}
                                                   
 You meant to type ## instead of #, right?
 Or maybe a } was forgotten somewhere earlier, and things
 are all screwed up? I'm going to assume that you meant ##.
 
-c:/Users/install/gyminf/redac/main.tex:1310: Illegal parameter number in definit
+c:/Users/install/gyminf/redac/main.tex:1262: Illegal parameter number in definit
 ion of \Hy@tempa.
 <to be read again> 
                    L
-l.1310 ...aption{Exemple de flowchart "for each"}}
+l.1262 ...aption{Exemple de flowchart "for each"}}
                                                   
 You meant to type ## instead of #, right?
 Or maybe a } was forgotten somewhere earlier, and things
 are all screwed up? I'm going to assume that you meant ##.
 
 
-Overfull \hbox (54.49356pt too wide) in paragraph at lines 1310--1310
+Overfull \hbox (54.49356pt too wide) in paragraph at lines 1262--1262
 []\TU/lmr/m/n/10.95 ga-ran-tit les quo-tas (\TU/DejaVuSansMono(0)/m/n/10.95 ensu
 reVariablesForOptions\TU/lmr/m/n/10.95 , [][]ligne 1452[][]), et crée au be-soi
 n via \TU/DejaVuSansMono(0)/m/n/10.95 declareVariable
  []
 
-c:/Users/install/gyminf/redac/main.tex:1310: Illegal parameter number in definit
+c:/Users/install/gyminf/redac/main.tex:1262: Illegal parameter number in definit
 ion of \Hy@tempa.
 <to be read again> 
                    L
-l.1310 ...aption{Exemple de flowchart "for each"}}
+l.1262 ...aption{Exemple de flowchart "for each"}}
                                                   
 You meant to type ## instead of #, right?
 Or maybe a } was forgotten somewhere earlier, and things
 are all screwed up? I'm going to assume that you meant ##.
 
-c:/Users/install/gyminf/redac/main.tex:1310: Illegal parameter number in definit
+c:/Users/install/gyminf/redac/main.tex:1262: Illegal parameter number in definit
 ion of \Hy@tempa.
 <to be read again> 
                    L
-l.1310 ...aption{Exemple de flowchart "for each"}}
+l.1262 ...aption{Exemple de flowchart "for each"}}
                                                   
 You meant to type ## instead of #, right?
 Or maybe a } was forgotten somewhere earlier, and things
 are all screwed up? I'm going to assume that you meant ##.
 
-c:/Users/install/gyminf/redac/main.tex:1310: Illegal parameter number in definit
+c:/Users/install/gyminf/redac/main.tex:1262: Illegal parameter number in definit
 ion of \Hy@tempa.
 <to be read again> 
                    L
-l.1310 ...aption{Exemple de flowchart "for each"}}
+l.1262 ...aption{Exemple de flowchart "for each"}}
                                                   
 You meant to type ## instead of #, right?
 Or maybe a } was forgotten somewhere earlier, and things
 are all screwed up? I'm going to assume that you meant ##.
 
 
-Overfull \hbox (3.01575pt too wide) in paragraph at lines 1310--1310
+Overfull \hbox (3.01575pt too wide) in paragraph at lines 1262--1262
 []\TU/lmr/bx/n/10.95 Opé-ra-tions par type mi-ni-ma-le-ment ga-ran-ties \TU/lm
 r/m/n/10.95 : \TU/DejaVuSansMono(0)/m/n/10.95 ensureTypeSpecificOperations \TU/
 lmr/m/n/10.95 ([][]ligne
  []
 
-c:/Users/install/gyminf/redac/main.tex:1310: Illegal parameter number in definit
+c:/Users/install/gyminf/redac/main.tex:1262: Illegal parameter number in definit
 ion of \Hy@tempa.
 <to be read again> 
                    L
-l.1310 ...aption{Exemple de flowchart "for each"}}
+l.1262 ...aption{Exemple de flowchart "for each"}}
                                                   
 You meant to type ## instead of #, right?
 Or maybe a } was forgotten somewhere earlier, and things
 are all screwed up? I'm going to assume that you meant ##.
 
-c:/Users/install/gyminf/redac/main.tex:1310: Illegal parameter number in definit
+c:/Users/install/gyminf/redac/main.tex:1262: Illegal parameter number in definit
 ion of \Hy@tempa.
 <to be read again> 
                    L
-l.1310 ...aption{Exemple de flowchart "for each"}}
+l.1262 ...aption{Exemple de flowchart "for each"}}
                                                   
 You meant to type ## instead of #, right?
 Or maybe a } was forgotten somewhere earlier, and things
 are all screwed up? I'm going to assume that you meant ##.
 
-c:/Users/install/gyminf/redac/main.tex:1310: Illegal parameter number in definit
+c:/Users/install/gyminf/redac/main.tex:1262: Illegal parameter number in definit
 ion of \Hy@tempa.
 <to be read again> 
                    L
-l.1310 ...aption{Exemple de flowchart "for each"}}
+l.1262 ...aption{Exemple de flowchart "for each"}}
                                                   
 You meant to type ## instead of #, right?
 Or maybe a } was forgotten somewhere earlier, and things
 are all screwed up? I'm going to assume that you meant ##.
 
-c:/Users/install/gyminf/redac/main.tex:1310: Illegal parameter number in definit
+c:/Users/install/gyminf/redac/main.tex:1262: Illegal parameter number in definit
 ion of \Hy@tempa.
 <to be read again> 
                    L
-l.1310 ...aption{Exemple de flowchart "for each"}}
+l.1262 ...aption{Exemple de flowchart "for each"}}
                                                   
 You meant to type ## instead of #, right?
 Or maybe a } was forgotten somewhere earlier, and things
 are all screwed up? I'm going to assume that you meant ##.
 
-c:/Users/install/gyminf/redac/main.tex:1310: Illegal parameter number in definit
+c:/Users/install/gyminf/redac/main.tex:1262: Illegal parameter number in definit
 ion of \Hy@tempa.
 <to be read again> 
                    L
-l.1310 ...aption{Exemple de flowchart "for each"}}
+l.1262 ...aption{Exemple de flowchart "for each"}}
                                                   
 You meant to type ## instead of #, right?
 Or maybe a } was forgotten somewhere earlier, and things
 are all screwed up? I'm going to assume that you meant ##.
 
-c:/Users/install/gyminf/redac/main.tex:1310: Illegal parameter number in definit
+c:/Users/install/gyminf/redac/main.tex:1262: Illegal parameter number in definit
 ion of \Hy@tempa.
 <to be read again> 
                    L
-l.1310 ...aption{Exemple de flowchart "for each"}}
+l.1262 ...aption{Exemple de flowchart "for each"}}
                                                   
 You meant to type ## instead of #, right?
 Or maybe a } was forgotten somewhere earlier, and things
 are all screwed up? I'm going to assume that you meant ##.
 
-c:/Users/install/gyminf/redac/main.tex:1310: Illegal parameter number in definit
+c:/Users/install/gyminf/redac/main.tex:1262: Illegal parameter number in definit
 ion of \Hy@tempa.
 <to be read again> 
                    L
-l.1310 ...aption{Exemple de flowchart "for each"}}
+l.1262 ...aption{Exemple de flowchart "for each"}}
                                                   
 You meant to type ## instead of #, right?
 Or maybe a } was forgotten somewhere earlier, and things
 are all screwed up? I'm going to assume that you meant ##.
 
-c:/Users/install/gyminf/redac/main.tex:1310: Illegal parameter number in definit
+c:/Users/install/gyminf/redac/main.tex:1262: Illegal parameter number in definit
 ion of \Hy@tempa.
 <to be read again> 
                    L
-l.1310 ...aption{Exemple de flowchart "for each"}}
+l.1262 ...aption{Exemple de flowchart "for each"}}
                                                   
 You meant to type ## instead of #, right?
 Or maybe a } was forgotten somewhere earlier, and things
 are all screwed up? I'm going to assume that you meant ##.
 
-c:/Users/install/gyminf/redac/main.tex:1310: Illegal parameter number in definit
+c:/Users/install/gyminf/redac/main.tex:1262: Illegal parameter number in definit
 ion of \Hy@tempa.
 <to be read again> 
                    L
-l.1310 ...aption{Exemple de flowchart "for each"}}
+l.1262 ...aption{Exemple de flowchart "for each"}}
                                                   
 You meant to type ## instead of #, right?
 Or maybe a } was forgotten somewhere earlier, and things
@@ -2333,158 +2315,158 @@ are all screwed up? I'm going to assume that you meant ##.
 
 
 [18]
-c:/Users/install/gyminf/redac/main.tex:1310: Illegal parameter number in definit
+c:/Users/install/gyminf/redac/main.tex:1262: Illegal parameter number in definit
 ion of \Hy@tempa.
 <to be read again> 
                    L
-l.1310 ...aption{Exemple de flowchart "for each"}}
+l.1262 ...aption{Exemple de flowchart "for each"}}
                                                   
 You meant to type ## instead of #, right?
 Or maybe a } was forgotten somewhere earlier, and things
 are all screwed up? I'm going to assume that you meant ##.
 
-c:/Users/install/gyminf/redac/main.tex:1310: Illegal parameter number in definit
+c:/Users/install/gyminf/redac/main.tex:1262: Illegal parameter number in definit
 ion of \Hy@tempa.
 <to be read again> 
                    L
-l.1310 ...aption{Exemple de flowchart "for each"}}
+l.1262 ...aption{Exemple de flowchart "for each"}}
                                                   
 You meant to type ## instead of #, right?
 Or maybe a } was forgotten somewhere earlier, and things
 are all screwed up? I'm going to assume that you meant ##.
 
-c:/Users/install/gyminf/redac/main.tex:1310: Illegal parameter number in definit
+c:/Users/install/gyminf/redac/main.tex:1262: Illegal parameter number in definit
 ion of \Hy@tempa.
 <to be read again> 
                    L
-l.1310 ...aption{Exemple de flowchart "for each"}}
+l.1262 ...aption{Exemple de flowchart "for each"}}
                                                   
 You meant to type ## instead of #, right?
 Or maybe a } was forgotten somewhere earlier, and things
 are all screwed up? I'm going to assume that you meant ##.
 
-c:/Users/install/gyminf/redac/main.tex:1310: Illegal parameter number in definit
+c:/Users/install/gyminf/redac/main.tex:1262: Illegal parameter number in definit
 ion of \Hy@tempa.
 <to be read again> 
                    L
-l.1310 ...aption{Exemple de flowchart "for each"}}
+l.1262 ...aption{Exemple de flowchart "for each"}}
                                                   
 You meant to type ## instead of #, right?
 Or maybe a } was forgotten somewhere earlier, and things
 are all screwed up? I'm going to assume that you meant ##.
 
-c:/Users/install/gyminf/redac/main.tex:1310: Illegal parameter number in definit
+c:/Users/install/gyminf/redac/main.tex:1262: Illegal parameter number in definit
 ion of \Hy@tempa.
 <to be read again> 
                    L
-l.1310 ...aption{Exemple de flowchart "for each"}}
+l.1262 ...aption{Exemple de flowchart "for each"}}
                                                   
 You meant to type ## instead of #, right?
 Or maybe a } was forgotten somewhere earlier, and things
 are all screwed up? I'm going to assume that you meant ##.
 
-c:/Users/install/gyminf/redac/main.tex:1310: Illegal parameter number in definit
+c:/Users/install/gyminf/redac/main.tex:1262: Illegal parameter number in definit
 ion of \Hy@tempa.
 <to be read again> 
                    L
-l.1310 ...aption{Exemple de flowchart "for each"}}
+l.1262 ...aption{Exemple de flowchart "for each"}}
                                                   
 You meant to type ## instead of #, right?
 Or maybe a } was forgotten somewhere earlier, and things
 are all screwed up? I'm going to assume that you meant ##.
 
-c:/Users/install/gyminf/redac/main.tex:1310: Illegal parameter number in definit
+c:/Users/install/gyminf/redac/main.tex:1262: Illegal parameter number in definit
 ion of \Hy@tempa.
 <to be read again> 
                    L
-l.1310 ...aption{Exemple de flowchart "for each"}}
+l.1262 ...aption{Exemple de flowchart "for each"}}
                                                   
 You meant to type ## instead of #, right?
 Or maybe a } was forgotten somewhere earlier, and things
 are all screwed up? I'm going to assume that you meant ##.
 
-c:/Users/install/gyminf/redac/main.tex:1310: Illegal parameter number in definit
+c:/Users/install/gyminf/redac/main.tex:1262: Illegal parameter number in definit
 ion of \Hy@tempa.
 <to be read again> 
                    L
-l.1310 ...aption{Exemple de flowchart "for each"}}
+l.1262 ...aption{Exemple de flowchart "for each"}}
                                                   
 You meant to type ## instead of #, right?
 Or maybe a } was forgotten somewhere earlier, and things
 are all screwed up? I'm going to assume that you meant ##.
 
-c:/Users/install/gyminf/redac/main.tex:1310: Illegal parameter number in definit
+c:/Users/install/gyminf/redac/main.tex:1262: Illegal parameter number in definit
 ion of \Hy@tempa.
 <to be read again> 
                    L
-l.1310 ...aption{Exemple de flowchart "for each"}}
+l.1262 ...aption{Exemple de flowchart "for each"}}
                                                   
 You meant to type ## instead of #, right?
 Or maybe a } was forgotten somewhere earlier, and things
 are all screwed up? I'm going to assume that you meant ##.
 
-c:/Users/install/gyminf/redac/main.tex:1310: Illegal parameter number in definit
+c:/Users/install/gyminf/redac/main.tex:1262: Illegal parameter number in definit
 ion of \Hy@tempa.
 <to be read again> 
                    L
-l.1310 ...aption{Exemple de flowchart "for each"}}
+l.1262 ...aption{Exemple de flowchart "for each"}}
                                                   
 You meant to type ## instead of #, right?
 Or maybe a } was forgotten somewhere earlier, and things
 are all screwed up? I'm going to assume that you meant ##.
 
-c:/Users/install/gyminf/redac/main.tex:1310: Illegal parameter number in definit
+c:/Users/install/gyminf/redac/main.tex:1262: Illegal parameter number in definit
 ion of \Hy@tempa.
 <to be read again> 
                    L
-l.1310 ...aption{Exemple de flowchart "for each"}}
+l.1262 ...aption{Exemple de flowchart "for each"}}
                                                   
 You meant to type ## instead of #, right?
 Or maybe a } was forgotten somewhere earlier, and things
 are all screwed up? I'm going to assume that you meant ##.
 
-c:/Users/install/gyminf/redac/main.tex:1310: Illegal parameter number in definit
+c:/Users/install/gyminf/redac/main.tex:1262: Illegal parameter number in definit
 ion of \Hy@tempa.
 <to be read again> 
                    L
-l.1310 ...aption{Exemple de flowchart "for each"}}
+l.1262 ...aption{Exemple de flowchart "for each"}}
                                                   
 You meant to type ## instead of #, right?
 Or maybe a } was forgotten somewhere earlier, and things
 are all screwed up? I'm going to assume that you meant ##.
 
-c:/Users/install/gyminf/redac/main.tex:1310: Illegal parameter number in definit
+c:/Users/install/gyminf/redac/main.tex:1262: Illegal parameter number in definit
 ion of \Hy@tempa.
 <to be read again> 
                    L
-l.1310 ...aption{Exemple de flowchart "for each"}}
+l.1262 ...aption{Exemple de flowchart "for each"}}
                                                   
 You meant to type ## instead of #, right?
 Or maybe a } was forgotten somewhere earlier, and things
 are all screwed up? I'm going to assume that you meant ##.
 
-c:/Users/install/gyminf/redac/main.tex:1310: Illegal parameter number in definit
+c:/Users/install/gyminf/redac/main.tex:1262: Illegal parameter number in definit
 ion of \Hy@tempa.
 <to be read again> 
                    L
-l.1310 ...aption{Exemple de flowchart "for each"}}
+l.1262 ...aption{Exemple de flowchart "for each"}}
                                                   
 You meant to type ## instead of #, right?
 Or maybe a } was forgotten somewhere earlier, and things
 are all screwed up? I'm going to assume that you meant ##.
 
-c:/Users/install/gyminf/redac/main.tex:1310: Illegal parameter number in definit
+c:/Users/install/gyminf/redac/main.tex:1262: Illegal parameter number in definit
 ion of \Hy@tempa.
 <to be read again> 
                    L
-l.1310 ...aption{Exemple de flowchart "for each"}}
+l.1262 ...aption{Exemple de flowchart "for each"}}
                                                   
 You meant to type ## instead of #, right?
 Or maybe a } was forgotten somewhere earlier, and things
 are all screwed up? I'm going to assume that you meant ##.
 
 
-Overfull \hbox (754.34218pt too wide) detected at line 1310
+Overfull \hbox (754.34218pt too wide) detected at line 1262
 [] \OMS/cmsy/m/n/10.95 ! []\OML/cmm/m/it/10.95 ;  [] \OMS/cmsy/m/n/10.95 ! []\O
 ML/cmm/m/it/10.95 ;  [] \OMS/cmsy/m/n/10.95 ! []\OML/cmm/m/it/10.95 ;  [] \OMS/
 cmsy/m/n/10.95 ! []\OML/cmm/m/it/10.95 ;  [] \OMS/cmsy/m/n/10.95 ! []\OML/cmm/m
@@ -2493,7 +2475,7 @@ cmsy/m/n/10.95 ! []\OML/cmm/m/it/10.95 ;  [] \OMS/cmsy/m/n/10.95 ! []\OML/cmm/m
 
 
 LaTeX Warning: Reference `fig:genfunc_flow' on page 19 undefined on input line 
-1310.
+1262.
 
 
 LaTeX Warning: `!h' float specifier changed to `!ht'.
@@ -2505,51 +2487,51 @@ LaTeX Warning: `!h' float specifier changed to `!ht'.
 [20]
 Runaway argument?
  enabled = True y = 1 def build(flag): output = not flag return outpu\ETC.
-c:/Users/install/gyminf/redac/main.tex:1310: Paragraph ended before \FV@BeginSc
+c:/Users/install/gyminf/redac/main.tex:1262: Paragraph ended before \FV@BeginSc
 anning was complete.
 <to be read again> 
                    \par 
-l.1310 ...aption{Exemple de flowchart "for each"}}
+l.1262 ...aption{Exemple de flowchart "for each"}}
                                                   
 I suspect you've forgotten a `}', causing me to apply this
 control sequence to too much text. How can we recover?
 My plan is to forget the whole thing and hope for the best.
 
-c:/Users/install/gyminf/redac/main.tex:1310: Illegal parameter number in definit
+c:/Users/install/gyminf/redac/main.tex:1262: Illegal parameter number in definit
 ion of \Hy@tempa.
 <to be read again> 
                    L
-l.1310 ...aption{Exemple de flowchart "for each"}}
+l.1262 ...aption{Exemple de flowchart "for each"}}
                                                   
 You meant to type ## instead of #, right?
 Or maybe a } was forgotten somewhere earlier, and things
 are all screwed up? I'm going to assume that you meant ##.
 
-c:/Users/install/gyminf/redac/main.tex:1310: Illegal parameter number in definit
+c:/Users/install/gyminf/redac/main.tex:1262: Illegal parameter number in definit
 ion of \Hy@tempa.
 <to be read again> 
                    L
-l.1310 ...aption{Exemple de flowchart "for each"}}
+l.1262 ...aption{Exemple de flowchart "for each"}}
                                                   
 You meant to type ## instead of #, right?
 Or maybe a } was forgotten somewhere earlier, and things
 are all screwed up? I'm going to assume that you meant ##.
 
-c:/Users/install/gyminf/redac/main.tex:1310: Illegal parameter number in definit
+c:/Users/install/gyminf/redac/main.tex:1262: Illegal parameter number in definit
 ion of \Hy@tempa.
 <to be read again> 
                    L
-l.1310 ...aption{Exemple de flowchart "for each"}}
+l.1262 ...aption{Exemple de flowchart "for each"}}
                                                   
 You meant to type ## instead of #, right?
 Or maybe a } was forgotten somewhere earlier, and things
 are all screwed up? I'm going to assume that you meant ##.
 
-c:/Users/install/gyminf/redac/main.tex:1310: Argument of \FV@BeginScanning has a
+c:/Users/install/gyminf/redac/main.tex:1262: Argument of \FV@BeginScanning has a
 n extra }.
 <inserted text> 
                 \par 
-l.1310 ...aption{Exemple de flowchart "for each"}}
+l.1262 ...aption{Exemple de flowchart "for each"}}
                                                   
 I've run across a `}' that doesn't seem to match anything.
 For example, `\def\a#1{...}' and `\a}' would produce
@@ -2560,20 +2542,20 @@ your `}' was spurious, just type `2' and it will go away.
 
 Runaway argument?
  // ##1100 const paramTypes = params.map(param => { // ... } else if \ETC.
-c:/Users/install/gyminf/redac/main.tex:1310: Paragraph ended before \FV@BeginSc
+c:/Users/install/gyminf/redac/main.tex:1262: Paragraph ended before \FV@BeginSc
 anning was complete.
 <to be read again> 
                    \par 
-l.1310 ...aption{Exemple de flowchart "for each"}}
+l.1262 ...aption{Exemple de flowchart "for each"}}
                                                   
 I suspect you've forgotten a `}', causing me to apply this
 control sequence to too much text. How can we recover?
 My plan is to forget the whole thing and hope for the best.
 
-c:/Users/install/gyminf/redac/main.tex:1310: Extra }, or forgotten \endgroup.
+c:/Users/install/gyminf/redac/main.tex:1262: Extra }, or forgotten \endgroup.
 <recently read> }
                  
-l.1310 ...aption{Exemple de flowchart "for each"}}
+l.1262 ...aption{Exemple de flowchart "for each"}}
                                                   
 I've deleted a group-closing symbol because it seems to be
 spurious, as in `$x}$'. But perhaps the } is legitimate and
@@ -2584,10 +2566,10 @@ deleted material, e.g., by typing `I$}'.
 \pydata@fh@0=\write10
 
 \openout10 = _FAD58DE7366495DB4650CFEFAC2FCD61.data.minted
-runsystem(latexminted config  --timestamp 20250831161910 FAD58DE7366495DB4650CFE
+runsystem(latexminted config  --timestamp 20250831175322 FAD58DE7366495DB4650CFE
 FAC2FCD61)...failed. 
 
-c:/Users/install/gyminf/redac/main.tex:1310: Package minted Error: minted v3+ e
+c:/Users/install/gyminf/redac/main.tex:1262: Package minted Error: minted v3+ e
 xecutable is not installed or is not added to PATH; or MiKTeX is being used wit
 h -aux-directory or -output-directory without setting a TEXMF_OUTPUT_DIRECTORY 
 environment variable.
@@ -2596,13 +2578,13 @@ See the minted package documentation for explanation.
 Type  H <return>  for immediate help.
  ...                                              
                                                   
-l.1310 ...aption{Exemple de flowchart "for each"}}
+l.1262 ...aption{Exemple de flowchart "for each"}}
                                                   
 (That was another \errmessage.)
 
 (./_minted/default.style.minted)
 
-c:/Users/install/gyminf/redac/main.tex:1310: Package minted Error: Cannot highl
+c:/Users/install/gyminf/redac/main.tex:1262: Package minted Error: Cannot highl
 ight code (minted executable is unavailable or disabled); attempting to typeset
  without highlighting.
 
@@ -2610,15 +2592,15 @@ See the minted package documentation for explanation.
 Type  H <return>  for immediate help.
  ...                                              
                                                   
-l.1310 ...aption{Exemple de flowchart "for each"}}
+l.1262 ...aption{Exemple de flowchart "for each"}}
                                                   
 (That was another \errmessage.)
 
-c:/Users/install/gyminf/redac/main.tex:1310: TeX capacity exceeded, sorry [input
+c:/Users/install/gyminf/redac/main.tex:1262: TeX capacity exceeded, sorry [input
  stack size=10000].
 \@noligs ->\@noligs 
                     \begingroup \lccode `\~=`\-\lowercase {\endgroup \def ~}...
-l.1310 ...aption{Exemple de flowchart "for each"}}
+l.1262 ...aption{Exemple de flowchart "for each"}}
                                                   
 If you really absolutely need more capacity,
 you can ask a wizard to enlarge me.
@@ -2626,16 +2608,16 @@ you can ask a wizard to enlarge me.
 
 
 Here is how much of LuaTeX's memory you used:
- 44679 strings out of 470118
- 156261,2373549 words of node,token memory allocated 46065 words of node memory still in use:
-   96 hlist, 1 vlist, 16 rule, 357 disc, 8 local_par, 1 dir, 1060 glue, 244 kern
-, 63 penalty, 3696 glyph, 1758 attribute, 322 glue_spec, 353 attribute_list, 1 i
+ 44566 strings out of 470118
+ 156266,2373549 words of node,token memory allocated 45489 words of node memory still in use:
+   96 hlist, 1 vlist, 16 rule, 357 disc, 8 local_par, 1 dir, 1024 glue, 244 kern
+, 53 penalty, 3695 glyph, 1678 attribute, 303 glue_spec, 337 attribute_list, 1 i
 f_stack, 2 shape, 1 pdf_start_link, 1 pdf_end_link, 3 pdf_dest, 3 pdf_action, 10
 0 pdf_colorstack nodes
-   avail lists: 1:5,2:7899,3:2016,4:310,5:240,6:154,7:6778,8:82,9:749,10:30,11:6
-85
- 71871 multiletter control sequences out of 65536+600000
+   avail lists: 1:6,2:7899,3:2016,4:310,5:240,6:152,7:6790,8:82,9:749,10:30,11:7
+10
+ 71783 multiletter control sequences out of 65536+600000
  88 fonts using 12977919 bytes
  10000i,12n,115p,1806b,2897s stack positions out of 10000i,1000n,20000p,200000b,200000s
-c:/Users/install/gyminf/redac/main.tex:1310:  ==> Fatal error occurred, no outpu
+c:/Users/install/gyminf/redac/main.tex:1262:  ==> Fatal error occurred, no outpu
 t PDF file produced!
