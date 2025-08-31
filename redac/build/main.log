@@ -1,4 +1,4 @@
-This is LuaHBTeX, Version 1.22.0 (MiKTeX 25.4) (format=lualatex 2025.8.30)  31 AUG 2025 11:23
+This is LuaHBTeX, Version 1.22.0 (MiKTeX 25.4) (format=lualatex 2025.8.30)  31 AUG 2025 13:22
  system commands enabled.
  file:line:error style messages enabled.
 **c:/Users/install/gyminf/redac/main.tex
@@ -1591,10 +1591,10 @@ If that doesn't work, type  X <return>  to quit.
 
 Package french.ldf Info: Setting StandardItemizeEnv=true for
 (french.ldf)             compatibility with enumitem package,
-(french.ldf)             reported on input line 125.
+(french.ldf)             reported on input line 117.
 Package french.ldf Info: Setting StandardEnumerateEnv=true for
 (french.ldf)             compatibility with enumitem package,
-(french.ldf)             reported on input line 125.
+(french.ldf)             reported on input line 117.
 Package csquotes Info: Checking for multilingual support...
 Package csquotes Info: ... found 'babel' package.
 Package csquotes Info: Adjusting default style.
@@ -1602,26 +1602,26 @@ Package csquotes Info: Redefining alias 'default' -> 'french'.
 (c:/Users/install/gyminf/redac/build/main.aux)
 \openout1 = main.aux
 
-LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 125.
-LaTeX Font Info:    ... okay on input line 125.
-LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 125.
-LaTeX Font Info:    ... okay on input line 125.
-LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 125.
-LaTeX Font Info:    ... okay on input line 125.
-LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 125.
-LaTeX Font Info:    ... okay on input line 125.
-LaTeX Font Info:    Checking defaults for TS1/cmr/m/n on input line 125.
-LaTeX Font Info:    ... okay on input line 125.
-LaTeX Font Info:    Checking defaults for TU/lmr/m/n on input line 125.
-LaTeX Font Info:    ... okay on input line 125.
-LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 125.
-LaTeX Font Info:    ... okay on input line 125.
-LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 125.
-LaTeX Font Info:    ... okay on input line 125.
-LaTeX Font Info:    Checking defaults for PD1/pdf/m/n on input line 125.
-LaTeX Font Info:    ... okay on input line 125.
-LaTeX Font Info:    Checking defaults for PU/pdf/m/n on input line 125.
-LaTeX Font Info:    ... okay on input line 125.
+LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 117.
+LaTeX Font Info:    ... okay on input line 117.
+LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 117.
+LaTeX Font Info:    ... okay on input line 117.
+LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 117.
+LaTeX Font Info:    ... okay on input line 117.
+LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 117.
+LaTeX Font Info:    ... okay on input line 117.
+LaTeX Font Info:    Checking defaults for TS1/cmr/m/n on input line 117.
+LaTeX Font Info:    ... okay on input line 117.
+LaTeX Font Info:    Checking defaults for TU/lmr/m/n on input line 117.
+LaTeX Font Info:    ... okay on input line 117.
+LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 117.
+LaTeX Font Info:    ... okay on input line 117.
+LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 117.
+LaTeX Font Info:    ... okay on input line 117.
+LaTeX Font Info:    Checking defaults for PD1/pdf/m/n on input line 117.
+LaTeX Font Info:    ... okay on input line 117.
+LaTeX Font Info:    Checking defaults for PU/pdf/m/n on input line 117.
+LaTeX Font Info:    ... okay on input line 117.
 
 Package fontspec Info: 
 (fontspec)             Adjusting the maths setup (use [no-math] to avoid
@@ -1629,59 +1629,59 @@ Package fontspec Info:
 
 \symlegacymaths=\mathgroup6
 LaTeX Font Info:    Overwriting symbol font `legacymaths' in version `bold'
-(Font)                  OT1/cmr/m/n --> OT1/cmr/bx/n on input line 125.
-LaTeX Font Info:    Redeclaring math accent \acute on input line 125.
-LaTeX Font Info:    Redeclaring math accent \grave on input line 125.
-LaTeX Font Info:    Redeclaring math accent \ddot on input line 125.
-LaTeX Font Info:    Redeclaring math accent \tilde on input line 125.
-LaTeX Font Info:    Redeclaring math accent \bar on input line 125.
-LaTeX Font Info:    Redeclaring math accent \breve on input line 125.
-LaTeX Font Info:    Redeclaring math accent \check on input line 125.
-LaTeX Font Info:    Redeclaring math accent \hat on input line 125.
-LaTeX Font Info:    Redeclaring math accent \dot on input line 125.
-LaTeX Font Info:    Redeclaring math accent \mathring on input line 125.
-LaTeX Font Info:    Redeclaring math symbol \Gamma on input line 125.
-LaTeX Font Info:    Redeclaring math symbol \Delta on input line 125.
-LaTeX Font Info:    Redeclaring math symbol \Theta on input line 125.
-LaTeX Font Info:    Redeclaring math symbol \Lambda on input line 125.
-LaTeX Font Info:    Redeclaring math symbol \Xi on input line 125.
-LaTeX Font Info:    Redeclaring math symbol \Pi on input line 125.
-LaTeX Font Info:    Redeclaring math symbol \Sigma on input line 125.
-LaTeX Font Info:    Redeclaring math symbol \Upsilon on input line 125.
-LaTeX Font Info:    Redeclaring math symbol \Phi on input line 125.
-LaTeX Font Info:    Redeclaring math symbol \Psi on input line 125.
-LaTeX Font Info:    Redeclaring math symbol \Omega on input line 125.
-LaTeX Font Info:    Redeclaring math symbol \mathdollar on input line 125.
-LaTeX Font Info:    Redeclaring symbol font `operators' on input line 125.
+(Font)                  OT1/cmr/m/n --> OT1/cmr/bx/n on input line 117.
+LaTeX Font Info:    Redeclaring math accent \acute on input line 117.
+LaTeX Font Info:    Redeclaring math accent \grave on input line 117.
+LaTeX Font Info:    Redeclaring math accent \ddot on input line 117.
+LaTeX Font Info:    Redeclaring math accent \tilde on input line 117.
+LaTeX Font Info:    Redeclaring math accent \bar on input line 117.
+LaTeX Font Info:    Redeclaring math accent \breve on input line 117.
+LaTeX Font Info:    Redeclaring math accent \check on input line 117.
+LaTeX Font Info:    Redeclaring math accent \hat on input line 117.
+LaTeX Font Info:    Redeclaring math accent \dot on input line 117.
+LaTeX Font Info:    Redeclaring math accent \mathring on input line 117.
+LaTeX Font Info:    Redeclaring math symbol \Gamma on input line 117.
+LaTeX Font Info:    Redeclaring math symbol \Delta on input line 117.
+LaTeX Font Info:    Redeclaring math symbol \Theta on input line 117.
+LaTeX Font Info:    Redeclaring math symbol \Lambda on input line 117.
+LaTeX Font Info:    Redeclaring math symbol \Xi on input line 117.
+LaTeX Font Info:    Redeclaring math symbol \Pi on input line 117.
+LaTeX Font Info:    Redeclaring math symbol \Sigma on input line 117.
+LaTeX Font Info:    Redeclaring math symbol \Upsilon on input line 117.
+LaTeX Font Info:    Redeclaring math symbol \Phi on input line 117.
+LaTeX Font Info:    Redeclaring math symbol \Psi on input line 117.
+LaTeX Font Info:    Redeclaring math symbol \Omega on input line 117.
+LaTeX Font Info:    Redeclaring math symbol \mathdollar on input line 117.
+LaTeX Font Info:    Redeclaring symbol font `operators' on input line 117.
 LaTeX Font Info:    Encoding `OT1' has changed to `TU' for symbol font
-(Font)              `operators' in the math version `normal' on input line 125.
+(Font)              `operators' in the math version `normal' on input line 117.
 
 LaTeX Font Info:    Overwriting symbol font `operators' in version `normal'
-(Font)                  OT1/cmr/m/n --> TU/lmr/m/n on input line 125.
+(Font)                  OT1/cmr/m/n --> TU/lmr/m/n on input line 117.
 LaTeX Font Info:    Encoding `OT1' has changed to `TU' for symbol font
-(Font)              `operators' in the math version `bold' on input line 125.
+(Font)              `operators' in the math version `bold' on input line 117.
 LaTeX Font Info:    Overwriting symbol font `operators' in version `bold'
-(Font)                  OT1/cmr/bx/n --> TU/lmr/m/n on input line 125.
+(Font)                  OT1/cmr/bx/n --> TU/lmr/m/n on input line 117.
 LaTeX Font Info:    Overwriting symbol font `operators' in version `normal'
-(Font)                  TU/lmr/m/n --> TU/lmr/m/n on input line 125.
+(Font)                  TU/lmr/m/n --> TU/lmr/m/n on input line 117.
 LaTeX Font Info:    Overwriting math alphabet `\mathit' in version `normal'
-(Font)                  OT1/cmr/m/it --> TU/lmr/m/it on input line 125.
+(Font)                  OT1/cmr/m/it --> TU/lmr/m/it on input line 117.
 LaTeX Font Info:    Overwriting math alphabet `\mathbf' in version `normal'
-(Font)                  OT1/cmr/bx/n --> TU/lmr/b/n on input line 125.
+(Font)                  OT1/cmr/bx/n --> TU/lmr/b/n on input line 117.
 LaTeX Font Info:    Overwriting math alphabet `\mathsf' in version `normal'
-(Font)                  OT1/cmss/m/n --> TU/lmss/m/n on input line 125.
+(Font)                  OT1/cmss/m/n --> TU/lmss/m/n on input line 117.
 LaTeX Font Info:    Overwriting math alphabet `\mathtt' in version `normal'
 (Font)                  OT1/cmtt/m/n --> TU/DejaVuSansMono(0)/m/n on input line
- 125.
+ 117.
 LaTeX Font Info:    Overwriting symbol font `operators' in version `bold'
-(Font)                  TU/lmr/m/n --> TU/lmr/b/n on input line 125.
+(Font)                  TU/lmr/m/n --> TU/lmr/b/n on input line 117.
 LaTeX Font Info:    Overwriting math alphabet `\mathit' in version `bold'
-(Font)                  OT1/cmr/bx/it --> TU/lmr/b/it on input line 125.
+(Font)                  OT1/cmr/bx/it --> TU/lmr/b/it on input line 117.
 LaTeX Font Info:    Overwriting math alphabet `\mathsf' in version `bold'
-(Font)                  OT1/cmss/bx/n --> TU/lmss/b/n on input line 125.
+(Font)                  OT1/cmss/bx/n --> TU/lmss/b/n on input line 117.
 LaTeX Font Info:    Overwriting math alphabet `\mathtt' in version `bold'
 (Font)                  OT1/cmtt/m/n --> TU/DejaVuSansMono(0)/b/n on input line
- 125.
+ 117.
 
 *geometry* driver: auto-detecting
 *geometry* detected driver: luatex
@@ -1775,12 +1775,10 @@ Package biblatex Info: Automatic encoding selection.
 Package biblatex Info: Trying to load bibliographic data...
 Package biblatex Info: ... file 'main.bbl' found.
  (c:/Users/install/gyminf/redac/build/main.bbl)
-Package biblatex Info: Reference section=0 on input line 125.
-Package biblatex Info: Reference segment=0 on input line 125.
-Package hyperref Info: Link coloring ON on input line 125.
-
-(c:/Users/install/gyminf/redac/build/main.out)
-(c:/Users/install/gyminf/redac/build/main.out)
+Package biblatex Info: Reference section=0 on input line 117.
+Package biblatex Info: Reference segment=0 on input line 117.
+Package hyperref Info: Link coloring ON on input line 117.
+ (./main.out) (./main.out)
 \@outlinefile=\write6
 
 \openout6 = main.out
@@ -1793,18 +1791,45 @@ Package hyperref Info: Link coloring ON on input line 125.
 
 warning  (pdf backend): ignoring duplicate destination with the name 'page.1'
 [1]
-LaTeX Font Info:    Trying to load font information for U+msa on input line 147
+c:/Users/install/gyminf/redac/main.tex:129: Undefined control sequence.
+<argument> \undefinedpagestyle 
+                               
+l.129 \thispagestyle{cover}
+                           
+The control sequence at the end of the top line
+of your error message was never \def'ed. If you have
+misspelled it (e.g., `\hobx'), type `I' and the correct
+spelling (e.g., `I\hbox'). Otherwise just continue,
+and I'll forget about whatever was undefined.
+
+LaTeX Font Info:    Trying to load font information for U+msa on input line 132
 .
- (C:/Users/install/AppData/Local/Programs/MiKTeX/tex/latex/amsfonts/umsa.fd
+(C:/Users/install/AppData/Local/Programs/MiKTeX/tex/latex/amsfonts/umsa.fd
 File: umsa.fd 2013/01/14 v3.01 AMS symbols A
 )
-LaTeX Font Info:    Trying to load font information for U+msb on input line 147
+LaTeX Font Info:    Trying to load font information for U+msb on input line 132
 .
+
 (C:/Users/install/AppData/Local/Programs/MiKTeX/tex/latex/amsfonts/umsb.fd
 File: umsb.fd 2013/01/14 v3.01 AMS symbols B
 )
 
-[2] (c:/Users/install/gyminf/redac/build/main.toc
+c:/Users/install/gyminf/redac/main.tex:145: LaTeX Error: There's no line here t
+o end.
+
+See the LaTeX manual or LaTeX Companion for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.145 L
+       e présent rapport n'a pas vocation à être un mode d'emploi ou une ...
+Your command was ignored.
+Type  I <command> <return>  to replace it with another command,
+or  <return>  to continue without it.
+
+
+
+[2] (./main.toc
 
 
 warning  (pdf backend): ignoring duplicate destination with the name 'page.1'
@@ -1814,23 +1839,21 @@ warning  (pdf backend): ignoring duplicate destination with the name 'page.1'
 \tf@toc=\write7
 
 \openout7 = main.toc
- (c:/Users/install/gyminf/redac/build/main.lof)
+ (./main.lof)
 \tf@lof=\write8
 
 \openout8 = main.lof
 
-(c:/Users/install/gyminf/redac/build/main.lot
-
-
-warning  (pdf backend): ignoring duplicate destination with the name 'page.2'
-[2])
+No file main.lot.
 \tf@lot=\write9
 
 \openout9 = main.lot
 
 
-[3]
-Overfull \hbox (5.22679pt too wide) in paragraph at lines 193--195
+
+warning  (pdf backend): ignoring duplicate destination with the name 'page.2'
+[2]
+Overfull \hbox (5.22679pt too wide) in paragraph at lines 186--188
 \TU/lmr/m/n/10.95 Main-te-nant dans une pers-pec-tive d’\TU/lmr/m/it/10.95 em-
 po-werment\TU/lmr/m/n/10.95 , telle que les four-nis-seurs d’IA nous le pro-me
 ttent ([]\TU/lmr/m/sc/10.95 Business
@@ -1838,24 +1861,26 @@ ttent ([]\TU/lmr/m/sc/10.95 Business
 
 
 
-[4
+[3
 
 ]
 
-[5]
-Overfull \hbox (32.2989pt too wide) in paragraph at lines 225--226
+[4]
+Overfull \hbox (32.2989pt too wide) in paragraph at lines 218--219
 []\TU/lmr/m/n/10.95 Hy-po-thèse : in-té-rêt de la re-pré-sen-ta-tion lo-gi-g
 ramme (\TU/lmr/m/it/10.95 flow-chart\TU/lmr/m/n/10.95 ) comme moyen d’ap-pren-
 tis-sage ([]\TU/lmr/m/sc/10.95 Zimmermann
  []
 
 
-Overfull \hbox (0.59088pt too wide) in paragraph at lines 244--247
+Overfull \hbox (0.59088pt too wide) in paragraph at lines 237--240
 []\TU/lmr/m/n/10.95 Pour sol-li-ci-ter les di-men-sions ``Run'' et ``In-ves-ti-g
 a-te'', nous uti-li-sons un in-ter-prète Py-thon |   []   |   []
  []
 
 
+
+[5]
 
 [6]
 
@@ -1864,34 +1889,32 @@ a-te'', nous uti-li-sons un in-ter-prète Py-thon |   []   |   []
 [8]
 
 [9]
-
-[10]
-Underfull \hbox (badness 10000) in paragraph at lines 358--359
+Underfull \hbox (badness 10000) in paragraph at lines 351--352
 
  []
 
 
 
-[11
+[10
 
 ]
-<app_vide_zones.png, id=587, 660.21657pt x 552.56438pt>
+<app_vide_zones.png, id=547, 660.21657pt x 552.56438pt>
 File: app_vide_zones.png Graphic file (type png)
 <use app_vide_zones.png>
-Package luatex.def Info: app_vide_zones.png  used on input line 395.
+Package luatex.def Info: app_vide_zones.png  used on input line 388.
 (luatex.def)             Requested size: 507.03093pt x 424.37135pt.
 
-Overfull \hbox (17.0pt too wide) in paragraph at lines 390--412
+Overfull \hbox (17.0pt too wide) in paragraph at lines 383--405
 []$[]$ 
  []
 
 \pydata@fh@0=\write10
 
 \openout10 = _FAD58DE7366495DB4650CFEFAC2FCD61.data.minted
-runsystem(latexminted config  --timestamp 20250831112327 FAD58DE7366495DB4650CFE
+runsystem(latexminted config  --timestamp 20250831132259 FAD58DE7366495DB4650CFE
 FAC2FCD61)...failed. 
 
-c:/Users/install/gyminf/redac/main.tex:426: Package minted Error: minted v3+ ex
+c:/Users/install/gyminf/redac/main.tex:419: Package minted Error: minted v3+ ex
 ecutable is not installed or is not added to PATH; or MiKTeX is being used with
  -aux-directory or -output-directory without setting a TEXMF_OUTPUT_DIRECTORY e
 nvironment variable.
@@ -1900,42 +1923,77 @@ See the minted package documentation for explanation.
 Type  H <return>  for immediate help.
  ...                                              
                                                   
-l.426 \end{minted}
+l.419 \end{minted}
                   
 (That was another \errmessage.)
 
 (./_minted/default.style.minted)
 (./_minted/7B47BD6BCEF217C56943A2D1391640AB.highlight.minted
 
-[12
+[11
 
 <./app_vide_zones.png>])
-<Flowchart_def-f-a-return.png, id=599, 581.92406pt x 421.575pt>
+<Flowchart_def-f-a-return.png, id=560, 581.92406pt x 421.575pt>
 File: Flowchart_def-f-a-return.png Graphic file (type png)
 <use Flowchart_def-f-a-return.png>
-Package luatex.def Info: Flowchart_def-f-a-return.png  used on input line 431.
+Package luatex.def Info: Flowchart_def-f-a-return.png  used on input line 424.
 (luatex.def)             Requested size: 409.72125pt x 296.83087pt.
-<Defi_Console_def-f-a-return.png, id=600, 694.84593pt x 331.2375pt>
+<Defi_Console_def-f-a-return.png, id=561, 694.84593pt x 331.2375pt>
 File: Defi_Console_def-f-a-return.png Graphic file (type png)
 <use Defi_Console_def-f-a-return.png>
 Package luatex.def Info: Defi_Console_def-f-a-return.png  used on input line 43
-9.
+2.
 (luatex.def)             Requested size: 409.72125pt x 195.31216pt.
 
-Underfull \hbox (badness 10000) in paragraph at lines 435--442
+Underfull \hbox (badness 10000) in paragraph at lines 428--435
 
  []
 
 
 
-[13<./Flowchart_def-f-a-return.png><./Defi_Console_def-f-a-return.png>]
-<ui_choix.png, id=607, 1011.78pt x 429.10312pt>
+[12<./Flowchart_def-f-a-return.png><./Defi_Console_def-f-a-return.png>]
+<ui_choix.png, id=570, 1011.78pt x 429.10312pt>
 File: ui_choix.png Graphic file (type png)
 <use ui_choix.png>
-Package luatex.def Info: ui_choix.png  used on input line 451.
+Package luatex.def Info: ui_choix.png  used on input line 444.
 (luatex.def)             Requested size: 409.72125pt x 173.76616pt.
 
-Overfull \hbox (17.0pt too wide) in paragraph at lines 446--465
+Overfull \hbox (17.0pt too wide) in paragraph at lines 439--458
+[]$[]$ 
+ []
+
+
+
+[13
+
+<./ui_choix.png>]
+<app_choix_def.png, id=576, 963.6pt x 542.025pt>
+File: app_choix_def.png Graphic file (type png)
+<use app_choix_def.png>
+Package luatex.def Info: app_choix_def.png  used on input line 473.
+(luatex.def)             Requested size: 512.14963pt x 288.09067pt.
+
+Overfull \hbox (17.0pt too wide) in paragraph at lines 461--479
+[]$[]$ 
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 558--559
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 559--560
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 560--561
+
+ []
+
+
+Overfull \hbox (17.0pt too wide) in paragraph at lines 494--564
 []$[]$ 
  []
 
@@ -1943,67 +2001,41 @@ Overfull \hbox (17.0pt too wide) in paragraph at lines 446--465
 
 [14
 
-<./ui_choix.png>]
-<app_choix_def.png, id=613, 963.6pt x 542.025pt>
-File: app_choix_def.png Graphic file (type png)
-<use app_choix_def.png>
-Package luatex.def Info: app_choix_def.png  used on input line 480.
-(luatex.def)             Requested size: 512.14963pt x 288.09067pt.
-
-Overfull \hbox (17.0pt too wide) in paragraph at lines 468--486
-[]$[]$ 
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 565--566
-
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 566--567
-
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 567--568
-
- []
-
-
-Overfull \hbox (17.0pt too wide) in paragraph at lines 501--571
-[]$[]$ 
- []
-
-
-
-[15
-
 <./app_choix_def.png>]
 
-[16]
-Overfull \hbox (54.62851pt too wide) in paragraph at lines 587--588
+[15]
+
+LaTeX Warning: Reference `fig:proposed_architecture_v3' on page 16 undefined on
+ input line 580.
+
+
+Overfull \hbox (54.62851pt too wide) in paragraph at lines 580--581
 []\TU/lmr/m/n/10.95 La gé-né-ra-tion d’un exer-cice suit un flux contrôl
 é, or-ches-tré par la fonc-tion [][][][][][]
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 650--651
+Underfull \hbox (badness 10000) in paragraph at lines 643--644
 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 652--653
+Underfull \hbox (badness 10000) in paragraph at lines 645--646
 
  []
 
 
+LaTeX Warning: Reference `fig:architecture' on page 16 undefined on input line 
+647.
 
-[17
+
+
+[16
 
 ]
 
-[18]
-Overfull \hbox (30.40361pt too wide) in paragraph at lines 685--686
+[17]
+Overfull \hbox (30.40361pt too wide) in paragraph at lines 678--679
 []\TU/lmr/m/n/10.95 ga-ran-tit les quo-tas (\TU/DejaVuSansMono(0)/m/n/10.95 ensu
 reVariablesForOptions\TU/lmr/m/n/10.95 , [][]ligne 1452[][]), et crée au be-soi
 n via \TU/DejaVuSansMono(0)/m/n/10.95 declareVariable
@@ -2011,8 +2043,8 @@ n via \TU/DejaVuSansMono(0)/m/n/10.95 declareVariable
 
 
 
-[19]
-Overfull \hbox (726.9672pt too wide) detected at line 732
+[18]
+Overfull \hbox (726.9672pt too wide) detected at line 725
 [] \OMS/cmsy/m/n/10.95 ! []\OML/cmm/m/it/10.95 ;  [] \OMS/cmsy/m/n/10.95 ! []\O
 ML/cmm/m/it/10.95 ;  [] \OMS/cmsy/m/n/10.95 ! []\OML/cmm/m/it/10.95 ;  [] \OMS/
 cmsy/m/n/10.95 ! []\OML/cmm/m/it/10.95 ;  [] \OMS/cmsy/m/n/10.95 ! []\OML/cmm/m
@@ -2020,15 +2052,19 @@ cmsy/m/n/10.95 ! []\OML/cmm/m/it/10.95 ;  [] \OMS/cmsy/m/n/10.95 ! []\OML/cmm/m
  []
 
 
+LaTeX Warning: Reference `fig:genfunc_flow' on page 19 undefined on input line 
+735.
+
+
 LaTeX Warning: `!h' float specifier changed to `!ht'.
 
 
 
-[20]
+[19]
 
-[21] (./_minted/7B47BD6BCEF217C56943A2D1391640AB.highlight.minted)
+[20] (./_minted/7B47BD6BCEF217C56943A2D1391640AB.highlight.minted)
 
-c:/Users/install/gyminf/redac/main.tex:855: Package minted Error: Cannot highli
+c:/Users/install/gyminf/redac/main.tex:848: Package minted Error: Cannot highli
 ght code (minted executable is unavailable or disabled); attempting to typeset 
 without highlighting.
 
@@ -2036,15 +2072,15 @@ See the minted package documentation for explanation.
 Type  H <return>  for immediate help.
  ...                                              
                                                   
-l.855 \end{minted}
+l.848 \end{minted}
                   
 (That was another \errmessage.)
 
 
 
-[22]
+[21]
 
-c:/Users/install/gyminf/redac/main.tex:872: Package minted Error: Cannot highli
+c:/Users/install/gyminf/redac/main.tex:865: Package minted Error: Cannot highli
 ght code (minted executable is unavailable or disabled); attempting to typeset 
 without highlighting.
 
@@ -2052,41 +2088,41 @@ See the minted package documentation for explanation.
 Type  H <return>  for immediate help.
  ...                                              
                                                   
-l.872 \end{minted}
+l.865 \end{minted}
                   
 (That was another \errmessage.)
 
 
-Overfull \hbox (11.27354pt too wide) in paragraph at lines 873--875
+Overfull \hbox (11.27354pt too wide) in paragraph at lines 866--868
 [][][][][][] \TU/lmr/m/n/10.95 une va-riable exis-tante. Dans notre cas, elle la
  trouve et re-tourne [][][][][][].
  []
 
 
-Overfull \hbox (4.4938pt too wide) in paragraph at lines 879--880
+Overfull \hbox (4.4938pt too wide) in paragraph at lines 872--873
 \TU/lmr/bx/n/10.95 que-Var-Name(’bool’)[] \TU/lmr/m/n/10.95 est fait. Cette fonc-tion choi-sit un nom s
 é-man-tique dans [][][][][][],
  []
 
 
 
-[23]
+[22]
 
-[24]
-Underfull \hbox (badness 10000) in paragraph at lines 929--939
+[23]
+Underfull \hbox (badness 10000) in paragraph at lines 922--932
 
  []
 
-c:/Users/install/gyminf/redac/main.tex:956: Misplaced \noalign.
+c:/Users/install/gyminf/redac/main.tex:949: Misplaced \noalign.
 \hline ->\noalign 
                   {\ifnum 0=`}\fi \hrule \@height \arrayrulewidth \futurelet...
-l.956 \hline
+l.949 \hline
             
 I expect to see \noalign only after the \cr of
 an alignment. Proceed, and I'll ignore this case.
 
 
-c:/Users/install/gyminf/redac/main.tex:965: Package minted Error: Cannot highli
+c:/Users/install/gyminf/redac/main.tex:958: Package minted Error: Cannot highli
 ght code (minted executable is unavailable or disabled); attempting to typeset 
 without highlighting.
 
@@ -2094,30 +2130,30 @@ See the minted package documentation for explanation.
 Type  H <return>  for immediate help.
  ...                                              
                                                   
-l.965 \end{minted}
+l.958 \end{minted}
                   
 (That was another \errmessage.)
 
 
-Overfull \hbox (2658.82027pt too wide) in paragraph at lines 971--971
+Overfull \hbox (2658.82027pt too wide) in paragraph at lines 964--964
 []    \TU/DejaVuSansMono(0)/m/n/10.95 Module(body=[Assign(targets=[Name(id='x', ctx=Store())], value=Constant(value=1)), If(test=Compare(left=Name(id='x', ctx=Load()), ops=[Gt()], comparators=[Constant(value=0)]), body=[Assign(targets=[Name(id='y', ctx=Store())], value=Constant(value=1))], orelse=[Assign(targets=[Name(id='y', ctx=Store())], value=UnaryOp(op=USub(), operand=Constant(value=1)))]), Expr(value=Call(func=Name(id='print', ctx=Load()), args=[Name(id='y', ctx=Load())], keywords=[]))], type_ignores=[])[] 
  []
 
 
 
-[25
+[24
 
 
 ]
 
-[26]
-Overfull \hbox (160.28058pt too wide) in paragraph at lines 1046--1046
+[25]
+Overfull \hbox (160.28058pt too wide) in paragraph at lines 1039--1039
 []\TU/DejaVuSansMono(0)/m/n/10.95 [('node01', 'Start'), ('node02', 'x = 1'), ('n
 ode03', 'x > 0'), ('node04', 'y = 1'), ('node05', 'y = -
  []
 
 
-Overfull \hbox (898.63531pt too wide) in paragraph at lines 1046--1046
+Overfull \hbox (898.63531pt too wide) in paragraph at lines 1039--1039
 []\TU/DejaVuSansMono(0)/m/n/10.95 {('node02', 'node03', ''), ('node04', 'node06'
 , ''), ('node03', 'node05', 'Non'), ('node06', 'node07', ''), ('node03', 'node04
 ', 'Oui'), ('node01', 'node02', ''), ('node07', 'node08', ''), ('node05', 'node0
@@ -2125,7 +2161,7 @@ Overfull \hbox (898.63531pt too wide) in paragraph at lines 1046--1046
  []
 
 
-Overfull \hbox (13.13196pt too wide) in paragraph at lines 1060--1062
+Overfull \hbox (13.13196pt too wide) in paragraph at lines 1053--1055
 \TU/lmr/m/n/10.95 nous vi-sons des \TU/lmr/bx/n/10.95 concepts al-go-rith-miques
  \TU/lmr/m/n/10.95 li-sibles ([][][][][][]/[][][][][][]/[][][][][][]/[][][][][]
 []). 
@@ -2133,233 +2169,697 @@ Overfull \hbox (13.13196pt too wide) in paragraph at lines 1060--1062
 
 
 
-[27]
-Overfull \hbox (7.46205pt too wide) in paragraph at lines 1104--1105
+[26]
+Overfull \hbox (7.46205pt too wide) in paragraph at lines 1097--1098
 []\TU/lmr/m/n/10.95 Pour chaque nœud AST ren-con-tré, la mé-thode [][][][][]
 [] ap-pelle le vi-si-teur spé-ci-fique (ex : [][][][][][]
  []
 
 
 
-[28]
-Underfull \hbox (badness 10000) in paragraph at lines 1132--1132
+[27]
+
+LaTeX Warning: Reference `tab:node-types' on page 28 undefined on input line 11
+23.
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 1138--1138
 []|[][][][][][]
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 1132--1132
+Underfull \hbox (badness 10000) in paragraph at lines 1138--1138
 \TU/lmr/m/n/10.95 (im-pli-cite),
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 1132--1132
+Underfull \hbox (badness 10000) in paragraph at lines 1138--1138
 [][][][][][]
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 1134--1134
+Underfull \hbox (badness 10000) in paragraph at lines 1140--1140
 []|[][][][][][]\TU/lmr/m/n/10.95 ,
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 1134--1134
+Underfull \hbox (badness 10000) in paragraph at lines 1140--1140
 [][][][][][] \TU/lmr/m/n/10.95 (conte-
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 1134--1134
+Underfull \hbox (badness 10000) in paragraph at lines 1140--1140
 \TU/lmr/m/n/10.95 nant [][][][][][]),
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 1134--1134
+Underfull \hbox (badness 10000) in paragraph at lines 1140--1140
 [][][][][][] \TU/lmr/m/n/10.95 (via
  []
 
 
-Underfull \hbox (badness 1005) in paragraph at lines 1135--1135
+Underfull \hbox (badness 1005) in paragraph at lines 1141--1141
 \TU/lmr/m/n/10.95 gra-phique et la li-si-bi-
  []
 
 
-Underfull \hbox (badness 1831) in paragraph at lines 1135--1135
+Underfull \hbox (badness 1831) in paragraph at lines 1141--1141
 []|\TU/lmr/m/n/10.95 Point de conver-gence où plu-sieurs che-mins
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 1137--1137
+Underfull \hbox (badness 10000) in paragraph at lines 1143--1143
 []|[][][][][][]\TU/lmr/m/n/10.95 ,
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 1138--1138
+Underfull \hbox (badness 10000) in paragraph at lines 1144--1144
 []|[][][][][][] \TU/lmr/m/n/10.95 (avec
  []
 
 
-Underfull \hbox (badness 1509) in paragraph at lines 1138--1138
+Underfull \hbox (badness 1509) in paragraph at lines 1144--1144
 \TU/lmr/m/n/10.95 man-ti-que-ment les opé-ra-tions d’en-trée/sor-tie,
  []
 
 
 
-[29
+[28]
+Underfull \hbox (badness 10000) in paragraph at lines 1168--1184
 
-]
-
-Package hyperref Warning: Token not allowed in a PDF string (Unicode):
-(hyperref)                removing `\colorbox' on input line 1155.
-
-
-Overfull \hbox (11.68202pt too wide) in paragraph at lines 1161--1162
-[]\TU/lmr/bx/n/10.95 Vi-site de la branche ”Oui” : \TU/lmr/m/n/10.95 Il ap-p
-elle [][][][][][] pour la liste d’ins-truc-tions de [][][][][][].
  []
 
-c:/Users/install/gyminf/redac/main.tex:1168: Missing $ inserted.
+
+Underfull \hbox (badness 10000) in paragraph at lines 1186--1206
+
+ []
+
+
+Package hyperref Warning: Token not allowed in a PDF string (Unicode):
+(hyperref)                removing `\colorbox' on input line 1210.
+
+
+
+[29]
+c:/Users/install/gyminf/redac/main.tex:1219: Missing $ inserted.
 <inserted text> 
                 $
-l.1168 ... la méthode visit et la méthode visit_
-                                                  body.
+l.1219 ...ode\_ids} passée à \code{visit_body()}
+                                                  . C'est une liste car un b...
 I've inserted a begin-math/end-math symbol since I think
 you left one out. Proceed, with fingers crossed.
 
-c:/Users/install/gyminf/redac/main.tex:1169: Missing $ inserted.
+c:/Users/install/gyminf/redac/main.tex:1219: Extra }, or forgotten $.
+<recently read> \egroup 
+                        
+l.1219 ...ode\_ids} passée à \code{visit_body()}
+                                                  . C'est une liste car un b...
+I've deleted a group-closing symbol because it seems to be
+spurious, as in `$x}$'. But perhaps the } is legitimate and
+you forgot something else, as in `\hbox{$x}'. In such cases
+the way to recover is to insert both the forgotten and the
+deleted material, e.g., by typing `I$}'.
+
+c:/Users/install/gyminf/redac/main.tex:1219: Extra }, or forgotten $.
+\color@b@x ...hbox {\kern \fboxsep {\set@color #3}
+                                                  \kern \fboxsep }\dimen@ \h...
+l.1219 ...ode\_ids} passée à \code{visit_body()}
+                                                  . C'est une liste car un b...
+I've deleted a group-closing symbol because it seems to be
+spurious, as in `$x}$'. But perhaps the } is legitimate and
+you forgot something else, as in `\hbox{$x}'. In such cases
+the way to recover is to insert both the forgotten and the
+deleted material, e.g., by typing `I$}'.
+
+c:/Users/install/gyminf/redac/main.tex:1219: Extra }, or forgotten $.
+\color@b@x ...xsep {\set@color #3}\kern \fboxsep }
+                                                  \dimen@ \ht \z@ \advance \...
+l.1219 ...ode\_ids} passée à \code{visit_body()}
+                                                  . C'est une liste car un b...
+I've deleted a group-closing symbol because it seems to be
+spurious, as in `$x}$'. But perhaps the } is legitimate and
+you forgot something else, as in `\hbox{$x}'. In such cases
+the way to recover is to insert both the forgotten and the
+deleted material, e.g., by typing `I$}'.
+
+
+c:/Users/install/gyminf/redac/main.tex:1220: LaTeX Error: Command \end{itemize}
+ invalid in math mode.
+
+See the LaTeX manual or LaTeX Companion for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.1220     \end{itemize}
+                        
+Try typing  <return>  to proceed.
+If that doesn't work, type  X <return>  to quit.
+
+c:/Users/install/gyminf/redac/main.tex:1220: Missing $ inserted.
 <inserted text> 
                 $
-l.1169 
-       
+l.1220     \end{itemize}
+                        
 I've inserted a begin-math/end-math symbol since I think
 you left one out. Proceed, with fingers crossed.
+
+Missing character: There is no ê (U+00EA) in font cmmi10!
+Missing character: There is no ê (U+00EA) in font cmmi10!
+c:/Users/install/gyminf/redac/main.tex:1220: Missing } inserted.
+<inserted text> 
+                }
+l.1220     \end{itemize}
+                        
+I've inserted something that you may have forgotten.
+(See the <inserted text> above.)
+With luck, this will get me unwedged. But if you
+really didn't forget anything, try typing `2' now; then
+my insertion and my current dilemma will both disappear.
+
+c:/Users/install/gyminf/redac/main.tex:1220: Missing } inserted.
+<inserted text> 
+                }
+l.1220     \end{itemize}
+                        
+I've inserted something that you may have forgotten.
+(See the <inserted text> above.)
+With luck, this will get me unwedged. But if you
+really didn't forget anything, try typing `2' now; then
+my insertion and my current dilemma will both disappear.
+
+c:/Users/install/gyminf/redac/main.tex:1220: Missing } inserted.
+<inserted text> 
+                }
+l.1220     \end{itemize}
+                        
+I've inserted something that you may have forgotten.
+(See the <inserted text> above.)
+With luck, this will get me unwedged. But if you
+really didn't forget anything, try typing `2' now; then
+my insertion and my current dilemma will both disappear.
+
+c:/Users/install/gyminf/redac/main.tex:1221: Missing $ inserted.
+<inserted text> 
+                $
+l.1221 ...de \code{visit()} et \code{visit_body()}
+                                                  
+I've inserted a begin-math/end-math symbol since I think
+you left one out. Proceed, with fingers crossed.
+
+c:/Users/install/gyminf/redac/main.tex:1221: Extra }, or forgotten $.
+<recently read> \egroup 
+                        
+l.1221 ...de \code{visit()} et \code{visit_body()}
+                                                  
+I've deleted a group-closing symbol because it seems to be
+spurious, as in `$x}$'. But perhaps the } is legitimate and
+you forgot something else, as in `\hbox{$x}'. In such cases
+the way to recover is to insert both the forgotten and the
+deleted material, e.g., by typing `I$}'.
+
+c:/Users/install/gyminf/redac/main.tex:1221: Extra }, or forgotten $.
+\color@b@x ...hbox {\kern \fboxsep {\set@color #3}
+                                                  \kern \fboxsep }\dimen@ \h...
+l.1221 ...de \code{visit()} et \code{visit_body()}
+                                                  
+I've deleted a group-closing symbol because it seems to be
+spurious, as in `$x}$'. But perhaps the } is legitimate and
+you forgot something else, as in `\hbox{$x}'. In such cases
+the way to recover is to insert both the forgotten and the
+deleted material, e.g., by typing `I$}'.
+
+c:/Users/install/gyminf/redac/main.tex:1221: Extra }, or forgotten $.
+\color@b@x ...xsep {\set@color #3}\kern \fboxsep }
+                                                  \dimen@ \ht \z@ \advance \...
+l.1221 ...de \code{visit()} et \code{visit_body()}
+                                                  
+I've deleted a group-closing symbol because it seems to be
+spurious, as in `$x}$'. But perhaps the } is legitimate and
+you forgot something else, as in `\hbox{$x}'. In such cases
+the way to recover is to insert both the forgotten and the
+deleted material, e.g., by typing `I$}'.
+
+c:/Users/install/gyminf/redac/main.tex:1223: Missing $ inserted.
+<inserted text> 
+                $
+l.1223         \item
+                     Chaque appel à \code{visit()} ou \code{visit_body()} r...
+I've inserted a begin-math/end-math symbol since I think
+you left one out. Proceed, with fingers crossed.
+
+c:/Users/install/gyminf/redac/main.tex:1223: Missing } inserted.
+<inserted text> 
+                }
+l.1223         \item
+                     Chaque appel à \code{visit()} ou \code{visit_body()} r...
+I've inserted something that you may have forgotten.
+(See the <inserted text> above.)
+With luck, this will get me unwedged. But if you
+really didn't forget anything, try typing `2' now; then
+my insertion and my current dilemma will both disappear.
+
+c:/Users/install/gyminf/redac/main.tex:1223: Missing \endgroup inserted.
+<inserted text> 
+                \endgroup 
+l.1223         \item
+                     Chaque appel à \code{visit()} ou \code{visit_body()} r...
+I've inserted something that you may have forgotten.
+(See the <inserted text> above.)
+With luck, this will get me unwedged. But if you
+really didn't forget anything, try typing `2' now; then
+my insertion and my current dilemma will both disappear.
+
+
+c:/Users/install/gyminf/redac/main.tex:1223: LaTeX Error: Not allowed in LR mod
+e.
+
+See the LaTeX manual or LaTeX Companion for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.1223         \item C
+                      haque appel à \code{visit()} ou \code{visit_body()} r...
+You've lost some text.  Try typing  <return>  to proceed.
+If that doesn't work, type  X <return>  to quit.
+
+
+c:/Users/install/gyminf/redac/main.tex:1223: LaTeX Error: Not allowed in LR mod
+e.
+
+See the LaTeX manual or LaTeX Companion for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.1223         \item C
+                      haque appel à \code{visit()} ou \code{visit_body()} r...
+You've lost some text.  Try typing  <return>  to proceed.
+If that doesn't work, type  X <return>  to quit.
+
+c:/Users/install/gyminf/redac/main.tex:1223: Missing } inserted.
+<inserted text> 
+                }
+l.1223         \item C
+                      haque appel à \code{visit()} ou \code{visit_body()} r...
+I've inserted something that you may have forgotten.
+(See the <inserted text> above.)
+With luck, this will get me unwedged. But if you
+really didn't forget anything, try typing `2' now; then
+my insertion and my current dilemma will both disappear.
+
+c:/Users/install/gyminf/redac/main.tex:1223: Missing } inserted.
+<inserted text> 
+                }
+l.1223         \item C
+                      haque appel à \code{visit()} ou \code{visit_body()} r...
+I've inserted something that you may have forgotten.
+(See the <inserted text> above.)
+With luck, this will get me unwedged. But if you
+really didn't forget anything, try typing `2' now; then
+my insertion and my current dilemma will both disappear.
+
+
+c:/Users/install/gyminf/redac/main.tex:1223: LaTeX Error: Something's wrong--pe
+rhaps a missing \item.
+
+See the LaTeX manual or LaTeX Companion for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.1223         \item C
+                      haque appel à \code{visit()} ou \code{visit_body()} r...
+Try typing  <return>  to proceed.
+If that doesn't work, type  X <return>  to quit.
+
+c:/Users/install/gyminf/redac/main.tex:1223: Missing $ inserted.
+<inserted text> 
+                $
+l.1223 ...à \code{visit()} ou \code{visit_body()}
+                                                   retourne une liste d'iden...
+I've inserted a begin-math/end-math symbol since I think
+you left one out. Proceed, with fingers crossed.
+
+c:/Users/install/gyminf/redac/main.tex:1223: Extra }, or forgotten $.
+<recently read> \egroup 
+                        
+l.1223 ...à \code{visit()} ou \code{visit_body()}
+                                                   retourne une liste d'iden...
+I've deleted a group-closing symbol because it seems to be
+spurious, as in `$x}$'. But perhaps the } is legitimate and
+you forgot something else, as in `\hbox{$x}'. In such cases
+the way to recover is to insert both the forgotten and the
+deleted material, e.g., by typing `I$}'.
+
+c:/Users/install/gyminf/redac/main.tex:1223: Extra }, or forgotten $.
+\color@b@x ...hbox {\kern \fboxsep {\set@color #3}
+                                                  \kern \fboxsep }\dimen@ \h...
+l.1223 ...à \code{visit()} ou \code{visit_body()}
+                                                   retourne une liste d'iden...
+I've deleted a group-closing symbol because it seems to be
+spurious, as in `$x}$'. But perhaps the } is legitimate and
+you forgot something else, as in `\hbox{$x}'. In such cases
+the way to recover is to insert both the forgotten and the
+deleted material, e.g., by typing `I$}'.
+
+c:/Users/install/gyminf/redac/main.tex:1223: Extra }, or forgotten $.
+\color@b@x ...xsep {\set@color #3}\kern \fboxsep }
+                                                  \dimen@ \ht \z@ \advance \...
+l.1223 ...à \code{visit()} ou \code{visit_body()}
+                                                   retourne une liste d'iden...
+I've deleted a group-closing symbol because it seems to be
+spurious, as in `$x}$'. But perhaps the } is legitimate and
+you forgot something else, as in `\hbox{$x}'. In such cases
+the way to recover is to insert both the forgotten and the
+deleted material, e.g., by typing `I$}'.
+
+
+c:/Users/install/gyminf/redac/main.tex:1224: LaTeX Error: Command \end{itemize}
+ invalid in math mode.
+
+See the LaTeX manual or LaTeX Companion for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.1224     \end{itemize}
+                        
+Try typing  <return>  to proceed.
+If that doesn't work, type  X <return>  to quit.
+
+c:/Users/install/gyminf/redac/main.tex:1224: Missing $ inserted.
+<inserted text> 
+                $
+l.1224     \end{itemize}
+                        
+I've inserted a begin-math/end-math symbol since I think
+you left one out. Proceed, with fingers crossed.
+
+Missing character: There is no œ (U+0153) in font cmmi10!
+Missing character: There is no œ (U+0153) in font cmmi10!
+Missing character: There is no à (U+00E0) in font cmmi10!
+Missing character: There is no à (U+00E0) in font cmmi10!
+Missing character: There is no œ (U+0153) in font cmmi10!
+Missing character: There is no œ (U+0153) in font cmmi10!
+Missing character: There is no é (U+00E9) in font cmmi10!
+Missing character: There is no é (U+00E9) in font cmmi10!
+c:/Users/install/gyminf/redac/main.tex:1224: Missing } inserted.
+<inserted text> 
+                }
+l.1224     \end{itemize}
+                        
+I've inserted something that you may have forgotten.
+(See the <inserted text> above.)
+With luck, this will get me unwedged. But if you
+really didn't forget anything, try typing `2' now; then
+my insertion and my current dilemma will both disappear.
+
+c:/Users/install/gyminf/redac/main.tex:1224: Missing } inserted.
+<inserted text> 
+                }
+l.1224     \end{itemize}
+                        
+I've inserted something that you may have forgotten.
+(See the <inserted text> above.)
+With luck, this will get me unwedged. But if you
+really didn't forget anything, try typing `2' now; then
+my insertion and my current dilemma will both disappear.
+
+c:/Users/install/gyminf/redac/main.tex:1224: Missing } inserted.
+<inserted text> 
+                }
+l.1224     \end{itemize}
+                        
+I've inserted something that you may have forgotten.
+(See the <inserted text> above.)
+With luck, this will get me unwedged. But if you
+really didn't forget anything, try typing `2' now; then
+my insertion and my current dilemma will both disappear.
+
+c:/Users/install/gyminf/redac/main.tex:1225: Undefined control sequence.
+\enit@enditemize ->\enit@after 
+                               \endlist \ifx \enit@series \relax \else \ifnu...
+l.1225 \end{itemize}
+                    
+The control sequence at the end of the top line
+of your error message was never \def'ed. If you have
+misspelled it (e.g., `\hobx'), type `I' and the correct
+spelling (e.g., `I\hbox'). Otherwise just continue,
+and I'll forget about whatever was undefined.
+
+c:/Users/install/gyminf/redac/main.tex:1225: Undefined control sequence.
+\enit@enditemize ...x \else \ifnum \enit@resuming 
+                                                  =\@ne \enit@setresumekeys ...
+l.1225 \end{itemize}
+                    
+The control sequence at the end of the top line
+of your error message was never \def'ed. If you have
+misspelled it (e.g., `\hobx'), type `I' and the correct
+spelling (e.g., `I\hbox'). Otherwise just continue,
+and I'll forget about whatever was undefined.
+
+c:/Users/install/gyminf/redac/main.tex:1225: Missing number, treated as zero.
+<to be read again> 
+                   =
+l.1225 \end{itemize}
+                    
+A number should have been here; I inserted `0'.
+(If you can't figure out why I needed to see a number,
+look up `weird error' in the index to The TeXbook.)
+
+c:/Users/install/gyminf/redac/main.tex:1225: Undefined control sequence.
+\enit@setresumekeys ...xpandafter {\enit@savekeys 
+                                                  }\xdef \enit@afterlist {#2...
+l.1225 \end{itemize}
+                    
+The control sequence at the end of the top line
+of your error message was never \def'ed. If you have
+misspelled it (e.g., `\hobx'), type `I' and the correct
+spelling (e.g., `I\hbox'). Otherwise just continue,
+and I'll forget about whatever was undefined.
+
+c:/Users/install/gyminf/redac/main.tex:1225: Undefined control sequence.
+\enit@setresumekeys ...it@toks }\ifnum \enit@type 
+                                                  =\z@ #3\def \enit@noexcs {...
+l.1225 \end{itemize}
+                    
+The control sequence at the end of the top line
+of your error message was never \def'ed. If you have
+misspelled it (e.g., `\hobx'), type `I' and the correct
+spelling (e.g., `I\hbox'). Otherwise just continue,
+and I'll forget about whatever was undefined.
+
+c:/Users/install/gyminf/redac/main.tex:1225: Missing number, treated as zero.
+<to be read again> 
+                   =
+l.1225 \end{itemize}
+                    
+A number should have been here; I inserted `0'.
+(If you can't figure out why I needed to see a number,
+look up `weird error' in the index to The TeXbook.)
+
+c:/Users/install/gyminf/redac/main.tex:1225: Undefined control sequence.
+<argument> enit@resume@series@\enit@series 
+                                           
+l.1225 \end{itemize}
+                    
+The control sequence at the end of the top line
+of your error message was never \def'ed. If you have
+misspelled it (e.g., `\hobx'), type `I' and the correct
+spelling (e.g., `I\hbox'). Otherwise just continue,
+and I'll forget about whatever was undefined.
+
+c:/Users/install/gyminf/redac/main.tex:1225: Undefined control sequence.
+\enit@setresumekeys ...me@#1}{\csname c@\@listctr 
+                                                  \endcsname \the \csname c@...
+l.1225 \end{itemize}
+                    
+The control sequence at the end of the top line
+of your error message was never \def'ed. If you have
+misspelled it (e.g., `\hobx'), type `I' and the correct
+spelling (e.g., `I\hbox'). Otherwise just continue,
+and I'll forget about whatever was undefined.
+
+c:/Users/install/gyminf/redac/main.tex:1225: Undefined control sequence.
+\enit@setresumekeys ...e \the \csname c@\@listctr 
+                                                  \endcsname }\fi }
+l.1225 \end{itemize}
+                    
+The control sequence at the end of the top line
+of your error message was never \def'ed. If you have
+misspelled it (e.g., `\hobx'), type `I' and the correct
+spelling (e.g., `I\hbox'). Otherwise just continue,
+and I'll forget about whatever was undefined.
+
+c:/Users/install/gyminf/redac/main.tex:1225: You can't use `\relax' after \the.
+<recently read> \c@ 
+                    
+l.1225 \end{itemize}
+                    
+I'm forgetting what you said and using zero instead.
+
+c:/Users/install/gyminf/redac/main.tex:1225: Undefined control sequence.
+\enit@enditemize ...ist \fi \ifnum \enit@resuming 
+                                                  =\thr@@ \enit@setresumekey...
+l.1225 \end{itemize}
+                    
+The control sequence at the end of the top line
+of your error message was never \def'ed. If you have
+misspelled it (e.g., `\hobx'), type `I' and the correct
+spelling (e.g., `I\hbox'). Otherwise just continue,
+and I'll forget about whatever was undefined.
+
+c:/Users/install/gyminf/redac/main.tex:1225: Missing number, treated as zero.
+<to be read again> 
+                   =
+l.1225 \end{itemize}
+                    
+A number should have been here; I inserted `0'.
+(If you can't figure out why I needed to see a number,
+look up `weird error' in the index to The TeXbook.)
+
+c:/Users/install/gyminf/redac/main.tex:1225: Undefined control sequence.
+\enit@setresumekeys ...xpandafter {\enit@savekeys 
+                                                  }\xdef \enit@afterlist {#2...
+l.1225 \end{itemize}
+                    
+The control sequence at the end of the top line
+of your error message was never \def'ed. If you have
+misspelled it (e.g., `\hobx'), type `I' and the correct
+spelling (e.g., `I\hbox'). Otherwise just continue,
+and I'll forget about whatever was undefined.
+
+c:/Users/install/gyminf/redac/main.tex:1225: Undefined control sequence.
+\enit@setresumekeys ...it@toks }\ifnum \enit@type 
+                                                  =\z@ #3\def \enit@noexcs {...
+l.1225 \end{itemize}
+                    
+The control sequence at the end of the top line
+of your error message was never \def'ed. If you have
+misspelled it (e.g., `\hobx'), type `I' and the correct
+spelling (e.g., `I\hbox'). Otherwise just continue,
+and I'll forget about whatever was undefined.
+
+c:/Users/install/gyminf/redac/main.tex:1225: Missing number, treated as zero.
+<to be read again> 
+                   =
+l.1225 \end{itemize}
+                    
+A number should have been here; I inserted `0'.
+(If you can't figure out why I needed to see a number,
+look up `weird error' in the index to The TeXbook.)
+
+c:/Users/install/gyminf/redac/main.tex:1225: Undefined control sequence.
+\enit@setresumekeys ...me@#1}{\csname c@\@listctr 
+                                                  \endcsname \the \csname c@...
+l.1225 \end{itemize}
+                    
+The control sequence at the end of the top line
+of your error message was never \def'ed. If you have
+misspelled it (e.g., `\hobx'), type `I' and the correct
+spelling (e.g., `I\hbox'). Otherwise just continue,
+and I'll forget about whatever was undefined.
+
+c:/Users/install/gyminf/redac/main.tex:1225: Undefined control sequence.
+\enit@setresumekeys ...e \the \csname c@\@listctr 
+                                                  \endcsname }\fi }
+l.1225 \end{itemize}
+                    
+The control sequence at the end of the top line
+of your error message was never \def'ed. If you have
+misspelled it (e.g., `\hobx'), type `I' and the correct
+spelling (e.g., `I\hbox'). Otherwise just continue,
+and I'll forget about whatever was undefined.
+
+c:/Users/install/gyminf/redac/main.tex:1225: You can't use `\relax' after \the.
+<recently read> \c@ 
+                    
+l.1225 \end{itemize}
+                    
+I'm forgetting what you said and using zero instead.
+
+
+c:/Users/install/gyminf/redac/main.tex:1225: LaTeX Error: \begin{document} ende
+d by \end{itemize}.
+
+See the LaTeX manual or LaTeX Companion for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.1225 \end{itemize}
+                    
+Your command was ignored.
+Type  I <command> <return>  to replace it with another command,
+or  <return>  to continue without it.
+
+c:/Users/install/gyminf/redac/main.tex:1225: Extra \endgroup.
+\end  ...end#1\endcsname \@checkend {#1}\endgroup 
+                                                  \UseHook {env/#1/after}\if...
+l.1225 \end{itemize}
+                    
+Things are pretty mixed up, but I think the worst is over.
+
+
+c:/Users/install/gyminf/redac/main.tex:1226: LaTeX Error: There's no line here 
+to end.
+
+See the LaTeX manual or LaTeX Companion for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.1226 \\R
+          eprenons l'exemple minimal montré supra pour tracer le flux d'app...
+Your command was ignored.
+Type  I <command> <return>  to replace it with another command,
+or  <return>  to continue without it.
+
+
+c:/Users/install/gyminf/redac/main.tex:1234: Package minted Error: Cannot highl
+ight code (minted executable is unavailable or disabled); attempting to typeset
+ without highlighting.
+
+See the minted package documentation for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.1234 \end{minted}
+                   
+(That was another \errmessage.)
+
+
+Overfull \hbox (18.69528pt too wide) in paragraph at lines 1241--1242
+[][][][][][] \TU/lmr/m/n/10.95 crée le nœud [][][][][][], le connecte à [][]
+[][][][], et re-tourne [][][][][][]
+ []
+
+
+Overfull \hbox (9.47522pt too wide) in paragraph at lines 1247--1248
+[][][][][][][] \TU/lmr/m/n/10.95 re-çoit [][][][][][] comme [][][][][][]. Il cr
+ée le nœud de dé-ci-sion [][][][][][]
+ []
+
+
+Overfull \hbox (79.61668pt too wide) in paragraph at lines 1248--1249
+[]\TU/lmr/bx/n/10.95 Vi-site de la branche [][][][][][] ([][][][][][]) : [][][]
+[][][] \TU/lmr/m/n/10.95 ap-pelle [][][][][][] avec [][][][][][].
+ []
 
 
 
 [30]
+Underfull \hbox (badness 10000) in paragraph at lines 1270--1271
 
-c:/Users/install/gyminf/redac/main.tex:1194: LaTeX Error: Environment subfigure
- undefined.
+ []
 
-See the LaTeX manual or LaTeX Companion for explanation.
-Type  H <return>  for immediate help.
- ...                                              
-                                                  
-l.1194     \begin{subfigure}
-                            {0.45\textwidth}
-Your command was ignored.
-Type  I <command> <return>  to replace it with another command,
-or  <return>  to continue without it.
-
-c:/Users/install/gyminf/redac/main.tex:1194: Missing number, treated as zero.
-<to be read again> 
-                   }
-l.1194     \begin{subfigure}{0.45\textwidth}
-                                            
-A number should have been here; I inserted `0'.
-(If you can't figure out why I needed to see a number,
-look up `weird error' in the index to The TeXbook.)
-
-c:/Users/install/gyminf/redac/main.tex:1194: Illegal unit of measure (pt inserte
-d).
-<to be read again> 
-                   }
-l.1194     \begin{subfigure}{0.45\textwidth}
-                                            
-Dimensions can be in units of em, ex, in, pt, pc,
-cm, mm, dd, cc, nd, nc, bp, or sp; but yours is a new one!
-I'll assume that you meant to say pt, for printer's points.
-To recover gracefully from this error, it's best to
-delete the erroneous units; e.g., type `2' to delete
-two letters. (See Chapter 27 of The TeXbook.)
-
-<FqKSJ.jpg, id=761, 366.36874pt x 679.53876pt>
-File: FqKSJ.jpg Graphic file (type jpg)
-<use FqKSJ.jpg>
-Package luatex.def Info: FqKSJ.jpg  used on input line 1196.
-(luatex.def)             Requested size: 153.64644pt x 284.9792pt.
-
-c:/Users/install/gyminf/redac/main.tex:1199: LaTeX Error: \begin{figure} on inp
-ut line 1192 ended by \end{subfigure}.
-
-See the LaTeX manual or LaTeX Companion for explanation.
-Type  H <return>  for immediate help.
- ...                                              
-                                                  
-l.1199     \end{subfigure}
-                          
-Your command was ignored.
-Type  I <command> <return>  to replace it with another command,
-or  <return>  to continue without it.
-
-
-c:/Users/install/gyminf/redac/main.tex:1200: LaTeX Error: Environment subfigure
- undefined.
-
-See the LaTeX manual or LaTeX Companion for explanation.
-Type  H <return>  for immediate help.
- ...                                              
-                                                  
-l.1200     \begin{subfigure}
-                            {0.45\textwidth}
-Your command was ignored.
-Type  I <command> <return>  to replace it with another command,
-or  <return>  to continue without it.
-
-c:/Users/install/gyminf/redac/main.tex:1200: Missing number, treated as zero.
-<to be read again> 
-                   }
-l.1200     \begin{subfigure}{0.45\textwidth}
-                                            
-A number should have been here; I inserted `0'.
-(If you can't figure out why I needed to see a number,
-look up `weird error' in the index to The TeXbook.)
-
-c:/Users/install/gyminf/redac/main.tex:1200: Illegal unit of measure (pt inserte
-d).
-<to be read again> 
-                   }
-l.1200     \begin{subfigure}{0.45\textwidth}
-                                            
-Dimensions can be in units of em, ex, in, pt, pc,
-cm, mm, dd, cc, nd, nc, bp, or sp; but yours is a new one!
-I'll assume that you meant to say pt, for printer's points.
-To recover gracefully from this error, it's best to
-delete the erroneous units; e.g., type `2' to delete
-two letters. (See Chapter 27 of The TeXbook.)
-
-<for_str_screenshot.png, id=764, 294.34969pt x 446.41782pt>
-File: for_str_screenshot.png Graphic file (type png)
-<use for_str_screenshot.png>
-Package luatex.def Info: for_str_screenshot.png  used on input line 1202.
-(luatex.def)             Requested size: 153.64644pt x 233.02412pt.
-
-c:/Users/install/gyminf/redac/main.tex:1205: LaTeX Error: \begin{figure} on inp
-ut line 1192 ended by \end{subfigure}.
-
-See the LaTeX manual or LaTeX Companion for explanation.
-Type  H <return>  for immediate help.
- ...                                              
-                                                  
-l.1205     \end{subfigure}
-                          
-Your command was ignored.
-Type  I <command> <return>  to replace it with another command,
-or  <return>  to continue without it.
-
-
-
-[31]
-c:/Users/install/gyminf/redac/main.tex:1210: Missing $ inserted.
+c:/Users/install/gyminf/redac/main.tex:1285: Missing $ inserted.
 <inserted text> 
                 $
-l.1210 ...ns internes et méthodes \code{has_next}
+l.1285 ...érique et la méthode \code{visit_body}
                                                   .
 I've inserted a begin-math/end-math symbol since I think
 you left one out. Proceed, with fingers crossed.
 
-c:/Users/install/gyminf/redac/main.tex:1210: Extra }, or forgotten $.
+c:/Users/install/gyminf/redac/main.tex:1285: Extra }, or forgotten $.
 <recently read> \egroup 
                         
-l.1210 ...ns internes et méthodes \code{has_next}
+l.1285 ...érique et la méthode \code{visit_body}
                                                   .
 I've deleted a group-closing symbol because it seems to be
 spurious, as in `$x}$'. But perhaps the } is legitimate and
@@ -2367,10 +2867,10 @@ you forgot something else, as in `\hbox{$x}'. In such cases
 the way to recover is to insert both the forgotten and the
 deleted material, e.g., by typing `I$}'.
 
-c:/Users/install/gyminf/redac/main.tex:1210: Extra }, or forgotten $.
+c:/Users/install/gyminf/redac/main.tex:1285: Extra }, or forgotten $.
 \color@b@x ...hbox {\kern \fboxsep {\set@color #3}
                                                   \kern \fboxsep }\dimen@ \h...
-l.1210 ...ns internes et méthodes \code{has_next}
+l.1285 ...érique et la méthode \code{visit_body}
                                                   .
 I've deleted a group-closing symbol because it seems to be
 spurious, as in `$x}$'. But perhaps the } is legitimate and
@@ -2378,10 +2878,10 @@ you forgot something else, as in `\hbox{$x}'. In such cases
 the way to recover is to insert both the forgotten and the
 deleted material, e.g., by typing `I$}'.
 
-c:/Users/install/gyminf/redac/main.tex:1210: Extra }, or forgotten $.
+c:/Users/install/gyminf/redac/main.tex:1285: Extra }, or forgotten $.
 \color@b@x ...xsep {\set@color #3}\kern \fboxsep }
                                                   \dimen@ \ht \z@ \advance \...
-l.1210 ...ns internes et méthodes \code{has_next}
+l.1285 ...érique et la méthode \code{visit_body}
                                                   .
 I've deleted a group-closing symbol because it seems to be
 spurious, as in `$x}$'. But perhaps the } is legitimate and
@@ -2389,10 +2889,238 @@ you forgot something else, as in `\hbox{$x}'. In such cases
 the way to recover is to insert both the forgotten and the
 deleted material, e.g., by typing `I$}'.
 
-c:/Users/install/gyminf/redac/main.tex:1214: Missing $ inserted.
+c:/Users/install/gyminf/redac/main.tex:1286: Missing $ inserted.
 <inserted text> 
                 $
-l.1214 
+l.1286 
+       
+I've inserted a begin-math/end-math symbol since I think
+you left one out. Proceed, with fingers crossed.
+
+
+c:/Users/install/gyminf/redac/main.tex:1287: LaTeX Error: Not allowed in LR mod
+e.
+
+See the LaTeX manual or LaTeX Companion for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.1287 \paragraph
+                 {Gestion des portées et des sous-graphes.} Une décision a...
+You've lost some text.  Try typing  <return>  to proceed.
+If that doesn't work, type  X <return>  to quit.
+
+
+c:/Users/install/gyminf/redac/main.tex:1287: LaTeX Error: Not allowed in LR mod
+e.
+
+See the LaTeX manual or LaTeX Companion for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.1287 \paragraph
+                 {Gestion des portées et des sous-graphes.} Une décision a...
+You've lost some text.  Try typing  <return>  to proceed.
+If that doesn't work, type  X <return>  to quit.
+
+c:/Users/install/gyminf/redac/main.tex:1287: Missing } inserted.
+<inserted text> 
+                }
+l.1287 \paragraph
+                 {Gestion des portées et des sous-graphes.} Une décision a...
+I've inserted something that you may have forgotten.
+(See the <inserted text> above.)
+With luck, this will get me unwedged. But if you
+really didn't forget anything, try typing `2' now; then
+my insertion and my current dilemma will both disappear.
+
+c:/Users/install/gyminf/redac/main.tex:1287: Missing } inserted.
+<inserted text> 
+                }
+l.1287 \paragraph
+                 {Gestion des portées et des sous-graphes.} Une décision a...
+I've inserted something that you may have forgotten.
+(See the <inserted text> above.)
+With luck, this will get me unwedged. But if you
+really didn't forget anything, try typing `2' now; then
+my insertion and my current dilemma will both disappear.
+
+c:/Users/install/gyminf/redac/main.tex:1287: Missing } inserted.
+<inserted text> 
+                }
+l.1287 \paragraph
+                 {Gestion des portées et des sous-graphes.} Une décision a...
+I've inserted something that you may have forgotten.
+(See the <inserted text> above.)
+With luck, this will get me unwedged. But if you
+really didn't forget anything, try typing `2' now; then
+my insertion and my current dilemma will both disappear.
+
+
+LaTeX Warning: Reference `fig:deux_for' on page 31 undefined on input line 1296
+.
+
+
+
+[31]
+
+c:/Users/install/gyminf/redac/main.tex:1308: LaTeX Error: Environment subfigure
+ undefined.
+
+See the LaTeX manual or LaTeX Companion for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.1308     \begin{subfigure}
+                            {0.45\textwidth}
+Your command was ignored.
+Type  I <command> <return>  to replace it with another command,
+or  <return>  to continue without it.
+
+c:/Users/install/gyminf/redac/main.tex:1308: Missing number, treated as zero.
+<to be read again> 
+                   }
+l.1308     \begin{subfigure}{0.45\textwidth}
+                                            
+A number should have been here; I inserted `0'.
+(If you can't figure out why I needed to see a number,
+look up `weird error' in the index to The TeXbook.)
+
+c:/Users/install/gyminf/redac/main.tex:1308: Illegal unit of measure (pt inserte
+d).
+<to be read again> 
+                   }
+l.1308     \begin{subfigure}{0.45\textwidth}
+                                            
+Dimensions can be in units of em, ex, in, pt, pc,
+cm, mm, dd, cc, nd, nc, bp, or sp; but yours is a new one!
+I'll assume that you meant to say pt, for printer's points.
+To recover gracefully from this error, it's best to
+delete the erroneous units; e.g., type `2' to delete
+two letters. (See Chapter 27 of The TeXbook.)
+
+<FqKSJ.jpg, id=752, 366.36874pt x 679.53876pt>
+File: FqKSJ.jpg Graphic file (type jpg)
+<use FqKSJ.jpg>
+Package luatex.def Info: FqKSJ.jpg  used on input line 1310.
+(luatex.def)             Requested size: 153.64644pt x 284.9792pt.
+
+c:/Users/install/gyminf/redac/main.tex:1313: LaTeX Error: \begin{figure} on inp
+ut line 1306 ended by \end{subfigure}.
+
+See the LaTeX manual or LaTeX Companion for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.1313     \end{subfigure}
+                          
+Your command was ignored.
+Type  I <command> <return>  to replace it with another command,
+or  <return>  to continue without it.
+
+
+c:/Users/install/gyminf/redac/main.tex:1314: LaTeX Error: Environment subfigure
+ undefined.
+
+See the LaTeX manual or LaTeX Companion for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.1314     \begin{subfigure}
+                            {0.45\textwidth}
+Your command was ignored.
+Type  I <command> <return>  to replace it with another command,
+or  <return>  to continue without it.
+
+c:/Users/install/gyminf/redac/main.tex:1314: Missing number, treated as zero.
+<to be read again> 
+                   }
+l.1314     \begin{subfigure}{0.45\textwidth}
+                                            
+A number should have been here; I inserted `0'.
+(If you can't figure out why I needed to see a number,
+look up `weird error' in the index to The TeXbook.)
+
+c:/Users/install/gyminf/redac/main.tex:1314: Illegal unit of measure (pt inserte
+d).
+<to be read again> 
+                   }
+l.1314     \begin{subfigure}{0.45\textwidth}
+                                            
+Dimensions can be in units of em, ex, in, pt, pc,
+cm, mm, dd, cc, nd, nc, bp, or sp; but yours is a new one!
+I'll assume that you meant to say pt, for printer's points.
+To recover gracefully from this error, it's best to
+delete the erroneous units; e.g., type `2' to delete
+two letters. (See Chapter 27 of The TeXbook.)
+
+<for_str_screenshot.png, id=755, 294.34969pt x 446.41782pt>
+File: for_str_screenshot.png Graphic file (type png)
+<use for_str_screenshot.png>
+Package luatex.def Info: for_str_screenshot.png  used on input line 1316.
+(luatex.def)             Requested size: 153.64644pt x 233.02412pt.
+
+c:/Users/install/gyminf/redac/main.tex:1319: LaTeX Error: \begin{figure} on inp
+ut line 1306 ended by \end{subfigure}.
+
+See the LaTeX manual or LaTeX Companion for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.1319     \end{subfigure}
+                          
+Your command was ignored.
+Type  I <command> <return>  to replace it with another command,
+or  <return>  to continue without it.
+
+
+
+[32]
+c:/Users/install/gyminf/redac/main.tex:1324: Missing $ inserted.
+<inserted text> 
+                $
+l.1324 ...ns internes et méthodes \code{has_next}
+                                                  .
+I've inserted a begin-math/end-math symbol since I think
+you left one out. Proceed, with fingers crossed.
+
+c:/Users/install/gyminf/redac/main.tex:1324: Extra }, or forgotten $.
+<recently read> \egroup 
+                        
+l.1324 ...ns internes et méthodes \code{has_next}
+                                                  .
+I've deleted a group-closing symbol because it seems to be
+spurious, as in `$x}$'. But perhaps the } is legitimate and
+you forgot something else, as in `\hbox{$x}'. In such cases
+the way to recover is to insert both the forgotten and the
+deleted material, e.g., by typing `I$}'.
+
+c:/Users/install/gyminf/redac/main.tex:1324: Extra }, or forgotten $.
+\color@b@x ...hbox {\kern \fboxsep {\set@color #3}
+                                                  \kern \fboxsep }\dimen@ \h...
+l.1324 ...ns internes et méthodes \code{has_next}
+                                                  .
+I've deleted a group-closing symbol because it seems to be
+spurious, as in `$x}$'. But perhaps the } is legitimate and
+you forgot something else, as in `\hbox{$x}'. In such cases
+the way to recover is to insert both the forgotten and the
+deleted material, e.g., by typing `I$}'.
+
+c:/Users/install/gyminf/redac/main.tex:1324: Extra }, or forgotten $.
+\color@b@x ...xsep {\set@color #3}\kern \fboxsep }
+                                                  \dimen@ \ht \z@ \advance \...
+l.1324 ...ns internes et méthodes \code{has_next}
+                                                  .
+I've deleted a group-closing symbol because it seems to be
+spurious, as in `$x}$'. But perhaps the } is legitimate and
+you forgot something else, as in `\hbox{$x}'. In such cases
+the way to recover is to insert both the forgotten and the
+deleted material, e.g., by typing `I$}'.
+
+c:/Users/install/gyminf/redac/main.tex:1328: Missing $ inserted.
+<inserted text> 
+                $
+l.1328 
        
 I've inserted a begin-math/end-math symbol since I think
 you left one out. Proceed, with fingers crossed.
@@ -2428,35 +3156,35 @@ Missing character: There is no é (U+00E9) in font cmmi10!
 Missing character: There is no î (U+00EE) in font cmmi10!
 Missing character: There is no î (U+00EE) in font cmmi10!
 
-c:/Users/install/gyminf/redac/main.tex:1215: LaTeX Error: Not allowed in LR mod
+c:/Users/install/gyminf/redac/main.tex:1329: LaTeX Error: Not allowed in LR mod
 e.
 
 See the LaTeX manual or LaTeX Companion for explanation.
 Type  H <return>  for immediate help.
  ...                                              
                                                   
-l.1215 \paragraph
+l.1329 \paragraph
                  {Robustesse et limitations.} L'implémentation actuelle gè...
 You've lost some text.  Try typing  <return>  to proceed.
 If that doesn't work, type  X <return>  to quit.
 
 
-c:/Users/install/gyminf/redac/main.tex:1215: LaTeX Error: Not allowed in LR mod
+c:/Users/install/gyminf/redac/main.tex:1329: LaTeX Error: Not allowed in LR mod
 e.
 
 See the LaTeX manual or LaTeX Companion for explanation.
 Type  H <return>  for immediate help.
  ...                                              
                                                   
-l.1215 \paragraph
+l.1329 \paragraph
                  {Robustesse et limitations.} L'implémentation actuelle gè...
 You've lost some text.  Try typing  <return>  to proceed.
 If that doesn't work, type  X <return>  to quit.
 
-c:/Users/install/gyminf/redac/main.tex:1215: Missing } inserted.
+c:/Users/install/gyminf/redac/main.tex:1329: Missing } inserted.
 <inserted text> 
                 }
-l.1215 \paragraph
+l.1329 \paragraph
                  {Robustesse et limitations.} L'implémentation actuelle gè...
 I've inserted something that you may have forgotten.
 (See the <inserted text> above.)
@@ -2464,10 +3192,10 @@ With luck, this will get me unwedged. But if you
 really didn't forget anything, try typing `2' now; then
 my insertion and my current dilemma will both disappear.
 
-c:/Users/install/gyminf/redac/main.tex:1215: Missing } inserted.
+c:/Users/install/gyminf/redac/main.tex:1329: Missing } inserted.
 <inserted text> 
                 }
-l.1215 \paragraph
+l.1329 \paragraph
                  {Robustesse et limitations.} L'implémentation actuelle gè...
 I've inserted something that you may have forgotten.
 (See the <inserted text> above.)
@@ -2475,10 +3203,10 @@ With luck, this will get me unwedged. But if you
 really didn't forget anything, try typing `2' now; then
 my insertion and my current dilemma will both disappear.
 
-c:/Users/install/gyminf/redac/main.tex:1215: Missing } inserted.
+c:/Users/install/gyminf/redac/main.tex:1329: Missing } inserted.
 <inserted text> 
                 }
-l.1215 \paragraph
+l.1329 \paragraph
                  {Robustesse et limitations.} L'implémentation actuelle gè...
 I've inserted something that you may have forgotten.
 (See the <inserted text> above.)
@@ -2487,7 +3215,7 @@ really didn't forget anything, try typing `2' now; then
 my insertion and my current dilemma will both disappear.
 
 
-Overfull \hbox (2.00171pt too wide) in paragraph at lines 1215--1216
+Overfull \hbox (2.00171pt too wide) in paragraph at lines 1329--1330
 []\TU/lmr/bx/n/10.95 Ro-bus-tesse et li-mi-ta-tions.[] \TU/lmr/m/n/10.95 L’im-
 plé-men-ta-tion ac-tuelle gère les struc-tures de contrôle de base ([][][][]
 [][]/[][][][][][],
@@ -2495,126 +3223,135 @@ plé-men-ta-tion ac-tuelle gère les struc-tures de contrôle de base ([][][][]
 
 
 
-[32<./FqKSJ.jpg><./for_str_screenshot.png>]
+[33<./FqKSJ.jpg><./for_str_screenshot.png>]
 
-[33]
-<BPMN_process_logigramme.png, id=785, 835.62187pt x 493.845pt>
+[34]
+<BPMN_process_logigramme.png, id=778, 835.62187pt x 493.845pt>
 File: BPMN_process_logigramme.png Graphic file (type png)
 <use BPMN_process_logigramme.png>
-Package luatex.def Info: BPMN_process_logigramme.png  used on input line 1229.
+Package luatex.def Info: BPMN_process_logigramme.png  used on input line 1343.
 (luatex.def)             Requested size: 665.79607pt x 393.50162pt.
 
 
-[34<./BPMN_process_logigramme.png>]
+[35<./BPMN_process_logigramme.png>]
 
-[35
+[36
 
 
 
 ]
-<UI_events_v2.png, id=798, 598.48593pt x 546.54187pt>
+<UI_events_v2.png, id=792, 598.48593pt x 546.54187pt>
 File: UI_events_v2.png Graphic file (type png)
 <use UI_events_v2.png>
-Package luatex.def Info: UI_events_v2.png  used on input line 1265.
+Package luatex.def Info: UI_events_v2.png  used on input line 1379.
 (luatex.def)             Requested size: 507.03093pt x 463.0283pt.
-<simplif_archi.png, id=799, 735.49782pt x 539.01375pt>
+<simplif_archi.png, id=793, 735.49782pt x 539.01375pt>
 File: simplif_archi.png Graphic file (type png)
 <use simplif_archi.png>
-Package luatex.def Info: simplif_archi.png  used on input line 1273.
+Package luatex.def Info: simplif_archi.png  used on input line 1387.
 (luatex.def)             Requested size: 409.72125pt x 300.27472pt.
 
 
-[36<./UI_events_v2.png>]
+[37<./UI_events_v2.png>]
 
-[37<./simplif_archi.png>]
-<erDiagram_logging.png, id=812, 1132.98282pt x 694.84593pt>
+LaTeX Warning: Reference `fig:ERD' on page 38 undefined on input line 1391.
+
+
+
+[38<./simplif_archi.png>]
+<erDiagram_logging.png, id=807, 1132.98282pt x 694.84593pt>
 File: erDiagram_logging.png Graphic file (type png)
 <use erDiagram_logging.png>
-Package luatex.def Info: erDiagram_logging.png  used on input line 1282.
+Package luatex.def Info: erDiagram_logging.png  used on input line 1396.
 (luatex.def)             Requested size: 768.22444pt x 471.15306pt.
 
-Overfull \hbox (8.53584pt too wide) in paragraph at lines 1282--1283
+Overfull \hbox (8.53584pt too wide) in paragraph at lines 1396--1397
  [][] 
  []
 
 
 
-[38<./erDiagram_logging.png>]
-Overfull \hbox (16.63982pt too wide) in paragraph at lines 1328--1328
+[39<./erDiagram_logging.png>]
+
+LaTeX Warning: Reference `fig:logging_process_v3' on page 40 undefined on input
+ line 1403.
+
+
+Overfull \hbox (16.63982pt too wide) in paragraph at lines 1442--1442
  [][][][][][][] 
  []
 
 
-Overfull \hbox (27.10832pt too wide) in paragraph at lines 1344--1344
+Overfull \hbox (27.10832pt too wide) in paragraph at lines 1458--1458
  []\TU/lmr/m/n/10.95 ([][][][][][]/[][][][][][]) 
  []
 
 (./_minted/EC244FF2476C29ABAF39A85742AC6605.highlight.minted
 
-[39
+[40
 
 
 ]
 
-[40]) (./_minted/896AAAC700B2AEAC065FDF7725D514C5.highlight.minted)
+[41]) (./_minted/896AAAC700B2AEAC065FDF7725D514C5.highlight.minted)
 (./_minted/9286F558659C59988338C42D74134B3A.highlight.minted)
 (./_minted/6FDAF4C9DEB0EDD2AE2F56CDB9795F19.highlight.minted
 
-[41]) (./_minted/0E64315A495E607A29A62E4F55DF60A3.highlight.minted)
+[42]) (./_minted/0E64315A495E607A29A62E4F55DF60A3.highlight.minted)
 
-[42]
-<logging_archi.png, id=844, 1053.9375pt x 552.56438pt>
+[43]
+<logging_archi.png, id=838, 1053.9375pt x 552.56438pt>
 File: logging_archi.png Graphic file (type png)
 <use logging_archi.png>
-Package luatex.def Info: logging_archi.png  used on input line 1526.
+Package luatex.def Info: logging_archi.png  used on input line 1640.
 (luatex.def)             Requested size: 507.03093pt x 265.83495pt.
-<tableau_journalisations.png, id=845, 837.1275pt x 487.8225pt>
+<tableau_journalisations.png, id=839, 837.1275pt x 487.8225pt>
 File: tableau_journalisations.png Graphic file (type png)
 <use tableau_journalisations.png>
-Package luatex.def Info: tableau_journalisations.png  used on input line 1534.
+Package luatex.def Info: tableau_journalisations.png  used on input line 1648.
 (luatex.def)             Requested size: 507.03093pt x 295.45732pt.
 
-Overfull \hbox (17.0pt too wide) in paragraph at lines 1520--1540
+Overfull \hbox (17.0pt too wide) in paragraph at lines 1634--1654
 []$[]$ 
- []
-
-
-
-[43
-
-<./logging_archi.png><./tableau_journalisations.png>]
-Underfull \hbox (badness 8019) in paragraph at lines 1583--1583
-[]|\TU/lmr/bx/n/10.95 Ap-pel Uni-fié à Pyo-dide. \TU/lmr/m/n/10.95 Au lieu de
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 1583--1583
-\TU/lmr/m/n/10.95 mul-tiples ap-pels [][][][][][] pour chaque ar-
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 1583--1583
-\TU/lmr/m/n/10.95 te-fact, une mé-thode cen-trale en Py-thon,
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 1583--1583
-[][][][][][]\TU/lmr/m/n/10.95 , est ap-pe-lée
  []
 
 
 
 [44
 
-]
+<./logging_archi.png><./tableau_journalisations.png>]
+Underfull \hbox (badness 8019) in paragraph at lines 1697--1697
+[]|\TU/lmr/bx/n/10.95 Ap-pel Uni-fié à Pyo-dide. \TU/lmr/m/n/10.95 Au lieu de
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 1697--1697
+\TU/lmr/m/n/10.95 mul-tiples ap-pels [][][][][][] pour chaque ar-
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 1697--1697
+\TU/lmr/m/n/10.95 te-fact, une mé-thode cen-trale en Py-thon,
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 1697--1697
+[][][][][][]\TU/lmr/m/n/10.95 , est ap-pe-lée
+ []
+
+
 
 [45
 
 ]
 
-[46]
+[46
 
-c:/Users/install/gyminf/redac/main.tex:1702: Package minted Error: Cannot highl
+]
+
+[47]
+
+c:/Users/install/gyminf/redac/main.tex:1816: Package minted Error: Cannot highl
 ight code (minted executable is unavailable or disabled); attempting to typeset
  without highlighting.
 
@@ -2622,59 +3359,59 @@ See the minted package documentation for explanation.
 Type  H <return>  for immediate help.
  ...                                              
                                                   
-l.1702 \end{minted}
+l.1816 \end{minted}
                    
 (That was another \errmessage.)
 
 
 
-[47]
-
 [48]
 
 [49]
-Overfull \hbox (2.0617pt too wide) in paragraph at lines 1856--1856
+
+[50]
+Overfull \hbox (2.0617pt too wide) in paragraph at lines 1970--1970
 []\TU/DejaVuSansMono(0)/m/n/10.95 │       │   ├── generateVariedOperat
 ion                   #1743 (logique anti-
  []
 
 
 
-[50]
-Overfull \hbox (566.60323pt too wide) in paragraph at lines 1876--1877
+[51]
+Overfull \hbox (566.60323pt too wide) in paragraph at lines 1990--1991
 \TU/lmr/m/n/10.95 dées. La condi-tion de sé-cu-rité est exac-te-ment : [][][
 ][][][] 
  []
 
 
 
-[51]
-Overfull \hbox (46.58685pt too wide) in paragraph at lines 1917--1918
+[52]
+Overfull \hbox (46.58685pt too wide) in paragraph at lines 2031--2032
 []\TU/lmr/m/n/10.95 Pour le type passé en pa-ra-mètre, ren-voie un nom de va-r
 iable gé-néré par ap-pel à \TU/DejaVuSansMono(0)/m/n/10.95 generateUniqueVar
 Name
  []
 
 
-Overfull \hbox (192.41411pt too wide) in paragraph at lines 1918--1919
+Overfull \hbox (192.41411pt too wide) in paragraph at lines 2032--2033
 \TU/lmr/bx/n/10.95 dic-tion-naire de fonc-tions \TU/DejaVuSansMono(0)/m/n/10.95
  LITERALS_BY_TYPE[type](difficulty, 'int') $[]$
  []
 
 
-Overfull \hbox (69.13339pt too wide) in paragraph at lines 1924--1925
+Overfull \hbox (69.13339pt too wide) in paragraph at lines 2038--2039
 \TU/lmr/m/n/10.95 puis, si les op-tions de va-riables ont été choi-sies par l
 ’uti-li-sa-teur, $[]$
  []
 
 
-Overfull \hbox (10.86682pt too wide) in paragraph at lines 1925--1926
+Overfull \hbox (10.86682pt too wide) in paragraph at lines 2039--2040
 []\TU/lmr/m/n/10.95 Ini-tia-lise une va-riable list-Va-lue par ap-pel à \TU/De
 jaVuSansMono(0)/m/n/10.95 generateDiverseList(itemTypes,difficulty)
  []
 
 
-c:/Users/install/gyminf/redac/main.tex:1935: Package minted Error: Cannot highl
+c:/Users/install/gyminf/redac/main.tex:2049: Package minted Error: Cannot highl
 ight code (minted executable is unavailable or disabled); attempting to typeset
  without highlighting.
 
@@ -2682,17 +3419,17 @@ See the minted package documentation for explanation.
 Type  H <return>  for immediate help.
  ...                                              
                                                   
-l.1935 \end{minted}
+l.2049 \end{minted}
                    
 (That was another \errmessage.)
 
 
-Overfull \hbox (195.71301pt too wide) in paragraph at lines 1942--1943
+Overfull \hbox (195.71301pt too wide) in paragraph at lines 2056--2057
 []$[]$ 
  []
 
 
-c:/Users/install/gyminf/redac/main.tex:1961: Package minted Error: Cannot highl
+c:/Users/install/gyminf/redac/main.tex:2075: Package minted Error: Cannot highl
 ight code (minted executable is unavailable or disabled); attempting to typeset
  without highlighting.
 
@@ -2700,39 +3437,39 @@ See the minted package documentation for explanation.
 Type  H <return>  for immediate help.
  ...                                              
                                                   
-l.1961 \end{minted}
+l.2075 \end{minted}
                    
 (That was another \errmessage.)
 
 
 
-[52]
-Overfull \hbox (56.08658pt too wide) in paragraph at lines 1962--1966
+[53]
+Overfull \hbox (56.08658pt too wide) in paragraph at lines 2076--2080
 \TU/lmr/m/n/10.95 de code en choi-sis-sant aléa-toi-re-ment un élé-ment parmi
  le ta-bleau \TU/lmr/m/it/10.95 ope-ra-tions \TU/lmr/m/n/10.95 : [][][][][][]
  []
 
 
-Overfull \hbox (19.92107pt too wide) in paragraph at lines 1966--1967
+Overfull \hbox (19.92107pt too wide) in paragraph at lines 2080--2081
 []\TU/lmr/m/n/10.95 Si la condi-tion [][][][][][]
  []
 
 
-Overfull \hbox (18.3048pt too wide) in paragraph at lines 1985--1986
+Overfull \hbox (18.3048pt too wide) in paragraph at lines 2099--2100
 \TU/lmr/m/n/10.95 table de dis-patch pour sé-lec-tion-ner une opé-ra-tion pos-
 sible en fonc-tion du [][][][][][] et de la [][][][][][].
  []
 
 
 
-[53]
-Overfull \hbox (9.65933pt too wide) in paragraph at lines 1998--2000
+[54]
+Overfull \hbox (9.65933pt too wide) in paragraph at lines 2112--2114
 []\TU/DejaVuSansMono(0)/m/n/10.95 generateCondition(varTypes = ['int', 'bool', 
 'str', 'list'], preferExisting
  []
 
 
-c:/Users/install/gyminf/redac/main.tex:2018: Package minted Error: Cannot highl
+c:/Users/install/gyminf/redac/main.tex:2132: Package minted Error: Cannot highl
 ight code (minted executable is unavailable or disabled); attempting to typeset
  without highlighting.
 
@@ -2740,306 +3477,311 @@ See the minted package documentation for explanation.
 Type  H <return>  for immediate help.
  ...                                              
                                                   
-l.2018         \end{minted}
+l.2132         \end{minted}
                            
 (That was another \errmessage.)
 
 
 
-[54]
-Underfull \hbox (badness 10000) in paragraph at lines 2072--2073
+[55]
+
+LaTeX Warning: Reference `tab:comparatif' on page 56 undefined on input line 21
+70.
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 2186--2187
 []|\TU/lmr/m/n/10.95 Ana-lyse plus sé-man-tique, mais
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 2074--2074
+Underfull \hbox (badness 10000) in paragraph at lines 2188--2188
 []|\TU/lmr/bx/n/10.95 En-trée ac-cep-
  []
 
 
-Underfull \hbox (badness 1968) in paragraph at lines 2076--2077
+Underfull \hbox (badness 1968) in paragraph at lines 2190--2191
 \TU/lmr/m/n/10.95 fonc-tion (cf. mes \TU/DejaVuSansMono(0)/m/n/10.95 exemples.py
 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 2076--2077
+Underfull \hbox (badness 10000) in paragraph at lines 2190--2191
 \TU/lmr/m/n/10.95 un \TU/DejaVuSansMono(0)/m/n/10.95 SyntaxError: 'return'
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 2078--2078
+Underfull \hbox (badness 10000) in paragraph at lines 2192--2192
 []|\TU/lmr/bx/n/10.95 Construc-tion
  []
 
 
-Underfull \hbox (badness 1092) in paragraph at lines 2080--2081
+Underfull \hbox (badness 1092) in paragraph at lines 2194--2195
 \TU/lmr/m/n/10.95 (ex : \TU/DejaVuSansMono(0)/m/n/10.95 on_if\TU/lmr/m/n/10.95 
 , \TU/DejaVuSansMono(0)/m/n/10.95 on_for\TU/lmr/m/n/10.95 , ...) pour
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 2082--2082
+Underfull \hbox (badness 10000) in paragraph at lines 2196--2196
 []|\TU/lmr/bx/n/10.95 Ges-tion des
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 2082--2082
+Underfull \hbox (badness 10000) in paragraph at lines 2196--2196
 \TU/lmr/bx/n/10.95 branches et
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 2086--2086
+Underfull \hbox (badness 10000) in paragraph at lines 2200--2200
 []|\TU/lmr/bx/n/10.95 Ges-tion des
  []
 
 
-Underfull \hbox (badness 1043) in paragraph at lines 2092--2093
+Underfull \hbox (badness 1043) in paragraph at lines 2206--2207
 []|\TU/lmr/m/n/10.95 Ap-pels de fonc-tions na-tives sont
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 2094--2094
+Underfull \hbox (badness 10000) in paragraph at lines 2208--2208
 []|\TU/lmr/bx/n/10.95 Ges-tion des
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 2094--2094
+Underfull \hbox (badness 10000) in paragraph at lines 2208--2208
 \TU/lmr/bx/n/10.95 dé-fi-ni-tions de
  []
 
 
-Underfull \hbox (badness 1014) in paragraph at lines 2095--2095
+Underfull \hbox (badness 1014) in paragraph at lines 2209--2209
 []|\TU/lmr/m/n/10.95 Pro-blé-ma-tique quand le code est uni-
  []
 
 
-Underfull \hbox (badness 6542) in paragraph at lines 2098--2098
+Underfull \hbox (badness 6542) in paragraph at lines 2212--2212
 []|\TU/lmr/bx/n/10.95 To-lé-rance aux
  []
 
 
-Underfull \hbox (badness 2142) in paragraph at lines 2100--2101
+Underfull \hbox (badness 2142) in paragraph at lines 2214--2215
 \TU/lmr/m/n/10.95 que-ment va-lide pour fonc-tion-ner
  []
 
 
-Underfull \hbox (badness 1231) in paragraph at lines 2104--2105
+Underfull \hbox (badness 1231) in paragraph at lines 2218--2219
 \TU/lmr/m/n/10.95 vi-sua-li-sa-tion avan-cée, cou-leurs et
  []
 
-[55]
-
 [56]
-Overfull \hbox (11.5443pt too wide) in paragraph at lines 2134--2135
+
+[57]
+Overfull \hbox (11.5443pt too wide) in paragraph at lines 2248--2249
 \TU/lmr/m/n/10.95 Chaque élé-ment est un tuple [][][][][][]
  []
 
 
-Overfull \hbox (26.96817pt too wide) in paragraph at lines 2142--2143
+Overfull \hbox (26.96817pt too wide) in paragraph at lines 2256--2257
 \TU/lmr/m/n/10.95 fonc-tion-ner cor-rec-te-ment. Quand on est à la fin de la vi
 -site d’une fonc-tion (dans [][][][][][]),
  []
 
 
-Overfull \hbox (2.08405pt too wide) in paragraph at lines 2156--2157
+Overfull \hbox (2.08405pt too wide) in paragraph at lines 2270--2271
 []\TU/lmr/m/it/10.95 new_id \TU/lmr/m/n/10.95 : []str[]. L’iden-ti-fiant de n
 œud nou-vel-le-ment gé-néré (par exemple,
  []
 
 
 
-[57]
-Overfull \hbox (35.38947pt too wide) in paragraph at lines 2206--2207
-[][][][][][][] 
- []
-
-
-
 [58]
-Overfull \hbox (84.39456pt too wide) in paragraph at lines 2220--2221
-[]\TU/lmr/m/it/10.95 pa-rent_id \TU/lmr/m/n/10.95 : []str[]. Un ID de nœud de 
-\TU/lmr/m/it/10.95 cur-rent_stmt_en-try_points\TU/lmr/m/n/10.95 , passé comme 
-pa-rent à [][][][][][]. 
- []
-
-
-Overfull \hbox (161.82013pt too wide) in paragraph at lines 2251--2252
+Overfull \hbox (35.38947pt too wide) in paragraph at lines 2320--2321
 [][][][][][][] 
  []
 
 
 
 [59]
-Overfull \hbox (65.492pt too wide) in paragraph at lines 2270--2271
-[][][][][][][] 
+Overfull \hbox (84.39456pt too wide) in paragraph at lines 2334--2335
+[]\TU/lmr/m/it/10.95 pa-rent_id \TU/lmr/m/n/10.95 : []str[]. Un ID de nœud de 
+\TU/lmr/m/it/10.95 cur-rent_stmt_en-try_points\TU/lmr/m/n/10.95 , passé comme 
+pa-rent à [][][][][][]. 
  []
 
 
-Overfull \hbox (53.45099pt too wide) in paragraph at lines 2291--2292
+Overfull \hbox (161.82013pt too wide) in paragraph at lines 2365--2366
 [][][][][][][] 
  []
 
 
 
 [60]
-Overfull \hbox (77.68927pt too wide) in paragraph at lines 2312--2313
+Overfull \hbox (65.492pt too wide) in paragraph at lines 2384--2385
 [][][][][][][] 
  []
 
 
-Overfull \hbox (14.60387pt too wide) in paragraph at lines 2341--2342
+Overfull \hbox (53.45099pt too wide) in paragraph at lines 2405--2406
+[][][][][][][] 
+ []
+
+
+
+[61]
+Overfull \hbox (77.68927pt too wide) in paragraph at lines 2426--2427
+[][][][][][][] 
+ []
+
+
+Overfull \hbox (14.60387pt too wide) in paragraph at lines 2455--2456
 \TU/lmr/m/n/10.95 plus sé-man-tique (ini-tia-li-sa-tion, condi-tion, in-cré-me
 n-ta-tion) on dis-tingue les cas [][][][][][]
  []
 
 
 
-[61]
-Overfull \hbox (28.76959pt too wide) in paragraph at lines 2349--2350
+[62]
+Overfull \hbox (28.76959pt too wide) in paragraph at lines 2463--2464
 []\TU/lmr/m/it/10.95 ite-ra-tor_va-riable_str \TU/lmr/m/n/10.95 (re-nom-mée de \TU/lmr/m/it/10.95 ite-ra-tor_str\TU/lmr/m/n/10.95 ) :
  []
 
 
-Overfull \hbox (203.96368pt too wide) in paragraph at lines 2381--2382
+Overfull \hbox (203.96368pt too wide) in paragraph at lines 2495--2496
 [][][][][][][] 
  []
 
 
 
-[62]
-Overfull \hbox (3.23747pt too wide) in paragraph at lines 2401--2402
+[63]
+Overfull \hbox (3.23747pt too wide) in paragraph at lines 2515--2516
 []\TU/lmr/m/it/10.95 ter-mi-na-ted_branch_first_node_id \TU/lmr/m/n/10.95 (re-no
 m-mée de \TU/lmr/m/it/10.95 ter-mi-na-ted_branch_start_node\TU/lmr/m/n/10.95 ) : []Op-tio-nal[str][].
  []
 
 
-Overfull \hbox (24.35643pt too wide) in paragraph at lines 2428--2429
+Overfull \hbox (24.35643pt too wide) in paragraph at lines 2542--2543
 []\TU/lmr/m/n/10.95 La branche False de en-try_de-ci-sion_id de-vient une des so
 r-ties de la boucle (loop_ove-rall_exit_points). 
  []
 
 
-Overfull \hbox (26.22888pt too wide) in paragraph at lines 2453--2454
+Overfull \hbox (26.22888pt too wide) in paragraph at lines 2567--2568
 []\TU/lmr/m/n/10.95 La branche False de re-test_de-ci-sion_id de-vient une des 
 sor-ties de la boucle (loop_ove-rall_exit_points). 
  []
 
 
 
-[63]
-
 [64]
-Overfull \hbox (16.30731pt too wide) in paragraph at lines 2554--2555
+
+[65]
+Overfull \hbox (16.30731pt too wide) in paragraph at lines 2668--2669
 []\TU/lmr/m/n/10.95 Vi-si-teur par dé-faut pour les types de nœuds AST qui n
 ’ont pas de mé-thode [][][][][][]
  []
 
 
 
-[65]
-Overfull \hbox (77.53302pt too wide) in paragraph at lines 2628--2629
+[66]
+Overfull \hbox (77.53302pt too wide) in paragraph at lines 2742--2743
 [][][][][][][] 
  []
 
 
 
-[66]
-Overfull \hbox (19.00539pt too wide) in paragraph at lines 2632--2633
+[67]
+Overfull \hbox (19.00539pt too wide) in paragraph at lines 2746--2747
 []\TU/lmr/m/it/10.95 sim-pli-fied_nodes_tuples \TU/lmr/m/n/10.95 (re-nom-mée de
  \TU/lmr/m/it/10.95 sim-pli-fied_nodes\TU/lmr/m/n/10.95 ) : []List[Tuple[str,
  []
 
 
 
-[67]
-Overfull \hbox (29.36896pt too wide) in paragraph at lines 2679--2680
+[68]
+Overfull \hbox (29.36896pt too wide) in paragraph at lines 2793--2794
 [][][][][][][] 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 2708--2708
+Underfull \hbox (badness 10000) in paragraph at lines 2822--2822
 []|\TU/DejaVuSansMono(0)/m/n/10.95 ast.ExceptHandler
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 2709--2709
+Underfull \hbox (badness 10000) in paragraph at lines 2823--2823
 []|\TU/DejaVuSansMono(0)/m/n/10.95 ast.Try \TU/lmr/m/n/10.95 (par-tie
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 2710--2710
+Underfull \hbox (badness 10000) in paragraph at lines 2824--2824
 []|\TU/DejaVuSansMono(0)/m/n/10.95 ast.Try \TU/lmr/m/n/10.95 (par-tie
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 2711--2711
+Underfull \hbox (badness 10000) in paragraph at lines 2825--2825
 []|\TU/DejaVuSansMono(0)/m/n/10.95 ast.Try \TU/lmr/m/n/10.95 (par-
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 2711--2711
+Underfull \hbox (badness 10000) in paragraph at lines 2825--2825
 \TU/lmr/m/n/10.95 tie \TU/DejaVuSansMono(0)/m/n/10.95 orelse\TU/lmr/m/n/10.95 ),
 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 2711--2711
+Underfull \hbox (badness 10000) in paragraph at lines 2825--2825
 \TU/DejaVuSansMono(0)/m/n/10.95 ast.For\TU/lmr/m/n/10.95 /\TU/DejaVuSansMono(0)
 /m/n/10.95 ast.While
  []
 
 
-Underfull \hbox (badness 1448) in paragraph at lines 2711--2711
+Underfull \hbox (badness 1448) in paragraph at lines 2825--2825
 \TU/lmr/m/n/10.95 une boucle se ter-mine *nor-ma-le-ment*
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 2713--2713
+Underfull \hbox (badness 10000) in paragraph at lines 2827--2827
 []|\TU/lmr/m/n/10.95 Context-Ma-na-ger
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 2713--2713
+Underfull \hbox (badness 10000) in paragraph at lines 2827--2827
 []|\TU/DejaVuSansMono(0)/m/n/10.95 ast.With\TU/lmr/m/n/10.95 ,
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 2714--2714
+Underfull \hbox (badness 10000) in paragraph at lines 2828--2828
 []|\TU/lmr/m/n/10.95 Vé-ri-fie une condi-tion et lève une
  []
 
 
-Underfull \hbox (badness 3657) in paragraph at lines 2714--2714
+Underfull \hbox (badness 3657) in paragraph at lines 2828--2828
 \TU/DejaVuSansMono(0)/m/n/10.95 AssertionError \TU/lmr/m/n/10.95 si elle est fau
 sse.
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 2716--2716
+Underfull \hbox (badness 10000) in paragraph at lines 2830--2830
 []|\TU/DejaVuSansMono(0)/m/n/10.95 ast.Yield\TU/lmr/m/n/10.95 ,
  []
 
 
-Overfull \hbox (21.08214pt too wide) in paragraph at lines 2717--2717
+Overfull \hbox (21.08214pt too wide) in paragraph at lines 2831--2831
 []|\TU/DejaVuSansMono(0)/m/n/10.95 ast.AsyncFunctionDef\TU/lmr/m/n/10.95 ,
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 2717--2717
+Underfull \hbox (badness 10000) in paragraph at lines 2831--2831
 \TU/DejaVuSansMono(0)/m/n/10.95 ast.Await\TU/lmr/m/n/10.95 ,
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 2717--2717
+Underfull \hbox (badness 10000) in paragraph at lines 2831--2831
 \TU/DejaVuSansMono(0)/m/n/10.95 ast.AsyncFor\TU/lmr/m/n/10.95 ,
  []
 
-[68]
-
 [69]
 
-c:/Users/install/gyminf/redac/main.tex:2754: Package minted Error: Cannot highl
+[70]
+
+c:/Users/install/gyminf/redac/main.tex:2868: Package minted Error: Cannot highl
 ight code (minted executable is unavailable or disabled); attempting to typeset
  without highlighting.
 
@@ -3047,14 +3789,14 @@ See the minted package documentation for explanation.
 Type  H <return>  for immediate help.
  ...                                              
                                                   
-l.2754 \end{minted}
+l.2868 \end{minted}
                    
 (That was another \errmessage.)
 
 
 
-[70]
-Overfull \hbox (24.91023pt too wide) in paragraph at lines 2797--2798
+[71]
+Overfull \hbox (24.91023pt too wide) in paragraph at lines 2911--2912
 \TU/lmr/m/n/10.95 l’édi-teur se dé-clenche im-mé-dia-te-ment. Ce lis-te-ner
  (dé-crit ci-dessous) verra que \TU/DejaVuSansMono(0)/m/n/10.95 lastDiagramAstD
 ump
@@ -3062,43 +3804,43 @@ ump
 
 
 
-[71]
-Overfull \hbox (15.9551pt too wide) in paragraph at lines 2818--2818
+[72]
+Overfull \hbox (15.9551pt too wide) in paragraph at lines 2932--2932
 []|\TU/DejaVuSansMono(0)/m/n/10.95 generateRandomPythonCode| 
  []
 
 
-Overfull \hbox (2.77019pt too wide) in paragraph at lines 2819--2819
+Overfull \hbox (2.77019pt too wide) in paragraph at lines 2933--2933
 []|\TU/DejaVuSansMono(0)/m/n/10.95 calculateRequiredLines| 
  []
 
 
-Overfull \hbox (22.54755pt too wide) in paragraph at lines 2820--2820
+Overfull \hbox (22.54755pt too wide) in paragraph at lines 2934--2934
 []|\TU/DejaVuSansMono(0)/m/n/10.95 ensureVariablesForOptions| 
  []
 
 
-Overfull \hbox (9.36264pt too wide) in paragraph at lines 2821--2821
+Overfull \hbox (9.36264pt too wide) in paragraph at lines 2935--2935
 []|\TU/DejaVuSansMono(0)/m/n/10.95 ensureRequiredVariables| 
  []
 
 
-Overfull \hbox (22.54755pt too wide) in paragraph at lines 2822--2822
+Overfull \hbox (22.54755pt too wide) in paragraph at lines 2936--2936
 []|\TU/DejaVuSansMono(0)/m/n/10.95 generateControlStructures| 
  []
 
 
-Overfull \hbox (9.36264pt too wide) in paragraph at lines 2838--2838
+Overfull \hbox (9.36264pt too wide) in paragraph at lines 2952--2952
 []|\TU/DejaVuSansMono(0)/m/n/10.95 generateSimpleOperation| 
  []
 
 
-Overfull \hbox (29.14pt too wide) in paragraph at lines 2840--2840
+Overfull \hbox (29.14pt too wide) in paragraph at lines 2954--2954
 []|\TU/DejaVuSansMono(0)/m/n/10.95 ensureVariableForStructure| 
  []
 
 
-Overfull \hbox (5.77786pt too wide) in paragraph at lines 2865--2866
+Overfull \hbox (5.77786pt too wide) in paragraph at lines 2979--2980
 []\TU/DejaVuSansMono(0)/m/n/10.95 generateVariables() \TU/lmr/m/n/10.95 et \TU/
 DejaVuSansMono(0)/m/n/10.95 ensureVariablesForOptions() \TU/lmr/m/n/10.95 ont de
 s rôles qui se che-vauchent 
@@ -3106,15 +3848,15 @@ s rôles qui se che-vauchent
 
 
 
-[72] (./_minted/94FB56CA56931A37BC96DB778C289269.highlight.minted)
-Overfull \hbox (14.47162pt too wide) in paragraph at lines 2917--2918
+[73] (./_minted/94FB56CA56931A37BC96DB778C289269.highlight.minted)
+Overfull \hbox (14.47162pt too wide) in paragraph at lines 3031--3032
 []\TU/lmr/m/n/10.95 Sup-pri-mer \TU/DejaVuSansMono(0)/m/n/10.95 finalVariableChe
 ck() \TU/lmr/m/n/10.95 et in-té-grer sa lo-gique dans \TU/DejaVuSansMono(0)/m/
 n/10.95 ensureRequiredVariables() 
  []
 
 
-Overfull \hbox (0.96208pt too wide) in paragraph at lines 2918--2919
+Overfull \hbox (0.96208pt too wide) in paragraph at lines 3032--3033
 []\TU/lmr/m/n/10.95 Rem-pla-cer \TU/DejaVuSansMono(0)/m/n/10.95 ensureVariableFo
 rStructure() \TU/lmr/m/n/10.95 par des ap-pels à \TU/DejaVuSansMono(0)/m/n/10.
 95 ensureVariableExists() 
@@ -3122,51 +3864,51 @@ rStructure() \TU/lmr/m/n/10.95 par des ap-pels à \TU/DejaVuSansMono(0)/m/n/10.
 
 
 
-[73]
-Overfull \hbox (10.79306pt too wide) in paragraph at lines 2937--2937
+[74]
+Overfull \hbox (10.79306pt too wide) in paragraph at lines 3051--3051
 [][]\TU/lmr/m/sc/10.95 Wenger\TU/lmr/m/n/10.95 , E. (1998). |   []. Cam-bridge 
 Uni-ver-sity Press.
  []
 
 
-Overfull \hbox (103.72946pt too wide) in paragraph at lines 2937--2937
+Overfull \hbox (103.72946pt too wide) in paragraph at lines 3051--3051
 \TU/lmr/m/n/10.95 gram-ming in school. |   [],
  []
 
 
-Overfull \hbox (173.49545pt too wide) in paragraph at lines 2937--2937
+Overfull \hbox (173.49545pt too wide) in paragraph at lines 3051--3051
 [][]\TU/lmr/m/sc/10.95 Crews\TU/lmr/m/n/10.95 , T., & \TU/lmr/m/sc/10.95 Ziegler
 \TU/lmr/m/n/10.95 , U. (1998). The flow-chart in-ter-pre-ter for in-tro-duc-tory
  pro-gram-ming courses. |   [],
  []
 
 
-Overfull \hbox (300.46065pt too wide) in paragraph at lines 2937--2937
+Overfull \hbox (300.46065pt too wide) in paragraph at lines 3051--3051
 [][]\TU/lmr/m/sc/10.95 Anderson\TU/lmr/m/n/10.95 , L. W., & \TU/lmr/m/sc/10.95 
 Krathwohl\TU/lmr/m/n/10.95 , D. R. (Éd.). (2001). |   [].
  []
 
 
-Overfull \hbox (0.95259pt too wide) in paragraph at lines 2937--2937
+Overfull \hbox (0.95259pt too wide) in paragraph at lines 3051--3051
 [][]\TU/lmr/m/sc/10.95 Fuller\TU/lmr/m/n/10.95 , U., et al. (2007). De-ve-lo-pin
 g a com-pu-ter science-specific lear-ning taxo-nomy. |   [],
  []
 
 
-Overfull \hbox (8.93169pt too wide) in paragraph at lines 2937--2937
+Overfull \hbox (8.93169pt too wide) in paragraph at lines 3051--3051
 [][]|   []\TU/lmr/m/n/10.95 . (2013). Consulté le 24 août 2025 à [][]$https 
 : / / stackoverflow .
  []
 
 
-Overfull \hbox (0.64243pt too wide) in paragraph at lines 2937--2937
+Overfull \hbox (0.64243pt too wide) in paragraph at lines 3051--3051
 [][]\TU/lmr/m/sc/10.95 Gopinath\TU/lmr/m/n/10.95 , R. (2024). |   []. Consult
 é le 24 août 2025 à [][]$https : / / github . com / rahulgopinath /
  []
 
 
 
-[74
+[75
 
 ] (c:/Users/install/gyminf/redac/build/main.aux)
  ***********
@@ -3175,13 +3917,23 @@ L3 programming layer <2025-07-20>
  ***********
 
 
+LaTeX Warning: There were undefined references.
+
+
 LaTeX Warning: Label(s) may have changed. Rerun to get cross-references right.
 
-Package rerunfilecheck Info: File `main.out' has not changed.
-(rerunfilecheck)             Checksum: 6B5EE60038245ED7022CC648944AC9BF;23140.
 
-Package biblatex Warning: Please rerun LaTeX.
-(biblatex)                Page breaks have changed.
+Package rerunfilecheck Warning: File `main.out' has changed.
+(rerunfilecheck)                Rerun to get outlines right
+(rerunfilecheck)                or use package `bookmark'.
+
+Package rerunfilecheck Info: Checksums for `main.out':
+(rerunfilecheck)             Before: 1DAD2DFA717509FEB787DBF9F5A033AB;19869
+(rerunfilecheck)             After:  75FAD2B89B42F92EA9B745AB45CE44BB;23211.
+
+Package biblatex Warning: Please (re)run Biber on the file:
+(biblatex)                main
+(biblatex)                and rerun LaTeX afterwards.
 
 Package logreq Info: Writing requests to 'main.run.xml'.
 
@@ -3189,16 +3941,117 @@ Package logreq Info: Writing requests to 'main.run.xml'.
 )
 
 Here is how much of LuaTeX's memory you used:
- 45488 strings out of 470118
- 195344,2373549 words of node,token memory allocated
- 24694 words of node memory still in use:
-   6 hlist, 2 vlist, 2 rule, 1290 glue, 4 kern, 26 penalty, 2 glyph, 4308 attrib
-ute, 994 glue_spec, 863 attribute_list, 2 write, 13 pdf_action nodes
-   avail lists: 1:7,2:6953,3:3439,4:649,5:544,6:153,7:10719,8:306,9:1553,10:35,1
-1:1045,12:2
- 72416 multiletter control sequences out of 65536+600000
+ 45461 strings out of 470118
+ 195345,2373549 words of node,token memory allocated
+ 25826 words of node memory still in use:
+   6 hlist, 2 vlist, 2 rule, 1349 glue, 4 kern, 21 penalty, 2 glyph, 4508 attrib
+ute, 1046 glue_spec, 903 attribute_list, 2 write, 12 pdf_action nodes
+   avail lists: 1:7,2:6947,3:3438,4:1052,5:544,6:154,7:10719,8:306,9:1553,10:35,
+11:1045,12:2
+ 72342 multiletter control sequences out of 65536+600000
  95 fonts using 15617015 bytes
- 85i,13n,115p,2121b,3277s stack positions out of 10000i,1000n,20000p,200000b,200000s
+ 85i,13n,115p,2121b,2897s stack positions out of 10000i,1000n,20000p,200000b,200000s
+
+warning  (pdf backend): unreferenced destination with name 'figure.caption.38'
+
+warning  (pdf backend): unreferenced destination with name 'figure.caption.37'
+
+warning  (pdf backend): unreferenced destination with name 'figure.caption.32'
+
+warning  (pdf backend): unreferenced destination with name 'figure.caption.31'
+
+warning  (pdf backend): unreferenced destination with name 'figure.caption.30'
+
+warning  (pdf backend): unreferenced destination with name 'figure.caption.29'
+
+warning  (pdf backend): unreferenced destination with name 'figure.caption.27'
+
+warning  (pdf backend): unreferenced destination with name 'figure.caption.23'
+
+warning  (pdf backend): unreferenced destination with name 'figure.caption.12'
+
+warning  (pdf backend): unreferenced destination with name 'figure.caption.8'
+
+warning  (pdf backend): unreferenced destination with name 'figure.caption.7'
+
+warning  (pdf backend): unreferenced destination with name 'figure.caption.6'
+
+warning  (pdf backend): unreferenced destination with name 'subsection.7.9'
+
+warning  (pdf backend): unreferenced destination with name 'subsection.7.8'
+
+warning  (pdf backend): unreferenced destination with name 'subsection.7.7'
+
+warning  (pdf backend): unreferenced destination with name 'subsection.7.6'
+
+warning  (pdf backend): unreferenced destination with name 'subsection.7.5'
+
+warning  (pdf backend): unreferenced destination with name 'subsection.7.4'
+
+warning  (pdf backend): unreferenced destination with name 'subsection.7.3'
+
+warning  (pdf backend): unreferenced destination with name 'subsubsection.7.2.4'
+
+
+warning  (pdf backend): unreferenced destination with name 'subsubsection.7.2.3'
+
+
+warning  (pdf backend): unreferenced destination with name 'subsubsection.7.2.2'
+
+
+warning  (pdf backend): unreferenced destination with name 'subsubsection.7.2.1'
+
+
+warning  (pdf backend): unreferenced destination with name 'subsection.7.2'
+
+warning  (pdf backend): unreferenced destination with name 'subsection.7.1'
+
+warning  (pdf backend): unreferenced destination with name 'subsubsection.4.1.2'
+
+
+warning  (pdf backend): unreferenced destination with name 'subsubsection.4.1.1'
+
+
+warning  (pdf backend): unreferenced destination with name 'subsubsection.3.2.3'
+
+
+warning  (pdf backend): unreferenced destination with name 'subsubsection.3.2.2'
+
+
+warning  (pdf backend): unreferenced destination with name 'subsubsection.3.2.1'
+
+
+warning  (pdf backend): unreferenced destination with name 'subsubsection.2.4.2'
+
+
+warning  (pdf backend): unreferenced destination with name 'subsubsection.2.4.1'
+
+
+warning  (pdf backend): unreferenced destination with name 'subsection.2.4'
+
+warning  (pdf backend): unreferenced destination with name 'subsubsection.2.1.1'
+
+
+warning  (pdf backend): unreferenced destination with name 'subsubsection.1.4.6'
+
+
+warning  (pdf backend): unreferenced destination with name 'subsubsection.1.4.5'
+
+
+warning  (pdf backend): unreferenced destination with name 'subsubsection.1.4.4'
+
+
+warning  (pdf backend): unreferenced destination with name 'subsubsection.1.4.3'
+
+
+warning  (pdf backend): unreferenced destination with name 'subsubsection.1.4.2'
+
+
+warning  (pdf backend): unreferenced destination with name 'subsubsection.1.3.4'
+
+
+warning  (pdf backend): unreferenced destination with name 'subsubsection.1.2.3'
+
 <C:/Users/install/AppData/Local/Programs/MiKTeX/fonts/truetype/public/dejavu/dej
 avusansmono-oblique.ttf><c:/users/install/appdata/local/programs/miktex/fonts/op
 entype/public/lm/lmroman9-regular.otf><c:/users/install/appdata/local/programs/m
@@ -3216,14 +4069,13 @@ c/lm/lmroman12-bold.otf><c:/users/install/appdata/local/programs/miktex/fonts/op
 entype/public/lm/lmroman12-regular.otf><c:/users/install/appdata/local/programs/
 miktex/fonts/opentype/public/lm/lmroman10-regular.otf><C:/Users/install/AppData/
 Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmmi10.pfb><C:/Users/instal
-l/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmmi8.pfb><C:/Use
-rs/install/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmr10.pf
-b><C:/Users/install/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm
-/cmsy10.pfb><C:/Users/install/AppData/Local/Programs/MiKTeX/fonts/type1/urw/zapf
-ding/uzdr.pfb>
-Output written on main.pdf (77 pages, 1551652 bytes).
+l/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmr10.pfb><C:/Use
+rs/install/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmsy10.p
+fb><C:/Users/install/AppData/Local/Programs/MiKTeX/fonts/type1/urw/zapfding/uzdr
+.pfb>
+Output written on main.pdf (78 pages, 1550062 bytes).
 
-PDF statistics: 1236 PDF objects out of 1440 (max. 8388607)
- 377 named destinations out of 1000 (max. 131072)
- 624 words of extra memory for PDF output out of 10000 (max. 100000000)
+PDF statistics: 1248 PDF objects out of 1440 (max. 8388607)
+ 429 named destinations out of 1000 (max. 131072)
+ 592 words of extra memory for PDF output out of 10000 (max. 100000000)
 

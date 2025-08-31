@@ -113,25 +113,10 @@
 \postdate{\par\end{center}\vspace{1.2cm}}
 \renewcommand{\abstractname}{Résumé}
 
-% ---- Style FANCY réservé à la page de garde ----
-\fancypagestyle{cover}{
-  \fancyhf{}
-  \renewcommand{\headrulewidth}{0pt}
-  \fancyfoot[L]{\small \textbf{Superviseur :} Prénom Nom, Titre / Affiliation}
-  \fancyfoot[R]{\small \textbf{Juré expert :} Prénom Nom, Titre / Affiliation}
-  \renewcommand{\footrulewidth}{0.4pt}
-}
 
 \begin{document}
 
 \begin{titlepage}
-  % Pied de page uniquement sur la page de garde
-  \pagestyle{fancy}
-  \fancyhf{}
-  \renewcommand{\headrulewidth}{0pt}
-  \fancyfoot[L]{\small \textbf{Superviseur :} Patrick Wang, HEP Lausanne}
-  \fancyfoot[R]{\small \textbf{Juré expert :} Micha Hersch, HEP Lausanne, Gymnase de Renens}
-  \renewcommand{\footrulewidth}{0.4pt}
 
   % AVEC LOGO ???
   \begin{center}
@@ -155,8 +140,16 @@ Nous présenterons d'abord les contextes qui ont présidé à la réalisation de
     \item le générateur Javascript de codes Python tournant dans le navigateur, aléatoires mais contrôlables et de niveau pédagogique
     \item le traducteur Javascript de code Python en graphique logigramme rendu dans le navigateur par Mermaid
     \item le serveur Flask (Python) enregistrant les interactions élèves face aux codes proposés pour construire une base de données didactiques. 
-\end{enumerate} 
+\end{enumerate}
+\\
 Le présent rapport n'a pas vocation à être un mode d'emploi ou une documentation technique exhaustive, mais une explication des fonctionnalités implémentées et des choix qui ont été faits.
+\vspace{2cm}
+  % Pied de page uniquement sur la page de garde
+  \pagestyle{fancy}
+  \fancyhf{}
+  \fancyfoot[L]{\small \textbf{Superviseur :} Patrick Wang, HEP Lausanne}
+  \fancyfoot[R]{\small \textbf{Juré expert :} Micha Hersch, HEP Lausanne, Gymnase de Renens}
+
 
 \end{abstract}
 \end{titlepage}
@@ -176,19 +169,19 @@ Notre projet a été construit à une époque marquée simultanément par trois 
     \item une \textbf{disparition annoncée de la pratique de l'écriture humaine de code} informatique, ce qui questionne la possible disparition de l'écriture de code comme compétence socialement valorisée
     \item l'ubiquité du \textbf{numérique dans la vie quotidienne}, en particulier pour les actuels élèves du secondaire, nés après l'avènement du smartphone et du Web 2.0 
 \end{itemize}
-Il nous semble donc d'autant plus urgent de proposer des \textit{outils conviviaux} susceptibles de redonner aux futurs citoyens une capacité d'agir dans notre monde numérique. Nous empruntons ici l'expression d'Ivan Illich \cite{Illich} pour qui des ``outils conviviaux'' sont le contraire de l'outil ``dominant'' (exemple aujourd'hui: l'algorithme qui décide pour nous, à notre insu). Sont ``conviviales'' les techniques autolimitées, compréhensibles et modifiables par leurs usagers, que chacun peut utiliser, réparer et adapter sans dépendre d’experts ni d’institutions, afin d’accroître l’autonomie et la coopération plutôt que la dépendance aux systèmes.
-\`{A} l'époque contemporaine, Shoshana Zuboff décrit notre ``capitalisme de surveillance'' - aux antipodes de la convivialité d’Illich - où l’outil capture les comportements plutôt que d’étendre la capacité d’agir.
-Les deux autres concepts qui nous semblent essentiels pour essayer de penser la valeur sociale d'un nouveau service numérique sont : le ``Panoptique'' \cite{Foucault} de Michel Foucault (métaphore d’un pouvoir disciplinaire fondé sur la visibilité asymétrique) et la ``Société de contrôle'' \cite{Deleuze} de Gilles Deleuze (très proche des logiques de plateformes et de scoring algorithmique d'aujourd'hui, des décennies après sa mort).
-L’outil ``convivial'' est ainsi un critère normatif contre ces logiques panoptiques et ``contrôlantes'' : gouvernance par les usagers, transparence et autolimitation vs. extraction des données, opacité et dépendance. 
-Je milite pour une évaluation critique des services numériques que nous faisons utiliser aux élèves, avec comme objectif de favoriser l’appropriation collective (Illich) et d'identifier là où elles se trouvent les logiques de surveillance et de contrôle diffus (Foucault/Deleuze).
+Il nous semble donc d'autant plus urgent de proposer des \textit{outils conviviaux} susceptibles de redonner aux futurs citoyens une capacité d'agir dans notre monde numérique. Nous empruntons ici l'expression d'Ivan Illich \cite{Illich} pour qui des ``outils conviviaux'' sont le contraire de l'outil ``dominant'' (exemple aujourd'hui: l'algorithme qui décide pour nous, à notre insu). Sont ``conviviales'' les techniques autolimitées, compréhensibles et modifiables par leurs usagers, que chacun peut utiliser, réparer et adapter sans dépendre d'experts ni d'institutions, afin d'accroître l'autonomie et la coopération plutôt que la dépendance aux systèmes.
+\`{A} l'époque contemporaine, Shoshana Zuboff décrit notre ``capitalisme de surveillance'' - aux antipodes de la convivialité d'Illich - où l'outil capture les comportements plutôt que d'étendre la capacité d'agir.
+Les deux autres concepts qui nous semblent essentiels pour essayer de penser la valeur sociale d'un nouveau service numérique sont : le ``Panoptique'' \cite{Foucault} de Michel Foucault (métaphore d'un pouvoir disciplinaire fondé sur la visibilité asymétrique) et la ``Société de contrôle'' \cite{Deleuze} de Gilles Deleuze (très proche des logiques de plateformes et de scoring algorithmique d'aujourd'hui, des décennies après sa mort).
+L'outil ``convivial'' est ainsi un critère normatif contre ces logiques panoptiques et ``contrôlantes'' : gouvernance par les usagers, transparence et autolimitation vs. extraction des données, opacité et dépendance. 
+Je milite pour une évaluation critique des services numériques que nous faisons utiliser aux élèves, avec comme objectif de favoriser l'appropriation collective (Illich) et d'identifier là où elles se trouvent les logiques de surveillance et de contrôle diffus (Foucault/Deleuze).
 
 \subsubsection{Position de principe sur l'IA générative comme outil dans les mains des élèves}
 Il apparaît naturel pour beaucoup de gens aujourd'hui de déléguer aux LLM des tâches d'enseignants tant les modèles et leurs interfaces sont devenus qualitativement et quantitativement performants. On peut en effet noter à la fois la qualité des réponses proposées, instructives pour nos élèves, et d'un point de vue quantitatif l'infrastructure qui nous sert ces modèles autorise un passage à l'échelle permettant une productivité face aux élèves littéralement inhumaine, leur ubiquité soulignant la rareté et la singularité de l'interaction pédagogique enseignant - apprenant. 
 De façon générale, plusieurs raisons de refuser d'inciter les élèves à utiliser massivement l'IA générative peuvent être mises en avant: \begin{enumerate}
         \item l'impact écologique (climat et environnement: énergie, eau et terres rares, etc.), 
         \item l'inadéquation par rapport à une démarche scientifique "explicative et contrôlée", 
-        \item les dérives sociales des géants du numérique (non respect des normes de traitement des humains engagés dans l’entraînement des modèles),
-        \item la cannibalisation des communs numériques pour l’entraînement des LLM privés (appropriation de biens publics pour la constitution de profits privés, non respect des bonnes pratiques de crawlers web pour alimenter les modèles),
+        \item les dérives sociales des géants du numérique (non respect des normes de traitement des humains engagés dans l'entraînement des modèles),
+        \item la cannibalisation des communs numériques pour l'entraînement des LLM privés (appropriation de biens publics pour la constitution de profits privés, non respect des bonnes pratiques de crawlers web pour alimenter les modèles),
     \end{enumerate}
 Maintenant dans une perspective d'\textit{empowerment}, telle que les fournisseurs d'IA nous le promettent \cite{email}, une précision nous semble importante : déléguer l'interaction maître-élève à une machine et déléguer l'observation et la ``compréhension'' de l'erreur élève à une machine prive l'enseignant de la possibilité de développer son expertise didactique
  Plus spécifiquement, pour notre cas d'usage qui est la génération aléatoire d'exercices par les élèves, adapté aux besoins pédagogiques, une solution acceptable par principe aurait été la distillation d'un gros modèle produit dans des conditions \textit{fair-trade}, assez frugale pour tourner sur un serveur interne à l'école, mais c'est un autre sujet qui ne rentre pas dans le cadre de ce travail. \\ Mettre dans les mains des élèves un outil basé sur l'API d'un modèle commercial, performant mais en voie de monétisation, reste inconcevable tant cela enfreindrait mes principes que je viens de mentionner ci-dessus, en exposant les élèves au risque d'être instrumentalisés dans le processus de monétisation des IA génératives.
@@ -206,13 +199,13 @@ Notre démarche tire son essence dans un but : aider les enseignants chargés de
 
 \subsubsection{Contexte institutionnel}
 \begin{description}
-    \item[Institutionnel et pédagogique:] École secondaire genevoise; enseignement de l'informatique comme discipline obligatoire pour tous les élèves de 1ère et 2ème année, mais avec très peu d’heures hebdomadaires pour chaque élève (respectivement 2 périodes et 1 seule) et dont la note ne sera pas reprise sur le diplôme de maturité: massification des effectifs d’élèves pour l’enseignant, difficulté voire opposition de certains élèves face à la programmation.
+    \item[Institutionnel et pédagogique:] École secondaire genevoise; enseignement de l'informatique comme discipline obligatoire pour tous les élèves de 1ère et 2ème année, mais avec très peu d'heures hebdomadaires pour chaque élève (respectivement 2 périodes et 1 seule) et dont la note ne sera pas reprise sur le diplôme de maturité: massification des effectifs d'élèves pour l'enseignant, difficulté voire opposition de certains élèves face à la programmation.
     \item[Professionnel et personnel:] Ce projet rentre dans le cadre de la validation de ma formation GymInf et doit se terminer durant le semestre académique courant.
     \item[Professionnel et institutionnel:]
     
         \begin{itemize}
-        \item Constat de l'absence d’une culture de groupe de discipline, besoin de créer une “communauté de pratique”; 
-        \item Très grand nombre d'élèves pour chaque enseignant. Et donc besoin de rationaliser au maximum la pratique en créant des outils automatiques, besoin d’autonomiser les élèves dans leurs apprentissages; 
+        \item Constat de l'absence d'une culture de groupe de discipline, besoin de créer une “communauté de pratique”; 
+        \item Très grand nombre d'élèves pour chaque enseignant. Et donc besoin de rationaliser au maximum la pratique en créant des outils automatiques, besoin d'autonomiser les élèves dans leurs apprentissages; 
         \item Indisponibilité (technique ou budgétaire) ou inadéquation des outils existants (curriculum différent, objectifs "venus d'en haut" et nécessité de se conformer à une épreuve commune)
         \end{itemize}
 \end{description}
@@ -223,7 +216,7 @@ Le calendrier scolaire est rythmé par le curriculum et l'évaluation certificat
     \item Hypothèse fondatrice, appuyée par la littérature : la pertinence de la méthodologie PRIMM \cite{Sentance2017WiPSCE} dans le cadre de l'enseignement de la programmation en particulier en école secondaire avec des classes hétérogènes \cite{Sentance2019CSE}, que nous étendons par hypothèse aux syntaxes graphiques de type logigramme. Les mêmes auteurs relèvent l'attrait de cette approche pour les enseignants, qui a priori justifie qu'on cherche à les aider dans cette approche si elle a du succès chez eux !
     \item Hypothèse forte appuyée par la littérature: les intérêts multiples d'un générateur d'exercices aléatoires \cite{messer2023}, pour autant que  l'aléa réponde à des critères pédagogiques fixés et contrôlables par l'enseignant et/ou par l'apprenant. Citons notamment comme intérêt la grande variété des questions, qui évite la mémorisation de la solution sans investissement personnel, évitant ainsi le \textit{plagiat de solutions}; le contrôle de la difficulté peut permettre une différenciation (par adaptation au niveau réel ou supposé de l'élève).
     \item Hypothèse : intérêt de la représentation logigramme (\textit{flowchart}) comme moyen d'apprentissage \cite{zimmermann2024}, et en particulier de la programmation \cite{CrewsZielger98} - en plus d'être un objectif d'apprentissage qui se justifie eu égard au contexte institutionnel.
-    \item Hypothèse : intérêt de proposer des exercices de lecture de programmes textuels et graphiques avant ceux d'écriture, en référence aux taxonomies d’Anderson \& Krathwohl \cite{AndersonKrathwohl2001} et plus spécifiquement \cite{Fuller2007} pour l'enseignement de la programmation. Ces taxonomies ont en commun de placer ``comprendre'' à un niveau cognitif plus bas que ``appliquer''“comprendre” est censé être de niveau cognitif plus bas que “appliquer” ou encore “créer”. ou encore ``créer''.
+    \item Hypothèse : intérêt de proposer des exercices de lecture de programmes textuels et graphiques avant ceux d'écriture, en référence aux taxonomies d'Anderson \& Krathwohl \cite{AndersonKrathwohl2001} et plus spécifiquement \cite{Fuller2007} pour l'enseignement de la programmation. Ces taxonomies ont en commun de placer ``comprendre'' à un niveau cognitif plus bas que ``appliquer''“comprendre” est censé être de niveau cognitif plus bas que “appliquer” ou encore “créer”. ou encore ``créer''.
     \item Hypothèse : l'intérêt d'une évaluation formative immédiate pour tester la compréhension et l'intérêt de la possibilité laissée à l'apprenant de modifier les codes proposés - textuel et logigramme - citons notamment \cite{HattieTimperley2007} et \cite{Shute2008}.
 \end{enumerate}
 
@@ -233,17 +226,17 @@ Nos objectifs fonctionnels apparaissent comme des conclusions de la section pré
 
 \subsubsection{Besoin d'un générateur de code et de questions pertinentes}
 
-Au niveau débutant, les classes sont hétérogènes. Nous visons donc des \emph{exercices de lecture de code} fondés sur la taxonomie des tâches au premier échelon, de difficulté \emph{ajustable} pour différencier au sein du groupe et accompagner sa progression. L’outil doit aussi \emph{décharger l’enseignant} avec : une génération automatique,un déploiement simple, un contrôle fin des paramètres.
+Au niveau débutant, les classes sont hétérogènes. Nous visons donc des \emph{exercices de lecture de code} fondés sur la taxonomie des tâches au premier échelon, de difficulté \emph{ajustable} pour différencier au sein du groupe et accompagner sa progression. L'outil doit aussi \emph{décharger l'enseignant} avec : une génération automatique,un déploiement simple, un contrôle fin des paramètres.
 \\
-Du côté de l’élève (dimension ``Predict''), il faut recevoir programmatiquement un script Python, l’afficher dans une fenêtre avec \emph{coloration syntaxique} et \emph{numérotation des lignes}, afin de soutenir la lecture analytique. L’aléa doit être \emph{contrôlé} pour garantir une plus-value pédagogique: on \emph{choisit} explicitement les constructions à inclure dans le script, on \emph{règle} des variables didactiques (nombre de variables, domaine de valeurs, longueur totale), et on \emph{fixe} les types à utiliser. Nous nous limitons volontairement aux \emph{types de base} utiles au début de l’apprentissage; nous renonçons à la simulation de programmes réalistes'' au profit de \emph{fragments signifiants}. Les noms de variables sont \emph{cohérents avec leurs types} pour donner une apparence plausible et guider l’inférence de l’élève.
+Du côté de l'élève (dimension ``Predict''), il faut recevoir programmatiquement un script Python, l'afficher dans une fenêtre avec \emph{coloration syntaxique} et \emph{numérotation des lignes}, afin de soutenir la lecture analytique. L'aléa doit être \emph{contrôlé} pour garantir une plus-value pédagogique: on \emph{choisit} explicitement les constructions à inclure dans le script, on \emph{règle} des variables didactiques (nombre de variables, domaine de valeurs, longueur totale), et on \emph{fixe} les types à utiliser. Nous nous limitons volontairement aux \emph{types de base} utiles au début de l'apprentissage; nous renonçons à la simulation de programmes réalistes'' au profit de \emph{fragments signifiants}. Les noms de variables sont \emph{cohérents avec leurs types} pour donner une apparence plausible et guider l'inférence de l'élève.
 
-Techniquement, l’interface collecte les \emph{choix utilisateurs} et les transmet au \emph{générateur} qui produit un script conforme: c’est le point d’entrée de tout le flux.
+Techniquement, l'interface collecte les \emph{choix utilisateurs} et les transmet au \emph{générateur} qui produit un script conforme: c'est le point d'entrée de tout le flux.
 
 \subsubsection{Besoin d'une sorte d'éditeur Python en ligne}
 
-Pour solliciter les dimensions ``Run'' et ``Investigate'', nous utilisons un interprète Python \emph{centré débutants} (sans viser l’exhaustivité syntaxique) et un éditeur qui \emph{teste l’élève} en cohérence avec les objectifs déclarés par l’enseignant. Les questions se \emph{calent automatiquement} sur le code proposé et une \emph{rétroaction immédiate} est fournie. Cela suppose des \emph{échanges DOM $\leftrightarrow$ exécution}: renvoi vers la page des \emph{valeurs attendues}, lecture des \emph{réponses élèves}, comparaison, puis affichage d’un \emph{feedback} adapté.
+Pour solliciter les dimensions ``Run'' et ``Investigate'', nous utilisons un interprète Python \emph{centré débutants} (sans viser l'exhaustivité syntaxique) et un éditeur qui \emph{teste l'élève} en cohérence avec les objectifs déclarés par l'enseignant. Les questions se \emph{calent automatiquement} sur le code proposé et une \emph{rétroaction immédiate} est fournie. Cela suppose des \emph{échanges DOM $\leftrightarrow$ exécution}: renvoi vers la page des \emph{valeurs attendues}, lecture des \emph{réponses élèves}, comparaison, puis affichage d'un \emph{feedback} adapté.
 \\
-Pour engager à la fois néophytes et aficionados, l’éditeur offre un \emph{rendu familier} type appli web ou IDE avec des aides activables (aplatissement de blocs, éventuellement auto-complétion) utiles dans un cadre pédagogique.\\ Enfin, pour ``Investigate'' et ``Modify'', l’élève peut \emph{sauvegarder} (\code{Download}) son script et \emph{revenir} au script initial (\code{Reload}) afin d’annuler ses modifications depuis la génération.
+Pour engager à la fois néophytes et aficionados, l'éditeur offre un \emph{rendu familier} type appli web ou IDE avec des aides activables (aplatissement de blocs, éventuellement auto-complétion) utiles dans un cadre pédagogique.\\ Enfin, pour ``Investigate'' et ``Modify'', l'élève peut \emph{sauvegarder} (\code{Download}) son script et \emph{revenir} au script initial (\code{Reload}) afin d'annuler ses modifications depuis la génération.
 
         
 \subsubsection{Un rendu logigramme}
@@ -252,7 +245,7 @@ Pour créer le rendu logigramme pour des codes valides, deux options étaient a 
     \item \textbf{Soit} à la génération du script, un logigramme statique (plus facile car le rendu logigramme est encapsulé avec la génération du code)
     \item \textbf{Soit} dynamique, modifiable en continu avec le code Python modifiable (ce qui alourdit l'UI qui devient moins lisible).
     \end{itemize}
-La première option aurait été en contradiction avec l’objectif d’\emph{investigation} et de \emph{modification} active ! aussi c'est la seconde option qui a été choisie. Le résultat est un couplage direct entre \emph{code affiché} et \emph{logigramme}—le support visuel se met à jour avec le script modifié, ce qui renforce l’activité de lecture, de prédiction et de vérification.
+La première option aurait été en contradiction avec l'objectif d'\emph{investigation} et de \emph{modification} active ! aussi c'est la seconde option qui a été choisie. Le résultat est un couplage direct entre \emph{code affiché} et \emph{logigramme}—le support visuel se met à jour avec le script modifié, ce qui renforce l'activité de lecture, de prédiction et de vérification.
 
 
 \subsection{Applications similaires et sources d'inspiration}
@@ -689,10 +682,10 @@ L'objectif pédagogique est de découvrir les affectations de valeurs aux variab
 Deux mécanismes assurent que les variables “vivent” dans le code :
 \begin{itemize}
   \item \textbf{Opérations par type minimalement garanties} : \texttt{ensureTypeSpecificOperations} (\href{https://github.com/edu-mateescoj/gyminf/blob/main/static/js/code-generator.js#L1083}{ligne 1806}) force au moins une opération pertinente pour chaque type demandé (ex. \texttt{str.replace}, concaténations…).
-  \item \textbf{Remplissage aléatoire jusqu’à la cible} : \texttt{addFiller} (\href{https://github.com/edu-mateescoj/gyminf/blob/main/static/js/code-generator.js#L1083}{ligne 1500}) choisit un type disponible, une variable, puis une opération parmi un éventail (\texttt{generateVariedOperation}, \href{https://github.com/edu-mateescoj/gyminf/blob/main/static/js/code-generator.js#L1083}{ligne 1586}), en évitant les répétitions.
+  \item \textbf{Remplissage aléatoire jusqu'à la cible} : \texttt{addFiller} (\href{https://github.com/edu-mateescoj/gyminf/blob/main/static/js/code-generator.js#L1083}{ligne 1500}) choisit un type disponible, une variable, puis une opération parmi un éventail (\texttt{generateVariedOperation}, \href{https://github.com/edu-mateescoj/gyminf/blob/main/static/js/code-generator.js#L1083}{ligne 1586}), en évitant les répétitions.
 \end{itemize}
 
-\emph{Conséquences.} Le code contient toujours des affectations/opérations effectives, même si l’utilisateur n’active aucune structure de contrôle : cela garantit un minimum d’``activité'' à analyser. Les opérations peuvent aussi apparaître \textbf{dans} les corps des structures (cf. \texttt{generateStructureBody}, \href{https://github.com/edu-mateescoj/gyminf/blob/main/static/js/code-generator.js#L1083}{ligne 551}), ce qui renforce la variété.
+\emph{Conséquences.} Le code contient toujours des affectations/opérations effectives, même si l'utilisateur n'active aucune structure de contrôle : cela garantit un minimum d'``activité'' à analyser. Les opérations peuvent aussi apparaître \textbf{dans} les corps des structures (cf. \texttt{generateStructureBody}, \href{https://github.com/edu-mateescoj/gyminf/blob/main/static/js/code-generator.js#L1083}{ligne 551}), ce qui renforce la variété.
 
 
 
@@ -705,14 +698,14 @@ Deux mécanismes assurent que les variables “vivent” dans le code :
 \begin{itemize}
   \item génère une condition en privilégiant des variables existantes, en se limitant aux types souhaités dans le plan d'études (\texttt{generateCondition}, \#409). Ex: pour les booléens ce sont les comparaisons et opérations logiques qui sont mobilisées, pour les listes ce sont les opérateurs \code{in} ou \code{not in} et la fofnction \code{len}, etc.
   \item construit un corps non vide via \texttt{generateAppropriateStatement} (\href{https://github.com/edu-mateescoj/gyminf/blob/main/static/js/code-generator.js#L1083}{ligne 1245}), qui ajoute des opérations adaptées au contexte ;
-  \item garantit qu’un \texttt{pass} est inséré si aucun type n'est disponible et que rien n’a été produit (\href{https://github.com/edu-mateescoj/gyminf/blob/main/static/js/code-generator.js#L1083}{ligne 1252}), ce qui a été utile pour le déboguage car ce cas ne devrait pas se produire.
+  \item garantit qu'un \texttt{pass} est inséré si aucun type n'est disponible et que rien n'a été produit (\href{https://github.com/edu-mateescoj/gyminf/blob/main/static/js/code-generator.js#L1083}{ligne 1252}), ce qui a été utile pour le déboguage car ce cas ne devrait pas se produire.
 \end{itemize}
 
 
 \emph{Conséquences (aléa, imbrication, cardinalité) :} 
 \begin{itemize}
-  \item \textbf{Aléa} : la présence d’un \code{if}, son ordre relatif, sa condition et ses opérations internes varient d’une génération à l’autre (liste mélangée + choix stochastiques).
-  \item \textbf{Imbrication} : dans la version actuelle, il n'y a pas d’\code{if} dans un \code{if}. Les corps contiennent des opérations, pas des structures récursives.
+  \item \textbf{Aléa} : la présence d'un \code{if}, son ordre relatif, sa condition et ses opérations internes varient d'une génération à l'autre (liste mélangée + choix stochastiques).
+  \item \textbf{Imbrication} : dans la version actuelle, il n'y a pas d'\code{if} dans un \code{if}. Les corps contiennent des opérations, pas des structures récursives.
   \item \textbf{Cardinalité} : au plus \emph{une} instance de chaque sorte de structure est ajoutée par génération.
 \end{itemize}
 
@@ -841,7 +834,7 @@ print("Le résultat de " + "build" + "(" + str(enabled) + ")" + " est " + str(fo
 Comment est assurée la correspondance entre les types ? et comment se fait-il que le type de la valeur de retour a un nom cohérent avec le nom de la variable ? Cette cohérence n'est pas le fruit du hasard, mais d'une chaîne logique délibérée en deux étapes qui se déroule entièrement au sein de la fonction \textit{generateFunction}. La correspondance entre le type attendu par la fonction (ici celui de \code{flag}) et le type de la variable passée en argument (ici celui de \code{enabled}) est assurée par le fait que le générateur planifie d'abord les types des paramètres lors de la définition, puis utilise ce plan pour générer à la fois la définition, le corps et pour choisir les arguments lors de l'appel. \\ Nous allons détailler le processus en traçant l'appel à \methodname{generateFunction} toujours pour notre exemple de code généré ci-dessus :
 \subsubsection*{Étape 1 : Planification de la fonction et génération de sa définition)}
 \begin{enumerate}
-\item \textbf{Choix d'un nom de paramètre sémantique} (cf. \href{https://github.com/edu-mateescoj/gyminf/blob/main/static/js/code-generator.js#L1083}{ligne 1083}) : Évidemment la génération de la fonction commence avec un choix de nom, parmi une liste maintenue en constante pour assurer une cohérence sémantique (un verbe d’action, choisi au hasard parmi FUNCTION\_NAMES). Le processus commence donc véritablement par l’appel à \methodname{chooseAppropriateParameterNames}. Cette fonction ne choisit pas des noms au hasard, mais dans des listes thématiques (ex: dataParams = ['data', 'items', 'elements', ...], mathParams = ['x', 'y', ...]).  Pour une fonction nommée \code{build}, elle pourrait sélectionner un nom dans la liste \code{utilParams}, comme \code{flag}. Le tableau \code{params} contient maintenant \code{['flag']}.
+\item \textbf{Choix d'un nom de paramètre sémantique} (cf. \href{https://github.com/edu-mateescoj/gyminf/blob/main/static/js/code-generator.js#L1083}{ligne 1083}) : Évidemment la génération de la fonction commence avec un choix de nom, parmi une liste maintenue en constante pour assurer une cohérence sémantique (un verbe d'action, choisi au hasard parmi FUNCTION\_NAMES). Le processus commence donc véritablement par l'appel à \methodname{chooseAppropriateParameterNames}. Cette fonction ne choisit pas des noms au hasard, mais dans des listes thématiques (ex: dataParams = ['data', 'items', 'elements', ...], mathParams = ['x', 'y', ...]).  Pour une fonction nommée \code{build}, elle pourrait sélectionner un nom dans la liste \code{utilParams}, comme \code{flag}. Le tableau \code{params} contient maintenant \code{['flag']}.
 
 \item \textbf{Inférence du type à partir du nom (\#1099)} : Le générateur parcourt le tableau \code{params}. Il trouve que le nom \code{flag} est inclus dans la constante \code{BOOL\_VAR\_NAMES}. Il en déduit que le type attendu est \vartype{bool}.
 \begin{minted}{javascript}
@@ -914,7 +907,7 @@ Cependant, cette approche directe, bien que plus simple à concevoir initialemen
 
 Le générateur est donc ``Automatique'' au sens où le pipeline est déterministe une fois les options fixées (vérifications, utilitaires, remplissage, validation). 
 \newline
-Le générateur est aussi ``Aléatoire'' : noms, littéraux, ordre des structures, choix d’opérations et certaines décisions (appeler ou non la fonction) introduisent de la variabilité encadrée.
+Le générateur est aussi ``Aléatoire'' : noms, littéraux, ordre des structures, choix d'opérations et certaines décisions (appeler ou non la fonction) introduisent de la variabilité encadrée.
 \newline
 Cette cascade de choix aléatoires mais contraints produit un code qui est à chaque fois différent, tout en restant logiquement et sémantiquement correct, et qui nous semble donc convenir pour un outil pédagogique. Cette approche a été choisie car elle transforme un problème complexe de combinaisons multiples en un système de règles simples et collaboratives. Elle a été le résultat de la poursuite de nombreux objectifs contradictoires : \textit{scalabilité} et robustesse pour l'ajout de nouvelles fonctionnalités, variété mais qualité pédagogique du code généré. \\ Au final, la plus grande perte dans ce processus serait peut être - au-delà de la maintenabilité - la possibilité d'une collaboration entre collègues utilisateurs de l'outil-auteur, invités à contribuer sur le processus de développement du générateur actuel.
 
@@ -1051,11 +1044,11 @@ On dira que le CFG est l'ensemble de ces noeuds et de ces arêtes : il rend expl
 \subsection{Pourquoi PyCFG (Fuzzing Book) était utile mais insuffisant pour nos objectifs}
 \paragraph{Apports de PyCFG :}
 \begin{itemize}
-\item Démonstration claire de la \textbf{construction d’un CFG à partir de l’AST} (\textit{The Fuzzing Book} \cite{fuzzingbook}).
+\item Démonstration claire de la \textbf{construction d'un CFG à partir de l'AST} (\textit{The Fuzzing Book} \cite{fuzzingbook}).
 \item Base technique pour le parcours \textit{visitor}, gestion des blocs, arêtes et séquences.
 \end{itemize}
 
-\paragraph{Limites pour l’usage pédagogique visé (et adaptation \code{MyCFG.py}).}
+\paragraph{Limites pour l'usage pédagogique visé (et adaptation \code{MyCFG.py}).}
 \begin{itemize}
 \item \textbf{Granularité trop bas niveau}: PyCFG reflète étroitement la syntaxe (blocs techniques), alors que 
 nous visons des \textbf{concepts algorithmiques} lisibles (\code{Process}/\code{Decision}/\code{Junction}/\code{IoOperation}).
@@ -1071,7 +1064,7 @@ des définitions de fonctions, ce que PyCFG ne vise pas.
 conditions courtes, noms de variables) afin d'essayer de garder le diagramme lisible.
 \end{itemize}
 
-\paragraph{Conclusion :} PyCFG fournit l’ossature algorithmique ; \code{MyCFG.py} ajoute une \textbf{couche sémantique
+\paragraph{Conclusion :} PyCFG fournit l'ossature algorithmique ; \code{MyCFG.py} ajoute une \textbf{couche sémantique
  et ergonomique} nécessaire à un \textit{retour visuel immédiat et didactique} pour les élèves, directement dans 
  le navigateur via Pyodide + Mermaid, conformément à l'objectif de traduction du code dans le navigateur.
 
@@ -1111,10 +1104,23 @@ Le processus, orchestré par la méthode principale \code{visit}, fonctionne com
     \end{itemize}
 \end{enumerate}
 
- \clearpage
+
+\subsection{Mon implémentation \textit{MyCFG.py}}
+
+Pour rappel l'architecture de \code{MyCFG.py} est guidée par une philosophie centrée sur l'objectif pédagogique. Plutôt que de viser une représentation exhaustive de tous les mécanismes d'exécution de Python (comme la gestion des exceptions, les définitions en compréhension ou l'asynchronisme), notre implémentation se concentre sur les constructions algorithmiques fondamentales enseignées aux débutants.
+
+\paragraph{Séparation des préoccupations.} La classe \code{ControlFlowGraph} est conçue en trois phases distinctes :
+\begin{enumerate}
+    \item \textbf{Initialisation et Parsing :} Le constructeur (\code{\_\_init\_\_}) prend le code source en entrée et utilise \code{ast.parse()} pour générer l'AST. La gestion des erreurs de syntaxe est effectuée à ce stade précoce, avec un retour immédiat si le code est syntaxiquement invalide. Ne sont pas capturées ici les erreurs sémantiques (exemple: l'utilisation dans une syntaxe Python valide de variables non initialisées)
+    \item \textbf{Construction du Graphe (Visite de l'AST) :} La méthode \code{visit} et ses sous-méthodes spécialisées (\code{visit\_If}, \code{visit\_For}, etc.) parcourent l'AST. Cette phase ne fait qu'ajouter des nœuds et des arêtes aux structures de données internes (\code{self.nodes}, \code{self.edges}). C'est ici que la logique de traduction de la syntaxe en flux de contrôle est implémentée. Une caractéristique clé est l'ajout de nœuds de \textbf{jonction} structurels, qui ne correspondent à aucun nœud AST mais sont essentiels pour représenter la convergence des flux de manière claire, notamment après les blocs conditionnels.
+    \item \textbf{Sérialisation en Mermaid :} La méthode \code{to\_mermaid} lit les structures de données internes (nœuds et arêtes) et génère la chaîne de caractères finale au format Mermaid. Cette séparation garantit que la logique de construction du graphe est indépendante du format de sortie final.
+\end{enumerate}
+Ce qu'il faut bien comprendre est la distinction entre le parcours structurel de l'AST du programme qui construit le CFG et le parcours suivant qui sérialise ce CFG en une chaîne Mermaid. Le premier parcours est guidé par la syntaxe du langage Python, tandis que le second est guidé par les besoins de visualisation.
+L'ambivalence vient du fait que j'ai choisi le même vocabulaire pour désigner des choses différentes.
+
 \subsection{Vocabulaire AST et sémantique des nœuds du CFG}
 
-La traduction d'un AST en un CFG implique une cartographie entre les nœuds syntaxiques de l'AST et les nœuds sémantiques du logigramme. Nous avons défini un ensemble de types de nœuds internes à notre graphe, chacun correspondant à un ou plusieurs types de nœuds AST et représentant un concept algorithmique distinct. Le tableau \ref{tab:node-types} détaille cette correspondance pour les éléments actuellement implémentés dans \code{MyCFG.py}.
+La traduction d'un AST en un CFG implique une cartographie entre les nœuds syntaxiques de l'AST et les nœuds sémantiques du logigramme. Nous avons défini un ensemble de types de nœuds internes à notre graphe, chacun correspondant à un ou plusieurs types de nœuds AST et représentant un concept algorithmique distinct. Le tableau \ref{tab:node-types} détaille cette correspondance pour les éléments actuellement implémentés dans \code{MyCFG.py} pour lever l'ambiguïté introduite par l'emploi des mêmes termes ``noeuds'' et ``visite'' pour des choses différentes.
 
 \begin{longtable}{| p{3cm} | p{4cm} | p{8cm} |}
 \caption{Correspondance des Types de Nœuds Internes, Nœuds AST et Sémantique}\label{tab:node-types}\\
@@ -1137,38 +1143,146 @@ Return & \code{ast.Return} & Indique la fin de l'exécution d'une fonction et le
 Jump & \code{ast.Break}, \code{ast.Continue} & Représente un saut inconditionnel dans le flux de contrôle vers un autre point défini (sortie de boucle pour 'Break', début de l'itération suivante pour 'Continue'). Termine le chemin séquentiel local. \\ \hline
 IoOperation & \code{ast.Call} (avec \code{func.id} étant 'print' ou 'input') & Un sous-type de 'Process' pour distinguer sémantiquement les opérations d'entrée/sortie, souvent représentées par un parallélogramme. \\ \hline
 \end{longtable}
+Enfin, clarifions le vocabulaire: \paragraph{Qu'est-ce qu'un "node" dans l'AST Python?}
+Un "node" (nœud) est toute instance d'une sous-classe de ast.AST.
+Chaque structure syntaxique du code Python (module, fonction, boucle, expression, etc.) est représentée par un nœud spécifique:
+ast.Module, ast.FunctionDef, ast.For, ast.If, ast.Assign, ast.Expr, etc.
+Exemple de nœuds:
+Module, For, If, Assign, Expr, Name, Call, Constant, etc.
 
-\subsection{Philosophie et architecture de \textit{MyCFG.py}}
+\paragraph{Quels éléments sont de simples arguments?}
+Les arguments sont des valeurs ou des attributs des nœuds, mais ne sont pas eux-mêmes des nœuds SEULEMENT s'ils sont de type primitif (int, str, etc.). On aura donc beaucoup de nœuds qui seront des arguments d'un nœud "parent".
+Exemple:Dans ast.For, les champs target, iter, et body sont des nœuds ou des listes de nœuds.
+Dans ast.Call, le champ args est une liste de nœuds représentant les arguments de la fonction appelée.
+Un champ comme lineno (numéro de ligne) ou col\_offset est un simple attribut (pas un nœud).
 
-Pour rappel l'architecture de \code{MyCFG.py} est guidée par une philosophie centrée sur l'objectif pédagogique. Plutôt que de viser une représentation exhaustive de tous les mécanismes d'exécution de Python (comme la gestion des exceptions, les définitions en compréhension ou l'asynchronisme), notre implémentation se concentre sur les constructions algorithmiques fondamentales enseignées aux débutants.
+\paragraph{Dans l'AST Python, aucun élément n'est à la fois une liste et un nœud:}
+Un nœud est une instance d'une sous-classe de ast.AST (ex: ast.Module, ast.For, ast.Assign, etc.).
+Une liste dans l'AST est toujours un champ (field) d'un nœud, qui contient zéro, un ou plusieurs nœuds (mais la liste elle-même n'est pas un nœud).
+D'après la doc officielle (ast)
+Les champs (fields) d'un nœud peuvent être:
+un nœud unique (ast.AST)
+une liste de nœuds (List[ast.AST])
+une valeur simple (int, str, None, etc.)
 
-\paragraph{Séparation des préoccupations.} La classe \code{ControlFlowGraph} est conçue en trois phases distinctes :
-\begin{enumerate}
-    \item \textbf{Initialisation et Parsing :} Le constructeur (\code{\_\_init\_\_}) prend le code source en entrée et utilise \code{ast.parse()} pour générer l'AST. La gestion des erreurs de syntaxe est effectuée à ce stade précoce, avec un retour immédiat si le code est syntaxiquement invalide. Ne sont pas capturées ici les erreurs sémantiques (exemple: l'utilisation dans une syntaxe Python valide de variables non initialisées)
-    \item \textbf{Construction du Graphe (Visite de l'AST) :} La méthode \code{visit} et ses sous-méthodes spécialisées (\code{visit\_If}, \code{visit\_For}, etc.) parcourent l'AST. Cette phase ne fait qu'ajouter des nœuds et des arêtes aux structures de données internes (\code{self.nodes}, \code{self.edges}). C'est ici que la logique de traduction de la syntaxe en flux de contrôle est implémentée. Une caractéristique clé est l'ajout de nœuds de \textbf{jonction} structurels, qui ne correspondent à aucun nœud AST mais sont essentiels pour représenter la convergence des flux de manière claire, notamment après les blocs conditionnels.
-    \item \textbf{Sérialisation en Mermaid :} La méthode \code{to\_mermaid} lit les structures de données internes (nœuds et arêtes) et génère la chaîne de caractères finale au format Mermaid. Cette séparation garantit que la logique de construction du graphe est indépendante du format de sortie final.
-\end{enumerate}
-Ce qu'il faut bien comprendre est la distinction entre le parcours structurel de l'AST du programme qui construit le CFG et le parcours suivant qui sérialise ce CFG en une chaîne Mermaid. Le premier parcours est guidé par la syntaxe du langage Python, tandis que le second est guidé par les besoins de visualisation.
-L’ambivalence vient du fait que j'ai choisi le même vocabulaire pour désigner des choses différentes.
+Exemples de champs qui sont des listes de nœuds:
+Module.body : liste d'instructions (nœuds)\\
+FunctionDef.body : liste d'instructions (nœuds)\\
+If.body, If.orelse : listes d'instructions (nœuds)\\
+For.body, For.orelse : listes d'instructions (nœuds)\\
+Call.args : liste d'expressions (nœuds)\\
+Assign.targets : liste de cibles (nœuds)\\
+List.elts, Tuple.elts : liste d'éléments (nœuds)\\
+Compare.ops : liste d'opérateurs (nœuds)\\
+Compare.comparators : liste d'expressions (nœuds)\\
+etc.\\
+Mais la liste elle-même n'est jamais un nœud:
+C'est toujours le champ d'un nœud, contenant des nœuds.\\
+Dans l'AST Python, les champs comme target, iter, func sont des attributs d'un nœud, mais leur valeur est (presque toujours) un nœud AST lui-même.
+Exemple dans la doc officielle: ``Each node class has a number of attributes, which are usually child nodes or lists of child nodes.''
+\newline
 
+\paragraph{Vocabulaire officiel pour la structure de l'arbre}
+Parent/Child (parent/enfant):\\
+Un nœud peut avoir des enfants (child nodes), accessibles via ses champs (fields).
+Le nœud qui contient un autre nœud est son parent.
+Fields (champs):
+Les attributs d'un nœud qui peuvent eux-mêmes être des nœuds ou des listes de nœuds.
+Voir ast.iter\_fields(node) dans la doc.\\
+Descendant (descendant):
+Tout nœud accessible en descendant l'arbre à partir d'un nœud donné.\\
+Siblings (frères/soeurs):
+Nœuds ayant le même parent.\\
+Tree (arbre), subtree (sous-arbre) :
+L'ensemble des nœuds à partir d'un nœud racine.\\
+En anglais dans la doc:
+"node", "child node", "parent node", "field", "attribute", "descendant", "tree", "subtree", "AST node".
+Vocabulaire pour la structure (français/anglais)\\
+Imbrication / Nesting: profondeur d'un nœud dans l'arbre.\\
+Appartenance / Membership: un nœud fait partie d'un sous-arbre.\\
+Inclusion / Containment: un nœud contient un autre nœud via un champ.\\
+Structure arborescente / Tree structure.
+\\
 
-\subsubsection{Exemple détaillé : la visite d'un \code{ast.If}}
+L'attribut \texttt{body} joue un rôle central dans cette représentation, car il contient les instructions ou expressions qui composent les différentes structures du code. 
+Dans l'AST Python, même une simple ligne contient plusieurs nœuds imbriqués. Prenons un exemple concret.
 
-La méthode \code{visit\_If} dans \code{MyCFG.py} illustre la traduction de la syntaxe en sémantique de flux :
-\begin{enumerate}
-    \item \textbf{Réception :} Le visiteur reçoit le nœud \code{ast.If} et l'ID du nœud CFG précédent (\code{parent\_id}).
-    \item \textbf{Création du nœud de Décision :} Il appelle \code{self.add\_node} pour créer un nœud de type "Decision" dont le label est le texte de la condition (\code{ast.unparse(node.test)}). Une arête est créée depuis \code{parent\_id} vers ce nouveau nœud de décision.
-    \item \textbf{Visite de la branche "Oui" :} Il appelle \code{self.visit\_body} pour la liste d'instructions de \code{node.body}. Le point d'entrée pour ce corps est le nœud de décision. \code{visit\_body} retourne les points de sortie de cette branche.
-    \item \textbf{Visite de la branche "Non" :} Il fait de même pour \code{node.orelse}.
-    \item \textbf{Labellisation des arêtes :} Il identifie les premières instructions de chaque branche et s'assure que les arêtes partant du nœud de décision vers ces instructions sont bien labellisées "Oui" et "Non".
-    \item \textbf{Retour des points de sortie :} Il retourne une liste contenant tous les points de sortie des deux branches. Si une branche est vide, le nœud de décision lui-même est un point de sortie.
-\end{enumerate}
-C'est la méthode \code{visit\_body} qui, en recevant potentiellement plusieurs points de sortie de la structure \code{if}, décidera de créer un nœud "Junction" pour les fusionner avant de passer à l'instruction suivante.
-La construction du CFG est donc un processus récursif et hiérarchique, où chaque structure de contrôle est traduite en une sous-structure de nœuds et d'arêtes, tout en maintenant la continuité du flux d'exécution. 
-Dans mon implémentation MyCFG.py, cette récursivité vient naturellement par l'interaction entre la méthode visit et la méthode visit_body.
-
+\subsubsection{Exemple minimal détaillé : la visite d'un code source avec \code{ast.If}}
 Le défi principal n'est pas seulement de parcourir l'arbre (la documentation Python et Green Tree Snakes en donne les moyens), mais de "tisser" un graphe séquentiel à partir d'une structure arborescente en rattachant les ``têtes'' de séquences aux ``queues'' correspondantes.
 Pour cela, la définition et l'enregistrement des points d'entrée et des points de sortie à chaque étape de la visite sont cruciales.
+Pour chaque séquence ces points d'entrée et de sortie peuvent être multiples, il faut donc construire les structures de données correspondantes.\\
+Mes définitions de structures utilisées dans ce cadre sont essentiellement:
+\begin{itemize}
+    \item \textbf{Point d'entrée :} \code{parent\_id} ou \code{entry\_node\_ids}
+    \begin{itemize}
+        \item Pour une instruction simple, c'est le \code{parent\_id} (une chaîne de caractères) passé à \code{visit()}. Il représente le nœud CFG précédent auquel le nouveau nœud doit être connecté.
+        \item Pour un bloc d'instructions, c'est la liste \code{entry\_node\_ids} passée à \code{visit_body()}. C'est une liste car un bloc peut être atteint a priori depuis plusieurs chemins 
+    \end{itemize}
+    \item \textbf{Point de sortie :} valeure de retour de \code{visit()} et \code{visit_body()}
+    \begin{itemize}
+        \item Chaque appel à \code{visit()} ou \code{visit_body()} retourne une liste d'identifiants de nœuds. C'est à partir de ces nœuds que le flux continuera. Une liste est nécessaire car une structure comme un if/else produit naturellement plusieurs points de sortie. 
+    \end{itemize}
+\end{itemize}
+\\Reprenons l'exemple minimal montré supra pour tracer le flux d'appels et la transmission des points d'entrée/sortie:
+\begin{minted}{python}
+x = 1
+if x > 0:
+    y = 1
+else:
+    y = -1
+print(y)
+\end{minted}
+
+\begin{enumerate}
+
+    \item \textbf{Début du processus : \code{visit\_Module}} \\L'appel initial est \code{cfg.visit(module\_node, None)}. La méthode \code{visit\_Module} crée le premier nœud du CFG, \code{node01 ("Start")}. Ce \code{start\_id} devient le point d'entrée initial. \code{visit\_Module} appelle alors \code{visit\_body} pour la liste des instructions du module, en lui passant \code{["node01"]} comme \code{entry\_node\_ids}.
+    \item \textbf{Premier niveau de \code{visit\_body} (au niveau du module)}
+    \begin{itemize}
+        \item \textbf{Instruction \code{x = 1} :} \code{visit\_body} appelle \code{visit(assign\_node, "node01")}. Le visiteur \code{visit\_Assign} crée le nœud \code{node02 ("x = 1")}, le connecte à \code{node01}, et retourne \code{["node02"]} comme point de sortie. La liste des points actifs de \code{visit\_body} devient \code{["node02"]}.
+        \item \textbf{Instruction \code{if x > 0: ...} :} \code{visit\_body} appelle \code{visit(if\_node, "node02")}. La méthode \code{visit} relaie l'appel à \code{visit\_If}. C'est ici que la \textbf{récursivité s'approfondit}.
+    \end{itemize}
+
+    \item \textbf{Visite de la structure \code{If} : \code{visit\_If}}
+    \begin{itemize}
+        \item \code{visit\_If} reçoit \code{"node02"} comme \code{parent\_id}. Il crée le nœud de décision \code{node03 ("x > 0")} et le connecte à \code{node02}. Ce \code{node03} devient le point d'entrée pour les deux branches.
+        \item \textbf{Visite de la branche \code{body} (\code{y = 1}) :} \code{visit\_If} appelle \code{visit\_body} avec \code{entry\_node\_ids=["node03"]}. Ce \code{visit\_body} de second niveau appelle \code{visit\_Assign}, qui crée \code{node04 ("y = 1")}, le connecte à \code{node03}, et retourne \code{["node04"]}. Le \code{visit\_body} de second niveau retourne donc \code{["node04"]} à \code{visit\_If}.
+        \item \textbf{Visite de la branche \code{orelse} (\code{y = -1}) :} De même, \code{visit\_If} appelle \code{visit\_body} avec \code{entry\_node\_ids=["node03"]}. Un troisième niveau de \code{visit\_body} est invoqué, qui crée \code{node05 ("y = -1")}, le connecte à \code{node03}, et retourne \code{["node05"]}.
+        \item \textbf{Fin de \code{visit\_If} :} Ayant traité ses deux branches, \code{visit\_If} a récolté deux points de sortie. Il retourne la liste combinée \code{["node04", "node05"]}.
+    \end{itemize}
+
+    \item \textbf{Retour au premier niveau de \code{visit\_body}}
+    \begin{itemize}
+        \item \code{visit\_body} reçoit \code{["node04", "node05"]} comme points de sortie de la structure \code{if}.
+        \item Il détecte qu'il y a plus d'un point de sortie et que ce n'est pas la dernière instruction. Il crée alors un nœud de jonction \code{node06 (".")} et connecte \code{node04} et \code{node05} à ce nouveau nœud. La liste des points actifs pour l'instruction suivante devient \code{["node06"]}.
+        \item \textbf{Instruction \code{print(y)} :} \code{visit\_body} appelle \code{visit(expr\_node, "node06")}. Le visiteur \code{visit\_Call} crée \code{node07 ("print(y)")}, le connecte à \code{node06}, et retourne \code{["node07"]}. La liste des points actifs devient \code{["node07"]}.
+    \end{itemize}
+
+    \item \textbf{Fin du processus : \code{visit\_Module}}\\
+    \code{visit\_body} a traité toutes les instructions et retourne son dernier point de sortie actif, \code{["node07"]}, à \code{visit\_Module}. Ce dernier crée le nœud final \code{node08 ("End")} et le connecte à \code{node07}. Le processus est terminé.
+
+\end{enumerate}
+
+\paragraph{Synthèse :}
+La \textbf{récursivité} se manifeste par les appels imbriqués \code{visit} $\rightarrow$ \code{visit\_If} $\rightarrow$ \code{visit\_body} $\rightarrow$ \code{visit} $\rightarrow$ \code{visit\_Assign}. C'est une descente dans l'arbre syntaxique.
+La \textbf{gestion du flux} est assurée par el chaînage des points d'entrée et de sortie, exemplifié ici par l'appel à \code{visit\_body} dans l'appel à \code{visit\_if}:
+\begin{itemize}
+    \item \code{visit\_body} agit comme un chef d'orchestre séquentiel. Il prend les points de sortie de l'instruction N et les utilise comme points d'entrée pour l'instruction N+1.
+    \item Les visiteurs de structures complexes comme \code{visit\_If} sont responsables de la \textbf{division} du flux (en créant un point de branchement) et de la \textbf{récolte} des multiples points de sortie qui en résultent.\\
+    \item La méthode \code{visit\_If} dans \code{MyCFG.py} illustre ce ``tissage'':
+    \begin{enumerate}
+        \item \textbf{Réception :} Le visiteur reçoit le nœud \code{ast.If} et l'ID du nœud CFG précédent (\code{parent\_id}).
+        \item \textbf{Création du nœud de Décision :} Il appelle \code{self.add\_node} pour créer un nœud de type "Decision" dont le label est le texte de la condition (\code{ast.unparse(node.test)}). Une arête est créée depuis \code{parent\_id} vers ce nouveau nœud de décision.
+        \item \textbf{Visite de la branche "Oui" :} Il appelle \code{self.visit\_body} pour la liste d'instructions de \code{node.body}. Le point d'entrée pour ce corps est le nœud de décision. \code{visit\_body} retourne les points de sortie de cette branche.
+        \item \textbf{Visite de la branche "Non" :} Il fait de même pour \code{node.orelse}.
+        \item \textbf{Labellisation des arêtes :} Il identifie les premières instructions de chaque branche et s'assure que les arêtes partant du nœud de décision vers ces instructions sont bien labellisées "Oui" et "Non".
+        \item \textbf{Retour des points de sortie :} Il retourne une liste contenant tous les points de sortie des deux branches. Si une branche est vide, le nœud de décision lui-même est un point de sortie.
+    \end{enumerate}
+    \item \code{visit\_body} est également responsable de la \textbf{fusion} de ces multiples points de sortie en un seul via un nœud de jonction, afin de fournir un point d'entrée unique et propre à l'instruction suivante.
+\end{itemize}
+
+C'est la méthode \code{visit\_body} qui, en recevant potentiellement plusieurs points de sortie de la structure \code{if}, décidera de créer un nœud "Junction" pour les fusionner avant de passer à l'instruction suivante. C'est ce passage constant de ``qui me précède?'' (\code{parent\_id}) et ``qui me succède?'' (la valeur de retour \code{List[str]}) qui permet en définitive construit le flux séquentiel à partir de l'arbre.\\
+La construction du CFG est donc un processus récursif et hiérarchique, où chaque structure de contrôle est traduite en une sous-structure de nœuds et d'arêtes, tout en maintenant la continuité du flux d'exécution. \\
+Dans mon implémentation MyCFG.py, cette récursivité vient naturellement par l'interaction entre la méthode \code{visit} générique et la méthode \code{visit_body}.
 
 \paragraph{Gestion des portées et des sous-graphes.} Une décision architecturale importante a été de séparer visuellement le flux principal du script des définitions de fonctions. \code{MyCFG.py} utilise une pile de portées (\code{\_function\_scope\_stack}) pendant la visite de l'AST pour identifier quels nœuds appartiennent à quelle fonction. Lors de la sérialisation en Mermaid, cette information est utilisée pour générer des \code{subgraph} distincts, améliorant considérablement la lisibilité en évitant le croisement d'arêtes entre des contextes d'exécution logiquement séparés.
 
@@ -1242,7 +1356,7 @@ La possibilité de plus-value apportée par l'enregistrement des codes généré
 \begin{quote}we recommend that computing education research move beyond documenting misconceptions to address the development of students' (mis)conceptions [...] \end{quote}
 
 Alors que l'enseignement de la programmation est maintenant proposée à des cohortes massives d'élèves (tous les élèves du secondaire de filière académique, à notre connaissance dans tous les pays de l'OCDE) nous rejoignons leur postulat : 
-\begin{quote}we believe that developing and enhancing instructors’ [...] ability to apply effective instructional approaches and tools to address students’ difficulties, is vital to the success of teaching introductory programming.\end{quote}
+\begin{quote}we believe that developing and enhancing instructors' [...] ability to apply effective instructional approaches and tools to address students' difficulties, is vital to the success of teaching introductory programming.\end{quote}
 
 \subsection{Principes directeurs de la collecte de données}
 Il serait évidemment intéressant de pouvoir évaluer l'efficacité de dispositifs didactiques permis par notre outil, en classe et en dehors, et de pouvoir analyser l'évolution des élèves. Cela nécessite un système de journalisation (\textit{logging}) robuste et réfléchi.
@@ -1728,7 +1842,7 @@ Le solveur de contraintes recevrait toutes ces règles et tenterait de ``constru
 Eu égard à son aspect certificatif ce travail mobilise une diversité de compétences, mettant en oeuvre des apprentissage variés (développement web, POO Python, base de données relationnnelles, modèle client - serveur), ce qui apporte une première justification au parcours de formation GymInf qu'il vient clôturer.\\
 Je crois que mon projet a du potentiel dans une démarche de pédagogie active, notamment dans le cadre de l'approche PRIMM, mais il reste à le soumettre aux pairs pour améliorations et à le tester dans de multiples classes à grande échelle pour en valider l'efficacité pédagogique et la pertinence des données collectées. alors seulement je pourrai dire que j'ai apporté ma pierre à l'édifice dans la constitution d'une communauté \textit{scientifique} de praticiens de la pédagogie de l'informatique. \\
 Aussi je crois que l'intérêt principal de mon outil n'est pas de permettre aux élèves de se réapproprier leur apprentissage en leur offrant des outils adaptés à leurs besoins et à leur niveau (ce qu'ils pourraient faire par ailleurs), mais surtout de permettre aux enseignants d'analyser les erreurs et de construire des indicateurs pertinents pour aller au-delà de l'observation des \textit{students misconceptions}.\\
-Je pense que l'enjeu principal dans l'enseignement de la programmation est l'\textit{empowerment} des débutants qui se tiennent à l'écart \textit{socio-culturellement} alors que les IA génératives donnent maintenant cette faculté de décupler un minimum de savoirs pour une puissance de productivité inouïe. Le code n’est pas seulement une technique : c’est une super-puissance que chacun peut apprendre pour imaginer, créer et agir dans le monde numérique. »
+Je pense que l'enjeu principal dans l'enseignement de la programmation est l'\textit{empowerment} des débutants qui se tiennent à l'écart \textit{socio-culturellement} alors que les IA génératives donnent maintenant cette faculté de décupler un minimum de savoirs pour une puissance de productivité inouïe. Le code n'est pas seulement une technique : c'est une super-puissance que chacun peut apprendre pour imaginer, créer et agir dans le monde numérique. »
 
 \'A la suite de Littman \cite{codetojoy} je crois que découvrir un peu de programmation, c'est ouvrir une porte vers l'autonomie, l'inventivité et la joie de façonner le futur. L'apprentissage de la programmation n'est pas une fin en soi, mais une ouverture : celle d'une capacité accrue à participer, à innover et à s'approprier un langage pour penser, créer et agir dans une société traversée par le numérique.
 
@@ -1753,12 +1867,12 @@ En français, d'après le \textit{Larousse} le mot ``convive'' a une significati
 Ivan Illich a donné un sens particulier à ce mot dans les années 1970. Pour inciter les enseignants et leurs élèves à se questionner sur le sujet, nous vous proposons une \textit{check-list} pratique et facile à mettre en place, qui ne nécessite pas de faire appel aux auteurs originaux de philosophie politique et sociologie.
 \par L'idée est d'attribuer une note entre 0 et 6 à chaque service numérique, par l'application de 6 critères, chacun évalué entre 0 et 100\% selon que la réponse à la question est totalement négative (0\%) ou parfaitement juste (100\%).
 \begin{description}
-    \item[Appropriation \& autonomie] L’usager peut-il apprendre, utiliser, réparer/modifier l’outil sans dépendre d’experts ou d’un prestataire unique ?
+    \item[Appropriation \& autonomie] L'usager peut-il apprendre, utiliser, réparer/modifier l'outil sans dépendre d'experts ou d'un prestataire unique ?
     \item[Auto-limitation \& échelle humaine] Le service fixe-t-il des limites à sa taille/complexité/effet réseau pour éviter la capture (l'addiction, la croissance illimitée, les dépendances opaques) ?
     \item[Gouvernance par les usagers] La communauté participe-t-elle réellement aux règles (statuts, votes, roadmap publique) ?
     \item[Transparence \& auditabilité] Code/algorithmes/logs sont-ils documentés, vérifiables (ou, a minima, explicables et audités) ?
     \item[Portabilité \& réversibilité] Export complet, formats ouverts, interopérabilité, pas de lock-in, migration/fork sont-ils tous et toujours permis ?
-    \item[Sobriété \& lien social] L'outil favorise-t-il la coopération plutôt que la captation/compétition ? ou au contraire contraint-il l’usage des ressources (énergie, attention, données)
+    \item[Sobriété \& lien social] L'outil favorise-t-il la coopération plutôt que la captation/compétition ? ou au contraire contraint-il l'usage des ressources (énergie, attention, données)
 \end{description}
 
 \textbf{Interprétation} : 5-6 = outil convivial ; ... <2 = logique de contrôle.
@@ -2073,7 +2187,7 @@ Analyse plus sémantique, mais \texttt{lineno} visualisé à chaque nœud; recon
 \hline
 \textbf{Entrée acceptée} & 
 Une chaîne de caractères représentant un code Python \textbf{syntaxiquement valide} (y compris invalide, tant que l'AST peut être construit) & 
-Uniquement du code Python valide (car lorsqu’il rencontre un return, il cherche à rattacher ce nœud à la fonction englobante en remontant la pile (liste Python) des parents, donc si le return n’est pas dans une fonction (cf. mes \texttt{exemples.py} comme dans NestedIf), la pile des parents finit par être vide, ce qui provoque un \texttt{IndexError} et pas un \texttt{SyntaxError: 'return' outside function}  \\
+Uniquement du code Python valide (car lorsqu'il rencontre un return, il cherche à rattacher ce nœud à la fonction englobante en remontant la pile (liste Python) des parents, donc si le return n'est pas dans une fonction (cf. mes \texttt{exemples.py} comme dans NestedIf), la pile des parents finit par être vide, ce qui provoque un \texttt{IndexError} et pas un \texttt{SyntaxError: 'return' outside function}  \\
 \hline
 \textbf{Construction du graphe} & 
 Plusieurs visites de l'AST, chaque structure (If, For, While, etc.) a sa méthode dédiée (\texttt{visit\_If}, \texttt{visit\_For}, ...) & 
@@ -2081,7 +2195,7 @@ Similaire (cf. classe \texttt{PyCFG}) avec  méthodes nommées \texttt{on\_NodeT
 \hline
 \textbf{Gestion des branches et jonctions} & 
 Ajoute explicitement des nœuds de jonction pour les structures de contrôle (type \texttt{Junction} pour chaque If, For et While), gère ce qui est sensé représenter une sortie terminale (\texttt{Return}); A MODIFIER: applique la même gestion à \texttt{Break} et \texttt{continue} & 
-Suit le flot réel, relie les nœuds selon l’exécution, gère les retours et les sorties via la structure du graphe et la pile de parents. Pas de nœud terminal \texttt{End} pour le flowchart, autre que les \texttt{return} de la fonction définie. \\
+Suit le flot réel, relie les nœuds selon l'exécution, gère les retours et les sorties via la structure du graphe et la pile de parents. Pas de nœud terminal \texttt{End} pour le flowchart, autre que les \texttt{return} de la fonction définie. \\
 \hline
 \textbf{Gestion des boucles} & 
 Représente les boucles telles qu'elles apparaissent dans le code source (ex: \texttt{For i in ...}) & 
@@ -2114,7 +2228,7 @@ c'est Digraph qui fait le graph !! \\
   % ========== fin du contenu ==========
 \end{longtable}
 
-\subsubsection{Documentation technique de l’implémentation MyCFG.py}
+\subsubsection{Documentation technique de l'implémentation MyCFG.py}
 La classe Python \code{ControlFlowGraph} est le composant central pour la transformation du code Python généré (une chaine) en un \textit{flowchart} (une chaine Mermaid rendue graphiquement par l'interface).
 
 \subsubsection*{\methodname{\_\_init\_\_}}

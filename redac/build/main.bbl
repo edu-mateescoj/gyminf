@@ -39,8 +39,8 @@
       \strng{authornamehash}{99e8a817947e13044842679cefbd0fa7}
       \strng{authorfullhash}{99e8a817947e13044842679cefbd0fa7}
       \strng{authorfullhashraw}{99e8a817947e13044842679cefbd0fa7}
-      \field{sortinit}{1}
-      \field{sortinithash}{4f6aaa89bab872aa0999fec09ff8e98a}
+      \field{sortinit}{2}
+      \field{sortinithash}{8b555b3791beccb63322c22f3320aa9a}
       \field{extradatescope}{labelyear}
       \field{labeldatesource}{}
       \true{uniqueprimaryauthor}
@@ -69,8 +69,8 @@
       \strng{authornamehash}{984e5967448051538555a64aac11ed21}
       \strng{authorfullhash}{984e5967448051538555a64aac11ed21}
       \strng{authorfullhashraw}{984e5967448051538555a64aac11ed21}
-      \field{sortinit}{2}
-      \field{sortinithash}{8b555b3791beccb63322c22f3320aa9a}
+      \field{sortinit}{3}
+      \field{sortinithash}{ad6fe7482ffbd7b9f99c9e8b5dccd3d7}
       \field{extradatescope}{labelyear}
       \field{labeldatesource}{}
       \true{uniqueprimaryauthor}
@@ -99,8 +99,8 @@
       \strng{authornamehash}{01e8c4f353d8f2d65f9f05ee78f50c8c}
       \strng{authorfullhash}{01e8c4f353d8f2d65f9f05ee78f50c8c}
       \strng{authorfullhashraw}{01e8c4f353d8f2d65f9f05ee78f50c8c}
-      \field{sortinit}{3}
-      \field{sortinithash}{ad6fe7482ffbd7b9f99c9e8b5dccd3d7}
+      \field{sortinit}{4}
+      \field{sortinithash}{9381316451d1b9788675a07e972a12a7}
       \field{extradatescope}{labelyear}
       \field{labeldatesource}{}
       \true{uniqueprimaryauthor}
@@ -123,8 +123,8 @@
       \strng{authornamehash}{ddb20008bae37b1617b61c23a1d4b9d2}
       \strng{authorfullhash}{ddb20008bae37b1617b61c23a1d4b9d2}
       \strng{authorfullhashraw}{ddb20008bae37b1617b61c23a1d4b9d2}
-      \field{sortinit}{4}
-      \field{sortinithash}{9381316451d1b9788675a07e972a12a7}
+      \field{sortinit}{5}
+      \field{sortinithash}{20e9b4b0b173788c5dace24730f47d8c}
       \field{extradatescope}{labelyear}
       \field{labeldatesource}{}
       \true{uniqueprimaryauthor}
@@ -164,8 +164,8 @@
       \strng{authornamehash}{101936ee07e3d900ba76ed76ae7c3d90}
       \strng{authorfullhash}{101936ee07e3d900ba76ed76ae7c3d90}
       \strng{authorfullhashraw}{101936ee07e3d900ba76ed76ae7c3d90}
-      \field{sortinit}{5}
-      \field{sortinithash}{20e9b4b0b173788c5dace24730f47d8c}
+      \field{sortinit}{6}
+      \field{sortinithash}{b33bc299efb3c36abec520a4c896a66d}
       \field{extradatescope}{labelyear}
       \field{labeldatesource}{}
       \true{uniqueprimaryauthor}
@@ -203,8 +203,8 @@
       \strng{authornamehash}{40e6691e166216646932c4283b7c908a}
       \strng{authorfullhash}{40e6691e166216646932c4283b7c908a}
       \strng{authorfullhashraw}{40e6691e166216646932c4283b7c908a}
-      \field{sortinit}{6}
-      \field{sortinithash}{b33bc299efb3c36abec520a4c896a66d}
+      \field{sortinit}{7}
+      \field{sortinithash}{108d0be1b1bee9773a1173443802c0a3}
       \field{extradatescope}{labelyear}
       \field{labeldatesource}{}
       \true{uniqueprimaryauthor}
@@ -248,8 +248,8 @@
       \strng{authornamehash}{6dd3a54ae94c54e606fc6e0db747ea97}
       \strng{authorfullhash}{0fe2b1fa6b0ae6b2014a1c115f4bbeb8}
       \strng{authorfullhashraw}{0fe2b1fa6b0ae6b2014a1c115f4bbeb8}
-      \field{sortinit}{7}
-      \field{sortinithash}{108d0be1b1bee9773a1173443802c0a3}
+      \field{sortinit}{8}
+      \field{sortinithash}{a231b008ebf0ecbe0b4d96dcc159445f}
       \field{extradatescope}{labelyear}
       \field{labeldatesource}{}
       \true{uniqueprimaryauthor}
@@ -301,8 +301,8 @@
       \strng{authornamehash}{d07d7f3c0568e289d80bb1cc49637883}
       \strng{authorfullhash}{6546bb8e7af5dd0e2f07b47bd3ca8ad1}
       \strng{authorfullhashraw}{6546bb8e7af5dd0e2f07b47bd3ca8ad1}
-      \field{sortinit}{8}
-      \field{sortinithash}{a231b008ebf0ecbe0b4d96dcc159445f}
+      \field{sortinit}{9}
+      \field{sortinithash}{0a5ebc79d83c96b6579069544c73c7d4}
       \field{extradatescope}{labelyear}
       \field{labeldatesource}{}
       \true{uniqueprimaryauthor}
@@ -350,8 +350,8 @@
       \strng{authornamehash}{373c5ca248906363b7a50f8dcf6b8cfe}
       \strng{authorfullhash}{4cfeefcb859364d01085fc3e27f48d31}
       \strng{authorfullhashraw}{4cfeefcb859364d01085fc3e27f48d31}
-      \field{sortinit}{9}
-      \field{sortinithash}{0a5ebc79d83c96b6579069544c73c7d4}
+      \field{sortinit}{1}
+      \field{sortinithash}{4f6aaa89bab872aa0999fec09ff8e98a}
       \field{extradatescope}{labelyear}
       \field{labeldatesource}{}
       \true{uniqueprimaryauthor}
@@ -716,8 +716,8 @@
       \endverb
     \endentry
     \entry{skulpt}{online}{}{}
-      \field{sortinit}{1}
-      \field{sortinithash}{4f6aaa89bab872aa0999fec09ff8e98a}
+      \field{sortinit}{2}
+      \field{sortinithash}{8b555b3791beccb63322c22f3320aa9a}
       \field{extradatescope}{labelyear}
       \field{labeldatesource}{}
       \field{labeltitlesource}{title}
@@ -974,8 +974,8 @@
       \strng{authornamehash}{421f701ed4ed770219168b6f80719917}
       \strng{authorfullhash}{421f701ed4ed770219168b6f80719917}
       \strng{authorfullhashraw}{421f701ed4ed770219168b6f80719917}
-      \field{sortinit}{2}
-      \field{sortinithash}{8b555b3791beccb63322c22f3320aa9a}
+      \field{sortinit}{3}
+      \field{sortinithash}{ad6fe7482ffbd7b9f99c9e8b5dccd3d7}
       \field{extradatescope}{labelyear}
       \field{labeldatesource}{}
       \true{uniqueprimaryauthor}
@@ -1016,8 +1016,8 @@
       \strng{authornamehash}{99e8a817947e13044842679cefbd0fa7}
       \strng{authorfullhash}{99e8a817947e13044842679cefbd0fa7}
       \strng{authorfullhashraw}{99e8a817947e13044842679cefbd0fa7}
-      \field{sortinit}{1}
-      \field{sortinithash}{4f6aaa89bab872aa0999fec09ff8e98a}
+      \field{sortinit}{2}
+      \field{sortinithash}{8b555b3791beccb63322c22f3320aa9a}
       \field{extradatescope}{labelyear}
       \field{labeldatesource}{}
       \true{uniqueprimaryauthor}
@@ -1046,8 +1046,8 @@
       \strng{authornamehash}{984e5967448051538555a64aac11ed21}
       \strng{authorfullhash}{984e5967448051538555a64aac11ed21}
       \strng{authorfullhashraw}{984e5967448051538555a64aac11ed21}
-      \field{sortinit}{2}
-      \field{sortinithash}{8b555b3791beccb63322c22f3320aa9a}
+      \field{sortinit}{3}
+      \field{sortinithash}{ad6fe7482ffbd7b9f99c9e8b5dccd3d7}
       \field{extradatescope}{labelyear}
       \field{labeldatesource}{}
       \true{uniqueprimaryauthor}
@@ -1076,8 +1076,8 @@
       \strng{authornamehash}{01e8c4f353d8f2d65f9f05ee78f50c8c}
       \strng{authorfullhash}{01e8c4f353d8f2d65f9f05ee78f50c8c}
       \strng{authorfullhashraw}{01e8c4f353d8f2d65f9f05ee78f50c8c}
-      \field{sortinit}{3}
-      \field{sortinithash}{ad6fe7482ffbd7b9f99c9e8b5dccd3d7}
+      \field{sortinit}{4}
+      \field{sortinithash}{9381316451d1b9788675a07e972a12a7}
       \field{extradatescope}{labelyear}
       \field{labeldatesource}{}
       \true{uniqueprimaryauthor}
@@ -1100,8 +1100,8 @@
       \strng{authornamehash}{ddb20008bae37b1617b61c23a1d4b9d2}
       \strng{authorfullhash}{ddb20008bae37b1617b61c23a1d4b9d2}
       \strng{authorfullhashraw}{ddb20008bae37b1617b61c23a1d4b9d2}
-      \field{sortinit}{4}
-      \field{sortinithash}{9381316451d1b9788675a07e972a12a7}
+      \field{sortinit}{5}
+      \field{sortinithash}{20e9b4b0b173788c5dace24730f47d8c}
       \field{extradatescope}{labelyear}
       \field{labeldatesource}{}
       \true{uniqueprimaryauthor}
@@ -1141,8 +1141,8 @@
       \strng{authornamehash}{101936ee07e3d900ba76ed76ae7c3d90}
       \strng{authorfullhash}{101936ee07e3d900ba76ed76ae7c3d90}
       \strng{authorfullhashraw}{101936ee07e3d900ba76ed76ae7c3d90}
-      \field{sortinit}{5}
-      \field{sortinithash}{20e9b4b0b173788c5dace24730f47d8c}
+      \field{sortinit}{6}
+      \field{sortinithash}{b33bc299efb3c36abec520a4c896a66d}
       \field{extradatescope}{labelyear}
       \field{labeldatesource}{}
       \true{uniqueprimaryauthor}
@@ -1180,8 +1180,8 @@
       \strng{authornamehash}{40e6691e166216646932c4283b7c908a}
       \strng{authorfullhash}{40e6691e166216646932c4283b7c908a}
       \strng{authorfullhashraw}{40e6691e166216646932c4283b7c908a}
-      \field{sortinit}{6}
-      \field{sortinithash}{b33bc299efb3c36abec520a4c896a66d}
+      \field{sortinit}{7}
+      \field{sortinithash}{108d0be1b1bee9773a1173443802c0a3}
       \field{extradatescope}{labelyear}
       \field{labeldatesource}{}
       \true{uniqueprimaryauthor}
@@ -1225,8 +1225,8 @@
       \strng{authornamehash}{6dd3a54ae94c54e606fc6e0db747ea97}
       \strng{authorfullhash}{0fe2b1fa6b0ae6b2014a1c115f4bbeb8}
       \strng{authorfullhashraw}{0fe2b1fa6b0ae6b2014a1c115f4bbeb8}
-      \field{sortinit}{7}
-      \field{sortinithash}{108d0be1b1bee9773a1173443802c0a3}
+      \field{sortinit}{8}
+      \field{sortinithash}{a231b008ebf0ecbe0b4d96dcc159445f}
       \field{extradatescope}{labelyear}
       \field{labeldatesource}{}
       \true{uniqueprimaryauthor}
@@ -1278,8 +1278,8 @@
       \strng{authornamehash}{d07d7f3c0568e289d80bb1cc49637883}
       \strng{authorfullhash}{6546bb8e7af5dd0e2f07b47bd3ca8ad1}
       \strng{authorfullhashraw}{6546bb8e7af5dd0e2f07b47bd3ca8ad1}
-      \field{sortinit}{8}
-      \field{sortinithash}{a231b008ebf0ecbe0b4d96dcc159445f}
+      \field{sortinit}{9}
+      \field{sortinithash}{0a5ebc79d83c96b6579069544c73c7d4}
       \field{extradatescope}{labelyear}
       \field{labeldatesource}{}
       \true{uniqueprimaryauthor}
@@ -1327,8 +1327,8 @@
       \strng{authornamehash}{373c5ca248906363b7a50f8dcf6b8cfe}
       \strng{authorfullhash}{4cfeefcb859364d01085fc3e27f48d31}
       \strng{authorfullhashraw}{4cfeefcb859364d01085fc3e27f48d31}
-      \field{sortinit}{9}
-      \field{sortinithash}{0a5ebc79d83c96b6579069544c73c7d4}
+      \field{sortinit}{1}
+      \field{sortinithash}{4f6aaa89bab872aa0999fec09ff8e98a}
       \field{extradatescope}{labelyear}
       \field{labeldatesource}{}
       \true{uniqueprimaryauthor}
@@ -1693,8 +1693,8 @@
       \endverb
     \endentry
     \entry{skulpt}{online}{}{}
-      \field{sortinit}{1}
-      \field{sortinithash}{4f6aaa89bab872aa0999fec09ff8e98a}
+      \field{sortinit}{2}
+      \field{sortinithash}{8b555b3791beccb63322c22f3320aa9a}
       \field{extradatescope}{labelyear}
       \field{labeldatesource}{}
       \field{labeltitlesource}{title}
@@ -1951,8 +1951,8 @@
       \strng{authornamehash}{421f701ed4ed770219168b6f80719917}
       \strng{authorfullhash}{421f701ed4ed770219168b6f80719917}
       \strng{authorfullhashraw}{421f701ed4ed770219168b6f80719917}
-      \field{sortinit}{2}
-      \field{sortinithash}{8b555b3791beccb63322c22f3320aa9a}
+      \field{sortinit}{3}
+      \field{sortinithash}{ad6fe7482ffbd7b9f99c9e8b5dccd3d7}
       \field{extradatescope}{labelyear}
       \field{labeldatesource}{}
       \true{uniqueprimaryauthor}
