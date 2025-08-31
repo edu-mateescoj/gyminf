@@ -593,6 +593,91 @@
       \verb https://www.didask.com
       \endverb
     \endentry
+    \entry{Altadmri_Brown_2015}{article}{}{}
+      \name{author}{4}{}{%
+        {{un=0,uniquepart=base,hash=08f3c9c50dbfe876ed5561e9ef9681bd}{%
+           family={Brown},
+           familyi={B\bibinitperiod},
+           given={Neil},
+           giveni={N\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=751dcafd5cdbf9faa7029ccb2af13680}{%
+           family={Altadmri},
+           familyi={A\bibinitperiod},
+           given={Amjad},
+           giveni={A\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=4d9e7174e2d3394c82796d579fb59687}{%
+           family={Sentance},
+           familyi={S\bibinitperiod},
+           given={Sue},
+           giveni={S\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=3d3bbf5ef136dbddf873344bc27f03d7}{%
+           family={Kölling},
+           familyi={K\bibinitperiod},
+           given={Michael},
+           giveni={M\bibinitperiod},
+           givenun=0}}%
+      }
+      \strng{namehash}{4171af76f7761ea4b3571018bd5d6054}
+      \strng{fullhash}{687231e264ec302ae71febe6726ec8e3}
+      \strng{fullhashraw}{687231e264ec302ae71febe6726ec8e3}
+      \strng{bibnamehash}{687231e264ec302ae71febe6726ec8e3}
+      \strng{authorbibnamehash}{687231e264ec302ae71febe6726ec8e3}
+      \strng{authornamehash}{4171af76f7761ea4b3571018bd5d6054}
+      \strng{authorfullhash}{687231e264ec302ae71febe6726ec8e3}
+      \strng{authorfullhashraw}{687231e264ec302ae71febe6726ec8e3}
+      \field{sortinit}{1}
+      \field{sortinithash}{4f6aaa89bab872aa0999fec09ff8e98a}
+      \field{extradatescope}{labelyear}
+      \field{labeldatesource}{}
+      \true{uniqueprimaryauthor}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{month}{08}
+      \field{title}{Blackbox, Five Years On: An Evaluation of a Large-scale Programming Data Collection Project}
+      \field{year}{2018}
+      \field{pages}{196\bibrangedash 204}
+      \range{pages}{9}
+      \verb{doi}
+      \verb 10.1145/3230977.3230991
+      \endverb
+    \endentry
+    \entry{SilentTeacher}{online}{}{}
+      \name{author}{1}{}{%
+        {{un=0,uniquepart=base,hash=ed8c4a4ea0befa986037f975d163addb}{%
+           family={{Toxicode}},
+           familyi={T\bibinitperiod}}}%
+      }
+      \strng{namehash}{ed8c4a4ea0befa986037f975d163addb}
+      \strng{fullhash}{ed8c4a4ea0befa986037f975d163addb}
+      \strng{fullhashraw}{ed8c4a4ea0befa986037f975d163addb}
+      \strng{bibnamehash}{ed8c4a4ea0befa986037f975d163addb}
+      \strng{authorbibnamehash}{ed8c4a4ea0befa986037f975d163addb}
+      \strng{authornamehash}{ed8c4a4ea0befa986037f975d163addb}
+      \strng{authorfullhash}{ed8c4a4ea0befa986037f975d163addb}
+      \strng{authorfullhashraw}{ed8c4a4ea0befa986037f975d163addb}
+      \field{sortinit}{1}
+      \field{sortinithash}{4f6aaa89bab872aa0999fec09ff8e98a}
+      \field{extradatescope}{labelyear}
+      \field{labeldatesource}{}
+      \true{uniqueprimaryauthor}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{title}{Silent Teacher}
+      \field{urlday}{24}
+      \field{urlmonth}{8}
+      \field{urlyear}{2025}
+      \field{year}{2025}
+      \field{urldateera}{ce}
+      \verb{urlraw}
+      \verb https://silentteacher.toxicode.fr/
+      \endverb
+      \verb{url}
+      \verb https://silentteacher.toxicode.fr/
+      \endverb
+    \endentry
     \entry{codemirror6}{online}{}{}
       \name{author}{1}{}{%
         {{un=0,uniquepart=base,hash=129098e814fb9141e381f6b3068dd41c}{%
@@ -650,8 +735,8 @@
       \endverb
     \endentry
     \entry{brython}{online}{}{}
-      \field{sortinit}{1}
-      \field{sortinithash}{4f6aaa89bab872aa0999fec09ff8e98a}
+      \field{sortinit}{2}
+      \field{sortinithash}{8b555b3791beccb63322c22f3320aa9a}
       \field{extradatescope}{labelyear}
       \field{labeldatesource}{}
       \field{labeltitlesource}{title}
@@ -687,8 +772,8 @@
       \strng{authornamehash}{bbde14bd15ef8817e033ba77c3750f3e}
       \strng{authorfullhash}{bbde14bd15ef8817e033ba77c3750f3e}
       \strng{authorfullhashraw}{bbde14bd15ef8817e033ba77c3750f3e}
-      \field{sortinit}{1}
-      \field{sortinithash}{4f6aaa89bab872aa0999fec09ff8e98a}
+      \field{sortinit}{2}
+      \field{sortinithash}{8b555b3791beccb63322c22f3320aa9a}
       \field{extradatescope}{labelyear}
       \field{labeldatesource}{}
       \true{uniqueprimaryauthor}
@@ -837,6 +922,40 @@
       \verb{doi}
       \verb 10.1145/3077618
       \endverb
+    \endentry
+    \entry{codetojoy}{book}{}{}
+      \name{author}{1}{}{%
+        {{un=0,uniquepart=base,hash=211e529e9f10ad1bfacff2284da10ea7}{%
+           family={Littman},
+           familyi={L\bibinitperiod},
+           given={Michael\bibnamedelima L.},
+           giveni={M\bibinitperiod\bibinitdelim L\bibinitperiod},
+           givenun=0}}%
+      }
+      \list{publisher}{1}{%
+        {The MIT Press}%
+      }
+      \strng{namehash}{211e529e9f10ad1bfacff2284da10ea7}
+      \strng{fullhash}{211e529e9f10ad1bfacff2284da10ea7}
+      \strng{fullhashraw}{211e529e9f10ad1bfacff2284da10ea7}
+      \strng{bibnamehash}{211e529e9f10ad1bfacff2284da10ea7}
+      \strng{authorbibnamehash}{211e529e9f10ad1bfacff2284da10ea7}
+      \strng{authornamehash}{211e529e9f10ad1bfacff2284da10ea7}
+      \strng{authorfullhash}{211e529e9f10ad1bfacff2284da10ea7}
+      \strng{authorfullhashraw}{211e529e9f10ad1bfacff2284da10ea7}
+      \field{sortinit}{2}
+      \field{sortinithash}{8b555b3791beccb63322c22f3320aa9a}
+      \field{extradatescope}{labelyear}
+      \field{labeldatesource}{}
+      \true{uniqueprimaryauthor}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{isbn}{9780262546393}
+      \field{month}{10}
+      \field{title}{Code to Joy: Why Everyone Should Learn a Little Programming}
+      \field{year}{2023}
+      \field{pages}{232}
+      \range{pages}{1}
     \endentry
     \entry{rahulgopinath}{online}{}{}
       \name{author}{1}{}{%
@@ -1451,6 +1570,91 @@
       \verb https://www.didask.com
       \endverb
     \endentry
+    \entry{Altadmri_Brown_2015}{article}{}{}
+      \name{author}{4}{}{%
+        {{un=0,uniquepart=base,hash=08f3c9c50dbfe876ed5561e9ef9681bd}{%
+           family={Brown},
+           familyi={B\bibinitperiod},
+           given={Neil},
+           giveni={N\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=751dcafd5cdbf9faa7029ccb2af13680}{%
+           family={Altadmri},
+           familyi={A\bibinitperiod},
+           given={Amjad},
+           giveni={A\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=4d9e7174e2d3394c82796d579fb59687}{%
+           family={Sentance},
+           familyi={S\bibinitperiod},
+           given={Sue},
+           giveni={S\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=3d3bbf5ef136dbddf873344bc27f03d7}{%
+           family={Kölling},
+           familyi={K\bibinitperiod},
+           given={Michael},
+           giveni={M\bibinitperiod},
+           givenun=0}}%
+      }
+      \strng{namehash}{4171af76f7761ea4b3571018bd5d6054}
+      \strng{fullhash}{687231e264ec302ae71febe6726ec8e3}
+      \strng{fullhashraw}{687231e264ec302ae71febe6726ec8e3}
+      \strng{bibnamehash}{687231e264ec302ae71febe6726ec8e3}
+      \strng{authorbibnamehash}{687231e264ec302ae71febe6726ec8e3}
+      \strng{authornamehash}{4171af76f7761ea4b3571018bd5d6054}
+      \strng{authorfullhash}{687231e264ec302ae71febe6726ec8e3}
+      \strng{authorfullhashraw}{687231e264ec302ae71febe6726ec8e3}
+      \field{sortinit}{1}
+      \field{sortinithash}{4f6aaa89bab872aa0999fec09ff8e98a}
+      \field{extradatescope}{labelyear}
+      \field{labeldatesource}{}
+      \true{uniqueprimaryauthor}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{month}{08}
+      \field{title}{Blackbox, Five Years On: An Evaluation of a Large-scale Programming Data Collection Project}
+      \field{year}{2018}
+      \field{pages}{196\bibrangedash 204}
+      \range{pages}{9}
+      \verb{doi}
+      \verb 10.1145/3230977.3230991
+      \endverb
+    \endentry
+    \entry{SilentTeacher}{online}{}{}
+      \name{author}{1}{}{%
+        {{un=0,uniquepart=base,hash=ed8c4a4ea0befa986037f975d163addb}{%
+           family={{Toxicode}},
+           familyi={T\bibinitperiod}}}%
+      }
+      \strng{namehash}{ed8c4a4ea0befa986037f975d163addb}
+      \strng{fullhash}{ed8c4a4ea0befa986037f975d163addb}
+      \strng{fullhashraw}{ed8c4a4ea0befa986037f975d163addb}
+      \strng{bibnamehash}{ed8c4a4ea0befa986037f975d163addb}
+      \strng{authorbibnamehash}{ed8c4a4ea0befa986037f975d163addb}
+      \strng{authornamehash}{ed8c4a4ea0befa986037f975d163addb}
+      \strng{authorfullhash}{ed8c4a4ea0befa986037f975d163addb}
+      \strng{authorfullhashraw}{ed8c4a4ea0befa986037f975d163addb}
+      \field{sortinit}{1}
+      \field{sortinithash}{4f6aaa89bab872aa0999fec09ff8e98a}
+      \field{extradatescope}{labelyear}
+      \field{labeldatesource}{}
+      \true{uniqueprimaryauthor}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{title}{Silent Teacher}
+      \field{urlday}{24}
+      \field{urlmonth}{8}
+      \field{urlyear}{2025}
+      \field{year}{2025}
+      \field{urldateera}{ce}
+      \verb{urlraw}
+      \verb https://silentteacher.toxicode.fr/
+      \endverb
+      \verb{url}
+      \verb https://silentteacher.toxicode.fr/
+      \endverb
+    \endentry
     \entry{codemirror6}{online}{}{}
       \name{author}{1}{}{%
         {{un=0,uniquepart=base,hash=129098e814fb9141e381f6b3068dd41c}{%
@@ -1508,8 +1712,8 @@
       \endverb
     \endentry
     \entry{brython}{online}{}{}
-      \field{sortinit}{1}
-      \field{sortinithash}{4f6aaa89bab872aa0999fec09ff8e98a}
+      \field{sortinit}{2}
+      \field{sortinithash}{8b555b3791beccb63322c22f3320aa9a}
       \field{extradatescope}{labelyear}
       \field{labeldatesource}{}
       \field{labeltitlesource}{title}
@@ -1545,8 +1749,8 @@
       \strng{authornamehash}{bbde14bd15ef8817e033ba77c3750f3e}
       \strng{authorfullhash}{bbde14bd15ef8817e033ba77c3750f3e}
       \strng{authorfullhashraw}{bbde14bd15ef8817e033ba77c3750f3e}
-      \field{sortinit}{1}
-      \field{sortinithash}{4f6aaa89bab872aa0999fec09ff8e98a}
+      \field{sortinit}{2}
+      \field{sortinithash}{8b555b3791beccb63322c22f3320aa9a}
       \field{extradatescope}{labelyear}
       \field{labeldatesource}{}
       \true{uniqueprimaryauthor}
@@ -1695,6 +1899,40 @@
       \verb{doi}
       \verb 10.1145/3077618
       \endverb
+    \endentry
+    \entry{codetojoy}{book}{}{}
+      \name{author}{1}{}{%
+        {{un=0,uniquepart=base,hash=211e529e9f10ad1bfacff2284da10ea7}{%
+           family={Littman},
+           familyi={L\bibinitperiod},
+           given={Michael\bibnamedelima L.},
+           giveni={M\bibinitperiod\bibinitdelim L\bibinitperiod},
+           givenun=0}}%
+      }
+      \list{publisher}{1}{%
+        {The MIT Press}%
+      }
+      \strng{namehash}{211e529e9f10ad1bfacff2284da10ea7}
+      \strng{fullhash}{211e529e9f10ad1bfacff2284da10ea7}
+      \strng{fullhashraw}{211e529e9f10ad1bfacff2284da10ea7}
+      \strng{bibnamehash}{211e529e9f10ad1bfacff2284da10ea7}
+      \strng{authorbibnamehash}{211e529e9f10ad1bfacff2284da10ea7}
+      \strng{authornamehash}{211e529e9f10ad1bfacff2284da10ea7}
+      \strng{authorfullhash}{211e529e9f10ad1bfacff2284da10ea7}
+      \strng{authorfullhashraw}{211e529e9f10ad1bfacff2284da10ea7}
+      \field{sortinit}{2}
+      \field{sortinithash}{8b555b3791beccb63322c22f3320aa9a}
+      \field{extradatescope}{labelyear}
+      \field{labeldatesource}{}
+      \true{uniqueprimaryauthor}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{isbn}{9780262546393}
+      \field{month}{10}
+      \field{title}{Code to Joy: Why Everyone Should Learn a Little Programming}
+      \field{year}{2023}
+      \field{pages}{232}
+      \range{pages}{1}
     \endentry
     \entry{rahulgopinath}{online}{}{}
       \name{author}{1}{}{%

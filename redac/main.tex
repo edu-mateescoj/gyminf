@@ -67,6 +67,10 @@
 \addbibresource{ref.bib}
 \let\cite\parencite
 
+\usepackage{setspace}
+\usepackage{fancyhdr}
+\usepackage{titling} 
+
 % --- LIENS HYPERTEXTE ET COULEURS PERSONNALISÉES ---
 \usepackage{hyperref}
 \definecolor{darkgreen}{rgb}{0.0, 0.5, 0.0}
@@ -94,13 +98,50 @@
 \let\labelitemi\labelitemii
 
 % --- INFORMATIONS DU DOCUMENT ---
-\title{\textbf{Conception et implémentation d'un exerciseur automatique pour l'enseignement de la programmation}}
+\title{\textbf{Conception et implémentation d'un exerciseur automatique pour l'enseignement de la programmation}} \\[5mm] Rapport de projet GymInf
 \author{Julien Mateesco}
 %footnote 'sous la direction de', juré expert
-\date{8 sept. 2025}
+\date{8 septembre 2025}
+
+% --- Réglages esthétiques du titre (titling) ---
+\setlength{\droptitle}{2.5cm}
+\pretitle{\begin{center}\LARGE\bfseries}
+\posttitle{\par\end{center}\vspace{0.8cm}}
+\preauthor{\begin{center}\large}
+\postauthor{\par\end{center}\vspace{0.5cm}}
+\predate{\begin{center}\large}
+\postdate{\par\end{center}\vspace{1.2cm}}
+\renewcommand{\abstractname}{Résumé}
+
+% ---- Style FANCY réservé à la page de garde ----
+\fancypagestyle{cover}{
+  \fancyhf{}
+  \renewcommand{\headrulewidth}{0pt}
+  \fancyfoot[L]{\small \textbf{Superviseur :} Prénom Nom, Titre / Affiliation}
+  \fancyfoot[R]{\small \textbf{Juré expert :} Prénom Nom, Titre / Affiliation}
+  \renewcommand{\footrulewidth}{0.4pt}
+}
 
 \begin{document}
+
+\begin{titlepage}
+  % Pied de page uniquement sur la page de garde
+  \pagestyle{fancy}
+  \fancyhf{}
+  \renewcommand{\headrulewidth}{0pt}
+  \fancyfoot[L]{\small \textbf{Superviseur :} Patrick Wang, HEP Lausanne}
+  \fancyfoot[R]{\small \textbf{Juré expert :} Micha Hersch, HEP Lausanne, Gymnase de Renens}
+  \renewcommand{\footrulewidth}{0.4pt}
+
+  % AVEC LOGO ???
+  \begin{center}
+    % \includegraphics[height=1.6cm]{logo.pdf}\par\vspace{0.4cm}
+    {\Large ?? UniFr , HEP ?}
+  \end{center}
+
 \maketitle
+
+\thispagestyle{cover}
 
 \begin{abstract}
 Ce rapport présentera un outil-auteur et sa réalisation, faite dans le cadre du programme de formation GymInf, répondant à la question ``comment soutenir l'apprentissage par la méthode PRIMM de la programmation Python chez les débutants, avec visualisation logigrammme''. L'outil existe, visible sous \url{https://github.com/edu-mateescoj/gyminf} et propose principalement quatre fonctionnalités :
@@ -116,13 +157,17 @@ Nous présenterons d'abord les contextes qui ont présidé à la réalisation de
     \item le serveur Flask (Python) enregistrant les interactions élèves face aux codes proposés pour construire une base de données didactiques. 
 \end{enumerate} 
 Le présent rapport n'a pas vocation à être un mode d'emploi ou une documentation technique exhaustive, mais une explication des fonctionnalités implémentées et des choix qui ont été faits.
-\end{abstract}
 
+\end{abstract}
+\end{titlepage}
 \clearpage
+\pagestyle{plain}
+
 \tableofcontents
 \listoffigures
-
+\listoftables
 \clearpage
+
 \section{Introduction}
 \subsection{Préambule philosophique}
 Notre projet a été construit à une époque marquée simultanément par trois phénomènes apparemment contradictoires : 
@@ -213,7 +258,7 @@ La première option aurait été en contradiction avec l’objectif d’\emph{in
 \subsection{Applications similaires et sources d'inspiration}
 Essayons de  classifier les solutions proposées parmi les plus connues, en guise d'état de l'art sur les exerciseurs accessibles facilement aux débutants et/ou à leurs enseignants pour organiser le travail des élèves ou animer la classe. On résumera la ou les différences essentielles rencontrées à chaque fois par rapport à notre outil.
 
-\subsubsection{Des outils auteurs}
+\subsubsection*{Des outils auteurs}
 Les outils auteurs sont des logiciels permettant à des non-développeurs (souvent des enseignants ou des concepteurs pédagogiques) de créer des contenus d'apprentissage interactifs sans écrire de code. Il existe des fournisseurs privés (exemple: Didask \cite{didask} et des solutions open-source. Les outils auteurs proposent généralement des modèles d'activités (quiz, glisser-déposer, etc.) à assembler, aujourd'hui les acteurs privés proposent de déléguer la création des contenus par IA générative.
 
 \begin{description}
@@ -223,15 +268,15 @@ Les outils auteurs sont des logiciels permettant à des non-développeurs (souve
     \item[Différenciation :] Notre application se distingue fondamentalement par sa \textbf{spécialisation et sa capacité de génération et de traduction en logigramme}. Alors qu'un outil auteur comme H5P demande à l'enseignant de fournir lui-même le contenu (le code Python, les questions), \textit{notre outil génère ce contenu de manière procédurale. C'est un outil auteur spécifique au domaine} de la syntaxe Python, qui ne fournit pas des modèles d'exercices vides mais produit l'exercice (code + questions) lui-même, en fonction de contraintes pédagogiques.
 \end{description}
 
-\subsubsection{Des cours et tutoriels en ligne, francophones}
+\subsubsection*{Des cours et tutoriels en ligne, francophones}
 Cette catégorie regroupe les innombrables sites web qui proposent des parcours d'apprentissage structurés, souvent sous forme de textes, d'exemples et d'exercices intégrés. Leur but est de guider l'apprenant de façon réfléchie à travers un curriculum défini y compris en utilisant des ressources vidéos. 
 
-\subsubsection*{Des exemples 100\% gratuit}
+\paragraph{Des exemples 100\% gratuit}
 (consultés le 24 août 2025) \begin{description}
     \item[France-ioi] \url{https://www.france-ioi.org/algo/chapters.php}
     \item[code.org] \url{https://code.org/fr/teachers}
 \end{description}
-\subsubsection*{Des exemples avec parcours certifiant}
+\paragraph{Des exemples avec parcours certifiant}
 (consultés le 24 août 2025) \begin{description}
     \item[OpenClassroom]
     \url{https://openclassrooms.com/fr/courses/7168871-apprenez-les-bases-du-langage-python}
@@ -239,7 +284,7 @@ Cette catégorie regroupe les innombrables sites web qui proposent des parcours 
 \end{description}
 
 
-\subsubsection{Des IDE pédagogiques}
+\subsubsection*{Des IDE pédagogiques}
 Les Environnements de Développement Intégrés (IDE) pédagogiques sont des versions simplifiées des outils professionnels, conçues pour les débutants. Ils mettent l'accent sur la clarté, la visualisation de l'exécution et des messages d'erreur plus compréhensibles.
 
 \begin{description}
@@ -251,7 +296,7 @@ Les Environnements de Développement Intégrés (IDE) pédagogiques sont des ver
     \item[Différenciation :] La finalité est différente. Thonny est un \textbf{environnement pour écrire et déboguer du code}. Notre application est un \textbf{générateur d'exercices pour lire et analyser du code valide}. Bien que notre outil intègre un éditeur, son but n'est pas la création de projets mais l'analyse et la modification de fragments de code (pour les phases "Run", "Investigate" et "Modify" du modèle PRIMM). De plus, notre solution de génération aléatoire \& traduction en logigramme est en ligne, elle ne nécessite donc aucune installation et est disponible pour les élèves sur smartphone, contrairement à un IDE de bureau comme Thonny qui est disponible pour Windows, Mac et Linux.
 \end{description}
 
-\subsubsection{Des défis pédagogiques}
+\subsubsection*{Des défis pédagogiques}
 Ces sites proposent des collections de problèmes ou "défis" de programmation que l'utilisateur doit résoudre en écrivant du code. L'accent est mis sur la résolution de problèmes et la validation algorithmique. Nous différencions ces sites des autres solutions par leur absence assumée de gestion de classe, d'adéquation à un quelconque curriculum officiel ou affiliation scolaire, et par leur centration sur la résolution de problèmes (présentés sous forme de ``challenges'' ludiques) par écriture de code.
 
 \begin{description}
@@ -267,7 +312,7 @@ Ces sites proposent des collections de problèmes ou "défis" de programmation q
     \item[Différenciation :] La démarche pédagogique est inversée. Sur ces plateformes, le \textbf{problème est fourni} et l'élève doit \textbf{produire le code}. Dans notre application, le \textbf{code est fourni} et l'élève doit \textbf{analyser son comportement} pour prédire la valeur finale des variables. Notre objectif n'est pas de tester la capacité à concevoir un algorithme, mais de renforcer la compréhension de la sémantique des constructions du langage. De plus, le contenu de notre outil est généré dynamiquement selon les besoins de l'enseignant, alors que les défis de ces plateformes sont des problèmes fixes (éventuellement créés par la communauté).
 \end{description}
 
-\subsubsection{Des plateformes pédagogiques}
+\subsubsection*{Des plateformes pédagogiques}
 Ces plateformes sont des écosystèmes complets qui intègrent un IDE en ligne, la gestion de cours, des devoirs, et souvent une infrastructure serveur pour exécuter le code et procéder à une évaluation automatique. Certaines plateformes intègrent ainsi tout ou partie des autres formes d'outils déjà mentionnées ci-dessus, par exemple avec simulation de console IPython, cours en ligne interactifs avec Jupyter Notebooks, défis progressifs, etc.
 
 \begin{description}
@@ -286,13 +331,15 @@ Ces plateformes sont des écosystèmes complets qui intègrent un IDE en ligne, 
     \item[Différenciation :] La principale différence réside dans la nature du contenu, la possibilité offerte à l'élève d'expérimenter en dehors de l'exercice strict, et la rétroaction immédiate sans blocage de l'élève dans son avancement. Ces plateformes proposent généralement un \textbf{contenu fixe et éditorialisé}, conçu pour être suivi de manière linéaire. Ainsi avec AlgoPython l'élève est stoppé dans sa progression en cas d'échec (sauf intervention de l'enseignant qui peut débloquer le niveau). Notre outil, à l'inverse, est un \textbf{générateur de contenu à la demande et non-linéaire}, offrant la possibilité supplémentaire de modifier le contenu et de l'exporter. Notre outil ne propose pas plus de cours que le seul nom des éléments syntaxique, mais est une source inépuisable d'exemples uniques sur des points de syntaxe précis, que l'enseignant peut utiliser pour illustrer une notion spécifique ou créer un exercice ponctuel. Notre application est volontairement \textbf{plus légère, plus ciblée sur l'expérimentation autonome par l'élève et axée sur la formation plutôt que l'évaluation}. Contrairement à ces plateformes (AlgoPython, Replit ou Codex) qui sont des solutions lourdes, forcément basées sur une infrastructure client-serveur et requérant des comptes, notre outil de génération d'exercices peut fonctionner comme une application web statique, sans serveur d'exécution grâce à Pyodide, donc anonyme, et conçue pour une tâche unique : générer des exercices ponctuels. Même avec la partie serveur notre outil n'a pas vocation à gérer un cours ou à organiser des examens, mais à fournir une ressource formative, que l'enseignant peut intégrer dans son propre cheminement.
 \end{description}
 
-\subsubsection{Des sources d'inspiration}
+\subsubsection*{Des sources d'inspiration}
 A citer également :
 \begin{itemize}
     \item La source d'inspiration pour l'utilisation du \textit{Control Flow Graph} de Python fourni par le module \code{ast} :  \url{https://www.fuzzingbook.org/html/GrammarFuzzer.html}
     \item Un papier universitaire présentant une initiative de génération automatique d'exercices dans le cadre de l'apprentissage de la programmation : \url{https://arxiv.org/abs/2205.11304}
     \item Un générateur de scripts Python, totalement aléatoire et intégrant un très grand nombre d'éléments syntaxiques : \url{https://github.com/radomirbosak/random-ast}
     \item Le célèbre visualiseur d'exécution de bouts de codes : \url{https://pythontutor.com/}
+    \item L'initiative emblématique Blackbox de l'enregistrement de (millions de) code snippets d'étudiants utilisant l'IDE BlueJ pour l'apprentissage de Java, pour identifier des patterns d'erreurs \cite{ Altadmri_Brown_2015}
+    \item Le jeu Silent Teacher \cite{SilentTeacher} qui écarte l'enseignant de l'apprentissage en proposant des mini questions avec rétroaction immédiate, sans aucune référence à la théorie ni contexte, isolant l'apprenant dans une sorte de behaviorisme radical
 \end{itemize} 
 \par En conclusion, la multitude des ressources pédagogiques disponibles est une source inépuisable d'inspiration, et de possible évolution, pour une prochaine version de l'outil proposant une génération sémantique (\textit{TBC}...)
 
@@ -990,7 +1037,7 @@ Tant que le CFG fourni par le module ast de Python n'a pas été ``visité'' il 
 --- CFG : les arêtes ---
 set()
 \end{verbatim}
-Une fois la ``visite'' effectuée on a construit un CFG :
+Une fois notre ``visite'' effectuée (cf. ci-dessous) on aura construit un CFG :
 \begin{verbatim}
     --- CFG : les noeuds ---
 [('node01', 'Start'), ('node02', 'x = 1'), ('node03', 'x > 0'), ('node04', 'y = 1'), ('node05', 'y = -1'), ('node06', '.'), ('node07', 'print(y)'), ('node08', 'End')]
@@ -1043,7 +1090,7 @@ Ce choix présente plusieurs avantages déterminants :
 Pour parcourir l'AST, nous utilisons le patron de conception \textit{Visiteur}. La classe \code{ControlFlowGraph} implémente une méthode \code{visit(node, parent\_id)} qui agit comme un répartiteur. Selon le type du nœud AST visité (ex: \code{ast.If}), elle délègue le traitement à une méthode spécialisée (ex: \code{visit\_If}). Cette approche structure le code de manière claire et alignée sur la grammaire du langage Python.
 
 Notre approche s'inspire de projets académiques et open-source qui exploitent l'AST pour l'analyse de code, 
-notamment les travaux présentés dans \textit{The Fuzzing Book} par Zeller et al. \cite{fuzzingbook}, qui 
+notamment les travaux déjà mentionnés, présentés dans \textit{The Fuzzing Book} par Zeller et al. \cite{fuzzingbook}, qui 
 démontrent la construction d'un CFG à partir d'un AST. De même, la documentation \textit{Green Tree Snakes} 
 \cite{greentreesnakes} illustre la puissance de la manipulation et de la visite de l'AST pour des tâches 
 d'analyse statique. Notre \code{MyCFG.py} adopte une philosophie similaire en utilisant le patron de conception 
@@ -1051,6 +1098,18 @@ d'analyse statique. Notre \code{MyCFG.py} adopte une philosophie similaire en ut
 nœud AST pertinent, permettant de traduire progressivement la structure du code en une structure de graphe 
 composée de nœuds et d'arêtes.
 
+Le processus, orchestré par la méthode principale \code{visit}, fonctionne comme suit :
+\begin{enumerate}
+    \item La visite commence au nœud racine de l'AST (\code{ast.Module}).
+    \item Pour chaque nœud AST rencontré, la méthode \code{visit} appelle le visiteur spécifique (ex: \code{visit\_Assign} pour un nœud \code{ast.Assign}).
+    \item Chaque méthode de visite est responsable de :
+    \begin{itemize}
+        \item \textbf{Créer des nœuds CFG :} Traduire le nœud AST en un ou plusieurs nœuds de logigramme (ex: un \code{ast.If} devient un nœud "Decision").
+        \item \textbf{Créer des arêtes :} Connecter le(s) nouveau(x) nœud(s) au(x) nœud(s) parent(s) du flux de contrôle.
+        \item \textbf{Visiter les enfants :} Appeler récursivement \code{visit} sur les nœuds enfants de l'AST (ex: \code{visit\_If} doit visiter les instructions dans ses branches \code{body} et \code{orelse}).
+        \item \textbf{Retourner les points de sortie :} Chaque visiteur retourne une liste des "points de sortie" de la structure qu'il vient de traiter. Ce sont les nœuds CFG qui devront être connectés à l'instruction suivante.
+    \end{itemize}
+\end{enumerate}
 
  \clearpage
 \subsection{Vocabulaire AST et sémantique des nœuds du CFG}
@@ -1081,7 +1140,7 @@ IoOperation & \code{ast.Call} (avec \code{func.id} étant 'print' ou 'input') & 
 
 \subsection{Philosophie et architecture de \textit{MyCFG.py}}
 
-L'architecture de \code{MyCFG.py} est guidée par une philosophie centrée sur l'objectif pédagogique. Plutôt que de viser une représentation exhaustive de tous les mécanismes d'exécution de Python (comme la gestion des exceptions, les définitions en compréhension ou l'asynchronisme), notre implémentation se concentre sur les constructions algorithmiques fondamentales enseignées aux débutants.
+Pour rappel l'architecture de \code{MyCFG.py} est guidée par une philosophie centrée sur l'objectif pédagogique. Plutôt que de viser une représentation exhaustive de tous les mécanismes d'exécution de Python (comme la gestion des exceptions, les définitions en compréhension ou l'asynchronisme), notre implémentation se concentre sur les constructions algorithmiques fondamentales enseignées aux débutants.
 
 \paragraph{Séparation des préoccupations.} La classe \code{ControlFlowGraph} est conçue en trois phases distinctes :
 \begin{enumerate}
@@ -1089,10 +1148,47 @@ L'architecture de \code{MyCFG.py} est guidée par une philosophie centrée sur l
     \item \textbf{Construction du Graphe (Visite de l'AST) :} La méthode \code{visit} et ses sous-méthodes spécialisées (\code{visit\_If}, \code{visit\_For}, etc.) parcourent l'AST. Cette phase ne fait qu'ajouter des nœuds et des arêtes aux structures de données internes (\code{self.nodes}, \code{self.edges}). C'est ici que la logique de traduction de la syntaxe en flux de contrôle est implémentée. Une caractéristique clé est l'ajout de nœuds de \textbf{jonction} structurels, qui ne correspondent à aucun nœud AST mais sont essentiels pour représenter la convergence des flux de manière claire, notamment après les blocs conditionnels.
     \item \textbf{Sérialisation en Mermaid :} La méthode \code{to\_mermaid} lit les structures de données internes (nœuds et arêtes) et génère la chaîne de caractères finale au format Mermaid. Cette séparation garantit que la logique de construction du graphe est indépendante du format de sortie final.
 \end{enumerate}
+Ce qu'il faut bien comprendre est la distinction entre le parcours structurel de l'AST du programme qui construit le CFG et le parcours suivant qui sérialise ce CFG en une chaîne Mermaid. Le premier parcours est guidé par la syntaxe du langage Python, tandis que le second est guidé par les besoins de visualisation.
+L’ambivalence vient du fait que j'ai choisi le même vocabulaire pour désigner des choses différentes.
+
+
+\subsubsection{Exemple détaillé : la visite d'un \code{ast.If}}
+
+La méthode \code{visit\_If} dans \code{MyCFG.py} illustre la traduction de la syntaxe en sémantique de flux :
+\begin{enumerate}
+    \item \textbf{Réception :} Le visiteur reçoit le nœud \code{ast.If} et l'ID du nœud CFG précédent (\code{parent\_id}).
+    \item \textbf{Création du nœud de Décision :} Il appelle \code{self.add\_node} pour créer un nœud de type "Decision" dont le label est le texte de la condition (\code{ast.unparse(node.test)}). Une arête est créée depuis \code{parent\_id} vers ce nouveau nœud de décision.
+    \item \textbf{Visite de la branche "Oui" :} Il appelle \code{self.visit\_body} pour la liste d'instructions de \code{node.body}. Le point d'entrée pour ce corps est le nœud de décision. \code{visit\_body} retourne les points de sortie de cette branche.
+    \item \textbf{Visite de la branche "Non" :} Il fait de même pour \code{node.orelse}.
+    \item \textbf{Labellisation des arêtes :} Il identifie les premières instructions de chaque branche et s'assure que les arêtes partant du nœud de décision vers ces instructions sont bien labellisées "Oui" et "Non".
+    \item \textbf{Retour des points de sortie :} Il retourne une liste contenant tous les points de sortie des deux branches. Si une branche est vide, le nœud de décision lui-même est un point de sortie.
+\end{enumerate}
+C'est la méthode \code{visit\_body} qui, en recevant potentiellement plusieurs points de sortie de la structure \code{if}, décidera de créer un nœud "Junction" pour les fusionner avant de passer à l'instruction suivante.
+La construction du CFG est donc un processus récursif et hiérarchique, où chaque structure de contrôle est traduite en une sous-structure de nœuds et d'arêtes, tout en maintenant la continuité du flux d'exécution. 
+Dans mon implémentation MyCFG.py, cette récursivité vient naturellement par l'interaction entre la méthode visit et la méthode visit_body.
+
+Le défi principal n'est pas seulement de parcourir l'arbre (la documentation Python et Green Tree Snakes en donne les moyens), mais de "tisser" un graphe séquentiel à partir d'une structure arborescente en rattachant les ``têtes'' de séquences aux ``queues'' correspondantes.
+Pour cela, la définition et l'enregistrement des points d'entrée et des points de sortie à chaque étape de la visite sont cruciales.
 
 \paragraph{Gestion des portées et des sous-graphes.} Une décision architecturale importante a été de séparer visuellement le flux principal du script des définitions de fonctions. \code{MyCFG.py} utilise une pile de portées (\code{\_function\_scope\_stack}) pendant la visite de l'AST pour identifier quels nœuds appartiennent à quelle fonction. Lors de la sérialisation en Mermaid, cette information est utilisée pour générer des \code{subgraph} distincts, améliorant considérablement la lisibilité en évitant le croisement d'arêtes entre des contextes d'exécution logiquement séparés.
 
-\paragraph{Représentation pédagogique des boucles.} Pour les boucles \code{for}, une attention particulière a été portée à la représentation. Plutôt qu'un simple nœud de décision, nous avons choisi de décomposer la boucle en une structure plus détaillée inspirée des logigrammes classiques (voir figure \ref{foreach_flowchart} : un test initial de vacuité de l'itérable ("des éléments sont ils présents dans la structure sur laquelle itérer"?), l'initialisation de la variable d'itération (l'itérateur), l'exécution du corps, un test de continuation, et la mise à jour de la variable. 
+\subsubsection{Le cas des boucles : une représentation pédagogique}
+
+Contrairement à \code{PyCFG.py} de \textit{Fuzzing Book} qui traduit une boucle \code{for} en une structure \code{while}
+ équivalente, notre approche dans \code{MyCFG.py} vise une \textbf{explicitation pédagogique}.
+ 
+\paragraph{Représentation pédagogique des boucles.} Pour les boucles \code{for}, une attention particulière a été portée
+ à la représentation. Plutôt qu'un simple nœud de décision, nous avons choisi de décomposer la boucle en une structure
+  plus détaillée inspirée des logigrammes classiques (voir figure \ref{fig:deux_for}.
+  La méthode \code{visit\_For} ne crée pas un simple nœud de décision, mais décompose la sémantique de l'itération en plusieurs étapes distinctes, chacune représentée par un nœud :
+\begin{itemize}
+    \item Un test initial : "L'itérable est-il vide ?"
+    \item Une initialisation : "Prendre le premier élément"
+    \item Le corps de la boucle
+    \item Un test de continuation : "Y a-t-il un élément suivant ?"
+    \item Une mise à jour : "Prendre l'élément suivant"
+\end{itemize}
+Voici concrètement un exemple de rendu graphique d'une boucle ``for'' parcourant une chaîne, mis en regard d'une structure théorique ``for each''.
 \begin{figure}[H]
     \centering
     \begin{subfigure}{0.45\textwidth}
@@ -1111,7 +1207,10 @@ L'architecture de \code{MyCFG.py} est guidée par une philosophie centrée sur l
     \label{fig:deux_for}
 \end{figure}
 
-Cette décomposition, bien que plus verbeuse, vise à rendre le mécanisme d'itération plus explicite pour l'apprenant. Une heuristique est également utilisée pour décrire la nature de l'itérable (chaîne, liste, variable, etc.) et de ses éléments (caractère, nombre, etc.) en langage naturel. C'est peut être encore un peu trop verbeux malgré l'attention qui a été porté pour réduire la longueur des chaînes (exemples: utiliser les ' plutôt que les ", couper les longues chaines et les faire suivre de ``...'')
+Cette décomposition, bien que plus verbeuse, vise à rendre le mécanisme d'itération plus explicite pour l'apprenant, faisant abstraction des constructions internes et méthodes \code{has_next}. 
+Une heuristique est également utilisée pour décrire la nature de l'itérable (chaîne, liste, variable, etc.) et 
+de ses éléments (caractère, nombre, etc.) en langage naturel. C'est peut être encore un peu trop verbeux malgré
+ l'attention qui a été porté pour réduire la longueur des chaînes (couper les longues chaines et les faire suivre de ``...'').
 
 \paragraph{Robustesse et limitations.} L'implémentation actuelle gère les structures de contrôle de base (\code{if}/\code{else}, \code{for}, \code{while}), les assignations, les appels de fonction, et les sauts (\code{break}, \code{continue}, \code{return}). Elle ne gère pas encore les constructions plus avancées comme la gestion des exceptions (\code{try}/\code{except}/\code{finally}), les contextes (\code{with}), les classes, ou les fonctionnalités asynchrones. Cette limitation est suffisante pour couvrir un sous-ensemble du langage pertinent pour les exercices du niveau des élèves, de débutant à intermédiaire.
 
@@ -1624,50 +1723,19 @@ Les contraintes :
 \end{itemize}
 Le solveur de contraintes recevrait toutes ces règles et tenterait de ``construire'' un programme valide qui les respecte toutes.
 
+\section{Conclusions}
+\subsection*{Remarques personnelles}
+Eu égard à son aspect certificatif ce travail mobilise une diversité de compétences, mettant en oeuvre des apprentissage variés (développement web, POO Python, base de données relationnnelles, modèle client - serveur), ce qui apporte une première justification au parcours de formation GymInf qu'il vient clôturer.\\
+Je crois que mon projet a du potentiel dans une démarche de pédagogie active, notamment dans le cadre de l'approche PRIMM, mais il reste à le soumettre aux pairs pour améliorations et à le tester dans de multiples classes à grande échelle pour en valider l'efficacité pédagogique et la pertinence des données collectées. alors seulement je pourrai dire que j'ai apporté ma pierre à l'édifice dans la constitution d'une communauté \textit{scientifique} de praticiens de la pédagogie de l'informatique. \\
+Aussi je crois que l'intérêt principal de mon outil n'est pas de permettre aux élèves de se réapproprier leur apprentissage en leur offrant des outils adaptés à leurs besoins et à leur niveau (ce qu'ils pourraient faire par ailleurs), mais surtout de permettre aux enseignants d'analyser les erreurs et de construire des indicateurs pertinents pour aller au-delà de l'observation des \textit{students misconceptions}.\\
+Je pense que l'enjeu principal dans l'enseignement de la programmation est l'\textit{empowerment} des débutants qui se tiennent à l'écart \textit{socio-culturellement} alors que les IA génératives donnent maintenant cette faculté de décupler un minimum de savoirs pour une puissance de productivité inouïe. Le code n’est pas seulement une technique : c’est une super-puissance que chacun peut apprendre pour imaginer, créer et agir dans le monde numérique. »
 
-------------------------------------------------------
-\section*{Stack technologique: choix \& hypothèses}
+\'A la suite de Littman \cite{codetojoy} je crois que découvrir un peu de programmation, c'est ouvrir une porte vers l'autonomie, l'inventivité et la joie de façonner le futur. L'apprentissage de la programmation n'est pas une fin en soi, mais une ouverture : celle d'une capacité accrue à participer, à innover et à s'approprier un langage pour penser, créer et agir dans une société traversée par le numérique.
 
-\subsection*{UI}
 
-\begin{enumerate}
-    \item Chargement des dépendances (parmi tous les possbles pour exécuter du Python dans le navigateur, préférence = $Pyodide$, et en plus $Skulpt$ si besoin) $+$ la jungle des frameworks pour affichage "joli": gros travail de debugging à prévoir même avec $LABjs$
-    
-    \item Des \texttt{checkbox} pour choisir les \textit{templates}, avec une logique d'exclusion de choix mutuellement exclusifs à définir et à implémenter (si et seulement si la boucle $for$ est choisie il existe la possibilité d'imbriquer des boucles, autre exemple selon le niveau de difficulté choisie on peut griser ou rendre visible certains choix, etc.)
-    
-    \item Les deux vues  \texttt{script} dans un éditeur de code, et \texttt{flowchart} si implémentées: onglets ou $toggle$ entre les \texttt{<div>}.
-    
-    \item Pour la présentation du feedback élève à renvoyer après enregistrement des réponses élèves: coloration des cellules $+$ modales pour retours ad hoc, notamment selon comparaison avec erreurs attendues
-    
-    \item Une piste: les \texttt{tooltips}, pour ajouter des \texttt{mouseover} sur les tokens du code, si possibilité d'y avoir accès... Autre piste: à la création de l'arbre syntaxique, possibilité de récupérer les annotations des noeuds par les parseurs Python
-\end{enumerate}
-
-\subsection*{Pistes et Hypothèses spécifiques flowchart... desquelles dépendra la logique de génération du code!}
-
-Des solutions très difficiles à créer from scratch, ou des solutions difficiles qui alourdissent la stack.
-
-\begin{enumerate}
-    \item Manipuler directement le DOM de l'UI via Pyodide: créer les éléments HTML appropriés et concevoir leur manipulation (= réinventer la roue, puisque des bibliothèques spécialisées ont été créées pour ça)... $\Rightarrow$ idées suivantes:
-    \item Bibliothèques JS existantes, exemple $Mermaid.js$: il faut que Python communique le flowchart à Mermaid $\rightarrow$ d'où l'idée du parsing AST
-    \item $Graphviz$ et son $DOT language$: à ma connaissance en WebAssembly (accessoirement alourdirait le chargement de la page) donc \textit{à ma connaissance} impossibilité de modifier le DOM directement rendant compliquée (impossible?) l'option du rendu dynamique du flowchart... MAJ 26/03/25 des modules Python existeraient pour faire le travail demandé: cf. \url{https://github.com/pydot/pydot}
-\end{enumerate}
-
-\subsection*{Génération du code - des idées de pistes avec une supposition à questionner sur le besoin de travailler l'AST correspondant}
-
-Différentes approches à envisager, pas forcément mutuellement exclusives.
-
-\begin{description}
-    \item[Approche texte + \texttt{ast}:] Le générateur de code créerait le script à afficher (texte) par application de \textit{templates} préddéfinis en les remplissant au fur et à mesure avec les variables et structures sélectionnées aléatoirement (exemple: "\texttt{if <condition> : <indent> <bloc>}). Approche la plus accessible et la plus facile à controler pédagogiquement, et la plus intuitive pour la production du script car on travaille du texte (ce que l'on veut en sortie) mais il manque le lien logique pour nous rapprocher du flowchart: besoin d'analyser la syntaxe du code généré pour en extraire la structure du code! C'est ce que promettent des fonctions comme \texttt{ast.parse()} pour retourner la racine de l'arbre syntaxique, et la classe \texttt{ast.NodeVisitor} pour parcourir les noeuds intéressants à traduire en noeuds flowchart (pour en garder que les éléments ciblés par nos objetifs pédagogiques). Pyodide est sensé nous donner la possibilité de créer et manipuler les éléments HTML correspondants, à styliser avec une classe CSS correspondante (à définir... plus facile à dire qu'à faire: il faudra supporter l'ancienneté des navigateurs installés dans les écoles et les terminaux des élèves iOS v18 et plus...).
-     
-     \item[Approche naïve:] S'inspirer de \cite{fuzzingbook} qui semble choisir des productions grammaticales correctes, mais à la signification aléatoire. 
-
-     \item [Approche AST radicale:] Générer un AST pour le traduire en Python et le traduire en flowchart = utiliser l'AST comme une sorte de DSL en faisant une application intensive du module \texttt{ast}. Approche inspirée de ce que j'ai compris de \url{https://github.com/radomirbosak/random-ast}. Utiliser l'arbre assurerait une cohérence syntaxique par rapport au langage (et permettrait des erreurs $Index Error$ ou $Division by zero$ et d'autres plus difficiles à contrôler). Le module \texttt{astor} semble faire le job de traduire l'arbre en code (cf. \url{https://pypi.org/project/astor/}). Le problème principal est la difficulté de créer le générateur d'arbre AST ! Sans parler de la difficulté de le maintenir pérenne selon les mises à jour Python !
-     
-    \item[Approche via DSL radicale:] D'après \url{https://en.wikipedia.org/wiki/Domain-specific_language} il s'agit d'une solution standard dans l'industrie logicielle de concevoir un DSL adapté à un problème spécifique afin de faciliter la génération de solutions... mais qui semble totalement hors de portée, dépassant le cadre de ce projet, à moins d'en trouver un clé en main !
-    
-\end{description}
-
-\newpage
+\subsection*{Remerciements}
+Merci à Patrick Wang pour son temps, ses idées et ses conseils tout au long de ce projet, pour son incitation à faire plus et à faire mieux.\\
+Merci à tous les acteurs du programme GymInf : Andreas Humm pour la coordination et tous les enseignants et les participants pour leur engagement.
 
 
 \newpage

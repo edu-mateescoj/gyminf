@@ -3086,18 +3086,20 @@
     <bcf:citekey order="14" intorder="1">HattieTimperley2007</bcf:citekey>
     <bcf:citekey order="15" intorder="1">Shute2008</bcf:citekey>
     <bcf:citekey order="16" intorder="1">didask</bcf:citekey>
-    <bcf:citekey order="17" intorder="1">codemirror6</bcf:citekey>
-    <bcf:citekey order="18" intorder="1">skulpt</bcf:citekey>
-    <bcf:citekey order="19" intorder="1">brython</bcf:citekey>
-    <bcf:citekey order="20" intorder="1">fuzzingbook</bcf:citekey>
-    <bcf:citekey order="21" intorder="1">fuzzingbook</bcf:citekey>
-    <bcf:citekey order="22" intorder="1">greentreesnakes</bcf:citekey>
-    <bcf:citekey order="23" intorder="1">for_each_exemple</bcf:citekey>
-    <bcf:citekey order="24" intorder="1">for_each_exemple</bcf:citekey>
-    <bcf:citekey order="25" intorder="1">pyodide</bcf:citekey>
-    <bcf:citekey order="26" intorder="1">Qian_Lehman_2017</bcf:citekey>
-    <bcf:citekey order="27" intorder="1">fuzzingbook</bcf:citekey>
-    <bcf:citekey order="28" intorder="1">rahulgopinath</bcf:citekey>
+    <bcf:citekey order="17" intorder="1">Altadmri_Brown_2015</bcf:citekey>
+    <bcf:citekey order="18" intorder="1">SilentTeacher</bcf:citekey>
+    <bcf:citekey order="19" intorder="1">codemirror6</bcf:citekey>
+    <bcf:citekey order="20" intorder="1">skulpt</bcf:citekey>
+    <bcf:citekey order="21" intorder="1">brython</bcf:citekey>
+    <bcf:citekey order="22" intorder="1">fuzzingbook</bcf:citekey>
+    <bcf:citekey order="23" intorder="1">fuzzingbook</bcf:citekey>
+    <bcf:citekey order="24" intorder="1">greentreesnakes</bcf:citekey>
+    <bcf:citekey order="25" intorder="1">for_each_exemple</bcf:citekey>
+    <bcf:citekey order="26" intorder="1">for_each_exemple</bcf:citekey>
+    <bcf:citekey order="27" intorder="1">pyodide</bcf:citekey>
+    <bcf:citekey order="28" intorder="1">Qian_Lehman_2017</bcf:citekey>
+    <bcf:citekey order="29" intorder="1">codetojoy</bcf:citekey>
+    <bcf:citekey order="30" intorder="1">rahulgopinath</bcf:citekey>
   </bcf:section>
   <!-- SORTING TEMPLATES -->
   <bcf:sortingtemplate name="none">

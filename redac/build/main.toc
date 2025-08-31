@@ -1,62 +1,60 @@
 \babel@toc {french}{}\relax 
-\contentsline {section}{\numberline {1}Introduction}{5}{section.1}%
-\contentsline {subsection}{\numberline {1.1}Préambule philosophique}{5}{subsection.1.1}%
-\contentsline {subsubsection}{\numberline {1.1.1}Position de principe sur l'IA générative comme outil dans les mains des élèves}{5}{subsubsection.1.1.1}%
-\contentsline {subsection}{\numberline {1.2}Éléments de contexte}{6}{subsection.1.2}%
-\contentsline {subsubsection}{\numberline {1.2.1}Contexte institutionnel}{6}{subsubsection.1.2.1}%
-\contentsline {subsubsection}{\numberline {1.2.2}Contexte didactique: surtout des hypothèses appuyées par la littérature}{6}{subsubsection.1.2.2}%
-\contentsline {subsection}{\numberline {1.3}Objectifs fonctionnels}{7}{subsection.1.3}%
-\contentsline {subsubsection}{\numberline {1.3.1}Besoin d'un générateur de code et de questions pertinentes}{7}{subsubsection.1.3.1}%
-\contentsline {subsubsection}{\numberline {1.3.2}Besoin d'une sorte d'éditeur Python en ligne}{7}{subsubsection.1.3.2}%
-\contentsline {subsubsection}{\numberline {1.3.3}Un rendu logigramme}{8}{subsubsection.1.3.3}%
-\contentsline {subsection}{\numberline {1.4}Applications similaires et sources d'inspiration}{8}{subsection.1.4}%
-\contentsline {subsubsection}{\numberline {1.4.1}Des outils auteurs}{8}{subsubsection.1.4.1}%
-\contentsline {subsubsection}{\numberline {1.4.2}Des cours et tutoriels en ligne, francophones}{8}{subsubsection.1.4.2}%
-\contentsline {subsubsection}{\numberline {1.4.3}Des IDE pédagogiques}{9}{subsubsection.1.4.3}%
-\contentsline {subsubsection}{\numberline {1.4.4}Des défis pédagogiques}{9}{subsubsection.1.4.4}%
-\contentsline {subsubsection}{\numberline {1.4.5}Des plateformes pédagogiques}{10}{subsubsection.1.4.5}%
-\contentsline {subsubsection}{\numberline {1.4.6}Des sources d'inspiration}{10}{subsubsection.1.4.6}%
-\contentsline {subsubsection}{\numberline {1.4.7}Différenciation et apport de notre solution}{11}{subsubsection.1.4.7}%
-\contentsline {section}{\numberline {2}L'outil et ses fonctionnalités}{12}{section.2}%
-\contentsline {subsection}{\numberline {2.1}Fonctionnalités pour les utilisateurs}{12}{subsection.2.1}%
-\contentsline {subsection}{\numberline {2.2}Côté client : l'interface et l'architecture logicielle}{13}{subsection.2.2}%
-\contentsline {subsubsection}{\numberline {2.2.1}Les interactions entre objets : entre les \textit {cards}, entre les \textit {divs}...}{15}{subsubsection.2.2.1}%
-\contentsline {subsubsection}{\numberline {2.2.2}L'interface : ses éléments de choix pour la création d'un exercice}{16}{subsubsection.2.2.2}%
-\contentsline {subsubsection}{\numberline {2.2.3}Un outil ``tout-en-un'' : fonctionnalités additionnelles}{16}{subsubsection.2.2.3}%
-\contentsline {subsubsection}{\numberline {2.2.4}Les technologies employées côté client}{16}{subsubsection.2.2.4}%
-\contentsline {subsection}{\numberline {2.3}L'architecture globale (en coulisse)}{17}{subsection.2.3}%
-\contentsline {subsubsection}{\numberline {2.3.1}Résumé en un schéma général}{17}{subsubsection.2.3.1}%
-\contentsline {subsubsection}{\numberline {2.3.2}Résumé en quatre phrases}{17}{subsubsection.2.3.2}%
-\contentsline {section}{\numberline {3}Présentation de la génération automatique du code}{18}{section.3}%
-\contentsline {subsection}{\numberline {3.1}Objectifs et principes directeurs du générateur}{18}{subsection.3.1}%
-\contentsline {subsection}{\numberline {3.2}Vue d'ensemble du processus de génération de code aléatoire et contrôlé}{18}{subsection.3.2}%
-\contentsline {subsection}{\numberline {3.3}Logique générale de la génération des structures}{20}{subsection.3.3}%
-\contentsline {subsection}{\numberline {3.4}Implémentations}{20}{subsection.3.4}%
-\contentsline {subsubsection}{\numberline {3.4.1}\texttt {'Vars'} \& \texttt {'Op'} : déclarations et opérations élémentaires}{20}{subsubsection.3.4.1}%
-\contentsline {paragraph}{Préparation des variables}{20}{section*.14}%
-\contentsline {paragraph}{Génération des opérations}{20}{section*.15}%
-\contentsline {subsubsection}{\numberline {3.4.2}'\texttt {Ctrl}': les structures conditionnelles \texttt {if... elif... else:}}{21}{subsubsection.3.4.2}%
-\contentsline {paragraph}{Préparation}{21}{section*.16}%
-\contentsline {paragraph}{Génération}{21}{section*.17}%
-\contentsline {subsubsection}{\numberline {3.4.3}'\texttt {Loop}' : les boucles \texttt {for}/\texttt {while}}{21}{subsubsection.3.4.3}%
-\contentsline {paragraph}{``Dispatch'' des structures}{21}{section*.18}%
-\contentsline {subsubsection}{\numberline {3.4.4}Concrétisation d'une génération de fonction : définition et appel}{21}{subsubsection.3.4.4}%
-\contentsline {subsection}{\numberline {3.5}Conclusion sur le processus de génération de code}{24}{subsection.3.5}%
-\contentsline {section}{\numberline {4}Présentation du traducteur automatique de code en logigramme}{26}{section.4}%
-\contentsline {subsection}{\numberline {4.1}L'AST Python}{26}{subsection.4.1}%
-\contentsline {subsection}{\numberline {4.2}AST, CFG, et logigramme}{26}{subsection.4.2}%
-\contentsline {subsection}{\numberline {4.3}Pourquoi PyCFG (Fuzzing Book) était utile mais insuffisant pour nos objectifs}{28}{subsection.4.3}%
-\contentsline {paragraph}{Apports de PyCFG :}{28}{section*.22}%
-\contentsline {paragraph}{Limites pour l’usage pédagogique visé (et adaptation \colorbox {lightgray}{\texttt {\small MyCFG.py}}).}{28}{section*.23}%
-\contentsline {paragraph}{Conclusion :}{28}{section*.24}%
-\contentsline {subsubsection}{\numberline {4.3.1}Le choix de l'AST comme source de vérité}{28}{subsubsection.4.3.1}%
-\contentsline {subsubsection}{\numberline {4.3.2}Le \textit {template} (patron de conception) "Visiteur"}{29}{subsubsection.4.3.2}%
-\contentsline {subsection}{\numberline {4.4}Vocabulaire AST et sémantique des nœuds du CFG}{30}{subsection.4.4}%
-\contentsline {subsection}{\numberline {4.5}Philosophie et architecture de \textit {MyCFG.py}}{30}{subsection.4.5}%
-\contentsline {paragraph}{Séparation des préoccupations.}{30}{section*.25}%
-\contentsline {paragraph}{Gestion des portées et des sous-graphes.}{31}{section*.26}%
-\contentsline {paragraph}{Représentation pédagogique des boucles.}{31}{section*.27}%
-\contentsline {paragraph}{Robustesse et limitations.}{32}{section*.29}%
+\contentsline {section}{\numberline {1}Introduction}{4}{section.1}%
+\contentsline {subsection}{\numberline {1.1}Préambule philosophique}{4}{subsection.1.1}%
+\contentsline {subsubsection}{\numberline {1.1.1}Position de principe sur l'IA générative comme outil dans les mains des élèves}{4}{subsubsection.1.1.1}%
+\contentsline {subsection}{\numberline {1.2}Éléments de contexte}{5}{subsection.1.2}%
+\contentsline {subsubsection}{\numberline {1.2.1}Contexte institutionnel}{5}{subsubsection.1.2.1}%
+\contentsline {subsubsection}{\numberline {1.2.2}Contexte didactique: surtout des hypothèses appuyées par la littérature}{5}{subsubsection.1.2.2}%
+\contentsline {subsection}{\numberline {1.3}Objectifs fonctionnels}{6}{subsection.1.3}%
+\contentsline {subsubsection}{\numberline {1.3.1}Besoin d'un générateur de code et de questions pertinentes}{6}{subsubsection.1.3.1}%
+\contentsline {subsubsection}{\numberline {1.3.2}Besoin d'une sorte d'éditeur Python en ligne}{6}{subsubsection.1.3.2}%
+\contentsline {subsubsection}{\numberline {1.3.3}Un rendu logigramme}{7}{subsubsection.1.3.3}%
+\contentsline {subsection}{\numberline {1.4}Applications similaires et sources d'inspiration}{7}{subsection.1.4}%
+\contentsline {paragraph}{Des exemples 100\% gratuit}{7}{section*.6}%
+\contentsline {paragraph}{Des exemples avec parcours certifiant}{8}{section*.7}%
+\contentsline {subsubsection}{\numberline {1.4.1}Différenciation et apport de notre solution}{10}{subsubsection.1.4.1}%
+\contentsline {section}{\numberline {2}L'outil et ses fonctionnalités}{11}{section.2}%
+\contentsline {subsection}{\numberline {2.1}Fonctionnalités pour les utilisateurs}{11}{subsection.2.1}%
+\contentsline {subsection}{\numberline {2.2}Côté client : l'interface et l'architecture logicielle}{12}{subsection.2.2}%
+\contentsline {subsubsection}{\numberline {2.2.1}Les interactions entre objets : entre les \textit {cards}, entre les \textit {divs}...}{14}{subsubsection.2.2.1}%
+\contentsline {subsubsection}{\numberline {2.2.2}L'interface : ses éléments de choix pour la création d'un exercice}{15}{subsubsection.2.2.2}%
+\contentsline {subsubsection}{\numberline {2.2.3}Un outil ``tout-en-un'' : fonctionnalités additionnelles}{15}{subsubsection.2.2.3}%
+\contentsline {subsubsection}{\numberline {2.2.4}Les technologies employées côté client}{15}{subsubsection.2.2.4}%
+\contentsline {subsection}{\numberline {2.3}L'architecture globale (en coulisse)}{16}{subsection.2.3}%
+\contentsline {subsubsection}{\numberline {2.3.1}Résumé en un schéma général}{16}{subsubsection.2.3.1}%
+\contentsline {subsubsection}{\numberline {2.3.2}Résumé en quatre phrases}{16}{subsubsection.2.3.2}%
+\contentsline {section}{\numberline {3}Présentation de la génération automatique du code}{17}{section.3}%
+\contentsline {subsection}{\numberline {3.1}Objectifs et principes directeurs du générateur}{17}{subsection.3.1}%
+\contentsline {subsection}{\numberline {3.2}Vue d'ensemble du processus de génération de code aléatoire et contrôlé}{17}{subsection.3.2}%
+\contentsline {subsection}{\numberline {3.3}Logique générale de la génération des structures}{19}{subsection.3.3}%
+\contentsline {subsection}{\numberline {3.4}Implémentations}{19}{subsection.3.4}%
+\contentsline {subsubsection}{\numberline {3.4.1}\texttt {'Vars'} \& \texttt {'Op'} : déclarations et opérations élémentaires}{19}{subsubsection.3.4.1}%
+\contentsline {paragraph}{Préparation des variables}{19}{section*.21}%
+\contentsline {paragraph}{Génération des opérations}{19}{section*.22}%
+\contentsline {subsubsection}{\numberline {3.4.2}'\texttt {Ctrl}': les structures conditionnelles \texttt {if... elif... else:}}{20}{subsubsection.3.4.2}%
+\contentsline {paragraph}{Préparation}{20}{section*.23}%
+\contentsline {paragraph}{Génération}{20}{section*.24}%
+\contentsline {subsubsection}{\numberline {3.4.3}'\texttt {Loop}' : les boucles \texttt {for}/\texttt {while}}{20}{subsubsection.3.4.3}%
+\contentsline {paragraph}{``Dispatch'' des structures}{20}{section*.25}%
+\contentsline {subsubsection}{\numberline {3.4.4}Concrétisation d'une génération de fonction : définition et appel}{20}{subsubsection.3.4.4}%
+\contentsline {subsection}{\numberline {3.5}Conclusion sur le processus de génération de code}{23}{subsection.3.5}%
+\contentsline {section}{\numberline {4}Présentation du traducteur automatique de code en logigramme}{25}{section.4}%
+\contentsline {subsection}{\numberline {4.1}L'AST Python}{25}{subsection.4.1}%
+\contentsline {subsection}{\numberline {4.2}AST, CFG, et logigramme}{25}{subsection.4.2}%
+\contentsline {subsection}{\numberline {4.3}Pourquoi PyCFG (Fuzzing Book) était utile mais insuffisant pour nos objectifs}{27}{subsection.4.3}%
+\contentsline {paragraph}{Apports de PyCFG :}{27}{section*.29}%
+\contentsline {paragraph}{Limites pour l’usage pédagogique visé (et adaptation \colorbox {lightgray}{\texttt {\small MyCFG.py}}).}{27}{section*.30}%
+\contentsline {paragraph}{Conclusion :}{27}{section*.31}%
+\contentsline {subsubsection}{\numberline {4.3.1}Le choix de l'AST comme source de vérité}{27}{subsubsection.4.3.1}%
+\contentsline {subsubsection}{\numberline {4.3.2}Le \textit {template} (patron de conception) "Visiteur"}{28}{subsubsection.4.3.2}%
+\contentsline {subsection}{\numberline {4.4}Vocabulaire AST et sémantique des nœuds du CFG}{29}{subsection.4.4}%
+\contentsline {subsection}{\numberline {4.5}Philosophie et architecture de \textit {MyCFG.py}}{29}{subsection.4.5}%
+\contentsline {paragraph}{Séparation des préoccupations.}{29}{section*.32}%
+\contentsline {subsubsection}{\numberline {4.5.1}Exemple détaillé : la visite d'un \colorbox {lightgray}{\texttt {\small ast.If}}}{30}{subsubsection.4.5.1}%
+\contentsline {paragraph}{Gestion des portées et des sous-graphes.}{30}{section*.33}%
+\contentsline {subsubsection}{\numberline {4.5.2}Le cas des boucles : une représentation pédagogique}{30}{subsubsection.4.5.2}%
+\contentsline {paragraph}{Représentation pédagogique des boucles.}{31}{section*.34}%
+\contentsline {paragraph}{Robustesse et limitations.}{32}{section*.36}%
 \contentsline {subsection}{\numberline {4.6}Fonctionnement de l'application pour la traduction de codes en logigramme}{33}{subsection.4.6}%
 \contentsline {section}{\numberline {5}Présentation des interactions élèves et de leur journalisation }{35}{section.5}%
 \contentsline {subsection}{\numberline {5.1}Principes directeurs de la collecte de données}{35}{subsection.5.1}%
@@ -78,15 +76,16 @@
 \contentsline {subsection}{\numberline {6.3}Travaux pour améliorer l'approche actuelle}{45}{subsection.6.3}%
 \contentsline {subsection}{\numberline {6.4} Des réponses aux critiques les plus probables}{46}{subsection.6.4}%
 \contentsline {subsection}{\numberline {6.5}Travaux pour une nouvelle approche de génération de code}{47}{subsection.6.5}%
-\contentsline {section}{\numberline {7}Annexes}{50}{section.7}%
-\contentsline {subsection}{\numberline {7.1}Check-list de \textit {convivialité} au sens d'Illich pour un service numérique et invitation à la réflexion}{50}{subsection.7.1}%
-\contentsline {subsection}{\numberline {7.2}Documentation technique}{50}{subsection.7.2}%
-\contentsline {subsubsection}{\numberline {7.2.1}Documentation Technique du Générateur de code}{50}{subsubsection.7.2.1}%
-\contentsline {subsubsection}{\numberline {7.2.2}Documentation technique de l'implémentation MyCFG.py}{56}{subsubsection.7.2.2}%
-\contentsline {subsubsection}{\numberline {7.2.3}Comparaison: MyCFG $\neq $ PyCFG}{56}{subsubsection.7.2.3}%
-\contentsline {subsubsection}{\numberline {7.2.4}Documentation technique de l’implémentation MyCFG.py}{57}{subsubsection.7.2.4}%
-\contentsline {subsection}{\numberline {7.3}Documentation des modifs UI du 24/06/25}{71}{subsection.7.3}%
-\contentsline {subsection}{\numberline {7.4}Documentation des modifs \texttt {code-generator.js} du 30/06/25}{73}{subsection.7.4}%
-\contentsline {subsection}{\numberline {7.5}Principales fonctions de génération }{73}{subsection.7.5}%
-\contentsline {subsection}{\numberline {7.6}Stratégie actuelle de gestion des variables}{73}{subsection.7.6}%
-\contentsline {subsection}{\numberline {7.7}Solutions proposées}{74}{subsection.7.7}%
+\contentsline {section}{\numberline {7}Conclusions}{48}{section.7}%
+\contentsline {section}{\numberline {8}Annexes}{49}{section.8}%
+\contentsline {subsection}{\numberline {8.1}Check-list de \textit {convivialité} au sens d'Illich pour un service numérique et invitation à la réflexion}{49}{subsection.8.1}%
+\contentsline {subsection}{\numberline {8.2}Documentation technique}{49}{subsection.8.2}%
+\contentsline {subsubsection}{\numberline {8.2.1}Documentation Technique du Générateur de code}{49}{subsubsection.8.2.1}%
+\contentsline {subsubsection}{\numberline {8.2.2}Documentation technique de l'implémentation MyCFG.py}{55}{subsubsection.8.2.2}%
+\contentsline {subsubsection}{\numberline {8.2.3}Comparaison: MyCFG $\neq $ PyCFG}{55}{subsubsection.8.2.3}%
+\contentsline {subsubsection}{\numberline {8.2.4}Documentation technique de l’implémentation MyCFG.py}{56}{subsubsection.8.2.4}%
+\contentsline {subsection}{\numberline {8.3}Documentation des modifs UI du 24/06/25}{70}{subsection.8.3}%
+\contentsline {subsection}{\numberline {8.4}Documentation des modifs \texttt {code-generator.js} du 30/06/25}{72}{subsection.8.4}%
+\contentsline {subsection}{\numberline {8.5}Principales fonctions de génération }{72}{subsection.8.5}%
+\contentsline {subsection}{\numberline {8.6}Stratégie actuelle de gestion des variables}{72}{subsection.8.6}%
+\contentsline {subsection}{\numberline {8.7}Solutions proposées}{73}{subsection.8.7}%
