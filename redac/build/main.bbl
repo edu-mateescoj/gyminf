@@ -1,0 +1,1939 @@
+% $ biblatex auxiliary file $
+% $ biblatex bbl format version 3.3 $
+% Do not modify the above lines!
+%
+% This is an auxiliary file used by the 'biblatex' package.
+% This file may safely be deleted. It will be recreated by
+% biber as required.
+%
+\begingroup
+\makeatletter
+\@ifundefined{ver@biblatex.sty}
+  {\@latex@error
+     {Missing 'biblatex' package}
+     {The bibliography requires the 'biblatex' package.}
+      \aftergroup\endinput}
+  {}
+\endgroup
+
+
+\refsection{0}
+  \datalist[entry]{none/apasortcite//global/global/global}
+    \entry{Illich}{book}{}{}
+      \name{author}{1}{}{%
+        {{un=0,uniquepart=base,hash=99e8a817947e13044842679cefbd0fa7}{%
+           family={Illich},
+           familyi={I\bibinitperiod},
+           given={Ivan},
+           giveni={I\bibinitperiod},
+           givenun=0}}%
+      }
+      \list{publisher}{1}{%
+        {Harper \& Row}%
+      }
+      \strng{namehash}{99e8a817947e13044842679cefbd0fa7}
+      \strng{fullhash}{99e8a817947e13044842679cefbd0fa7}
+      \strng{fullhashraw}{99e8a817947e13044842679cefbd0fa7}
+      \strng{bibnamehash}{99e8a817947e13044842679cefbd0fa7}
+      \strng{authorbibnamehash}{99e8a817947e13044842679cefbd0fa7}
+      \strng{authornamehash}{99e8a817947e13044842679cefbd0fa7}
+      \strng{authorfullhash}{99e8a817947e13044842679cefbd0fa7}
+      \strng{authorfullhashraw}{99e8a817947e13044842679cefbd0fa7}
+      \field{sortinit}{1}
+      \field{sortinithash}{4f6aaa89bab872aa0999fec09ff8e98a}
+      \field{extradatescope}{labelyear}
+      \field{labeldatesource}{}
+      \true{uniqueprimaryauthor}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{title}{Tools for Conviviality}
+      \field{year}{1973}
+    \endentry
+    \entry{Foucault}{book}{}{}
+      \name{author}{1}{}{%
+        {{un=0,uniquepart=base,hash=984e5967448051538555a64aac11ed21}{%
+           family={Foucault},
+           familyi={F\bibinitperiod},
+           given={Michel},
+           giveni={M\bibinitperiod},
+           givenun=0}}%
+      }
+      \list{publisher}{1}{%
+        {Gallimard}%
+      }
+      \strng{namehash}{984e5967448051538555a64aac11ed21}
+      \strng{fullhash}{984e5967448051538555a64aac11ed21}
+      \strng{fullhashraw}{984e5967448051538555a64aac11ed21}
+      \strng{bibnamehash}{984e5967448051538555a64aac11ed21}
+      \strng{authorbibnamehash}{984e5967448051538555a64aac11ed21}
+      \strng{authornamehash}{984e5967448051538555a64aac11ed21}
+      \strng{authorfullhash}{984e5967448051538555a64aac11ed21}
+      \strng{authorfullhashraw}{984e5967448051538555a64aac11ed21}
+      \field{sortinit}{2}
+      \field{sortinithash}{8b555b3791beccb63322c22f3320aa9a}
+      \field{extradatescope}{labelyear}
+      \field{labeldatesource}{}
+      \true{uniqueprimaryauthor}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{title}{Surveiller et punir: Naissance de la prison}
+      \field{year}{1975}
+    \endentry
+    \entry{Deleuze}{book}{}{}
+      \name{author}{1}{}{%
+        {{un=0,uniquepart=base,hash=01e8c4f353d8f2d65f9f05ee78f50c8c}{%
+           family={Deleuze},
+           familyi={D\bibinitperiod},
+           given={Gilles},
+           giveni={G\bibinitperiod},
+           givenun=0}}%
+      }
+      \list{publisher}{1}{%
+        {Les Éditions de Minuit}%
+      }
+      \strng{namehash}{01e8c4f353d8f2d65f9f05ee78f50c8c}
+      \strng{fullhash}{01e8c4f353d8f2d65f9f05ee78f50c8c}
+      \strng{fullhashraw}{01e8c4f353d8f2d65f9f05ee78f50c8c}
+      \strng{bibnamehash}{01e8c4f353d8f2d65f9f05ee78f50c8c}
+      \strng{authorbibnamehash}{01e8c4f353d8f2d65f9f05ee78f50c8c}
+      \strng{authornamehash}{01e8c4f353d8f2d65f9f05ee78f50c8c}
+      \strng{authorfullhash}{01e8c4f353d8f2d65f9f05ee78f50c8c}
+      \strng{authorfullhashraw}{01e8c4f353d8f2d65f9f05ee78f50c8c}
+      \field{sortinit}{3}
+      \field{sortinithash}{ad6fe7482ffbd7b9f99c9e8b5dccd3d7}
+      \field{extradatescope}{labelyear}
+      \field{labeldatesource}{}
+      \true{uniqueprimaryauthor}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{title}{Foucault}
+      \field{year}{1986}
+    \endentry
+    \entry{email}{online}{}{}
+      \name{author}{1}{}{%
+        {{un=0,uniquepart=base,hash=ddb20008bae37b1617b61c23a1d4b9d2}{%
+           family={{Business Insider}},
+           familyi={B\bibinitperiod}}}%
+      }
+      \strng{namehash}{ddb20008bae37b1617b61c23a1d4b9d2}
+      \strng{fullhash}{ddb20008bae37b1617b61c23a1d4b9d2}
+      \strng{fullhashraw}{ddb20008bae37b1617b61c23a1d4b9d2}
+      \strng{bibnamehash}{ddb20008bae37b1617b61c23a1d4b9d2}
+      \strng{authorbibnamehash}{ddb20008bae37b1617b61c23a1d4b9d2}
+      \strng{authornamehash}{ddb20008bae37b1617b61c23a1d4b9d2}
+      \strng{authorfullhash}{ddb20008bae37b1617b61c23a1d4b9d2}
+      \strng{authorfullhashraw}{ddb20008bae37b1617b61c23a1d4b9d2}
+      \field{sortinit}{4}
+      \field{sortinithash}{9381316451d1b9788675a07e972a12a7}
+      \field{extradatescope}{labelyear}
+      \field{labeldatesource}{}
+      \true{uniqueprimaryauthor}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{note}{Consulté en août 2025}
+      \field{title}{Emails between Sam Altman and Elon Musk that kicked off OpenAI}
+      \field{urlday}{24}
+      \field{urlmonth}{8}
+      \field{urlyear}{2025}
+      \field{year}{2024}
+      \field{urldateera}{ce}
+      \verb{urlraw}
+      \verb https://www.businessinsider.com/emails-between-sam-altman-elon-musk-kicked-off-openai-2024-11
+      \endverb
+      \verb{url}
+      \verb https://www.businessinsider.com/emails-between-sam-altman-elon-musk-kicked-off-openai-2024-11
+      \endverb
+    \endentry
+    \entry{wenger}{book}{}{}
+      \name{author}{1}{}{%
+        {{un=0,uniquepart=base,hash=101936ee07e3d900ba76ed76ae7c3d90}{%
+           family={Wenger},
+           familyi={W\bibinitperiod},
+           given={Etienne},
+           giveni={E\bibinitperiod},
+           givenun=0}}%
+      }
+      \list{publisher}{1}{%
+        {Cambridge University Press}%
+      }
+      \strng{namehash}{101936ee07e3d900ba76ed76ae7c3d90}
+      \strng{fullhash}{101936ee07e3d900ba76ed76ae7c3d90}
+      \strng{fullhashraw}{101936ee07e3d900ba76ed76ae7c3d90}
+      \strng{bibnamehash}{101936ee07e3d900ba76ed76ae7c3d90}
+      \strng{authorbibnamehash}{101936ee07e3d900ba76ed76ae7c3d90}
+      \strng{authornamehash}{101936ee07e3d900ba76ed76ae7c3d90}
+      \strng{authorfullhash}{101936ee07e3d900ba76ed76ae7c3d90}
+      \strng{authorfullhashraw}{101936ee07e3d900ba76ed76ae7c3d90}
+      \field{sortinit}{5}
+      \field{sortinithash}{20e9b4b0b173788c5dace24730f47d8c}
+      \field{extradatescope}{labelyear}
+      \field{labeldatesource}{}
+      \true{uniqueprimaryauthor}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{title}{Communities of Practice: Learning, Meaning, and Identity}
+      \field{year}{1998}
+      \verb{doi}
+      \verb 10.1017/CBO9780511803932
+      \endverb
+    \endentry
+    \entry{Sentance2017WiPSCE}{article}{}{}
+      \name{author}{2}{}{%
+        {{un=0,uniquepart=base,hash=4d9e7174e2d3394c82796d579fb59687}{%
+           family={Sentance},
+           familyi={S\bibinitperiod},
+           given={Sue},
+           giveni={S\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=d198b4f411ac2d78f552676293fb1434}{%
+           family={Waite},
+           familyi={W\bibinitperiod},
+           given={Jane},
+           giveni={J\bibinitperiod},
+           givenun=0}}%
+      }
+      \list{publisher}{1}{%
+        {ACM}%
+      }
+      \strng{namehash}{40e6691e166216646932c4283b7c908a}
+      \strng{fullhash}{40e6691e166216646932c4283b7c908a}
+      \strng{fullhashraw}{40e6691e166216646932c4283b7c908a}
+      \strng{bibnamehash}{40e6691e166216646932c4283b7c908a}
+      \strng{authorbibnamehash}{40e6691e166216646932c4283b7c908a}
+      \strng{authornamehash}{40e6691e166216646932c4283b7c908a}
+      \strng{authorfullhash}{40e6691e166216646932c4283b7c908a}
+      \strng{authorfullhashraw}{40e6691e166216646932c4283b7c908a}
+      \field{sortinit}{6}
+      \field{sortinithash}{b33bc299efb3c36abec520a4c896a66d}
+      \field{extradatescope}{labelyear}
+      \field{labeldatesource}{}
+      \true{uniqueprimaryauthor}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{journaltitle}{Proceedings of the 12th Workshop on Primary and Secondary Computing Education (WiPSCE '17)}
+      \field{title}{PRIMM: Exploring pedagogical approaches for teaching text-based programming in school}
+      \field{year}{2017}
+      \field{pages}{113\bibrangedash 114}
+      \range{pages}{2}
+      \verb{doi}
+      \verb 10.1145/3137065.3137084
+      \endverb
+    \endentry
+    \entry{Sentance2019CSE}{article}{}{}
+      \name{author}{3}{}{%
+        {{un=0,uniquepart=base,hash=4d9e7174e2d3394c82796d579fb59687}{%
+           family={Sentance},
+           familyi={S\bibinitperiod},
+           given={Sue},
+           giveni={S\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=d198b4f411ac2d78f552676293fb1434}{%
+           family={Waite},
+           familyi={W\bibinitperiod},
+           given={Jane},
+           giveni={J\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=016f1430812398ce424ff788d240ec10}{%
+           family={Kallia},
+           familyi={K\bibinitperiod},
+           given={Maria},
+           giveni={M\bibinitperiod},
+           givenun=0}}%
+      }
+      \strng{namehash}{6dd3a54ae94c54e606fc6e0db747ea97}
+      \strng{fullhash}{0fe2b1fa6b0ae6b2014a1c115f4bbeb8}
+      \strng{fullhashraw}{0fe2b1fa6b0ae6b2014a1c115f4bbeb8}
+      \strng{bibnamehash}{0fe2b1fa6b0ae6b2014a1c115f4bbeb8}
+      \strng{authorbibnamehash}{0fe2b1fa6b0ae6b2014a1c115f4bbeb8}
+      \strng{authornamehash}{6dd3a54ae94c54e606fc6e0db747ea97}
+      \strng{authorfullhash}{0fe2b1fa6b0ae6b2014a1c115f4bbeb8}
+      \strng{authorfullhashraw}{0fe2b1fa6b0ae6b2014a1c115f4bbeb8}
+      \field{sortinit}{7}
+      \field{sortinithash}{108d0be1b1bee9773a1173443802c0a3}
+      \field{extradatescope}{labelyear}
+      \field{labeldatesource}{}
+      \true{uniqueprimaryauthor}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{journaltitle}{Computer Science Education}
+      \field{number}{2-3}
+      \field{title}{Teaching computer programming with PRIMM: A sociocultural perspective}
+      \field{volume}{29}
+      \field{year}{2019}
+      \field{pages}{136\bibrangedash 176}
+      \range{pages}{41}
+      \verb{doi}
+      \verb 10.1080/08993408.2019.1608781
+      \endverb
+    \endentry
+    \entry{messer2023}{article}{}{}
+      \name{author}{4}{}{%
+        {{un=0,uniquepart=base,hash=e4f073ac0006f267203c8aed0c4e84fd}{%
+           family={Messer},
+           familyi={M\bibinitperiod},
+           given={Michael},
+           giveni={M\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=2987dd4f6ef86ef095be77c06797c4d2}{%
+           family={Brown},
+           familyi={B\bibinitperiod},
+           given={Neil\bibnamedelimb C.\bibnamedelimi C.},
+           giveni={N\bibinitperiod\bibinitdelim C\bibinitperiod\bibinitdelim C\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=3d3bbf5ef136dbddf873344bc27f03d7}{%
+           family={Kölling},
+           familyi={K\bibinitperiod},
+           given={Michael},
+           giveni={M\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=c9799863603a895108b08bad7338c0d1}{%
+           family={Shi},
+           familyi={S\bibinitperiod},
+           given={Mingyu},
+           giveni={M\bibinitperiod},
+           givenun=0}}%
+      }
+      \strng{namehash}{d07d7f3c0568e289d80bb1cc49637883}
+      \strng{fullhash}{6546bb8e7af5dd0e2f07b47bd3ca8ad1}
+      \strng{fullhashraw}{6546bb8e7af5dd0e2f07b47bd3ca8ad1}
+      \strng{bibnamehash}{6546bb8e7af5dd0e2f07b47bd3ca8ad1}
+      \strng{authorbibnamehash}{6546bb8e7af5dd0e2f07b47bd3ca8ad1}
+      \strng{authornamehash}{d07d7f3c0568e289d80bb1cc49637883}
+      \strng{authorfullhash}{6546bb8e7af5dd0e2f07b47bd3ca8ad1}
+      \strng{authorfullhashraw}{6546bb8e7af5dd0e2f07b47bd3ca8ad1}
+      \field{sortinit}{8}
+      \field{sortinithash}{a231b008ebf0ecbe0b4d96dcc159445f}
+      \field{extradatescope}{labelyear}
+      \field{labeldatesource}{}
+      \true{uniqueprimaryauthor}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{journaltitle}{arXiv preprint}
+      \field{title}{Automated Grading and Feedback Tools for Programming Education: A Systematic Review}
+      \field{year}{2023}
+      \verb{eprint}
+      \verb 2306.11722
+      \endverb
+      \verb{urlraw}
+      \verb https://arxiv.org/abs/2306.11722
+      \endverb
+      \verb{url}
+      \verb https://arxiv.org/abs/2306.11722
+      \endverb
+    \endentry
+    \entry{zimmermann2024}{article}{}{}
+      \name{author}{3}{}{%
+        {{un=0,uniquepart=base,hash=42e235adeb67faedaf80e5d597dae667}{%
+           family={Zimmermann},
+           familyi={Z\bibinitperiod},
+           given={Allison\bibnamedelima E.},
+           giveni={A\bibinitperiod\bibinitdelim E\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=4e42f70a624af133a6808bff15e94980}{%
+           family={King},
+           familyi={K\bibinitperiod},
+           given={Erin\bibnamedelima E.},
+           giveni={E\bibinitperiod\bibinitdelim E\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=a606f04dbfb0118209983bb2f5fdea89}{%
+           family={Bose},
+           familyi={B\bibinitperiod},
+           given={Deepa\bibnamedelima D.},
+           giveni={D\bibinitperiod\bibinitdelim D\bibinitperiod},
+           givenun=0}}%
+      }
+      \strng{namehash}{373c5ca248906363b7a50f8dcf6b8cfe}
+      \strng{fullhash}{4cfeefcb859364d01085fc3e27f48d31}
+      \strng{fullhashraw}{4cfeefcb859364d01085fc3e27f48d31}
+      \strng{bibnamehash}{4cfeefcb859364d01085fc3e27f48d31}
+      \strng{authorbibnamehash}{4cfeefcb859364d01085fc3e27f48d31}
+      \strng{authornamehash}{373c5ca248906363b7a50f8dcf6b8cfe}
+      \strng{authorfullhash}{4cfeefcb859364d01085fc3e27f48d31}
+      \strng{authorfullhashraw}{4cfeefcb859364d01085fc3e27f48d31}
+      \field{sortinit}{9}
+      \field{sortinithash}{0a5ebc79d83c96b6579069544c73c7d4}
+      \field{extradatescope}{labelyear}
+      \field{labeldatesource}{}
+      \true{uniqueprimaryauthor}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{journaltitle}{American Journal of Pharmaceutical Education}
+      \field{number}{1}
+      \field{title}{Effectiveness and Utility of Flowcharts on Learning in a Classroom Setting: A Mixed-Methods Study}
+      \field{volume}{88}
+      \field{year}{2024}
+      \field{pages}{100591}
+      \range{pages}{1}
+      \verb{doi}
+      \verb 10.5688/ajpe100591
+      \endverb
+    \endentry
+    \entry{CrewsZielger98}{article}{}{}
+      \name{author}{2}{}{%
+        {{un=0,uniquepart=base,hash=a3995ceb8c60d74dff0e3bfd8b9b907e}{%
+           family={Crews},
+           familyi={C\bibinitperiod},
+           given={T.},
+           giveni={T\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=53b81340f33089c03cc06179de8d9b50}{%
+           family={Ziegler},
+           familyi={Z\bibinitperiod},
+           given={U.},
+           giveni={U\bibinitperiod},
+           givenun=0}}%
+      }
+      \list{publisher}{1}{%
+        {IEEE}%
+      }
+      \strng{namehash}{a75c4ed117864e89db23509005184e7d}
+      \strng{fullhash}{a75c4ed117864e89db23509005184e7d}
+      \strng{fullhashraw}{a75c4ed117864e89db23509005184e7d}
+      \strng{bibnamehash}{a75c4ed117864e89db23509005184e7d}
+      \strng{authorbibnamehash}{a75c4ed117864e89db23509005184e7d}
+      \strng{authornamehash}{a75c4ed117864e89db23509005184e7d}
+      \strng{authorfullhash}{a75c4ed117864e89db23509005184e7d}
+      \strng{authorfullhashraw}{a75c4ed117864e89db23509005184e7d}
+      \field{sortinit}{1}
+      \field{sortinithash}{4f6aaa89bab872aa0999fec09ff8e98a}
+      \field{extradatescope}{labelyear}
+      \field{labeldatesource}{}
+      \true{uniqueprimaryauthor}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{journaltitle}{Frontiers in Education Conference (FIE '98)}
+      \field{title}{The flowchart interpreter for introductory programming courses}
+      \field{year}{1998}
+      \field{pages}{307\bibrangedash 312}
+      \range{pages}{6}
+      \verb{doi}
+      \verb 10.1109/FIE.1998.736854
+      \endverb
+    \endentry
+    \entry{AndersonKrathwohl2001}{book}{}{}
+      \name{editor}{2}{}{%
+        {{un=0,uniquepart=base,hash=4b42f1b57e4a94e21e6f50d531f41ddd}{%
+           family={Anderson},
+           familyi={A\bibinitperiod},
+           given={Lorin\bibnamedelima W.},
+           giveni={L\bibinitperiod\bibinitdelim W\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=783eb677bc36afc2d47e7e01ecdaec4a}{%
+           family={Krathwohl},
+           familyi={K\bibinitperiod},
+           given={David\bibnamedelima R.},
+           giveni={D\bibinitperiod\bibinitdelim R\bibinitperiod},
+           givenun=0}}%
+      }
+      \list{publisher}{1}{%
+        {Longman}%
+      }
+      \strng{namehash}{7965d3ac39b47c83e4d076aadeb9d6ac}
+      \strng{fullhash}{7965d3ac39b47c83e4d076aadeb9d6ac}
+      \strng{fullhashraw}{7965d3ac39b47c83e4d076aadeb9d6ac}
+      \strng{bibnamehash}{7965d3ac39b47c83e4d076aadeb9d6ac}
+      \strng{editorbibnamehash}{7965d3ac39b47c83e4d076aadeb9d6ac}
+      \strng{editornamehash}{7965d3ac39b47c83e4d076aadeb9d6ac}
+      \strng{editorfullhash}{7965d3ac39b47c83e4d076aadeb9d6ac}
+      \strng{editorfullhashraw}{7965d3ac39b47c83e4d076aadeb9d6ac}
+      \field{sortinit}{1}
+      \field{sortinithash}{4f6aaa89bab872aa0999fec09ff8e98a}
+      \field{extradatescope}{labelyear}
+      \field{labeldatesource}{}
+      \true{uniqueprimaryauthor}
+      \field{labelnamesource}{editor}
+      \field{labeltitlesource}{title}
+      \field{title}{A Taxonomy for Learning, Teaching, and Assessing: A Revision of Bloom's Taxonomy of Educational Objectives}
+      \field{year}{2001}
+    \endentry
+    \entry{Fuller2007}{article}{}{}
+      \true{moreauthor}
+      \true{morelabelname}
+      \name{author}{1}{}{%
+        {{un=0,uniquepart=base,hash=7e52c70373cd12760a912458b3faebdc}{%
+           family={Fuller},
+           familyi={F\bibinitperiod},
+           given={Ursula},
+           giveni={U\bibinitperiod},
+           givenun=0}}%
+      }
+      \strng{namehash}{8580c699bdada01c0f1b810b1f5e6a0e}
+      \strng{fullhash}{8580c699bdada01c0f1b810b1f5e6a0e}
+      \strng{fullhashraw}{8580c699bdada01c0f1b810b1f5e6a0e}
+      \strng{bibnamehash}{8580c699bdada01c0f1b810b1f5e6a0e}
+      \strng{authorbibnamehash}{8580c699bdada01c0f1b810b1f5e6a0e}
+      \strng{authornamehash}{8580c699bdada01c0f1b810b1f5e6a0e}
+      \strng{authorfullhash}{8580c699bdada01c0f1b810b1f5e6a0e}
+      \strng{authorfullhashraw}{8580c699bdada01c0f1b810b1f5e6a0e}
+      \field{sortinit}{1}
+      \field{sortinithash}{4f6aaa89bab872aa0999fec09ff8e98a}
+      \field{extradatescope}{labelyear}
+      \field{labeldatesource}{}
+      \true{uniqueprimaryauthor}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{journaltitle}{ACM SIGCSE Bulletin}
+      \field{number}{4}
+      \field{title}{Developing a computer science-specific learning taxonomy}
+      \field{volume}{39}
+      \field{year}{2007}
+      \field{pages}{152\bibrangedash 170}
+      \range{pages}{19}
+      \verb{doi}
+      \verb 10.1145/1345375.1345438
+      \endverb
+    \endentry
+    \entry{HattieTimperley2007}{article}{}{}
+      \name{author}{2}{}{%
+        {{un=0,uniquepart=base,hash=e7251c15733701c65025dabbf16656e4}{%
+           family={Hattie},
+           familyi={H\bibinitperiod},
+           given={John},
+           giveni={J\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=e09dc6ea98acb0192a7a1c50eaf4eaff}{%
+           family={Timperley},
+           familyi={T\bibinitperiod},
+           given={Helen},
+           giveni={H\bibinitperiod},
+           givenun=0}}%
+      }
+      \strng{namehash}{41affa46da516f24b1c9311f5ed30fb9}
+      \strng{fullhash}{41affa46da516f24b1c9311f5ed30fb9}
+      \strng{fullhashraw}{41affa46da516f24b1c9311f5ed30fb9}
+      \strng{bibnamehash}{41affa46da516f24b1c9311f5ed30fb9}
+      \strng{authorbibnamehash}{41affa46da516f24b1c9311f5ed30fb9}
+      \strng{authornamehash}{41affa46da516f24b1c9311f5ed30fb9}
+      \strng{authorfullhash}{41affa46da516f24b1c9311f5ed30fb9}
+      \strng{authorfullhashraw}{41affa46da516f24b1c9311f5ed30fb9}
+      \field{sortinit}{1}
+      \field{sortinithash}{4f6aaa89bab872aa0999fec09ff8e98a}
+      \field{extradatescope}{labelyear}
+      \field{labeldatesource}{}
+      \true{uniqueprimaryauthor}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{journaltitle}{Review of Educational Research}
+      \field{number}{1}
+      \field{title}{The power of feedback}
+      \field{volume}{77}
+      \field{year}{2007}
+      \field{pages}{81\bibrangedash 112}
+      \range{pages}{32}
+      \verb{doi}
+      \verb 10.3102/003465430298487
+      \endverb
+    \endentry
+    \entry{Shute2008}{article}{}{}
+      \name{author}{1}{}{%
+        {{un=0,uniquepart=base,hash=817b19f1186b605320c603ee888c7850}{%
+           family={Shute},
+           familyi={S\bibinitperiod},
+           given={Valerie\bibnamedelima J.},
+           giveni={V\bibinitperiod\bibinitdelim J\bibinitperiod},
+           givenun=0}}%
+      }
+      \strng{namehash}{817b19f1186b605320c603ee888c7850}
+      \strng{fullhash}{817b19f1186b605320c603ee888c7850}
+      \strng{fullhashraw}{817b19f1186b605320c603ee888c7850}
+      \strng{bibnamehash}{817b19f1186b605320c603ee888c7850}
+      \strng{authorbibnamehash}{817b19f1186b605320c603ee888c7850}
+      \strng{authornamehash}{817b19f1186b605320c603ee888c7850}
+      \strng{authorfullhash}{817b19f1186b605320c603ee888c7850}
+      \strng{authorfullhashraw}{817b19f1186b605320c603ee888c7850}
+      \field{sortinit}{1}
+      \field{sortinithash}{4f6aaa89bab872aa0999fec09ff8e98a}
+      \field{extradatescope}{labelyear}
+      \field{labeldatesource}{}
+      \true{uniqueprimaryauthor}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{journaltitle}{Review of Educational Research}
+      \field{number}{1}
+      \field{title}{Focus on formative feedback}
+      \field{volume}{78}
+      \field{year}{2008}
+      \field{pages}{153\bibrangedash 189}
+      \range{pages}{37}
+      \verb{doi}
+      \verb 10.3102/0034654307313795
+      \endverb
+    \endentry
+    \entry{didask}{online}{}{}
+      \name{author}{1}{}{%
+        {{un=0,uniquepart=base,hash=0e5cc667077413250eac177abccf7395}{%
+           family={Didask},
+           familyi={D\bibinitperiod}}}%
+      }
+      \strng{namehash}{0e5cc667077413250eac177abccf7395}
+      \strng{fullhash}{0e5cc667077413250eac177abccf7395}
+      \strng{fullhashraw}{0e5cc667077413250eac177abccf7395}
+      \strng{bibnamehash}{0e5cc667077413250eac177abccf7395}
+      \strng{authorbibnamehash}{0e5cc667077413250eac177abccf7395}
+      \strng{authornamehash}{0e5cc667077413250eac177abccf7395}
+      \strng{authorfullhash}{0e5cc667077413250eac177abccf7395}
+      \strng{authorfullhashraw}{0e5cc667077413250eac177abccf7395}
+      \field{sortinit}{1}
+      \field{sortinithash}{4f6aaa89bab872aa0999fec09ff8e98a}
+      \field{extradatescope}{labelyear}
+      \field{labeldatesource}{}
+      \true{uniqueprimaryauthor}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{title}{Qu'est-ce qu'un outil auteur ? -- Le guide complet}
+      \field{urlday}{5}
+      \field{urlmonth}{8}
+      \field{urlyear}{2025}
+      \field{year}{2025}
+      \field{urldateera}{ce}
+      \verb{urlraw}
+      \verb https://www.didask.com
+      \endverb
+      \verb{url}
+      \verb https://www.didask.com
+      \endverb
+    \endentry
+    \entry{Altadmri_Brown_2015}{article}{}{}
+      \name{author}{4}{}{%
+        {{un=0,uniquepart=base,hash=08f3c9c50dbfe876ed5561e9ef9681bd}{%
+           family={Brown},
+           familyi={B\bibinitperiod},
+           given={Neil},
+           giveni={N\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=751dcafd5cdbf9faa7029ccb2af13680}{%
+           family={Altadmri},
+           familyi={A\bibinitperiod},
+           given={Amjad},
+           giveni={A\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=4d9e7174e2d3394c82796d579fb59687}{%
+           family={Sentance},
+           familyi={S\bibinitperiod},
+           given={Sue},
+           giveni={S\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=3d3bbf5ef136dbddf873344bc27f03d7}{%
+           family={Kölling},
+           familyi={K\bibinitperiod},
+           given={Michael},
+           giveni={M\bibinitperiod},
+           givenun=0}}%
+      }
+      \strng{namehash}{4171af76f7761ea4b3571018bd5d6054}
+      \strng{fullhash}{687231e264ec302ae71febe6726ec8e3}
+      \strng{fullhashraw}{687231e264ec302ae71febe6726ec8e3}
+      \strng{bibnamehash}{687231e264ec302ae71febe6726ec8e3}
+      \strng{authorbibnamehash}{687231e264ec302ae71febe6726ec8e3}
+      \strng{authornamehash}{4171af76f7761ea4b3571018bd5d6054}
+      \strng{authorfullhash}{687231e264ec302ae71febe6726ec8e3}
+      \strng{authorfullhashraw}{687231e264ec302ae71febe6726ec8e3}
+      \field{sortinit}{1}
+      \field{sortinithash}{4f6aaa89bab872aa0999fec09ff8e98a}
+      \field{extradatescope}{labelyear}
+      \field{labeldatesource}{}
+      \true{uniqueprimaryauthor}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{month}{08}
+      \field{title}{Blackbox, Five Years On: An Evaluation of a Large-scale Programming Data Collection Project}
+      \field{year}{2018}
+      \field{pages}{196\bibrangedash 204}
+      \range{pages}{9}
+      \verb{doi}
+      \verb 10.1145/3230977.3230991
+      \endverb
+    \endentry
+    \entry{SilentTeacher}{online}{}{}
+      \name{author}{1}{}{%
+        {{un=0,uniquepart=base,hash=ed8c4a4ea0befa986037f975d163addb}{%
+           family={{Toxicode}},
+           familyi={T\bibinitperiod}}}%
+      }
+      \strng{namehash}{ed8c4a4ea0befa986037f975d163addb}
+      \strng{fullhash}{ed8c4a4ea0befa986037f975d163addb}
+      \strng{fullhashraw}{ed8c4a4ea0befa986037f975d163addb}
+      \strng{bibnamehash}{ed8c4a4ea0befa986037f975d163addb}
+      \strng{authorbibnamehash}{ed8c4a4ea0befa986037f975d163addb}
+      \strng{authornamehash}{ed8c4a4ea0befa986037f975d163addb}
+      \strng{authorfullhash}{ed8c4a4ea0befa986037f975d163addb}
+      \strng{authorfullhashraw}{ed8c4a4ea0befa986037f975d163addb}
+      \field{sortinit}{1}
+      \field{sortinithash}{4f6aaa89bab872aa0999fec09ff8e98a}
+      \field{extradatescope}{labelyear}
+      \field{labeldatesource}{}
+      \true{uniqueprimaryauthor}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{title}{Silent Teacher}
+      \field{urlday}{24}
+      \field{urlmonth}{8}
+      \field{urlyear}{2025}
+      \field{year}{2025}
+      \field{urldateera}{ce}
+      \verb{urlraw}
+      \verb https://silentteacher.toxicode.fr/
+      \endverb
+      \verb{url}
+      \verb https://silentteacher.toxicode.fr/
+      \endverb
+    \endentry
+    \entry{codemirror6}{online}{}{}
+      \name{author}{1}{}{%
+        {{un=0,uniquepart=base,hash=129098e814fb9141e381f6b3068dd41c}{%
+           family={Haverbeke},
+           familyi={H\bibinitperiod},
+           given={Marijn},
+           giveni={M\bibinitperiod},
+           givenun=0}}%
+      }
+      \strng{namehash}{129098e814fb9141e381f6b3068dd41c}
+      \strng{fullhash}{129098e814fb9141e381f6b3068dd41c}
+      \strng{fullhashraw}{129098e814fb9141e381f6b3068dd41c}
+      \strng{bibnamehash}{129098e814fb9141e381f6b3068dd41c}
+      \strng{authorbibnamehash}{129098e814fb9141e381f6b3068dd41c}
+      \strng{authornamehash}{129098e814fb9141e381f6b3068dd41c}
+      \strng{authorfullhash}{129098e814fb9141e381f6b3068dd41c}
+      \strng{authorfullhashraw}{129098e814fb9141e381f6b3068dd41c}
+      \field{sortinit}{1}
+      \field{sortinithash}{4f6aaa89bab872aa0999fec09ff8e98a}
+      \field{extradatescope}{labelyear}
+      \field{labeldatesource}{}
+      \true{uniqueprimaryauthor}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{title}{CodeMirror 6 Documentation}
+      \field{urlday}{24}
+      \field{urlmonth}{8}
+      \field{urlyear}{2025}
+      \field{year}{2021}
+      \field{urldateera}{ce}
+      \verb{urlraw}
+      \verb https://codemirror.net/6/
+      \endverb
+      \verb{url}
+      \verb https://codemirror.net/6/
+      \endverb
+    \endentry
+    \entry{skulpt}{online}{}{}
+      \field{sortinit}{1}
+      \field{sortinithash}{4f6aaa89bab872aa0999fec09ff8e98a}
+      \field{extradatescope}{labelyear}
+      \field{labeldatesource}{}
+      \field{labeltitlesource}{title}
+      \field{title}{Skulpt}
+      \field{urlday}{24}
+      \field{urlmonth}{8}
+      \field{urlyear}{2025}
+      \field{year}{2024}
+      \field{urldateera}{ce}
+      \verb{urlraw}
+      \verb https://skulpt.org/
+      \endverb
+      \verb{url}
+      \verb https://skulpt.org/
+      \endverb
+    \endentry
+    \entry{brython}{online}{}{}
+      \field{sortinit}{2}
+      \field{sortinithash}{8b555b3791beccb63322c22f3320aa9a}
+      \field{extradatescope}{labelyear}
+      \field{labeldatesource}{}
+      \field{labeltitlesource}{title}
+      \field{title}{Brython}
+      \field{urlday}{24}
+      \field{urlmonth}{8}
+      \field{urlyear}{2025}
+      \field{year}{2024}
+      \field{urldateera}{ce}
+      \verb{urlraw}
+      \verb https://brython.info/
+      \endverb
+      \verb{url}
+      \verb https://brython.info/
+      \endverb
+    \endentry
+    \entry{fuzzingbook}{online}{}{}
+      \true{moreauthor}
+      \true{morelabelname}
+      \name{author}{1}{}{%
+        {{un=0,uniquepart=base,hash=5e1cda0c07dec7bd29209963590efad4}{%
+           family={Zeller},
+           familyi={Z\bibinitperiod},
+           given={Andreas},
+           giveni={A\bibinitperiod},
+           givenun=0}}%
+      }
+      \strng{namehash}{bbde14bd15ef8817e033ba77c3750f3e}
+      \strng{fullhash}{bbde14bd15ef8817e033ba77c3750f3e}
+      \strng{fullhashraw}{bbde14bd15ef8817e033ba77c3750f3e}
+      \strng{bibnamehash}{bbde14bd15ef8817e033ba77c3750f3e}
+      \strng{authorbibnamehash}{bbde14bd15ef8817e033ba77c3750f3e}
+      \strng{authornamehash}{bbde14bd15ef8817e033ba77c3750f3e}
+      \strng{authorfullhash}{bbde14bd15ef8817e033ba77c3750f3e}
+      \strng{authorfullhashraw}{bbde14bd15ef8817e033ba77c3750f3e}
+      \field{sortinit}{2}
+      \field{sortinithash}{8b555b3791beccb63322c22f3320aa9a}
+      \field{extradatescope}{labelyear}
+      \field{labeldatesource}{}
+      \true{uniqueprimaryauthor}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{title}{The Fuzzing Book}
+      \field{urlday}{24}
+      \field{urlmonth}{8}
+      \field{urlyear}{2025}
+      \field{year}{2022}
+      \field{urldateera}{ce}
+      \verb{urlraw}
+      \verb https://www.fuzzingbook.org
+      \endverb
+      \verb{url}
+      \verb https://www.fuzzingbook.org
+      \endverb
+    \endentry
+    \entry{greentreesnakes}{online}{}{}
+      \name{author}{1}{}{%
+        {{un=0,uniquepart=base,hash=282b5d6fe909cc357c8dd473058b8fdc}{%
+           family={Kluyver},
+           familyi={K\bibinitperiod},
+           given={Thomas},
+           giveni={T\bibinitperiod},
+           givenun=0}}%
+      }
+      \strng{namehash}{282b5d6fe909cc357c8dd473058b8fdc}
+      \strng{fullhash}{282b5d6fe909cc357c8dd473058b8fdc}
+      \strng{fullhashraw}{282b5d6fe909cc357c8dd473058b8fdc}
+      \strng{bibnamehash}{282b5d6fe909cc357c8dd473058b8fdc}
+      \strng{authorbibnamehash}{282b5d6fe909cc357c8dd473058b8fdc}
+      \strng{authornamehash}{282b5d6fe909cc357c8dd473058b8fdc}
+      \strng{authorfullhash}{282b5d6fe909cc357c8dd473058b8fdc}
+      \strng{authorfullhashraw}{282b5d6fe909cc357c8dd473058b8fdc}
+      \field{sortinit}{2}
+      \field{sortinithash}{8b555b3791beccb63322c22f3320aa9a}
+      \field{extradatescope}{labelyear}
+      \field{labeldatesource}{}
+      \true{uniqueprimaryauthor}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{title}{Green Tree Snakes: Getting to and from ASTs}
+      \field{urlday}{24}
+      \field{urlmonth}{8}
+      \field{urlyear}{2025}
+      \field{year}{2012}
+      \field{urldateera}{ce}
+      \verb{urlraw}
+      \verb https://greentreesnakes.readthedocs.io
+      \endverb
+      \verb{url}
+      \verb https://greentreesnakes.readthedocs.io
+      \endverb
+    \endentry
+    \entry{pyodide}{online}{}{}
+      \name{author}{1}{}{%
+        {{un=0,uniquepart=base,hash=007df87d4199093772f417849fdf8f08}{%
+           family={{Pyodide Development Team}},
+           familyi={P\bibinitperiod}}}%
+      }
+      \strng{namehash}{007df87d4199093772f417849fdf8f08}
+      \strng{fullhash}{007df87d4199093772f417849fdf8f08}
+      \strng{fullhashraw}{007df87d4199093772f417849fdf8f08}
+      \strng{bibnamehash}{007df87d4199093772f417849fdf8f08}
+      \strng{authorbibnamehash}{007df87d4199093772f417849fdf8f08}
+      \strng{authornamehash}{007df87d4199093772f417849fdf8f08}
+      \strng{authorfullhash}{007df87d4199093772f417849fdf8f08}
+      \strng{authorfullhashraw}{007df87d4199093772f417849fdf8f08}
+      \field{sortinit}{2}
+      \field{sortinithash}{8b555b3791beccb63322c22f3320aa9a}
+      \field{extradatescope}{labelyear}
+      \field{labeldatesource}{}
+      \true{uniqueprimaryauthor}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{title}{Pyodide Documentation}
+      \field{urlday}{24}
+      \field{urlmonth}{8}
+      \field{urlyear}{2025}
+      \field{year}{2023}
+      \field{urldateera}{ce}
+      \verb{urlraw}
+      \verb https://pyodide.org
+      \endverb
+      \verb{url}
+      \verb https://pyodide.org
+      \endverb
+    \endentry
+    \entry{Qian_Lehman_2017}{article}{}{}
+      \name{author}{2}{}{%
+        {{un=0,uniquepart=base,hash=9230f557aa84e59f2408c5330586cfb1}{%
+           family={Qian},
+           familyi={Q\bibinitperiod},
+           given={Yizhou},
+           giveni={Y\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=8f0e8d382caf721ed2c0f52f04fe49f3}{%
+           family={Lehman},
+           familyi={L\bibinitperiod},
+           given={James\bibnamedelima D.},
+           giveni={J\bibinitperiod\bibinitdelim D\bibinitperiod},
+           givenun=0}}%
+      }
+      \strng{namehash}{5a3e9d32880540791eadd90e1eea0ae3}
+      \strng{fullhash}{5a3e9d32880540791eadd90e1eea0ae3}
+      \strng{fullhashraw}{5a3e9d32880540791eadd90e1eea0ae3}
+      \strng{bibnamehash}{5a3e9d32880540791eadd90e1eea0ae3}
+      \strng{authorbibnamehash}{5a3e9d32880540791eadd90e1eea0ae3}
+      \strng{authornamehash}{5a3e9d32880540791eadd90e1eea0ae3}
+      \strng{authorfullhash}{5a3e9d32880540791eadd90e1eea0ae3}
+      \strng{authorfullhashraw}{5a3e9d32880540791eadd90e1eea0ae3}
+      \field{sortinit}{2}
+      \field{sortinithash}{8b555b3791beccb63322c22f3320aa9a}
+      \field{extradatescope}{labelyear}
+      \field{labeldatesource}{}
+      \true{uniqueprimaryauthor}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{journaltitle}{ACM Transactions on Computing Education}
+      \field{number}{1}
+      \field{title}{Students’ Misconceptions and Other Difficulties in Introductory Programming: A Literature Review}
+      \field{volume}{18}
+      \field{year}{2017}
+      \field{pages}{1\bibrangedash 24}
+      \range{pages}{24}
+      \verb{doi}
+      \verb 10.1145/3077618
+      \endverb
+    \endentry
+    \entry{codetojoy}{book}{}{}
+      \name{author}{1}{}{%
+        {{un=0,uniquepart=base,hash=211e529e9f10ad1bfacff2284da10ea7}{%
+           family={Littman},
+           familyi={L\bibinitperiod},
+           given={Michael\bibnamedelima L.},
+           giveni={M\bibinitperiod\bibinitdelim L\bibinitperiod},
+           givenun=0}}%
+      }
+      \list{publisher}{1}{%
+        {The MIT Press}%
+      }
+      \strng{namehash}{211e529e9f10ad1bfacff2284da10ea7}
+      \strng{fullhash}{211e529e9f10ad1bfacff2284da10ea7}
+      \strng{fullhashraw}{211e529e9f10ad1bfacff2284da10ea7}
+      \strng{bibnamehash}{211e529e9f10ad1bfacff2284da10ea7}
+      \strng{authorbibnamehash}{211e529e9f10ad1bfacff2284da10ea7}
+      \strng{authornamehash}{211e529e9f10ad1bfacff2284da10ea7}
+      \strng{authorfullhash}{211e529e9f10ad1bfacff2284da10ea7}
+      \strng{authorfullhashraw}{211e529e9f10ad1bfacff2284da10ea7}
+      \field{sortinit}{2}
+      \field{sortinithash}{8b555b3791beccb63322c22f3320aa9a}
+      \field{extradatescope}{labelyear}
+      \field{labeldatesource}{}
+      \true{uniqueprimaryauthor}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{isbn}{9780262546393}
+      \field{month}{10}
+      \field{title}{Code to Joy: Why Everyone Should Learn a Little Programming}
+      \field{year}{2023}
+      \field{pages}{232}
+      \range{pages}{1}
+    \endentry
+    \entry{rahulgopinath}{online}{}{}
+      \name{author}{1}{}{%
+        {{un=0,uniquepart=base,hash=421f701ed4ed770219168b6f80719917}{%
+           family={Gopinath},
+           familyi={G\bibinitperiod},
+           given={Rahul},
+           giveni={R\bibinitperiod},
+           givenun=0}}%
+      }
+      \strng{namehash}{421f701ed4ed770219168b6f80719917}
+      \strng{fullhash}{421f701ed4ed770219168b6f80719917}
+      \strng{fullhashraw}{421f701ed4ed770219168b6f80719917}
+      \strng{bibnamehash}{421f701ed4ed770219168b6f80719917}
+      \strng{authorbibnamehash}{421f701ed4ed770219168b6f80719917}
+      \strng{authornamehash}{421f701ed4ed770219168b6f80719917}
+      \strng{authorfullhash}{421f701ed4ed770219168b6f80719917}
+      \strng{authorfullhashraw}{421f701ed4ed770219168b6f80719917}
+      \field{sortinit}{2}
+      \field{sortinithash}{8b555b3791beccb63322c22f3320aa9a}
+      \field{extradatescope}{labelyear}
+      \field{labeldatesource}{}
+      \true{uniqueprimaryauthor}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{title}{Personal GitHub page}
+      \field{urlday}{24}
+      \field{urlmonth}{8}
+      \field{urlyear}{2025}
+      \field{year}{2024}
+      \field{urldateera}{ce}
+      \verb{urlraw}
+      \verb https://github.com/rahulgopinath/rahulgopinath.github.io
+      \endverb
+      \verb{url}
+      \verb https://github.com/rahulgopinath/rahulgopinath.github.io
+      \endverb
+    \endentry
+  \enddatalist
+  \datalist[entry]{none/global//global/global/global}
+    \entry{Illich}{book}{}{}
+      \name{author}{1}{}{%
+        {{un=0,uniquepart=base,hash=99e8a817947e13044842679cefbd0fa7}{%
+           family={Illich},
+           familyi={I\bibinitperiod},
+           given={Ivan},
+           giveni={I\bibinitperiod},
+           givenun=0}}%
+      }
+      \list{publisher}{1}{%
+        {Harper \& Row}%
+      }
+      \strng{namehash}{99e8a817947e13044842679cefbd0fa7}
+      \strng{fullhash}{99e8a817947e13044842679cefbd0fa7}
+      \strng{fullhashraw}{99e8a817947e13044842679cefbd0fa7}
+      \strng{bibnamehash}{99e8a817947e13044842679cefbd0fa7}
+      \strng{authorbibnamehash}{99e8a817947e13044842679cefbd0fa7}
+      \strng{authornamehash}{99e8a817947e13044842679cefbd0fa7}
+      \strng{authorfullhash}{99e8a817947e13044842679cefbd0fa7}
+      \strng{authorfullhashraw}{99e8a817947e13044842679cefbd0fa7}
+      \field{sortinit}{1}
+      \field{sortinithash}{4f6aaa89bab872aa0999fec09ff8e98a}
+      \field{extradatescope}{labelyear}
+      \field{labeldatesource}{}
+      \true{uniqueprimaryauthor}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{title}{Tools for Conviviality}
+      \field{year}{1973}
+    \endentry
+    \entry{Foucault}{book}{}{}
+      \name{author}{1}{}{%
+        {{un=0,uniquepart=base,hash=984e5967448051538555a64aac11ed21}{%
+           family={Foucault},
+           familyi={F\bibinitperiod},
+           given={Michel},
+           giveni={M\bibinitperiod},
+           givenun=0}}%
+      }
+      \list{publisher}{1}{%
+        {Gallimard}%
+      }
+      \strng{namehash}{984e5967448051538555a64aac11ed21}
+      \strng{fullhash}{984e5967448051538555a64aac11ed21}
+      \strng{fullhashraw}{984e5967448051538555a64aac11ed21}
+      \strng{bibnamehash}{984e5967448051538555a64aac11ed21}
+      \strng{authorbibnamehash}{984e5967448051538555a64aac11ed21}
+      \strng{authornamehash}{984e5967448051538555a64aac11ed21}
+      \strng{authorfullhash}{984e5967448051538555a64aac11ed21}
+      \strng{authorfullhashraw}{984e5967448051538555a64aac11ed21}
+      \field{sortinit}{2}
+      \field{sortinithash}{8b555b3791beccb63322c22f3320aa9a}
+      \field{extradatescope}{labelyear}
+      \field{labeldatesource}{}
+      \true{uniqueprimaryauthor}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{title}{Surveiller et punir: Naissance de la prison}
+      \field{year}{1975}
+    \endentry
+    \entry{Deleuze}{book}{}{}
+      \name{author}{1}{}{%
+        {{un=0,uniquepart=base,hash=01e8c4f353d8f2d65f9f05ee78f50c8c}{%
+           family={Deleuze},
+           familyi={D\bibinitperiod},
+           given={Gilles},
+           giveni={G\bibinitperiod},
+           givenun=0}}%
+      }
+      \list{publisher}{1}{%
+        {Les Éditions de Minuit}%
+      }
+      \strng{namehash}{01e8c4f353d8f2d65f9f05ee78f50c8c}
+      \strng{fullhash}{01e8c4f353d8f2d65f9f05ee78f50c8c}
+      \strng{fullhashraw}{01e8c4f353d8f2d65f9f05ee78f50c8c}
+      \strng{bibnamehash}{01e8c4f353d8f2d65f9f05ee78f50c8c}
+      \strng{authorbibnamehash}{01e8c4f353d8f2d65f9f05ee78f50c8c}
+      \strng{authornamehash}{01e8c4f353d8f2d65f9f05ee78f50c8c}
+      \strng{authorfullhash}{01e8c4f353d8f2d65f9f05ee78f50c8c}
+      \strng{authorfullhashraw}{01e8c4f353d8f2d65f9f05ee78f50c8c}
+      \field{sortinit}{3}
+      \field{sortinithash}{ad6fe7482ffbd7b9f99c9e8b5dccd3d7}
+      \field{extradatescope}{labelyear}
+      \field{labeldatesource}{}
+      \true{uniqueprimaryauthor}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{title}{Foucault}
+      \field{year}{1986}
+    \endentry
+    \entry{email}{online}{}{}
+      \name{author}{1}{}{%
+        {{un=0,uniquepart=base,hash=ddb20008bae37b1617b61c23a1d4b9d2}{%
+           family={{Business Insider}},
+           familyi={B\bibinitperiod}}}%
+      }
+      \strng{namehash}{ddb20008bae37b1617b61c23a1d4b9d2}
+      \strng{fullhash}{ddb20008bae37b1617b61c23a1d4b9d2}
+      \strng{fullhashraw}{ddb20008bae37b1617b61c23a1d4b9d2}
+      \strng{bibnamehash}{ddb20008bae37b1617b61c23a1d4b9d2}
+      \strng{authorbibnamehash}{ddb20008bae37b1617b61c23a1d4b9d2}
+      \strng{authornamehash}{ddb20008bae37b1617b61c23a1d4b9d2}
+      \strng{authorfullhash}{ddb20008bae37b1617b61c23a1d4b9d2}
+      \strng{authorfullhashraw}{ddb20008bae37b1617b61c23a1d4b9d2}
+      \field{sortinit}{4}
+      \field{sortinithash}{9381316451d1b9788675a07e972a12a7}
+      \field{extradatescope}{labelyear}
+      \field{labeldatesource}{}
+      \true{uniqueprimaryauthor}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{note}{Consulté en août 2025}
+      \field{title}{Emails between Sam Altman and Elon Musk that kicked off OpenAI}
+      \field{urlday}{24}
+      \field{urlmonth}{8}
+      \field{urlyear}{2025}
+      \field{year}{2024}
+      \field{urldateera}{ce}
+      \verb{urlraw}
+      \verb https://www.businessinsider.com/emails-between-sam-altman-elon-musk-kicked-off-openai-2024-11
+      \endverb
+      \verb{url}
+      \verb https://www.businessinsider.com/emails-between-sam-altman-elon-musk-kicked-off-openai-2024-11
+      \endverb
+    \endentry
+    \entry{wenger}{book}{}{}
+      \name{author}{1}{}{%
+        {{un=0,uniquepart=base,hash=101936ee07e3d900ba76ed76ae7c3d90}{%
+           family={Wenger},
+           familyi={W\bibinitperiod},
+           given={Etienne},
+           giveni={E\bibinitperiod},
+           givenun=0}}%
+      }
+      \list{publisher}{1}{%
+        {Cambridge University Press}%
+      }
+      \strng{namehash}{101936ee07e3d900ba76ed76ae7c3d90}
+      \strng{fullhash}{101936ee07e3d900ba76ed76ae7c3d90}
+      \strng{fullhashraw}{101936ee07e3d900ba76ed76ae7c3d90}
+      \strng{bibnamehash}{101936ee07e3d900ba76ed76ae7c3d90}
+      \strng{authorbibnamehash}{101936ee07e3d900ba76ed76ae7c3d90}
+      \strng{authornamehash}{101936ee07e3d900ba76ed76ae7c3d90}
+      \strng{authorfullhash}{101936ee07e3d900ba76ed76ae7c3d90}
+      \strng{authorfullhashraw}{101936ee07e3d900ba76ed76ae7c3d90}
+      \field{sortinit}{5}
+      \field{sortinithash}{20e9b4b0b173788c5dace24730f47d8c}
+      \field{extradatescope}{labelyear}
+      \field{labeldatesource}{}
+      \true{uniqueprimaryauthor}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{title}{Communities of Practice: Learning, Meaning, and Identity}
+      \field{year}{1998}
+      \verb{doi}
+      \verb 10.1017/CBO9780511803932
+      \endverb
+    \endentry
+    \entry{Sentance2017WiPSCE}{article}{}{}
+      \name{author}{2}{}{%
+        {{un=0,uniquepart=base,hash=4d9e7174e2d3394c82796d579fb59687}{%
+           family={Sentance},
+           familyi={S\bibinitperiod},
+           given={Sue},
+           giveni={S\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=d198b4f411ac2d78f552676293fb1434}{%
+           family={Waite},
+           familyi={W\bibinitperiod},
+           given={Jane},
+           giveni={J\bibinitperiod},
+           givenun=0}}%
+      }
+      \list{publisher}{1}{%
+        {ACM}%
+      }
+      \strng{namehash}{40e6691e166216646932c4283b7c908a}
+      \strng{fullhash}{40e6691e166216646932c4283b7c908a}
+      \strng{fullhashraw}{40e6691e166216646932c4283b7c908a}
+      \strng{bibnamehash}{40e6691e166216646932c4283b7c908a}
+      \strng{authorbibnamehash}{40e6691e166216646932c4283b7c908a}
+      \strng{authornamehash}{40e6691e166216646932c4283b7c908a}
+      \strng{authorfullhash}{40e6691e166216646932c4283b7c908a}
+      \strng{authorfullhashraw}{40e6691e166216646932c4283b7c908a}
+      \field{sortinit}{6}
+      \field{sortinithash}{b33bc299efb3c36abec520a4c896a66d}
+      \field{extradatescope}{labelyear}
+      \field{labeldatesource}{}
+      \true{uniqueprimaryauthor}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{journaltitle}{Proceedings of the 12th Workshop on Primary and Secondary Computing Education (WiPSCE '17)}
+      \field{title}{PRIMM: Exploring pedagogical approaches for teaching text-based programming in school}
+      \field{year}{2017}
+      \field{pages}{113\bibrangedash 114}
+      \range{pages}{2}
+      \verb{doi}
+      \verb 10.1145/3137065.3137084
+      \endverb
+    \endentry
+    \entry{Sentance2019CSE}{article}{}{}
+      \name{author}{3}{}{%
+        {{un=0,uniquepart=base,hash=4d9e7174e2d3394c82796d579fb59687}{%
+           family={Sentance},
+           familyi={S\bibinitperiod},
+           given={Sue},
+           giveni={S\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=d198b4f411ac2d78f552676293fb1434}{%
+           family={Waite},
+           familyi={W\bibinitperiod},
+           given={Jane},
+           giveni={J\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=016f1430812398ce424ff788d240ec10}{%
+           family={Kallia},
+           familyi={K\bibinitperiod},
+           given={Maria},
+           giveni={M\bibinitperiod},
+           givenun=0}}%
+      }
+      \strng{namehash}{6dd3a54ae94c54e606fc6e0db747ea97}
+      \strng{fullhash}{0fe2b1fa6b0ae6b2014a1c115f4bbeb8}
+      \strng{fullhashraw}{0fe2b1fa6b0ae6b2014a1c115f4bbeb8}
+      \strng{bibnamehash}{0fe2b1fa6b0ae6b2014a1c115f4bbeb8}
+      \strng{authorbibnamehash}{0fe2b1fa6b0ae6b2014a1c115f4bbeb8}
+      \strng{authornamehash}{6dd3a54ae94c54e606fc6e0db747ea97}
+      \strng{authorfullhash}{0fe2b1fa6b0ae6b2014a1c115f4bbeb8}
+      \strng{authorfullhashraw}{0fe2b1fa6b0ae6b2014a1c115f4bbeb8}
+      \field{sortinit}{7}
+      \field{sortinithash}{108d0be1b1bee9773a1173443802c0a3}
+      \field{extradatescope}{labelyear}
+      \field{labeldatesource}{}
+      \true{uniqueprimaryauthor}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{journaltitle}{Computer Science Education}
+      \field{number}{2-3}
+      \field{title}{Teaching computer programming with PRIMM: A sociocultural perspective}
+      \field{volume}{29}
+      \field{year}{2019}
+      \field{pages}{136\bibrangedash 176}
+      \range{pages}{41}
+      \verb{doi}
+      \verb 10.1080/08993408.2019.1608781
+      \endverb
+    \endentry
+    \entry{messer2023}{article}{}{}
+      \name{author}{4}{}{%
+        {{un=0,uniquepart=base,hash=e4f073ac0006f267203c8aed0c4e84fd}{%
+           family={Messer},
+           familyi={M\bibinitperiod},
+           given={Michael},
+           giveni={M\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=2987dd4f6ef86ef095be77c06797c4d2}{%
+           family={Brown},
+           familyi={B\bibinitperiod},
+           given={Neil\bibnamedelimb C.\bibnamedelimi C.},
+           giveni={N\bibinitperiod\bibinitdelim C\bibinitperiod\bibinitdelim C\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=3d3bbf5ef136dbddf873344bc27f03d7}{%
+           family={Kölling},
+           familyi={K\bibinitperiod},
+           given={Michael},
+           giveni={M\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=c9799863603a895108b08bad7338c0d1}{%
+           family={Shi},
+           familyi={S\bibinitperiod},
+           given={Mingyu},
+           giveni={M\bibinitperiod},
+           givenun=0}}%
+      }
+      \strng{namehash}{d07d7f3c0568e289d80bb1cc49637883}
+      \strng{fullhash}{6546bb8e7af5dd0e2f07b47bd3ca8ad1}
+      \strng{fullhashraw}{6546bb8e7af5dd0e2f07b47bd3ca8ad1}
+      \strng{bibnamehash}{6546bb8e7af5dd0e2f07b47bd3ca8ad1}
+      \strng{authorbibnamehash}{6546bb8e7af5dd0e2f07b47bd3ca8ad1}
+      \strng{authornamehash}{d07d7f3c0568e289d80bb1cc49637883}
+      \strng{authorfullhash}{6546bb8e7af5dd0e2f07b47bd3ca8ad1}
+      \strng{authorfullhashraw}{6546bb8e7af5dd0e2f07b47bd3ca8ad1}
+      \field{sortinit}{8}
+      \field{sortinithash}{a231b008ebf0ecbe0b4d96dcc159445f}
+      \field{extradatescope}{labelyear}
+      \field{labeldatesource}{}
+      \true{uniqueprimaryauthor}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{journaltitle}{arXiv preprint}
+      \field{title}{Automated Grading and Feedback Tools for Programming Education: A Systematic Review}
+      \field{year}{2023}
+      \verb{eprint}
+      \verb 2306.11722
+      \endverb
+      \verb{urlraw}
+      \verb https://arxiv.org/abs/2306.11722
+      \endverb
+      \verb{url}
+      \verb https://arxiv.org/abs/2306.11722
+      \endverb
+    \endentry
+    \entry{zimmermann2024}{article}{}{}
+      \name{author}{3}{}{%
+        {{un=0,uniquepart=base,hash=42e235adeb67faedaf80e5d597dae667}{%
+           family={Zimmermann},
+           familyi={Z\bibinitperiod},
+           given={Allison\bibnamedelima E.},
+           giveni={A\bibinitperiod\bibinitdelim E\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=4e42f70a624af133a6808bff15e94980}{%
+           family={King},
+           familyi={K\bibinitperiod},
+           given={Erin\bibnamedelima E.},
+           giveni={E\bibinitperiod\bibinitdelim E\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=a606f04dbfb0118209983bb2f5fdea89}{%
+           family={Bose},
+           familyi={B\bibinitperiod},
+           given={Deepa\bibnamedelima D.},
+           giveni={D\bibinitperiod\bibinitdelim D\bibinitperiod},
+           givenun=0}}%
+      }
+      \strng{namehash}{373c5ca248906363b7a50f8dcf6b8cfe}
+      \strng{fullhash}{4cfeefcb859364d01085fc3e27f48d31}
+      \strng{fullhashraw}{4cfeefcb859364d01085fc3e27f48d31}
+      \strng{bibnamehash}{4cfeefcb859364d01085fc3e27f48d31}
+      \strng{authorbibnamehash}{4cfeefcb859364d01085fc3e27f48d31}
+      \strng{authornamehash}{373c5ca248906363b7a50f8dcf6b8cfe}
+      \strng{authorfullhash}{4cfeefcb859364d01085fc3e27f48d31}
+      \strng{authorfullhashraw}{4cfeefcb859364d01085fc3e27f48d31}
+      \field{sortinit}{9}
+      \field{sortinithash}{0a5ebc79d83c96b6579069544c73c7d4}
+      \field{extradatescope}{labelyear}
+      \field{labeldatesource}{}
+      \true{uniqueprimaryauthor}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{journaltitle}{American Journal of Pharmaceutical Education}
+      \field{number}{1}
+      \field{title}{Effectiveness and Utility of Flowcharts on Learning in a Classroom Setting: A Mixed-Methods Study}
+      \field{volume}{88}
+      \field{year}{2024}
+      \field{pages}{100591}
+      \range{pages}{1}
+      \verb{doi}
+      \verb 10.5688/ajpe100591
+      \endverb
+    \endentry
+    \entry{CrewsZielger98}{article}{}{}
+      \name{author}{2}{}{%
+        {{un=0,uniquepart=base,hash=a3995ceb8c60d74dff0e3bfd8b9b907e}{%
+           family={Crews},
+           familyi={C\bibinitperiod},
+           given={T.},
+           giveni={T\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=53b81340f33089c03cc06179de8d9b50}{%
+           family={Ziegler},
+           familyi={Z\bibinitperiod},
+           given={U.},
+           giveni={U\bibinitperiod},
+           givenun=0}}%
+      }
+      \list{publisher}{1}{%
+        {IEEE}%
+      }
+      \strng{namehash}{a75c4ed117864e89db23509005184e7d}
+      \strng{fullhash}{a75c4ed117864e89db23509005184e7d}
+      \strng{fullhashraw}{a75c4ed117864e89db23509005184e7d}
+      \strng{bibnamehash}{a75c4ed117864e89db23509005184e7d}
+      \strng{authorbibnamehash}{a75c4ed117864e89db23509005184e7d}
+      \strng{authornamehash}{a75c4ed117864e89db23509005184e7d}
+      \strng{authorfullhash}{a75c4ed117864e89db23509005184e7d}
+      \strng{authorfullhashraw}{a75c4ed117864e89db23509005184e7d}
+      \field{sortinit}{1}
+      \field{sortinithash}{4f6aaa89bab872aa0999fec09ff8e98a}
+      \field{extradatescope}{labelyear}
+      \field{labeldatesource}{}
+      \true{uniqueprimaryauthor}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{journaltitle}{Frontiers in Education Conference (FIE '98)}
+      \field{title}{The flowchart interpreter for introductory programming courses}
+      \field{year}{1998}
+      \field{pages}{307\bibrangedash 312}
+      \range{pages}{6}
+      \verb{doi}
+      \verb 10.1109/FIE.1998.736854
+      \endverb
+    \endentry
+    \entry{AndersonKrathwohl2001}{book}{}{}
+      \name{editor}{2}{}{%
+        {{un=0,uniquepart=base,hash=4b42f1b57e4a94e21e6f50d531f41ddd}{%
+           family={Anderson},
+           familyi={A\bibinitperiod},
+           given={Lorin\bibnamedelima W.},
+           giveni={L\bibinitperiod\bibinitdelim W\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=783eb677bc36afc2d47e7e01ecdaec4a}{%
+           family={Krathwohl},
+           familyi={K\bibinitperiod},
+           given={David\bibnamedelima R.},
+           giveni={D\bibinitperiod\bibinitdelim R\bibinitperiod},
+           givenun=0}}%
+      }
+      \list{publisher}{1}{%
+        {Longman}%
+      }
+      \strng{namehash}{7965d3ac39b47c83e4d076aadeb9d6ac}
+      \strng{fullhash}{7965d3ac39b47c83e4d076aadeb9d6ac}
+      \strng{fullhashraw}{7965d3ac39b47c83e4d076aadeb9d6ac}
+      \strng{bibnamehash}{7965d3ac39b47c83e4d076aadeb9d6ac}
+      \strng{editorbibnamehash}{7965d3ac39b47c83e4d076aadeb9d6ac}
+      \strng{editornamehash}{7965d3ac39b47c83e4d076aadeb9d6ac}
+      \strng{editorfullhash}{7965d3ac39b47c83e4d076aadeb9d6ac}
+      \strng{editorfullhashraw}{7965d3ac39b47c83e4d076aadeb9d6ac}
+      \field{sortinit}{1}
+      \field{sortinithash}{4f6aaa89bab872aa0999fec09ff8e98a}
+      \field{extradatescope}{labelyear}
+      \field{labeldatesource}{}
+      \true{uniqueprimaryauthor}
+      \field{labelnamesource}{editor}
+      \field{labeltitlesource}{title}
+      \field{title}{A Taxonomy for Learning, Teaching, and Assessing: A Revision of Bloom's Taxonomy of Educational Objectives}
+      \field{year}{2001}
+    \endentry
+    \entry{Fuller2007}{article}{}{}
+      \true{moreauthor}
+      \true{morelabelname}
+      \name{author}{1}{}{%
+        {{un=0,uniquepart=base,hash=7e52c70373cd12760a912458b3faebdc}{%
+           family={Fuller},
+           familyi={F\bibinitperiod},
+           given={Ursula},
+           giveni={U\bibinitperiod},
+           givenun=0}}%
+      }
+      \strng{namehash}{8580c699bdada01c0f1b810b1f5e6a0e}
+      \strng{fullhash}{8580c699bdada01c0f1b810b1f5e6a0e}
+      \strng{fullhashraw}{8580c699bdada01c0f1b810b1f5e6a0e}
+      \strng{bibnamehash}{8580c699bdada01c0f1b810b1f5e6a0e}
+      \strng{authorbibnamehash}{8580c699bdada01c0f1b810b1f5e6a0e}
+      \strng{authornamehash}{8580c699bdada01c0f1b810b1f5e6a0e}
+      \strng{authorfullhash}{8580c699bdada01c0f1b810b1f5e6a0e}
+      \strng{authorfullhashraw}{8580c699bdada01c0f1b810b1f5e6a0e}
+      \field{sortinit}{1}
+      \field{sortinithash}{4f6aaa89bab872aa0999fec09ff8e98a}
+      \field{extradatescope}{labelyear}
+      \field{labeldatesource}{}
+      \true{uniqueprimaryauthor}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{journaltitle}{ACM SIGCSE Bulletin}
+      \field{number}{4}
+      \field{title}{Developing a computer science-specific learning taxonomy}
+      \field{volume}{39}
+      \field{year}{2007}
+      \field{pages}{152\bibrangedash 170}
+      \range{pages}{19}
+      \verb{doi}
+      \verb 10.1145/1345375.1345438
+      \endverb
+    \endentry
+    \entry{HattieTimperley2007}{article}{}{}
+      \name{author}{2}{}{%
+        {{un=0,uniquepart=base,hash=e7251c15733701c65025dabbf16656e4}{%
+           family={Hattie},
+           familyi={H\bibinitperiod},
+           given={John},
+           giveni={J\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=e09dc6ea98acb0192a7a1c50eaf4eaff}{%
+           family={Timperley},
+           familyi={T\bibinitperiod},
+           given={Helen},
+           giveni={H\bibinitperiod},
+           givenun=0}}%
+      }
+      \strng{namehash}{41affa46da516f24b1c9311f5ed30fb9}
+      \strng{fullhash}{41affa46da516f24b1c9311f5ed30fb9}
+      \strng{fullhashraw}{41affa46da516f24b1c9311f5ed30fb9}
+      \strng{bibnamehash}{41affa46da516f24b1c9311f5ed30fb9}
+      \strng{authorbibnamehash}{41affa46da516f24b1c9311f5ed30fb9}
+      \strng{authornamehash}{41affa46da516f24b1c9311f5ed30fb9}
+      \strng{authorfullhash}{41affa46da516f24b1c9311f5ed30fb9}
+      \strng{authorfullhashraw}{41affa46da516f24b1c9311f5ed30fb9}
+      \field{sortinit}{1}
+      \field{sortinithash}{4f6aaa89bab872aa0999fec09ff8e98a}
+      \field{extradatescope}{labelyear}
+      \field{labeldatesource}{}
+      \true{uniqueprimaryauthor}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{journaltitle}{Review of Educational Research}
+      \field{number}{1}
+      \field{title}{The power of feedback}
+      \field{volume}{77}
+      \field{year}{2007}
+      \field{pages}{81\bibrangedash 112}
+      \range{pages}{32}
+      \verb{doi}
+      \verb 10.3102/003465430298487
+      \endverb
+    \endentry
+    \entry{Shute2008}{article}{}{}
+      \name{author}{1}{}{%
+        {{un=0,uniquepart=base,hash=817b19f1186b605320c603ee888c7850}{%
+           family={Shute},
+           familyi={S\bibinitperiod},
+           given={Valerie\bibnamedelima J.},
+           giveni={V\bibinitperiod\bibinitdelim J\bibinitperiod},
+           givenun=0}}%
+      }
+      \strng{namehash}{817b19f1186b605320c603ee888c7850}
+      \strng{fullhash}{817b19f1186b605320c603ee888c7850}
+      \strng{fullhashraw}{817b19f1186b605320c603ee888c7850}
+      \strng{bibnamehash}{817b19f1186b605320c603ee888c7850}
+      \strng{authorbibnamehash}{817b19f1186b605320c603ee888c7850}
+      \strng{authornamehash}{817b19f1186b605320c603ee888c7850}
+      \strng{authorfullhash}{817b19f1186b605320c603ee888c7850}
+      \strng{authorfullhashraw}{817b19f1186b605320c603ee888c7850}
+      \field{sortinit}{1}
+      \field{sortinithash}{4f6aaa89bab872aa0999fec09ff8e98a}
+      \field{extradatescope}{labelyear}
+      \field{labeldatesource}{}
+      \true{uniqueprimaryauthor}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{journaltitle}{Review of Educational Research}
+      \field{number}{1}
+      \field{title}{Focus on formative feedback}
+      \field{volume}{78}
+      \field{year}{2008}
+      \field{pages}{153\bibrangedash 189}
+      \range{pages}{37}
+      \verb{doi}
+      \verb 10.3102/0034654307313795
+      \endverb
+    \endentry
+    \entry{didask}{online}{}{}
+      \name{author}{1}{}{%
+        {{un=0,uniquepart=base,hash=0e5cc667077413250eac177abccf7395}{%
+           family={Didask},
+           familyi={D\bibinitperiod}}}%
+      }
+      \strng{namehash}{0e5cc667077413250eac177abccf7395}
+      \strng{fullhash}{0e5cc667077413250eac177abccf7395}
+      \strng{fullhashraw}{0e5cc667077413250eac177abccf7395}
+      \strng{bibnamehash}{0e5cc667077413250eac177abccf7395}
+      \strng{authorbibnamehash}{0e5cc667077413250eac177abccf7395}
+      \strng{authornamehash}{0e5cc667077413250eac177abccf7395}
+      \strng{authorfullhash}{0e5cc667077413250eac177abccf7395}
+      \strng{authorfullhashraw}{0e5cc667077413250eac177abccf7395}
+      \field{sortinit}{1}
+      \field{sortinithash}{4f6aaa89bab872aa0999fec09ff8e98a}
+      \field{extradatescope}{labelyear}
+      \field{labeldatesource}{}
+      \true{uniqueprimaryauthor}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{title}{Qu'est-ce qu'un outil auteur ? -- Le guide complet}
+      \field{urlday}{5}
+      \field{urlmonth}{8}
+      \field{urlyear}{2025}
+      \field{year}{2025}
+      \field{urldateera}{ce}
+      \verb{urlraw}
+      \verb https://www.didask.com
+      \endverb
+      \verb{url}
+      \verb https://www.didask.com
+      \endverb
+    \endentry
+    \entry{Altadmri_Brown_2015}{article}{}{}
+      \name{author}{4}{}{%
+        {{un=0,uniquepart=base,hash=08f3c9c50dbfe876ed5561e9ef9681bd}{%
+           family={Brown},
+           familyi={B\bibinitperiod},
+           given={Neil},
+           giveni={N\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=751dcafd5cdbf9faa7029ccb2af13680}{%
+           family={Altadmri},
+           familyi={A\bibinitperiod},
+           given={Amjad},
+           giveni={A\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=4d9e7174e2d3394c82796d579fb59687}{%
+           family={Sentance},
+           familyi={S\bibinitperiod},
+           given={Sue},
+           giveni={S\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=3d3bbf5ef136dbddf873344bc27f03d7}{%
+           family={Kölling},
+           familyi={K\bibinitperiod},
+           given={Michael},
+           giveni={M\bibinitperiod},
+           givenun=0}}%
+      }
+      \strng{namehash}{4171af76f7761ea4b3571018bd5d6054}
+      \strng{fullhash}{687231e264ec302ae71febe6726ec8e3}
+      \strng{fullhashraw}{687231e264ec302ae71febe6726ec8e3}
+      \strng{bibnamehash}{687231e264ec302ae71febe6726ec8e3}
+      \strng{authorbibnamehash}{687231e264ec302ae71febe6726ec8e3}
+      \strng{authornamehash}{4171af76f7761ea4b3571018bd5d6054}
+      \strng{authorfullhash}{687231e264ec302ae71febe6726ec8e3}
+      \strng{authorfullhashraw}{687231e264ec302ae71febe6726ec8e3}
+      \field{sortinit}{1}
+      \field{sortinithash}{4f6aaa89bab872aa0999fec09ff8e98a}
+      \field{extradatescope}{labelyear}
+      \field{labeldatesource}{}
+      \true{uniqueprimaryauthor}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{month}{08}
+      \field{title}{Blackbox, Five Years On: An Evaluation of a Large-scale Programming Data Collection Project}
+      \field{year}{2018}
+      \field{pages}{196\bibrangedash 204}
+      \range{pages}{9}
+      \verb{doi}
+      \verb 10.1145/3230977.3230991
+      \endverb
+    \endentry
+    \entry{SilentTeacher}{online}{}{}
+      \name{author}{1}{}{%
+        {{un=0,uniquepart=base,hash=ed8c4a4ea0befa986037f975d163addb}{%
+           family={{Toxicode}},
+           familyi={T\bibinitperiod}}}%
+      }
+      \strng{namehash}{ed8c4a4ea0befa986037f975d163addb}
+      \strng{fullhash}{ed8c4a4ea0befa986037f975d163addb}
+      \strng{fullhashraw}{ed8c4a4ea0befa986037f975d163addb}
+      \strng{bibnamehash}{ed8c4a4ea0befa986037f975d163addb}
+      \strng{authorbibnamehash}{ed8c4a4ea0befa986037f975d163addb}
+      \strng{authornamehash}{ed8c4a4ea0befa986037f975d163addb}
+      \strng{authorfullhash}{ed8c4a4ea0befa986037f975d163addb}
+      \strng{authorfullhashraw}{ed8c4a4ea0befa986037f975d163addb}
+      \field{sortinit}{1}
+      \field{sortinithash}{4f6aaa89bab872aa0999fec09ff8e98a}
+      \field{extradatescope}{labelyear}
+      \field{labeldatesource}{}
+      \true{uniqueprimaryauthor}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{title}{Silent Teacher}
+      \field{urlday}{24}
+      \field{urlmonth}{8}
+      \field{urlyear}{2025}
+      \field{year}{2025}
+      \field{urldateera}{ce}
+      \verb{urlraw}
+      \verb https://silentteacher.toxicode.fr/
+      \endverb
+      \verb{url}
+      \verb https://silentteacher.toxicode.fr/
+      \endverb
+    \endentry
+    \entry{codemirror6}{online}{}{}
+      \name{author}{1}{}{%
+        {{un=0,uniquepart=base,hash=129098e814fb9141e381f6b3068dd41c}{%
+           family={Haverbeke},
+           familyi={H\bibinitperiod},
+           given={Marijn},
+           giveni={M\bibinitperiod},
+           givenun=0}}%
+      }
+      \strng{namehash}{129098e814fb9141e381f6b3068dd41c}
+      \strng{fullhash}{129098e814fb9141e381f6b3068dd41c}
+      \strng{fullhashraw}{129098e814fb9141e381f6b3068dd41c}
+      \strng{bibnamehash}{129098e814fb9141e381f6b3068dd41c}
+      \strng{authorbibnamehash}{129098e814fb9141e381f6b3068dd41c}
+      \strng{authornamehash}{129098e814fb9141e381f6b3068dd41c}
+      \strng{authorfullhash}{129098e814fb9141e381f6b3068dd41c}
+      \strng{authorfullhashraw}{129098e814fb9141e381f6b3068dd41c}
+      \field{sortinit}{1}
+      \field{sortinithash}{4f6aaa89bab872aa0999fec09ff8e98a}
+      \field{extradatescope}{labelyear}
+      \field{labeldatesource}{}
+      \true{uniqueprimaryauthor}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{title}{CodeMirror 6 Documentation}
+      \field{urlday}{24}
+      \field{urlmonth}{8}
+      \field{urlyear}{2025}
+      \field{year}{2021}
+      \field{urldateera}{ce}
+      \verb{urlraw}
+      \verb https://codemirror.net/6/
+      \endverb
+      \verb{url}
+      \verb https://codemirror.net/6/
+      \endverb
+    \endentry
+    \entry{skulpt}{online}{}{}
+      \field{sortinit}{1}
+      \field{sortinithash}{4f6aaa89bab872aa0999fec09ff8e98a}
+      \field{extradatescope}{labelyear}
+      \field{labeldatesource}{}
+      \field{labeltitlesource}{title}
+      \field{title}{Skulpt}
+      \field{urlday}{24}
+      \field{urlmonth}{8}
+      \field{urlyear}{2025}
+      \field{year}{2024}
+      \field{urldateera}{ce}
+      \verb{urlraw}
+      \verb https://skulpt.org/
+      \endverb
+      \verb{url}
+      \verb https://skulpt.org/
+      \endverb
+    \endentry
+    \entry{brython}{online}{}{}
+      \field{sortinit}{2}
+      \field{sortinithash}{8b555b3791beccb63322c22f3320aa9a}
+      \field{extradatescope}{labelyear}
+      \field{labeldatesource}{}
+      \field{labeltitlesource}{title}
+      \field{title}{Brython}
+      \field{urlday}{24}
+      \field{urlmonth}{8}
+      \field{urlyear}{2025}
+      \field{year}{2024}
+      \field{urldateera}{ce}
+      \verb{urlraw}
+      \verb https://brython.info/
+      \endverb
+      \verb{url}
+      \verb https://brython.info/
+      \endverb
+    \endentry
+    \entry{fuzzingbook}{online}{}{}
+      \true{moreauthor}
+      \true{morelabelname}
+      \name{author}{1}{}{%
+        {{un=0,uniquepart=base,hash=5e1cda0c07dec7bd29209963590efad4}{%
+           family={Zeller},
+           familyi={Z\bibinitperiod},
+           given={Andreas},
+           giveni={A\bibinitperiod},
+           givenun=0}}%
+      }
+      \strng{namehash}{bbde14bd15ef8817e033ba77c3750f3e}
+      \strng{fullhash}{bbde14bd15ef8817e033ba77c3750f3e}
+      \strng{fullhashraw}{bbde14bd15ef8817e033ba77c3750f3e}
+      \strng{bibnamehash}{bbde14bd15ef8817e033ba77c3750f3e}
+      \strng{authorbibnamehash}{bbde14bd15ef8817e033ba77c3750f3e}
+      \strng{authornamehash}{bbde14bd15ef8817e033ba77c3750f3e}
+      \strng{authorfullhash}{bbde14bd15ef8817e033ba77c3750f3e}
+      \strng{authorfullhashraw}{bbde14bd15ef8817e033ba77c3750f3e}
+      \field{sortinit}{2}
+      \field{sortinithash}{8b555b3791beccb63322c22f3320aa9a}
+      \field{extradatescope}{labelyear}
+      \field{labeldatesource}{}
+      \true{uniqueprimaryauthor}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{title}{The Fuzzing Book}
+      \field{urlday}{24}
+      \field{urlmonth}{8}
+      \field{urlyear}{2025}
+      \field{year}{2022}
+      \field{urldateera}{ce}
+      \verb{urlraw}
+      \verb https://www.fuzzingbook.org
+      \endverb
+      \verb{url}
+      \verb https://www.fuzzingbook.org
+      \endverb
+    \endentry
+    \entry{greentreesnakes}{online}{}{}
+      \name{author}{1}{}{%
+        {{un=0,uniquepart=base,hash=282b5d6fe909cc357c8dd473058b8fdc}{%
+           family={Kluyver},
+           familyi={K\bibinitperiod},
+           given={Thomas},
+           giveni={T\bibinitperiod},
+           givenun=0}}%
+      }
+      \strng{namehash}{282b5d6fe909cc357c8dd473058b8fdc}
+      \strng{fullhash}{282b5d6fe909cc357c8dd473058b8fdc}
+      \strng{fullhashraw}{282b5d6fe909cc357c8dd473058b8fdc}
+      \strng{bibnamehash}{282b5d6fe909cc357c8dd473058b8fdc}
+      \strng{authorbibnamehash}{282b5d6fe909cc357c8dd473058b8fdc}
+      \strng{authornamehash}{282b5d6fe909cc357c8dd473058b8fdc}
+      \strng{authorfullhash}{282b5d6fe909cc357c8dd473058b8fdc}
+      \strng{authorfullhashraw}{282b5d6fe909cc357c8dd473058b8fdc}
+      \field{sortinit}{2}
+      \field{sortinithash}{8b555b3791beccb63322c22f3320aa9a}
+      \field{extradatescope}{labelyear}
+      \field{labeldatesource}{}
+      \true{uniqueprimaryauthor}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{title}{Green Tree Snakes: Getting to and from ASTs}
+      \field{urlday}{24}
+      \field{urlmonth}{8}
+      \field{urlyear}{2025}
+      \field{year}{2012}
+      \field{urldateera}{ce}
+      \verb{urlraw}
+      \verb https://greentreesnakes.readthedocs.io
+      \endverb
+      \verb{url}
+      \verb https://greentreesnakes.readthedocs.io
+      \endverb
+    \endentry
+    \entry{pyodide}{online}{}{}
+      \name{author}{1}{}{%
+        {{un=0,uniquepart=base,hash=007df87d4199093772f417849fdf8f08}{%
+           family={{Pyodide Development Team}},
+           familyi={P\bibinitperiod}}}%
+      }
+      \strng{namehash}{007df87d4199093772f417849fdf8f08}
+      \strng{fullhash}{007df87d4199093772f417849fdf8f08}
+      \strng{fullhashraw}{007df87d4199093772f417849fdf8f08}
+      \strng{bibnamehash}{007df87d4199093772f417849fdf8f08}
+      \strng{authorbibnamehash}{007df87d4199093772f417849fdf8f08}
+      \strng{authornamehash}{007df87d4199093772f417849fdf8f08}
+      \strng{authorfullhash}{007df87d4199093772f417849fdf8f08}
+      \strng{authorfullhashraw}{007df87d4199093772f417849fdf8f08}
+      \field{sortinit}{2}
+      \field{sortinithash}{8b555b3791beccb63322c22f3320aa9a}
+      \field{extradatescope}{labelyear}
+      \field{labeldatesource}{}
+      \true{uniqueprimaryauthor}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{title}{Pyodide Documentation}
+      \field{urlday}{24}
+      \field{urlmonth}{8}
+      \field{urlyear}{2025}
+      \field{year}{2023}
+      \field{urldateera}{ce}
+      \verb{urlraw}
+      \verb https://pyodide.org
+      \endverb
+      \verb{url}
+      \verb https://pyodide.org
+      \endverb
+    \endentry
+    \entry{Qian_Lehman_2017}{article}{}{}
+      \name{author}{2}{}{%
+        {{un=0,uniquepart=base,hash=9230f557aa84e59f2408c5330586cfb1}{%
+           family={Qian},
+           familyi={Q\bibinitperiod},
+           given={Yizhou},
+           giveni={Y\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=8f0e8d382caf721ed2c0f52f04fe49f3}{%
+           family={Lehman},
+           familyi={L\bibinitperiod},
+           given={James\bibnamedelima D.},
+           giveni={J\bibinitperiod\bibinitdelim D\bibinitperiod},
+           givenun=0}}%
+      }
+      \strng{namehash}{5a3e9d32880540791eadd90e1eea0ae3}
+      \strng{fullhash}{5a3e9d32880540791eadd90e1eea0ae3}
+      \strng{fullhashraw}{5a3e9d32880540791eadd90e1eea0ae3}
+      \strng{bibnamehash}{5a3e9d32880540791eadd90e1eea0ae3}
+      \strng{authorbibnamehash}{5a3e9d32880540791eadd90e1eea0ae3}
+      \strng{authornamehash}{5a3e9d32880540791eadd90e1eea0ae3}
+      \strng{authorfullhash}{5a3e9d32880540791eadd90e1eea0ae3}
+      \strng{authorfullhashraw}{5a3e9d32880540791eadd90e1eea0ae3}
+      \field{sortinit}{2}
+      \field{sortinithash}{8b555b3791beccb63322c22f3320aa9a}
+      \field{extradatescope}{labelyear}
+      \field{labeldatesource}{}
+      \true{uniqueprimaryauthor}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{journaltitle}{ACM Transactions on Computing Education}
+      \field{number}{1}
+      \field{title}{Students’ Misconceptions and Other Difficulties in Introductory Programming: A Literature Review}
+      \field{volume}{18}
+      \field{year}{2017}
+      \field{pages}{1\bibrangedash 24}
+      \range{pages}{24}
+      \verb{doi}
+      \verb 10.1145/3077618
+      \endverb
+    \endentry
+    \entry{codetojoy}{book}{}{}
+      \name{author}{1}{}{%
+        {{un=0,uniquepart=base,hash=211e529e9f10ad1bfacff2284da10ea7}{%
+           family={Littman},
+           familyi={L\bibinitperiod},
+           given={Michael\bibnamedelima L.},
+           giveni={M\bibinitperiod\bibinitdelim L\bibinitperiod},
+           givenun=0}}%
+      }
+      \list{publisher}{1}{%
+        {The MIT Press}%
+      }
+      \strng{namehash}{211e529e9f10ad1bfacff2284da10ea7}
+      \strng{fullhash}{211e529e9f10ad1bfacff2284da10ea7}
+      \strng{fullhashraw}{211e529e9f10ad1bfacff2284da10ea7}
+      \strng{bibnamehash}{211e529e9f10ad1bfacff2284da10ea7}
+      \strng{authorbibnamehash}{211e529e9f10ad1bfacff2284da10ea7}
+      \strng{authornamehash}{211e529e9f10ad1bfacff2284da10ea7}
+      \strng{authorfullhash}{211e529e9f10ad1bfacff2284da10ea7}
+      \strng{authorfullhashraw}{211e529e9f10ad1bfacff2284da10ea7}
+      \field{sortinit}{2}
+      \field{sortinithash}{8b555b3791beccb63322c22f3320aa9a}
+      \field{extradatescope}{labelyear}
+      \field{labeldatesource}{}
+      \true{uniqueprimaryauthor}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{isbn}{9780262546393}
+      \field{month}{10}
+      \field{title}{Code to Joy: Why Everyone Should Learn a Little Programming}
+      \field{year}{2023}
+      \field{pages}{232}
+      \range{pages}{1}
+    \endentry
+    \entry{rahulgopinath}{online}{}{}
+      \name{author}{1}{}{%
+        {{un=0,uniquepart=base,hash=421f701ed4ed770219168b6f80719917}{%
+           family={Gopinath},
+           familyi={G\bibinitperiod},
+           given={Rahul},
+           giveni={R\bibinitperiod},
+           givenun=0}}%
+      }
+      \strng{namehash}{421f701ed4ed770219168b6f80719917}
+      \strng{fullhash}{421f701ed4ed770219168b6f80719917}
+      \strng{fullhashraw}{421f701ed4ed770219168b6f80719917}
+      \strng{bibnamehash}{421f701ed4ed770219168b6f80719917}
+      \strng{authorbibnamehash}{421f701ed4ed770219168b6f80719917}
+      \strng{authornamehash}{421f701ed4ed770219168b6f80719917}
+      \strng{authorfullhash}{421f701ed4ed770219168b6f80719917}
+      \strng{authorfullhashraw}{421f701ed4ed770219168b6f80719917}
+      \field{sortinit}{2}
+      \field{sortinithash}{8b555b3791beccb63322c22f3320aa9a}
+      \field{extradatescope}{labelyear}
+      \field{labeldatesource}{}
+      \true{uniqueprimaryauthor}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{title}{Personal GitHub page}
+      \field{urlday}{24}
+      \field{urlmonth}{8}
+      \field{urlyear}{2025}
+      \field{year}{2024}
+      \field{urldateera}{ce}
+      \verb{urlraw}
+      \verb https://github.com/rahulgopinath/rahulgopinath.github.io
+      \endverb
+      \verb{url}
+      \verb https://github.com/rahulgopinath/rahulgopinath.github.io
+      \endverb
+    \endentry
+  \enddatalist
+\endrefsection
+\endinput
+

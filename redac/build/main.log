@@ -1,4 +1,4 @@
-This is LuaHBTeX, Version 1.22.0 (MiKTeX 25.4) (format=lualatex 2025.8.30)  31 AUG 2025 17:53
+This is LuaHBTeX, Version 1.22.0 (MiKTeX 25.4) (format=lualatex 2025.8.30)  1 SEP 2025 22:59
  system commands enabled.
  file:line:error style messages enabled.
 **c:/Users/install/gyminf/redac/main.tex
@@ -1568,40 +1568,40 @@ Package uniquecounter Info: New unique counter `rerunfilecheck' on input line 2
 )
 \Hy@SectionHShift=\skip102
 )
-Package hyperref Info: Option `colorlinks' set `true' on input line 86.
+Package hyperref Info: Option `colorlinks' set `true' on input line 73.
 Package french.ldf Info: Setting StandardItemizeEnv=true for
 (french.ldf)             compatibility with enumitem package,
-(french.ldf)             reported on input line 118.
+(french.ldf)             reported on input line 97.
 Package french.ldf Info: Setting StandardEnumerateEnv=true for
 (french.ldf)             compatibility with enumitem package,
-(french.ldf)             reported on input line 118.
+(french.ldf)             reported on input line 97.
 Package csquotes Info: Checking for multilingual support...
 Package csquotes Info: ... found 'babel' package.
 Package csquotes Info: Adjusting default style.
 Package csquotes Info: Redefining alias 'default' -> 'french'.
- (c:/Users/install/gyminf/redac/build/main.aux)
+ (./main.aux)
 \openout1 = main.aux
 
-LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 118.
-LaTeX Font Info:    ... okay on input line 118.
-LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 118.
-LaTeX Font Info:    ... okay on input line 118.
-LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 118.
-LaTeX Font Info:    ... okay on input line 118.
-LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 118.
-LaTeX Font Info:    ... okay on input line 118.
-LaTeX Font Info:    Checking defaults for TS1/cmr/m/n on input line 118.
-LaTeX Font Info:    ... okay on input line 118.
-LaTeX Font Info:    Checking defaults for TU/lmr/m/n on input line 118.
-LaTeX Font Info:    ... okay on input line 118.
-LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 118.
-LaTeX Font Info:    ... okay on input line 118.
-LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 118.
-LaTeX Font Info:    ... okay on input line 118.
-LaTeX Font Info:    Checking defaults for PD1/pdf/m/n on input line 118.
-LaTeX Font Info:    ... okay on input line 118.
-LaTeX Font Info:    Checking defaults for PU/pdf/m/n on input line 118.
-LaTeX Font Info:    ... okay on input line 118.
+LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 97.
+LaTeX Font Info:    ... okay on input line 97.
+LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 97.
+LaTeX Font Info:    ... okay on input line 97.
+LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 97.
+LaTeX Font Info:    ... okay on input line 97.
+LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 97.
+LaTeX Font Info:    ... okay on input line 97.
+LaTeX Font Info:    Checking defaults for TS1/cmr/m/n on input line 97.
+LaTeX Font Info:    ... okay on input line 97.
+LaTeX Font Info:    Checking defaults for TU/lmr/m/n on input line 97.
+LaTeX Font Info:    ... okay on input line 97.
+LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 97.
+LaTeX Font Info:    ... okay on input line 97.
+LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 97.
+LaTeX Font Info:    ... okay on input line 97.
+LaTeX Font Info:    Checking defaults for PD1/pdf/m/n on input line 97.
+LaTeX Font Info:    ... okay on input line 97.
+LaTeX Font Info:    Checking defaults for PU/pdf/m/n on input line 97.
+LaTeX Font Info:    ... okay on input line 97.
 
 Package fontspec Info: 
 (fontspec)             Adjusting the maths setup (use [no-math] to avoid
@@ -1609,59 +1609,58 @@ Package fontspec Info:
 
 \symlegacymaths=\mathgroup6
 LaTeX Font Info:    Overwriting symbol font `legacymaths' in version `bold'
-(Font)                  OT1/cmr/m/n --> OT1/cmr/bx/n on input line 118.
-LaTeX Font Info:    Redeclaring math accent \acute on input line 118.
-LaTeX Font Info:    Redeclaring math accent \grave on input line 118.
-LaTeX Font Info:    Redeclaring math accent \ddot on input line 118.
-LaTeX Font Info:    Redeclaring math accent \tilde on input line 118.
-LaTeX Font Info:    Redeclaring math accent \bar on input line 118.
-LaTeX Font Info:    Redeclaring math accent \breve on input line 118.
-LaTeX Font Info:    Redeclaring math accent \check on input line 118.
-LaTeX Font Info:    Redeclaring math accent \hat on input line 118.
-LaTeX Font Info:    Redeclaring math accent \dot on input line 118.
-LaTeX Font Info:    Redeclaring math accent \mathring on input line 118.
-LaTeX Font Info:    Redeclaring math symbol \Gamma on input line 118.
-LaTeX Font Info:    Redeclaring math symbol \Delta on input line 118.
-LaTeX Font Info:    Redeclaring math symbol \Theta on input line 118.
-LaTeX Font Info:    Redeclaring math symbol \Lambda on input line 118.
-LaTeX Font Info:    Redeclaring math symbol \Xi on input line 118.
-LaTeX Font Info:    Redeclaring math symbol \Pi on input line 118.
-LaTeX Font Info:    Redeclaring math symbol \Sigma on input line 118.
-LaTeX Font Info:    Redeclaring math symbol \Upsilon on input line 118.
-LaTeX Font Info:    Redeclaring math symbol \Phi on input line 118.
-LaTeX Font Info:    Redeclaring math symbol \Psi on input line 118.
-LaTeX Font Info:    Redeclaring math symbol \Omega on input line 118.
-LaTeX Font Info:    Redeclaring math symbol \mathdollar on input line 118.
-LaTeX Font Info:    Redeclaring symbol font `operators' on input line 118.
+(Font)                  OT1/cmr/m/n --> OT1/cmr/bx/n on input line 97.
+LaTeX Font Info:    Redeclaring math accent \acute on input line 97.
+LaTeX Font Info:    Redeclaring math accent \grave on input line 97.
+LaTeX Font Info:    Redeclaring math accent \ddot on input line 97.
+LaTeX Font Info:    Redeclaring math accent \tilde on input line 97.
+LaTeX Font Info:    Redeclaring math accent \bar on input line 97.
+LaTeX Font Info:    Redeclaring math accent \breve on input line 97.
+LaTeX Font Info:    Redeclaring math accent \check on input line 97.
+LaTeX Font Info:    Redeclaring math accent \hat on input line 97.
+LaTeX Font Info:    Redeclaring math accent \dot on input line 97.
+LaTeX Font Info:    Redeclaring math accent \mathring on input line 97.
+LaTeX Font Info:    Redeclaring math symbol \Gamma on input line 97.
+LaTeX Font Info:    Redeclaring math symbol \Delta on input line 97.
+LaTeX Font Info:    Redeclaring math symbol \Theta on input line 97.
+LaTeX Font Info:    Redeclaring math symbol \Lambda on input line 97.
+LaTeX Font Info:    Redeclaring math symbol \Xi on input line 97.
+LaTeX Font Info:    Redeclaring math symbol \Pi on input line 97.
+LaTeX Font Info:    Redeclaring math symbol \Sigma on input line 97.
+LaTeX Font Info:    Redeclaring math symbol \Upsilon on input line 97.
+LaTeX Font Info:    Redeclaring math symbol \Phi on input line 97.
+LaTeX Font Info:    Redeclaring math symbol \Psi on input line 97.
+LaTeX Font Info:    Redeclaring math symbol \Omega on input line 97.
+LaTeX Font Info:    Redeclaring math symbol \mathdollar on input line 97.
+LaTeX Font Info:    Redeclaring symbol font `operators' on input line 97.
 LaTeX Font Info:    Encoding `OT1' has changed to `TU' for symbol font
-(Font)              `operators' in the math version `normal' on input line 118.
-
+(Font)              `operators' in the math version `normal' on input line 97.
 LaTeX Font Info:    Overwriting symbol font `operators' in version `normal'
-(Font)                  OT1/cmr/m/n --> TU/lmr/m/n on input line 118.
+(Font)                  OT1/cmr/m/n --> TU/lmr/m/n on input line 97.
 LaTeX Font Info:    Encoding `OT1' has changed to `TU' for symbol font
-(Font)              `operators' in the math version `bold' on input line 118.
+(Font)              `operators' in the math version `bold' on input line 97.
 LaTeX Font Info:    Overwriting symbol font `operators' in version `bold'
-(Font)                  OT1/cmr/bx/n --> TU/lmr/m/n on input line 118.
+(Font)                  OT1/cmr/bx/n --> TU/lmr/m/n on input line 97.
 LaTeX Font Info:    Overwriting symbol font `operators' in version `normal'
-(Font)                  TU/lmr/m/n --> TU/lmr/m/n on input line 118.
+(Font)                  TU/lmr/m/n --> TU/lmr/m/n on input line 97.
 LaTeX Font Info:    Overwriting math alphabet `\mathit' in version `normal'
-(Font)                  OT1/cmr/m/it --> TU/lmr/m/it on input line 118.
+(Font)                  OT1/cmr/m/it --> TU/lmr/m/it on input line 97.
 LaTeX Font Info:    Overwriting math alphabet `\mathbf' in version `normal'
-(Font)                  OT1/cmr/bx/n --> TU/lmr/b/n on input line 118.
+(Font)                  OT1/cmr/bx/n --> TU/lmr/b/n on input line 97.
 LaTeX Font Info:    Overwriting math alphabet `\mathsf' in version `normal'
-(Font)                  OT1/cmss/m/n --> TU/lmss/m/n on input line 118.
+(Font)                  OT1/cmss/m/n --> TU/lmss/m/n on input line 97.
 LaTeX Font Info:    Overwriting math alphabet `\mathtt' in version `normal'
 (Font)                  OT1/cmtt/m/n --> TU/DejaVuSansMono(0)/m/n on input line
- 118.
+ 97.
 LaTeX Font Info:    Overwriting symbol font `operators' in version `bold'
-(Font)                  TU/lmr/m/n --> TU/lmr/b/n on input line 118.
+(Font)                  TU/lmr/m/n --> TU/lmr/b/n on input line 97.
 LaTeX Font Info:    Overwriting math alphabet `\mathit' in version `bold'
-(Font)                  OT1/cmr/bx/it --> TU/lmr/b/it on input line 118.
+(Font)                  OT1/cmr/bx/it --> TU/lmr/b/it on input line 97.
 LaTeX Font Info:    Overwriting math alphabet `\mathsf' in version `bold'
-(Font)                  OT1/cmss/bx/n --> TU/lmss/b/n on input line 118.
+(Font)                  OT1/cmss/bx/n --> TU/lmss/b/n on input line 97.
 LaTeX Font Info:    Overwriting math alphabet `\mathtt' in version `bold'
 (Font)                  OT1/cmtt/m/n --> TU/DejaVuSansMono(0)/b/n on input line
- 118.
+ 97.
 
 *geometry* driver: auto-detecting
 *geometry* detected driver: luatex
@@ -1753,23 +1752,22 @@ Package biblatex Info: Automatic encoding selection.
 
 \openout5 = main.bcf
 Package biblatex Info: Trying to load bibliographic data...
-Package biblatex Info: ... file 'main.bbl' not found.
-
-No file main.bbl.
-Package biblatex Info: Reference section=0 on input line 118.
-Package biblatex Info: Reference segment=0 on input line 118.
-Package hyperref Info: Link coloring ON on input line 118.
-(./main.out) (./main.out)
+Package biblatex Info: ... file 'main.bbl' found.
+ (c:/Users/install/gyminf/redac/build/main.bbl)
+Package biblatex Info: Reference section=0 on input line 97.
+Package biblatex Info: Reference segment=0 on input line 97.
+Package hyperref Info: Link coloring ON on input line 97.
+ (./main.out) (./main.out)
 \@outlinefile=\write6
 
 \openout6 = main.out
-LaTeX Font Info:    Trying to load font information for U+msa on input line 125
+LaTeX Font Info:    Trying to load font information for U+msa on input line 102
 .
 
 (C:/Users/install/AppData/Local/Programs/MiKTeX/tex/latex/amsfonts/umsa.fd
 File: umsa.fd 2013/01/14 v3.01 AMS symbols A
 )
-LaTeX Font Info:    Trying to load font information for U+msb on input line 125
+LaTeX Font Info:    Trying to load font information for U+msb on input line 102
 .
 
 (C:/Users/install/AppData/Local/Programs/MiKTeX/tex/latex/amsfonts/umsb.fd
@@ -1779,8 +1777,7 @@ File: umsb.fd 2013/01/14 v3.01 AMS symbols B
 [1
 
 {C:/Users/install/AppData/Local/MiKTeX/fonts/map/pdftex/pdftex.map}]
-
-[2] (./main.toc
+(./main.toc
 
 
 warning  (pdf backend): ignoring duplicate destination with the name 'page.1'
@@ -1801,23 +1798,15 @@ No file main.lot.
 \openout9 = main.lot
 
 
-
-warning  (pdf backend): ignoring duplicate destination with the name 'page.2'
 [2]
-
-LaTeX Warning: Citation 'Illich' on page 3 undefined on input line 163.
-
-
-LaTeX Warning: Citation 'Foucault' on page 3 undefined on input line 165.
-
-
-LaTeX Warning: Citation 'Deleuze' on page 3 undefined on input line 165.
+Overfull \hbox (5.22679pt too wide) in paragraph at lines 157--160
+\TU/lmr/m/n/10.95 Main-te-nant dans une pers-pec-tive d’\TU/lmr/m/it/10.95 em-
+po-werment\TU/lmr/m/n/10.95 , telle que les four-nis-seurs d’IA nous le pro-me
+ttent ([]\TU/lmr/m/sc/10.95 Business
+ []
 
 
-LaTeX Warning: Citation 'email' on page 3 undefined on input line 177.
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 177--180
+Underfull \hbox (badness 10000) in paragraph at lines 157--160
 
  []
 
@@ -1827,115 +1816,25 @@ Underfull \hbox (badness 10000) in paragraph at lines 177--180
 
 ]
 
-LaTeX Warning: Citation 'wenger' on page 4 undefined on input line 184.
-
-
-c:/Users/install/gyminf/redac/main.tex:186: LaTeX Error: There's no line here t
-o end.
-
-See the LaTeX manual or LaTeX Companion for explanation.
-Type  H <return>  for immediate help.
- ...                                              
-                                                  
-l.186 \\M
-         aintenant que nous avons défini le cadre social, voyons tout d'abo...
-Your command was ignored.
-Type  I <command> <return>  to replace it with another command,
-or  <return>  to continue without it.
-
-
-LaTeX Warning: Citation 'Sentance2017WiPSCE' on page 4 undefined on input line 
-207.
-
-
-LaTeX Warning: Citation 'Sentance2019CSE' on page 4 undefined on input line 207
-.
-
-
-Overfull \hbox (75.73755pt too wide) in paragraph at lines 207--208
-[]\TU/lmr/m/n/10.95 Hy-po-thèse fon-da-trice, ap-puyée par la lit-té-ra-ture : la per-ti-nence de la m
-é-tho-do-lo-gie PRIMM ([])
- []
-
-
-
 [4]
-
-LaTeX Warning: Citation 'messer2023' on page 5 undefined on input line 208.
-
-
-LaTeX Warning: Citation 'zimmermann2024' on page 5 undefined on input line 209.
-
-
-
-LaTeX Warning: Citation 'CrewsZielger98' on page 5 undefined on input line 209.
-
-
-
-Overfull \hbox (68.41203pt too wide) in paragraph at lines 209--210
+Overfull \hbox (32.2989pt too wide) in paragraph at lines 189--190
 []\TU/lmr/m/n/10.95 Hy-po-thèse : in-té-rêt de la re-pré-sen-ta-tion lo-gi-g
 ramme (\TU/lmr/m/it/10.95 flow-chart\TU/lmr/m/n/10.95 ) comme moyen d’ap-pren-
-tis-sage ([]),
+tis-sage ([]\TU/lmr/m/sc/10.95 Zimmermann
  []
-
-
-LaTeX Warning: Citation 'AndersonKrathwohl2001' on page 5 undefined on input li
-ne 210.
-
-
-LaTeX Warning: Citation 'Fuller2007' on page 5 undefined on input line 210.
-
-
-LaTeX Warning: Citation 'HattieTimperley2007' on page 5 undefined on input line
- 211.
-
-
-LaTeX Warning: Citation 'Shute2008' on page 5 undefined on input line 211.
 
 
 
 [5]
-Runaway argument?
-{Soit à la génération du script, un logigramme statique (plus faci\ETC.
-c:/Users/install/gyminf/redac/main.tex:1262: Paragraph ended before \text@comma
-nd was complete.
-<to be read again> 
-                   \par 
-l.1262 ...aption{Exemple de flowchart "for each"}}
-                                                  
-I suspect you've forgotten a `}', causing me to apply this
-control sequence to too much text. How can we recover?
-My plan is to forget the whole thing and hope for the best.
-
-
-LaTeX Warning: Citation 'didask' on page 6 undefined on input line 1262.
-
-
-Overfull \hbox (25.48418pt too wide) in paragraph at lines 1262--1262
-[][][]$\TU/lmr/m/n/10.95 https://openclassrooms.com/fr/courses/7168871-[]apprene
-z-[]les-[]bases-[]du-[]langage-[]python$[][] 
- []
-
-
 
 [6]
 
 [7]
 
-LaTeX Warning: Citation 'Altadmri_Brown_2015' on page 8 undefined on input line
- 1262.
-
-
-
 [8]
 
-LaTeX Warning: Citation 'SilentTeacher' on page 9 undefined on input line 1262.
-
-
-
-
 [9]
-Underfull \hbox (badness 10000) in paragraph at lines 1262--1262
+Underfull \hbox (badness 10000) in paragraph at lines 320--321
 
  []
 
@@ -1944,60 +1843,67 @@ Underfull \hbox (badness 10000) in paragraph at lines 1262--1262
 [10
 
 ]
-<app_vide_zones.png, id=505, 660.21657pt x 552.56438pt>
+<app_vide_zones.png, id=542, 660.21657pt x 552.56438pt>
 File: app_vide_zones.png Graphic file (type png)
 <use app_vide_zones.png>
-Package luatex.def Info: app_vide_zones.png  used on input line 1262.
+Package luatex.def Info: app_vide_zones.png  used on input line 357.
 (luatex.def)             Requested size: 507.03093pt x 424.37135pt.
 
-Overfull \hbox (27.37498pt too wide) in paragraph at lines 1262--1262
+Overfull \hbox (17.0pt too wide) in paragraph at lines 352--374
 []$[]$ 
  []
 
-Runaway argument?
- enabled = True y = 1 def build(flag): output = not flag return outpu\ETC.
-c:/Users/install/gyminf/redac/main.tex:1262: Paragraph ended before \FV@BeginSc
-anning was complete.
-<to be read again> 
-                   \par 
-l.1262 ...aption{Exemple de flowchart "for each"}}
+\pydata@fh@0=\write10
+
+\openout10 = _FAD58DE7366495DB4650CFEFAC2FCD61.data.minted
+runsystem(latexminted config  --timestamp 20250901225958 FAD58DE7366495DB4650CFE
+FAC2FCD61)...failed. 
+
+c:/Users/install/gyminf/redac/main.tex:388: Package minted Error: minted v3+ ex
+ecutable is not installed or is not added to PATH; or MiKTeX is being used with
+ -aux-directory or -output-directory without setting a TEXMF_OUTPUT_DIRECTORY e
+nvironment variable.
+
+See the minted package documentation for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
                                                   
-I suspect you've forgotten a `}', causing me to apply this
-control sequence to too much text. How can we recover?
-My plan is to forget the whole thing and hope for the best.
+l.388 \end{minted}
+                  
+(That was another \errmessage.)
 
-<Flowchart_def-f-a-return.png, id=506, 581.92406pt x 421.575pt>
-File: Flowchart_def-f-a-return.png Graphic file (type png)
-<use Flowchart_def-f-a-return.png>
-Package luatex.def Info: Flowchart_def-f-a-return.png  used on input line 1262.
-
-(luatex.def)             Requested size: 409.72125pt x 296.83087pt.
-
+(./_minted/default.style.minted)
+(./_minted/7B47BD6BCEF217C56943A2D1391640AB.highlight.minted
 
 [11
 
-<./app_vide_zones.png>]
-<Defi_Console_def-f-a-return.png, id=519, 694.84593pt x 331.2375pt>
+<./app_vide_zones.png>])
+<Flowchart_def-f-a-return.png, id=555, 581.92406pt x 421.575pt>
+File: Flowchart_def-f-a-return.png Graphic file (type png)
+<use Flowchart_def-f-a-return.png>
+Package luatex.def Info: Flowchart_def-f-a-return.png  used on input line 393.
+(luatex.def)             Requested size: 409.72125pt x 296.83087pt.
+<Defi_Console_def-f-a-return.png, id=556, 694.84593pt x 331.2375pt>
 File: Defi_Console_def-f-a-return.png Graphic file (type png)
 <use Defi_Console_def-f-a-return.png>
-Package luatex.def Info: Defi_Console_def-f-a-return.png  used on input line 12
-62.
+Package luatex.def Info: Defi_Console_def-f-a-return.png  used on input line 40
+1.
 (luatex.def)             Requested size: 409.72125pt x 195.31216pt.
 
-Underfull \hbox (badness 10000) in paragraph at lines 1262--1262
+Underfull \hbox (badness 10000) in paragraph at lines 397--404
 
  []
 
 
 
 [12<./Flowchart_def-f-a-return.png><./Defi_Console_def-f-a-return.png>]
-<ui_choix.png, id=528, 1011.78pt x 429.10312pt>
+<ui_choix.png, id=565, 1011.78pt x 429.10312pt>
 File: ui_choix.png Graphic file (type png)
 <use ui_choix.png>
-Package luatex.def Info: ui_choix.png  used on input line 1262.
+Package luatex.def Info: ui_choix.png  used on input line 413.
 (luatex.def)             Requested size: 409.72125pt x 173.76616pt.
 
-Overfull \hbox (27.37498pt too wide) in paragraph at lines 1262--1262
+Overfull \hbox (17.0pt too wide) in paragraph at lines 408--427
 []$[]$ 
  []
 
@@ -2006,467 +1912,101 @@ Overfull \hbox (27.37498pt too wide) in paragraph at lines 1262--1262
 [13
 
 <./ui_choix.png>]
-<app_choix_def.png, id=534, 963.6pt x 542.025pt>
+<app_choix_def.png, id=571, 963.6pt x 542.025pt>
 File: app_choix_def.png Graphic file (type png)
 <use app_choix_def.png>
-Package luatex.def Info: app_choix_def.png  used on input line 1262.
+Package luatex.def Info: app_choix_def.png  used on input line 442.
 (luatex.def)             Requested size: 512.14963pt x 288.09067pt.
 
-Overfull \hbox (27.37498pt too wide) in paragraph at lines 1262--1262
+Overfull \hbox (17.0pt too wide) in paragraph at lines 430--448
 []$[]$ 
  []
 
 
-LaTeX Warning: Citation 'codemirror6' on page 14 undefined on input line 1262.
+LaTeX Warning: File `architecture_generateur.png' not found on input line 467.
 
 
-LaTeX Warning: Citation 'skulpt' on page 14 undefined on input line 1262.
+c:/Users/install/gyminf/redac/main.tex:467: Package luatex.def Error: File `arc
+hitecture_generateur.png' not found: using draft setting.
+
+See the luatex.def package documentation for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.467 ...aspectratio]{architecture_generateur.png}
+                                                  
+Try typing  <return>  to proceed.
+If that doesn't work, type  X <return>  to quit.
 
 
-LaTeX Warning: Citation 'brython' on page 14 undefined on input line 1262.
+Underfull \hbox (badness 10000) in paragraph at lines 474--475
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 475--476
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 476--477
+
+ []
+
+
+Overfull \hbox (17.0pt too wide) in paragraph at lines 463--480
+[]$[]$ 
+ []
 
 
 
 [14
 
 <./app_choix_def.png>]
-Underfull \hbox (badness 10000) in paragraph at lines 1262--1262
-
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 1262--1262
-
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 1262--1262
-
- []
-
-
-Overfull \hbox (27.37498pt too wide) in paragraph at lines 1262--1262
-[]$[]$ 
- []
-
-
 
 [15]
-
-LaTeX Warning: Reference `fig:proposed_architecture_v3' on page 16 undefined on
- input line 1262.
+Overfull \vbox (59.10194pt too high) has occurred while \output is active []
 
 
-Overfull \hbox (65.0035pt too wide) in paragraph at lines 1262--1262
+
+[16]
+
+LaTeX Warning: Reference `fig:proposed_architecture_v3' on page 17 undefined on
+ input line 496.
+
+
+Overfull \hbox (54.62851pt too wide) in paragraph at lines 496--497
 []\TU/lmr/m/n/10.95 La gé-né-ra-tion d’un exer-cice suit un flux contrôl
 é, or-ches-tré par la fonc-tion [][][][][][]
  []
 
 
-Overfull \hbox (36.90703pt too wide) in paragraph at lines 1262--1262
-\TU/lmr/m/n/10.95 pré-dé-fi-nies par type, puis les struc-tures de contrôle. Les fonc-tions comme [][][][][][]
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 1262--1262
+Underfull \hbox (badness 10000) in paragraph at lines 559--560
 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 1262--1262
+Underfull \hbox (badness 10000) in paragraph at lines 561--562
 
  []
 
 
-LaTeX Warning: Reference `fig:architecture' on page 16 undefined on input line 
-1262.
 
-
-
-[16
+[17
 
 ]
 
-[17]
-c:/Users/install/gyminf/redac/main.tex:1262: Illegal parameter number in definit
-ion of \Hy@tempa.
-<to be read again> 
-                   L
-l.1262 ...aption{Exemple de flowchart "for each"}}
-                                                  
-You meant to type ## instead of #, right?
-Or maybe a } was forgotten somewhere earlier, and things
-are all screwed up? I'm going to assume that you meant ##.
-
-c:/Users/install/gyminf/redac/main.tex:1262: Illegal parameter number in definit
-ion of \Hy@tempa.
-<to be read again> 
-                   L
-l.1262 ...aption{Exemple de flowchart "for each"}}
-                                                  
-You meant to type ## instead of #, right?
-Or maybe a } was forgotten somewhere earlier, and things
-are all screwed up? I'm going to assume that you meant ##.
-
-c:/Users/install/gyminf/redac/main.tex:1262: Illegal parameter number in definit
-ion of \Hy@tempa.
-<to be read again> 
-                   L
-l.1262 ...aption{Exemple de flowchart "for each"}}
-                                                  
-You meant to type ## instead of #, right?
-Or maybe a } was forgotten somewhere earlier, and things
-are all screwed up? I'm going to assume that you meant ##.
-
-c:/Users/install/gyminf/redac/main.tex:1262: Illegal parameter number in definit
-ion of \Hy@tempa.
-<to be read again> 
-                   L
-l.1262 ...aption{Exemple de flowchart "for each"}}
-                                                  
-You meant to type ## instead of #, right?
-Or maybe a } was forgotten somewhere earlier, and things
-are all screwed up? I'm going to assume that you meant ##.
-
-c:/Users/install/gyminf/redac/main.tex:1262: Illegal parameter number in definit
-ion of \Hy@tempa.
-<to be read again> 
-                   L
-l.1262 ...aption{Exemple de flowchart "for each"}}
-                                                  
-You meant to type ## instead of #, right?
-Or maybe a } was forgotten somewhere earlier, and things
-are all screwed up? I'm going to assume that you meant ##.
-
-c:/Users/install/gyminf/redac/main.tex:1262: Illegal parameter number in definit
-ion of \Hy@tempa.
-<to be read again> 
-                   L
-l.1262 ...aption{Exemple de flowchart "for each"}}
-                                                  
-You meant to type ## instead of #, right?
-Or maybe a } was forgotten somewhere earlier, and things
-are all screwed up? I'm going to assume that you meant ##.
-
-c:/Users/install/gyminf/redac/main.tex:1262: Illegal parameter number in definit
-ion of \Hy@tempa.
-<to be read again> 
-                   L
-l.1262 ...aption{Exemple de flowchart "for each"}}
-                                                  
-You meant to type ## instead of #, right?
-Or maybe a } was forgotten somewhere earlier, and things
-are all screwed up? I'm going to assume that you meant ##.
-
-c:/Users/install/gyminf/redac/main.tex:1262: Illegal parameter number in definit
-ion of \Hy@tempa.
-<to be read again> 
-                   L
-l.1262 ...aption{Exemple de flowchart "for each"}}
-                                                  
-You meant to type ## instead of #, right?
-Or maybe a } was forgotten somewhere earlier, and things
-are all screwed up? I'm going to assume that you meant ##.
-
-c:/Users/install/gyminf/redac/main.tex:1262: Illegal parameter number in definit
-ion of \Hy@tempa.
-<to be read again> 
-                   L
-l.1262 ...aption{Exemple de flowchart "for each"}}
-                                                  
-You meant to type ## instead of #, right?
-Or maybe a } was forgotten somewhere earlier, and things
-are all screwed up? I'm going to assume that you meant ##.
-
-
-Overfull \hbox (54.49356pt too wide) in paragraph at lines 1262--1262
+[18]
+Overfull \hbox (30.40361pt too wide) in paragraph at lines 594--595
 []\TU/lmr/m/n/10.95 ga-ran-tit les quo-tas (\TU/DejaVuSansMono(0)/m/n/10.95 ensu
 reVariablesForOptions\TU/lmr/m/n/10.95 , [][]ligne 1452[][]), et crée au be-soi
 n via \TU/DejaVuSansMono(0)/m/n/10.95 declareVariable
  []
 
-c:/Users/install/gyminf/redac/main.tex:1262: Illegal parameter number in definit
-ion of \Hy@tempa.
-<to be read again> 
-                   L
-l.1262 ...aption{Exemple de flowchart "for each"}}
-                                                  
-You meant to type ## instead of #, right?
-Or maybe a } was forgotten somewhere earlier, and things
-are all screwed up? I'm going to assume that you meant ##.
-
-c:/Users/install/gyminf/redac/main.tex:1262: Illegal parameter number in definit
-ion of \Hy@tempa.
-<to be read again> 
-                   L
-l.1262 ...aption{Exemple de flowchart "for each"}}
-                                                  
-You meant to type ## instead of #, right?
-Or maybe a } was forgotten somewhere earlier, and things
-are all screwed up? I'm going to assume that you meant ##.
-
-c:/Users/install/gyminf/redac/main.tex:1262: Illegal parameter number in definit
-ion of \Hy@tempa.
-<to be read again> 
-                   L
-l.1262 ...aption{Exemple de flowchart "for each"}}
-                                                  
-You meant to type ## instead of #, right?
-Or maybe a } was forgotten somewhere earlier, and things
-are all screwed up? I'm going to assume that you meant ##.
 
 
-Overfull \hbox (3.01575pt too wide) in paragraph at lines 1262--1262
-[]\TU/lmr/bx/n/10.95 Opé-ra-tions par type mi-ni-ma-le-ment ga-ran-ties \TU/lm
-r/m/n/10.95 : \TU/DejaVuSansMono(0)/m/n/10.95 ensureTypeSpecificOperations \TU/
-lmr/m/n/10.95 ([][]ligne
- []
-
-c:/Users/install/gyminf/redac/main.tex:1262: Illegal parameter number in definit
-ion of \Hy@tempa.
-<to be read again> 
-                   L
-l.1262 ...aption{Exemple de flowchart "for each"}}
-                                                  
-You meant to type ## instead of #, right?
-Or maybe a } was forgotten somewhere earlier, and things
-are all screwed up? I'm going to assume that you meant ##.
-
-c:/Users/install/gyminf/redac/main.tex:1262: Illegal parameter number in definit
-ion of \Hy@tempa.
-<to be read again> 
-                   L
-l.1262 ...aption{Exemple de flowchart "for each"}}
-                                                  
-You meant to type ## instead of #, right?
-Or maybe a } was forgotten somewhere earlier, and things
-are all screwed up? I'm going to assume that you meant ##.
-
-c:/Users/install/gyminf/redac/main.tex:1262: Illegal parameter number in definit
-ion of \Hy@tempa.
-<to be read again> 
-                   L
-l.1262 ...aption{Exemple de flowchart "for each"}}
-                                                  
-You meant to type ## instead of #, right?
-Or maybe a } was forgotten somewhere earlier, and things
-are all screwed up? I'm going to assume that you meant ##.
-
-c:/Users/install/gyminf/redac/main.tex:1262: Illegal parameter number in definit
-ion of \Hy@tempa.
-<to be read again> 
-                   L
-l.1262 ...aption{Exemple de flowchart "for each"}}
-                                                  
-You meant to type ## instead of #, right?
-Or maybe a } was forgotten somewhere earlier, and things
-are all screwed up? I'm going to assume that you meant ##.
-
-c:/Users/install/gyminf/redac/main.tex:1262: Illegal parameter number in definit
-ion of \Hy@tempa.
-<to be read again> 
-                   L
-l.1262 ...aption{Exemple de flowchart "for each"}}
-                                                  
-You meant to type ## instead of #, right?
-Or maybe a } was forgotten somewhere earlier, and things
-are all screwed up? I'm going to assume that you meant ##.
-
-c:/Users/install/gyminf/redac/main.tex:1262: Illegal parameter number in definit
-ion of \Hy@tempa.
-<to be read again> 
-                   L
-l.1262 ...aption{Exemple de flowchart "for each"}}
-                                                  
-You meant to type ## instead of #, right?
-Or maybe a } was forgotten somewhere earlier, and things
-are all screwed up? I'm going to assume that you meant ##.
-
-c:/Users/install/gyminf/redac/main.tex:1262: Illegal parameter number in definit
-ion of \Hy@tempa.
-<to be read again> 
-                   L
-l.1262 ...aption{Exemple de flowchart "for each"}}
-                                                  
-You meant to type ## instead of #, right?
-Or maybe a } was forgotten somewhere earlier, and things
-are all screwed up? I'm going to assume that you meant ##.
-
-c:/Users/install/gyminf/redac/main.tex:1262: Illegal parameter number in definit
-ion of \Hy@tempa.
-<to be read again> 
-                   L
-l.1262 ...aption{Exemple de flowchart "for each"}}
-                                                  
-You meant to type ## instead of #, right?
-Or maybe a } was forgotten somewhere earlier, and things
-are all screwed up? I'm going to assume that you meant ##.
-
-c:/Users/install/gyminf/redac/main.tex:1262: Illegal parameter number in definit
-ion of \Hy@tempa.
-<to be read again> 
-                   L
-l.1262 ...aption{Exemple de flowchart "for each"}}
-                                                  
-You meant to type ## instead of #, right?
-Or maybe a } was forgotten somewhere earlier, and things
-are all screwed up? I'm going to assume that you meant ##.
-
-
-
-[18]
-c:/Users/install/gyminf/redac/main.tex:1262: Illegal parameter number in definit
-ion of \Hy@tempa.
-<to be read again> 
-                   L
-l.1262 ...aption{Exemple de flowchart "for each"}}
-                                                  
-You meant to type ## instead of #, right?
-Or maybe a } was forgotten somewhere earlier, and things
-are all screwed up? I'm going to assume that you meant ##.
-
-c:/Users/install/gyminf/redac/main.tex:1262: Illegal parameter number in definit
-ion of \Hy@tempa.
-<to be read again> 
-                   L
-l.1262 ...aption{Exemple de flowchart "for each"}}
-                                                  
-You meant to type ## instead of #, right?
-Or maybe a } was forgotten somewhere earlier, and things
-are all screwed up? I'm going to assume that you meant ##.
-
-c:/Users/install/gyminf/redac/main.tex:1262: Illegal parameter number in definit
-ion of \Hy@tempa.
-<to be read again> 
-                   L
-l.1262 ...aption{Exemple de flowchart "for each"}}
-                                                  
-You meant to type ## instead of #, right?
-Or maybe a } was forgotten somewhere earlier, and things
-are all screwed up? I'm going to assume that you meant ##.
-
-c:/Users/install/gyminf/redac/main.tex:1262: Illegal parameter number in definit
-ion of \Hy@tempa.
-<to be read again> 
-                   L
-l.1262 ...aption{Exemple de flowchart "for each"}}
-                                                  
-You meant to type ## instead of #, right?
-Or maybe a } was forgotten somewhere earlier, and things
-are all screwed up? I'm going to assume that you meant ##.
-
-c:/Users/install/gyminf/redac/main.tex:1262: Illegal parameter number in definit
-ion of \Hy@tempa.
-<to be read again> 
-                   L
-l.1262 ...aption{Exemple de flowchart "for each"}}
-                                                  
-You meant to type ## instead of #, right?
-Or maybe a } was forgotten somewhere earlier, and things
-are all screwed up? I'm going to assume that you meant ##.
-
-c:/Users/install/gyminf/redac/main.tex:1262: Illegal parameter number in definit
-ion of \Hy@tempa.
-<to be read again> 
-                   L
-l.1262 ...aption{Exemple de flowchart "for each"}}
-                                                  
-You meant to type ## instead of #, right?
-Or maybe a } was forgotten somewhere earlier, and things
-are all screwed up? I'm going to assume that you meant ##.
-
-c:/Users/install/gyminf/redac/main.tex:1262: Illegal parameter number in definit
-ion of \Hy@tempa.
-<to be read again> 
-                   L
-l.1262 ...aption{Exemple de flowchart "for each"}}
-                                                  
-You meant to type ## instead of #, right?
-Or maybe a } was forgotten somewhere earlier, and things
-are all screwed up? I'm going to assume that you meant ##.
-
-c:/Users/install/gyminf/redac/main.tex:1262: Illegal parameter number in definit
-ion of \Hy@tempa.
-<to be read again> 
-                   L
-l.1262 ...aption{Exemple de flowchart "for each"}}
-                                                  
-You meant to type ## instead of #, right?
-Or maybe a } was forgotten somewhere earlier, and things
-are all screwed up? I'm going to assume that you meant ##.
-
-c:/Users/install/gyminf/redac/main.tex:1262: Illegal parameter number in definit
-ion of \Hy@tempa.
-<to be read again> 
-                   L
-l.1262 ...aption{Exemple de flowchart "for each"}}
-                                                  
-You meant to type ## instead of #, right?
-Or maybe a } was forgotten somewhere earlier, and things
-are all screwed up? I'm going to assume that you meant ##.
-
-c:/Users/install/gyminf/redac/main.tex:1262: Illegal parameter number in definit
-ion of \Hy@tempa.
-<to be read again> 
-                   L
-l.1262 ...aption{Exemple de flowchart "for each"}}
-                                                  
-You meant to type ## instead of #, right?
-Or maybe a } was forgotten somewhere earlier, and things
-are all screwed up? I'm going to assume that you meant ##.
-
-c:/Users/install/gyminf/redac/main.tex:1262: Illegal parameter number in definit
-ion of \Hy@tempa.
-<to be read again> 
-                   L
-l.1262 ...aption{Exemple de flowchart "for each"}}
-                                                  
-You meant to type ## instead of #, right?
-Or maybe a } was forgotten somewhere earlier, and things
-are all screwed up? I'm going to assume that you meant ##.
-
-c:/Users/install/gyminf/redac/main.tex:1262: Illegal parameter number in definit
-ion of \Hy@tempa.
-<to be read again> 
-                   L
-l.1262 ...aption{Exemple de flowchart "for each"}}
-                                                  
-You meant to type ## instead of #, right?
-Or maybe a } was forgotten somewhere earlier, and things
-are all screwed up? I'm going to assume that you meant ##.
-
-c:/Users/install/gyminf/redac/main.tex:1262: Illegal parameter number in definit
-ion of \Hy@tempa.
-<to be read again> 
-                   L
-l.1262 ...aption{Exemple de flowchart "for each"}}
-                                                  
-You meant to type ## instead of #, right?
-Or maybe a } was forgotten somewhere earlier, and things
-are all screwed up? I'm going to assume that you meant ##.
-
-c:/Users/install/gyminf/redac/main.tex:1262: Illegal parameter number in definit
-ion of \Hy@tempa.
-<to be read again> 
-                   L
-l.1262 ...aption{Exemple de flowchart "for each"}}
-                                                  
-You meant to type ## instead of #, right?
-Or maybe a } was forgotten somewhere earlier, and things
-are all screwed up? I'm going to assume that you meant ##.
-
-c:/Users/install/gyminf/redac/main.tex:1262: Illegal parameter number in definit
-ion of \Hy@tempa.
-<to be read again> 
-                   L
-l.1262 ...aption{Exemple de flowchart "for each"}}
-                                                  
-You meant to type ## instead of #, right?
-Or maybe a } was forgotten somewhere earlier, and things
-are all screwed up? I'm going to assume that you meant ##.
-
-
-Overfull \hbox (754.34218pt too wide) detected at line 1262
+[19]
+Overfull \hbox (726.9672pt too wide) detected at line 641
 [] \OMS/cmsy/m/n/10.95 ! []\OML/cmm/m/it/10.95 ;  [] \OMS/cmsy/m/n/10.95 ! []\O
 ML/cmm/m/it/10.95 ;  [] \OMS/cmsy/m/n/10.95 ! []\OML/cmm/m/it/10.95 ;  [] \OMS/
 cmsy/m/n/10.95 ! []\OML/cmm/m/it/10.95 ;  [] \OMS/cmsy/m/n/10.95 ! []\OML/cmm/m
@@ -2474,117 +2014,339 @@ cmsy/m/n/10.95 ! []\OML/cmm/m/it/10.95 ;  [] \OMS/cmsy/m/n/10.95 ! []\OML/cmm/m
  []
 
 
-LaTeX Warning: Reference `fig:genfunc_flow' on page 19 undefined on input line 
-1262.
+LaTeX Warning: File `gen_func_flow.png' not found on input line 655.
 
 
-LaTeX Warning: `!h' float specifier changed to `!ht'.
+c:/Users/install/gyminf/redac/main.tex:655: Package luatex.def Error: File `gen
+_func_flow.png' not found: using draft setting.
+
+See the luatex.def package documentation for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.655 ...idth, keepaspectratio]{gen_func_flow.png}
+                                                  
+Try typing  <return>  to proceed.
+If that doesn't work, type  X <return>  to quit.
 
 
-
-[19]
 
 [20]
-Runaway argument?
- enabled = True y = 1 def build(flag): output = not flag return outpu\ETC.
-c:/Users/install/gyminf/redac/main.tex:1262: Paragraph ended before \FV@BeginSc
-anning was complete.
-<to be read again> 
-                   \par 
-l.1262 ...aption{Exemple de flowchart "for each"}}
-                                                  
-I suspect you've forgotten a `}', causing me to apply this
-control sequence to too much text. How can we recover?
-My plan is to forget the whole thing and hope for the best.
 
-c:/Users/install/gyminf/redac/main.tex:1262: Illegal parameter number in definit
-ion of \Hy@tempa.
-<to be read again> 
-                   L
-l.1262 ...aption{Exemple de flowchart "for each"}}
-                                                  
-You meant to type ## instead of #, right?
-Or maybe a } was forgotten somewhere earlier, and things
-are all screwed up? I'm going to assume that you meant ##.
+[21] (./_minted/7B47BD6BCEF217C56943A2D1391640AB.highlight.minted)
 
-c:/Users/install/gyminf/redac/main.tex:1262: Illegal parameter number in definit
-ion of \Hy@tempa.
-<to be read again> 
-                   L
-l.1262 ...aption{Exemple de flowchart "for each"}}
-                                                  
-You meant to type ## instead of #, right?
-Or maybe a } was forgotten somewhere earlier, and things
-are all screwed up? I'm going to assume that you meant ##.
+c:/Users/install/gyminf/redac/main.tex:692: Package minted Error: Cannot highli
+ght code (minted executable is unavailable or disabled); attempting to typeset 
+without highlighting.
 
-c:/Users/install/gyminf/redac/main.tex:1262: Illegal parameter number in definit
-ion of \Hy@tempa.
-<to be read again> 
-                   L
-l.1262 ...aption{Exemple de flowchart "for each"}}
+See the minted package documentation for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
                                                   
-You meant to type ## instead of #, right?
-Or maybe a } was forgotten somewhere earlier, and things
-are all screwed up? I'm going to assume that you meant ##.
+l.692 \end{minted}
+                  
+(That was another \errmessage.)
 
-c:/Users/install/gyminf/redac/main.tex:1262: Argument of \FV@BeginScanning has a
-n extra }.
+
+c:/Users/install/gyminf/redac/main.tex:709: Package minted Error: Cannot highli
+ght code (minted executable is unavailable or disabled); attempting to typeset 
+without highlighting.
+
+See the minted package documentation for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.709 \end{minted}
+                  
+(That was another \errmessage.)
+
+
+
+[22]
+Overfull \hbox (11.27354pt too wide) in paragraph at lines 710--712
+[][][][][][] \TU/lmr/m/n/10.95 une va-riable exis-tante. Dans notre cas, elle la
+ trouve et re-tourne [][][][][][].
+ []
+
+
+Overfull \hbox (4.4938pt too wide) in paragraph at lines 716--717
+\TU/lmr/bx/n/10.95 que-Var-Name(’bool’)[] \TU/lmr/m/n/10.95 est fait. Cette fonc-tion choi-sit un nom s
+é-man-tique dans [][][][][][],
+ []
+
+
+
+[23]
+
+[24]
+c:/Users/install/gyminf/redac/main.tex:775: Misplaced \noalign.
+\hline ->\noalign 
+                  {\ifnum 0=`}\fi \hrule \@height \arrayrulewidth \futurelet...
+l.775 \hline
+            
+I expect to see \noalign only after the \cr of
+an alignment. Proceed, and I'll ignore this case.
+
+
+c:/Users/install/gyminf/redac/main.tex:784: Package minted Error: Cannot highli
+ght code (minted executable is unavailable or disabled); attempting to typeset 
+without highlighting.
+
+See the minted package documentation for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.784 \end{minted}
+                  
+(That was another \errmessage.)
+
+
+Overfull \hbox (2658.82027pt too wide) in paragraph at lines 788--788
+[]    \TU/DejaVuSansMono(0)/m/n/10.95 Module(body=[Assign(targets=[Name(id='x', ctx=Store())], value=Constant(value=1)), If(test=Compare(left=Name(id='x', ctx=Load()), ops=[Gt()], comparators=[Constant(value=0)]), body=[Assign(targets=[Name(id='y', ctx=Store())], value=Constant(value=1))], orelse=[Assign(targets=[Name(id='y', ctx=Store())], value=UnaryOp(op=USub(), operand=Constant(value=1)))]), Expr(value=Call(func=Name(id='print', ctx=Load()), args=[Name(id='y', ctx=Load())], keywords=[]))], type_ignores=[])[] 
+ []
+
+
+
+[25
+
+
+]
+<logigramme_minimal.png, id=684, 162.6075pt x 692.5875pt>
+File: logigramme_minimal.png Graphic file (type png)
+<use logigramme_minimal.png>
+Package luatex.def Info: logigramme_minimal.png  used on input line 842.
+(luatex.def)             Requested size: 153.64644pt x 654.46695pt.
+
+
+[26]
+
+[27<./logigramme_minimal.png>]
+Overfull \hbox (160.28058pt too wide) in paragraph at lines 860--860
+[]\TU/DejaVuSansMono(0)/m/n/10.95 [('node01', 'Start'), ('node02', 'x = 1'), ('n
+ode03', 'x > 0'), ('node04', 'y = 1'), ('node05', 'y = -
+ []
+
+
+Overfull \hbox (898.63531pt too wide) in paragraph at lines 860--860
+[]\TU/DejaVuSansMono(0)/m/n/10.95 {('node02', 'node03', ''), ('node04', 'node06'
+, ''), ('node03', 'node05', 'Non'), ('node06', 'node07', ''), ('node03', 'node04
+', 'Oui'), ('node01', 'node02', ''), ('node07', 'node08', ''), ('node05', 'node0
+6', '')}[] 
+ []
+
+
+Overfull \hbox (13.13196pt too wide) in paragraph at lines 873--874
+\TU/lmr/m/n/10.95 nous vi-sons des \TU/lmr/bx/n/10.95 concepts al-go-rith-miques
+ \TU/lmr/m/n/10.95 li-sibles ([][][][][][]/[][][][][][]/[][][][][][]/[][][][][]
+[]). 
+ []
+
+<noeud_jonction.png, id=695, 416.30531pt x 377.91188pt>
+File: noeud_jonction.png Graphic file (type png)
+<use noeud_jonction.png>
+Package luatex.def Info: noeud_jonction.png  used on input line 885.
+(luatex.def)             Requested size: 409.72125pt x 371.95418pt.
+
+
+[28]
+
+[29<./noeud_jonction.png>]
+Overfull \hbox (7.46205pt too wide) in paragraph at lines 915--916
+[]\TU/lmr/m/n/10.95 Pour chaque nœud AST ren-con-tré, la mé-thode [][][][][]
+[] ap-pelle le vi-si-teur spé-ci-fique (ex : [][][][][][]
+ []
+
+
+
+[30]
+Underfull \hbox (badness 10000) in paragraph at lines 956--956
+[]|[][][][][][]
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 956--956
+\TU/lmr/m/n/10.95 (im-pli-cite),
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 956--956
+[][][][][][]
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 958--958
+[]|[][][][][][]\TU/lmr/m/n/10.95 ,
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 958--958
+[][][][][][] \TU/lmr/m/n/10.95 (conte-
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 958--958
+\TU/lmr/m/n/10.95 nant [][][][][][]),
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 958--958
+[][][][][][] \TU/lmr/m/n/10.95 (via
+ []
+
+
+Underfull \hbox (badness 1005) in paragraph at lines 959--959
+\TU/lmr/m/n/10.95 gra-phique et la li-si-bi-
+ []
+
+
+Underfull \hbox (badness 1831) in paragraph at lines 959--959
+[]|\TU/lmr/m/n/10.95 Point de conver-gence où plu-sieurs che-mins
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 961--961
+[]|[][][][][][]\TU/lmr/m/n/10.95 ,
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 962--962
+[]|[][][][][][] \TU/lmr/m/n/10.95 (avec
+ []
+
+
+Underfull \hbox (badness 1509) in paragraph at lines 962--962
+\TU/lmr/m/n/10.95 man-ti-que-ment les opé-ra-tions d’en-trée/sor-tie,
+ []
+
+
+
+[31]
+Underfull \hbox (badness 10000) in paragraph at lines 986--1002
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 1004--1024
+
+ []
+
+
+Package hyperref Warning: Token not allowed in a PDF string (Unicode):
+(hyperref)                removing `\colorbox' on input line 1028.
+
+c:/Users/install/gyminf/redac/main.tex:1037: Missing $ inserted.
 <inserted text> 
-                \par 
-l.1262 ...aption{Exemple de flowchart "for each"}}
-                                                  
-I've run across a `}' that doesn't seem to match anything.
-For example, `\def\a#1{...}' and `\a}' would produce
-this error. If you simply proceed now, the `\par' that
-I've just inserted will cause me to report a runaway
-argument that might be the root of the problem. But if
-your `}' was spurious, just type `2' and it will go away.
+                $
+l.1037 ...ode\_ids} passée à \code{visit_body()}
+                                                  . C'est une liste car un b...
+I've inserted a begin-math/end-math symbol since I think
+you left one out. Proceed, with fingers crossed.
 
-Runaway argument?
- // ##1100 const paramTypes = params.map(param => { // ... } else if \ETC.
-c:/Users/install/gyminf/redac/main.tex:1262: Paragraph ended before \FV@BeginSc
-anning was complete.
-<to be read again> 
-                   \par 
-l.1262 ...aption{Exemple de flowchart "for each"}}
-                                                  
-I suspect you've forgotten a `}', causing me to apply this
-control sequence to too much text. How can we recover?
-My plan is to forget the whole thing and hope for the best.
-
-c:/Users/install/gyminf/redac/main.tex:1262: Extra }, or forgotten \endgroup.
-<recently read> }
-                 
-l.1262 ...aption{Exemple de flowchart "for each"}}
-                                                  
+c:/Users/install/gyminf/redac/main.tex:1037: Extra }, or forgotten $.
+<recently read> \egroup 
+                        
+l.1037 ...ode\_ids} passée à \code{visit_body()}
+                                                  . C'est une liste car un b...
 I've deleted a group-closing symbol because it seems to be
 spurious, as in `$x}$'. But perhaps the } is legitimate and
 you forgot something else, as in `\hbox{$x}'. In such cases
 the way to recover is to insert both the forgotten and the
 deleted material, e.g., by typing `I$}'.
 
-\pydata@fh@0=\write10
+c:/Users/install/gyminf/redac/main.tex:1037: Extra }, or forgotten $.
+\color@b@x ...hbox {\kern \fboxsep {\set@color #3}
+                                                  \kern \fboxsep }\dimen@ \h...
+l.1037 ...ode\_ids} passée à \code{visit_body()}
+                                                  . C'est une liste car un b...
+I've deleted a group-closing symbol because it seems to be
+spurious, as in `$x}$'. But perhaps the } is legitimate and
+you forgot something else, as in `\hbox{$x}'. In such cases
+the way to recover is to insert both the forgotten and the
+deleted material, e.g., by typing `I$}'.
 
-\openout10 = _FAD58DE7366495DB4650CFEFAC2FCD61.data.minted
-runsystem(latexminted config  --timestamp 20250831175322 FAD58DE7366495DB4650CFE
-FAC2FCD61)...failed. 
+c:/Users/install/gyminf/redac/main.tex:1037: Extra }, or forgotten $.
+\color@b@x ...xsep {\set@color #3}\kern \fboxsep }
+                                                  \dimen@ \ht \z@ \advance \...
+l.1037 ...ode\_ids} passée à \code{visit_body()}
+                                                  . C'est une liste car un b...
+I've deleted a group-closing symbol because it seems to be
+spurious, as in `$x}$'. But perhaps the } is legitimate and
+you forgot something else, as in `\hbox{$x}'. In such cases
+the way to recover is to insert both the forgotten and the
+deleted material, e.g., by typing `I$}'.
 
-c:/Users/install/gyminf/redac/main.tex:1262: Package minted Error: minted v3+ e
-xecutable is not installed or is not added to PATH; or MiKTeX is being used wit
-h -aux-directory or -output-directory without setting a TEXMF_OUTPUT_DIRECTORY 
-environment variable.
 
-See the minted package documentation for explanation.
+c:/Users/install/gyminf/redac/main.tex:1038: LaTeX Error: Command \end{itemize}
+ invalid in math mode.
+
+See the LaTeX manual or LaTeX Companion for explanation.
 Type  H <return>  for immediate help.
  ...                                              
                                                   
-l.1262 ...aption{Exemple de flowchart "for each"}}
+l.1038     \end{itemize}
+                        
+Try typing  <return>  to proceed.
+If that doesn't work, type  X <return>  to quit.
+
+c:/Users/install/gyminf/redac/main.tex:1038: Missing $ inserted.
+<inserted text> 
+                $
+l.1038     \end{itemize}
+                        
+I've inserted a begin-math/end-math symbol since I think
+you left one out. Proceed, with fingers crossed.
+
+Missing character: There is no ê (U+00EA) in font cmmi10!
+Missing character: There is no ê (U+00EA) in font cmmi10!
+c:/Users/install/gyminf/redac/main.tex:1038: Missing } inserted.
+<inserted text> 
+                }
+l.1038     \end{itemize}
+                        
+I've inserted something that you may have forgotten.
+(See the <inserted text> above.)
+With luck, this will get me unwedged. But if you
+really didn't forget anything, try typing `2' now; then
+my insertion and my current dilemma will both disappear.
+
+c:/Users/install/gyminf/redac/main.tex:1038: Missing } inserted.
+<inserted text> 
+                }
+l.1038     \end{itemize}
+                        
+I've inserted something that you may have forgotten.
+(See the <inserted text> above.)
+With luck, this will get me unwedged. But if you
+really didn't forget anything, try typing `2' now; then
+my insertion and my current dilemma will both disappear.
+
+c:/Users/install/gyminf/redac/main.tex:1038: Missing } inserted.
+<inserted text> 
+                }
+l.1038     \end{itemize}
+                        
+I've inserted something that you may have forgotten.
+(See the <inserted text> above.)
+With luck, this will get me unwedged. But if you
+really didn't forget anything, try typing `2' now; then
+my insertion and my current dilemma will both disappear.
+
+
+c:/Users/install/gyminf/redac/main.tex:1044: LaTeX Error: There's no line here 
+to end.
+
+See the LaTeX manual or LaTeX Companion for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
                                                   
-(That was another \errmessage.)
+l.1044 \\R
+          eprenons l'exemple minimal montré supra pour tracer le flux d'app...
+Your command was ignored.
+Type  I <command> <return>  to replace it with another command,
+or  <return>  to continue without it.
 
-(./_minted/default.style.minted)
 
-c:/Users/install/gyminf/redac/main.tex:1262: Package minted Error: Cannot highl
+c:/Users/install/gyminf/redac/main.tex:1052: Package minted Error: Cannot highl
 ight code (minted executable is unavailable or disabled); attempting to typeset
  without highlighting.
 
@@ -2592,32 +2354,2859 @@ See the minted package documentation for explanation.
 Type  H <return>  for immediate help.
  ...                                              
                                                   
-l.1262 ...aption{Exemple de flowchart "for each"}}
-                                                  
+l.1052 \end{minted}
+                   
 (That was another \errmessage.)
 
-c:/Users/install/gyminf/redac/main.tex:1262: TeX capacity exceeded, sorry [input
- stack size=10000].
-\@noligs ->\@noligs 
-                    \begingroup \lccode `\~=`\-\lowercase {\endgroup \def ~}...
-l.1262 ...aption{Exemple de flowchart "for each"}}
+
+
+[32]
+Overfull \hbox (18.69528pt too wide) in paragraph at lines 1059--1060
+[][][][][][] \TU/lmr/m/n/10.95 crée le nœud [][][][][][], le connecte à [][]
+[][][][], et re-tourne [][][][][][]
+ []
+
+
+Overfull \hbox (9.47522pt too wide) in paragraph at lines 1065--1066
+[][][][][][][] \TU/lmr/m/n/10.95 re-çoit [][][][][][] comme [][][][][][]. Il cr
+ée le nœud de dé-ci-sion [][][][][][]
+ []
+
+
+Overfull \hbox (79.61668pt too wide) in paragraph at lines 1066--1067
+[]\TU/lmr/bx/n/10.95 Vi-site de la branche [][][][][][] ([][][][][][]) : [][][]
+[][][] \TU/lmr/m/n/10.95 ap-pelle [][][][][][] avec [][][][][][].
+ []
+
+
+
+[33]
+Underfull \hbox (badness 10000) in paragraph at lines 1088--1089
+
+ []
+
+c:/Users/install/gyminf/redac/main.tex:1103: Missing $ inserted.
+<inserted text> 
+                $
+l.1103 ...érique et la méthode \code{visit_body}
+                                                  .
+I've inserted a begin-math/end-math symbol since I think
+you left one out. Proceed, with fingers crossed.
+
+c:/Users/install/gyminf/redac/main.tex:1103: Extra }, or forgotten $.
+<recently read> \egroup 
+                        
+l.1103 ...érique et la méthode \code{visit_body}
+                                                  .
+I've deleted a group-closing symbol because it seems to be
+spurious, as in `$x}$'. But perhaps the } is legitimate and
+you forgot something else, as in `\hbox{$x}'. In such cases
+the way to recover is to insert both the forgotten and the
+deleted material, e.g., by typing `I$}'.
+
+c:/Users/install/gyminf/redac/main.tex:1103: Extra }, or forgotten $.
+\color@b@x ...hbox {\kern \fboxsep {\set@color #3}
+                                                  \kern \fboxsep }\dimen@ \h...
+l.1103 ...érique et la méthode \code{visit_body}
+                                                  .
+I've deleted a group-closing symbol because it seems to be
+spurious, as in `$x}$'. But perhaps the } is legitimate and
+you forgot something else, as in `\hbox{$x}'. In such cases
+the way to recover is to insert both the forgotten and the
+deleted material, e.g., by typing `I$}'.
+
+c:/Users/install/gyminf/redac/main.tex:1103: Extra }, or forgotten $.
+\color@b@x ...xsep {\set@color #3}\kern \fboxsep }
+                                                  \dimen@ \ht \z@ \advance \...
+l.1103 ...érique et la méthode \code{visit_body}
+                                                  .
+I've deleted a group-closing symbol because it seems to be
+spurious, as in `$x}$'. But perhaps the } is legitimate and
+you forgot something else, as in `\hbox{$x}'. In such cases
+the way to recover is to insert both the forgotten and the
+deleted material, e.g., by typing `I$}'.
+
+c:/Users/install/gyminf/redac/main.tex:1104: Missing $ inserted.
+<inserted text> 
+                $
+l.1104 
+       
+I've inserted a begin-math/end-math symbol since I think
+you left one out. Proceed, with fingers crossed.
+
+
+c:/Users/install/gyminf/redac/main.tex:1105: LaTeX Error: Not allowed in LR mod
+e.
+
+See the LaTeX manual or LaTeX Companion for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
                                                   
-If you really absolutely need more capacity,
-you can ask a wizard to enlarge me.
+l.1105 \paragraph
+                 {Gestion des portées et des sous-graphes.} Une décision a...
+You've lost some text.  Try typing  <return>  to proceed.
+If that doesn't work, type  X <return>  to quit.
 
 
+c:/Users/install/gyminf/redac/main.tex:1105: LaTeX Error: Not allowed in LR mod
+e.
+
+See the LaTeX manual or LaTeX Companion for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.1105 \paragraph
+                 {Gestion des portées et des sous-graphes.} Une décision a...
+You've lost some text.  Try typing  <return>  to proceed.
+If that doesn't work, type  X <return>  to quit.
+
+c:/Users/install/gyminf/redac/main.tex:1105: Missing } inserted.
+<inserted text> 
+                }
+l.1105 \paragraph
+                 {Gestion des portées et des sous-graphes.} Une décision a...
+I've inserted something that you may have forgotten.
+(See the <inserted text> above.)
+With luck, this will get me unwedged. But if you
+really didn't forget anything, try typing `2' now; then
+my insertion and my current dilemma will both disappear.
+
+c:/Users/install/gyminf/redac/main.tex:1105: Missing } inserted.
+<inserted text> 
+                }
+l.1105 \paragraph
+                 {Gestion des portées et des sous-graphes.} Une décision a...
+I've inserted something that you may have forgotten.
+(See the <inserted text> above.)
+With luck, this will get me unwedged. But if you
+really didn't forget anything, try typing `2' now; then
+my insertion and my current dilemma will both disappear.
+
+c:/Users/install/gyminf/redac/main.tex:1105: Missing } inserted.
+<inserted text> 
+                }
+l.1105 \paragraph
+                 {Gestion des portées et des sous-graphes.} Une décision a...
+I've inserted something that you may have forgotten.
+(See the <inserted text> above.)
+With luck, this will get me unwedged. But if you
+really didn't forget anything, try typing `2' now; then
+my insertion and my current dilemma will both disappear.
+
+
+LaTeX Warning: Reference `fig:deux_for' on page 34 undefined on input line 1112
+.
+
+
+
+[34]
+
+LaTeX Warning: File `foreach_forstr.png' not found on input line 1125.
+
+
+c:/Users/install/gyminf/redac/main.tex:1125: Package luatex.def Error: File `fo
+reach_forstr.png' not found: using draft setting.
+
+See the luatex.def package documentation for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.1125 ...th, keepaspectratio]{foreach_forstr.png}
+                                                  
+Try typing  <return>  to proceed.
+If that doesn't work, type  X <return>  to quit.
+
+c:/Users/install/gyminf/redac/main.tex:1130: Missing $ inserted.
+<inserted text> 
+                $
+l.1130 ...ns internes et méthodes \code{has_next}
+                                                  . Une heuristique est éga...
+I've inserted a begin-math/end-math symbol since I think
+you left one out. Proceed, with fingers crossed.
+
+c:/Users/install/gyminf/redac/main.tex:1130: Extra }, or forgotten $.
+<recently read> \egroup 
+                        
+l.1130 ...ns internes et méthodes \code{has_next}
+                                                  . Une heuristique est éga...
+I've deleted a group-closing symbol because it seems to be
+spurious, as in `$x}$'. But perhaps the } is legitimate and
+you forgot something else, as in `\hbox{$x}'. In such cases
+the way to recover is to insert both the forgotten and the
+deleted material, e.g., by typing `I$}'.
+
+c:/Users/install/gyminf/redac/main.tex:1130: Extra }, or forgotten $.
+\color@b@x ...hbox {\kern \fboxsep {\set@color #3}
+                                                  \kern \fboxsep }\dimen@ \h...
+l.1130 ...ns internes et méthodes \code{has_next}
+                                                  . Une heuristique est éga...
+I've deleted a group-closing symbol because it seems to be
+spurious, as in `$x}$'. But perhaps the } is legitimate and
+you forgot something else, as in `\hbox{$x}'. In such cases
+the way to recover is to insert both the forgotten and the
+deleted material, e.g., by typing `I$}'.
+
+c:/Users/install/gyminf/redac/main.tex:1130: Extra }, or forgotten $.
+\color@b@x ...xsep {\set@color #3}\kern \fboxsep }
+                                                  \dimen@ \ht \z@ \advance \...
+l.1130 ...ns internes et méthodes \code{has_next}
+                                                  . Une heuristique est éga...
+I've deleted a group-closing symbol because it seems to be
+spurious, as in `$x}$'. But perhaps the } is legitimate and
+you forgot something else, as in `\hbox{$x}'. In such cases
+the way to recover is to insert both the forgotten and the
+deleted material, e.g., by typing `I$}'.
+
+c:/Users/install/gyminf/redac/main.tex:1132: Missing $ inserted.
+<inserted text> 
+                $
+l.1132 
+       
+I've inserted a begin-math/end-math symbol since I think
+you left one out. Proceed, with fingers crossed.
+
+Missing character: There is no é (U+00E9) in font cmmi10!
+Missing character: There is no é (U+00E9) in font cmmi10!
+Missing character: There is no é (U+00E9) in font cmmi10!
+Missing character: There is no é (U+00E9) in font cmmi10!
+Missing character: There is no é (U+00E9) in font cmmi10!
+Missing character: There is no é (U+00E9) in font cmmi10!
+Missing character: There is no é (U+00E9) in font cmmi10!
+Missing character: There is no é (U+00E9) in font cmmi10!
+Missing character: There is no î (U+00EE) in font cmmi10!
+Missing character: There is no î (U+00EE) in font cmmi10!
+Missing character: There is no é (U+00E9) in font cmmi10!
+Missing character: There is no é (U+00E9) in font cmmi10!
+Missing character: There is no é (U+00E9) in font cmmi10!
+Missing character: There is no é (U+00E9) in font cmmi10!
+Missing character: There is no è (U+00E8) in font cmmi10!
+Missing character: There is no è (U+00E8) in font cmmi10!
+Missing character: There is no ê (U+00EA) in font cmmi10!
+Missing character: There is no ê (U+00EA) in font cmmi10!
+Missing character: There is no é (U+00E9) in font cmmi10!
+Missing character: There is no é (U+00E9) in font cmmi10!
+Missing character: There is no é (U+00E9) in font cmmi10!
+Missing character: There is no é (U+00E9) in font cmmi10!
+Missing character: There is no é (U+00E9) in font cmmi10!
+Missing character: There is no é (U+00E9) in font cmmi10!
+Missing character: There is no é (U+00E9) in font cmmi10!
+Missing character: There is no é (U+00E9) in font cmmi10!
+Missing character: There is no é (U+00E9) in font cmmi10!
+Missing character: There is no é (U+00E9) in font cmmi10!
+Missing character: There is no î (U+00EE) in font cmmi10!
+Missing character: There is no î (U+00EE) in font cmmi10!
+
+c:/Users/install/gyminf/redac/main.tex:1133: LaTeX Error: Not allowed in LR mod
+e.
+
+See the LaTeX manual or LaTeX Companion for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.1133 \paragraph
+                 {Robustesse et alignement curriculaire.} L'implémentation ...
+You've lost some text.  Try typing  <return>  to proceed.
+If that doesn't work, type  X <return>  to quit.
+
+
+c:/Users/install/gyminf/redac/main.tex:1133: LaTeX Error: Not allowed in LR mod
+e.
+
+See the LaTeX manual or LaTeX Companion for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.1133 \paragraph
+                 {Robustesse et alignement curriculaire.} L'implémentation ...
+You've lost some text.  Try typing  <return>  to proceed.
+If that doesn't work, type  X <return>  to quit.
+
+c:/Users/install/gyminf/redac/main.tex:1133: Missing } inserted.
+<inserted text> 
+                }
+l.1133 \paragraph
+                 {Robustesse et alignement curriculaire.} L'implémentation ...
+I've inserted something that you may have forgotten.
+(See the <inserted text> above.)
+With luck, this will get me unwedged. But if you
+really didn't forget anything, try typing `2' now; then
+my insertion and my current dilemma will both disappear.
+
+c:/Users/install/gyminf/redac/main.tex:1133: Missing } inserted.
+<inserted text> 
+                }
+l.1133 \paragraph
+                 {Robustesse et alignement curriculaire.} L'implémentation ...
+I've inserted something that you may have forgotten.
+(See the <inserted text> above.)
+With luck, this will get me unwedged. But if you
+really didn't forget anything, try typing `2' now; then
+my insertion and my current dilemma will both disappear.
+
+c:/Users/install/gyminf/redac/main.tex:1133: Missing } inserted.
+<inserted text> 
+                }
+l.1133 \paragraph
+                 {Robustesse et alignement curriculaire.} L'implémentation ...
+I've inserted something that you may have forgotten.
+(See the <inserted text> above.)
+With luck, this will get me unwedged. But if you
+really didn't forget anything, try typing `2' now; then
+my insertion and my current dilemma will both disappear.
+
+
+Overfull \hbox (82.11168pt too wide) in paragraph at lines 1133--1134
+[][][][][][]\TU/lmr/m/n/10.95 ). Elle ne gère pas en-core les construc-tions pl
+us avan-cées comme la ges-tion des ex-cep-tions ([][][][][][]/[][][][][][]/[][
+][][][][]),
+ []
+
+
+
+[35]
+
+[36]
+<BPMN_process_logigramme.png, id=783, 835.62187pt x 493.845pt>
+File: BPMN_process_logigramme.png Graphic file (type png)
+<use BPMN_process_logigramme.png>
+Package luatex.def Info: BPMN_process_logigramme.png  used on input line 1147.
+(luatex.def)             Requested size: 665.79607pt x 393.50162pt.
+
+
+[37<./BPMN_process_logigramme.png>]
+
+[38
+
+
+
+]
+<UI_events_v2.png, id=797, 598.48593pt x 546.54187pt>
+File: UI_events_v2.png Graphic file (type png)
+<use UI_events_v2.png>
+Package luatex.def Info: UI_events_v2.png  used on input line 1183.
+(luatex.def)             Requested size: 507.03093pt x 463.0283pt.
+<simplif_archi.png, id=798, 735.49782pt x 539.01375pt>
+File: simplif_archi.png Graphic file (type png)
+<use simplif_archi.png>
+Package luatex.def Info: simplif_archi.png  used on input line 1191.
+(luatex.def)             Requested size: 409.72125pt x 300.27472pt.
+
+
+[39<./UI_events_v2.png>]
+
+LaTeX Warning: Reference `fig:ERD' on page 40 undefined on input line 1195.
+
+
+
+[40<./simplif_archi.png>]
+<erDiagram_logging.png, id=812, 1132.98282pt x 694.84593pt>
+File: erDiagram_logging.png Graphic file (type png)
+<use erDiagram_logging.png>
+Package luatex.def Info: erDiagram_logging.png  used on input line 1200.
+(luatex.def)             Requested size: 768.22444pt x 471.15306pt.
+
+Overfull \hbox (8.53584pt too wide) in paragraph at lines 1200--1201
+ [][] 
+ []
+
+
+
+[41<./erDiagram_logging.png>]
+
+c:/Users/install/gyminf/redac/main.tex:1243: Package pgfkeys Error: I do not kn
+ow the key '/tikz/event' and I am going to ignore it. Perhaps you misspelled it
+.
+
+See the pgfkeys package documentation for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.1243 \node[event]
+                    (start) {Action à logger};
+(That was another \errmessage.)
+
+
+c:/Users/install/gyminf/redac/main.tex:1244: Package pgfkeys Error: I do not kn
+ow the key '/tikz/task' and I am going to ignore it. Perhaps you misspelled it.
+
+
+See the pgfkeys package documentation for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.1244 \node[task, below=of start]
+                                   (main_js) {\textbf{main.js}\\Appelle la f...
+(That was another \errmessage.)
+
+
+c:/Users/install/gyminf/redac/main.tex:1244: LaTeX Error: Not allowed in LR mod
+e.
+
+See the LaTeX manual or LaTeX Companion for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.1244 ...of start] (main_js) {\textbf{main.js}\\A
+                                                  ppelle la fonction ad hoc};
+You've lost some text.  Try typing  <return>  to proceed.
+If that doesn't work, type  X <return>  to quit.
+
+c:/Users/install/gyminf/redac/main.tex:1244: Missing } inserted.
+<inserted text> 
+                }
+l.1244 ...of start] (main_js) {\textbf{main.js}\\A
+                                                  ppelle la fonction ad hoc};
+I've inserted something that you may have forgotten.
+(See the <inserted text> above.)
+With luck, this will get me unwedged. But if you
+really didn't forget anything, try typing `2' now; then
+my insertion and my current dilemma will both disappear.
+
+
+c:/Users/install/gyminf/redac/main.tex:1244: Package tikz Error: Giving up on t
+his path. Did you forget a semicolon?.
+
+See the tikz package documentation for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.1244 ...of start] (main_js) {\textbf{main.js}\\A
+                                                  ppelle la fonction ad hoc};
+(That was another \errmessage.)
+
+c:/Users/install/gyminf/redac/main.tex:1244: Missing \endgroup inserted.
+<inserted text> 
+                \endgroup 
+l.1244 ...of start] (main_js) {\textbf{main.js}\\A
+                                                  ppelle la fonction ad hoc};
+I've inserted something that you may have forgotten.
+(See the <inserted text> above.)
+With luck, this will get me unwedged. But if you
+really didn't forget anything, try typing `2' now; then
+my insertion and my current dilemma will both disappear.
+
+c:/Users/install/gyminf/redac/main.tex:1244: Undefined control sequence.
+<recently read> \tikz@expand@last@token@ 
+                                         
+l.1244 ...of start] (main_js) {\textbf{main.js}\\A
+                                                  ppelle la fonction ad hoc};
+The control sequence at the end of the top line
+of your error message was never \def'ed. If you have
+misspelled it (e.g., `\hobx'), type `I' and the correct
+spelling (e.g., `I\hbox'). Otherwise just continue,
+and I'll forget about whatever was undefined.
+
+c:/Users/install/gyminf/redac/main.tex:1244: Missing number, treated as zero.
+<to be read again> 
+                   \let 
+l.1244 ...of start] (main_js) {\textbf{main.js}\\A
+                                                  ppelle la fonction ad hoc};
+A number should have been here; I inserted `0'.
+(If you can't figure out why I needed to see a number,
+look up `weird error' in the index to The TeXbook.)
+
+c:/Users/install/gyminf/redac/main.tex:1244: Illegal unit of measure (pt inserte
+d).
+<to be read again> 
+                   \let 
+l.1244 ...of start] (main_js) {\textbf{main.js}\\A
+                                                  ppelle la fonction ad hoc};
+Dimensions can be in units of em, ex, in, pt, pc,
+cm, mm, dd, cc, nd, nc, bp, or sp; but yours is a new one!
+I'll assume that you meant to say pt, for printer's points.
+To recover gracefully from this error, it's best to
+delete the erroneous units; e.g., type `2' to delete
+two letters. (See Chapter 27 of The TeXbook.)
+
+c:/Users/install/gyminf/redac/main.tex:1244: Extra }, or forgotten \endgroup.
+l.1244 ...bf{main.js}\\Appelle la fonction ad hoc}
+                                                  ;
+I've deleted a group-closing symbol because it seems to be
+spurious, as in `$x}$'. But perhaps the } is legitimate and
+you forgot something else, as in `\hbox{$x}'. In such cases
+the way to recover is to insert both the forgotten and the
+deleted material, e.g., by typing `I$}'.
+
+
+c:/Users/install/gyminf/redac/main.tex:1245: Package pgfkeys Error: I do not kn
+ow the key '/tikz/task' and I am going to ignore it. Perhaps you misspelled it.
+
+
+See the pgfkeys package documentation for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.1245 \node[task, below=of main_js]
+                                     (db_queries_prepare) {\textbf{db\_queri...
+(That was another \errmessage.)
+
+
+c:/Users/install/gyminf/redac/main.tex:1245: LaTeX Error: Not allowed in LR mod
+e.
+
+See the LaTeX manual or LaTeX Companion for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.1245 ...ies_prepare) {\textbf{db\_queries.js}\\C
+                                                  onstruit JSON};
+You've lost some text.  Try typing  <return>  to proceed.
+If that doesn't work, type  X <return>  to quit.
+
+c:/Users/install/gyminf/redac/main.tex:1245: Missing } inserted.
+<inserted text> 
+                }
+l.1245 ...ies_prepare) {\textbf{db\_queries.js}\\C
+                                                  onstruit JSON};
+I've inserted something that you may have forgotten.
+(See the <inserted text> above.)
+With luck, this will get me unwedged. But if you
+really didn't forget anything, try typing `2' now; then
+my insertion and my current dilemma will both disappear.
+
+
+c:/Users/install/gyminf/redac/main.tex:1245: Package tikz Error: Giving up on t
+his path. Did you forget a semicolon?.
+
+See the tikz package documentation for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.1245 ...ies_prepare) {\textbf{db\_queries.js}\\C
+                                                  onstruit JSON};
+(That was another \errmessage.)
+
+c:/Users/install/gyminf/redac/main.tex:1245: Missing \endgroup inserted.
+<inserted text> 
+                \endgroup 
+l.1245 ...ies_prepare) {\textbf{db\_queries.js}\\C
+                                                  onstruit JSON};
+I've inserted something that you may have forgotten.
+(See the <inserted text> above.)
+With luck, this will get me unwedged. But if you
+really didn't forget anything, try typing `2' now; then
+my insertion and my current dilemma will both disappear.
+
+c:/Users/install/gyminf/redac/main.tex:1245: Undefined control sequence.
+<recently read> \tikz@expand@last@token@ 
+                                         
+l.1245 ...ies_prepare) {\textbf{db\_queries.js}\\C
+                                                  onstruit JSON};
+The control sequence at the end of the top line
+of your error message was never \def'ed. If you have
+misspelled it (e.g., `\hobx'), type `I' and the correct
+spelling (e.g., `I\hbox'). Otherwise just continue,
+and I'll forget about whatever was undefined.
+
+c:/Users/install/gyminf/redac/main.tex:1245: Missing number, treated as zero.
+<to be read again> 
+                   \let 
+l.1245 ...ies_prepare) {\textbf{db\_queries.js}\\C
+                                                  onstruit JSON};
+A number should have been here; I inserted `0'.
+(If you can't figure out why I needed to see a number,
+look up `weird error' in the index to The TeXbook.)
+
+c:/Users/install/gyminf/redac/main.tex:1245: Illegal unit of measure (pt inserte
+d).
+<to be read again> 
+                   \let 
+l.1245 ...ies_prepare) {\textbf{db\_queries.js}\\C
+                                                  onstruit JSON};
+Dimensions can be in units of em, ex, in, pt, pc,
+cm, mm, dd, cc, nd, nc, bp, or sp; but yours is a new one!
+I'll assume that you meant to say pt, for printer's points.
+To recover gracefully from this error, it's best to
+delete the erroneous units; e.g., type `2' to delete
+two letters. (See Chapter 27 of The TeXbook.)
+
+c:/Users/install/gyminf/redac/main.tex:1245: Extra }, or forgotten \endgroup.
+l.1245 ...\textbf{db\_queries.js}\\Construit JSON}
+                                                  ;
+I've deleted a group-closing symbol because it seems to be
+spurious, as in `$x}$'. But perhaps the } is legitimate and
+you forgot something else, as in `\hbox{$x}'. In such cases
+the way to recover is to insert both the forgotten and the
+deleted material, e.g., by typing `I$}'.
+
+
+c:/Users/install/gyminf/redac/main.tex:1246: Package pgfkeys Error: I do not kn
+ow the key '/tikz/task' and I am going to ignore it. Perhaps you misspelled it.
+
+
+See the pgfkeys package documentation for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.1246 \node[task, below=of db_queries_prepare]
+                                                (db_queries_send) {\textbf{d...
+(That was another \errmessage.)
+
+
+c:/Users/install/gyminf/redac/main.tex:1246: LaTeX Error: Not allowed in LR mod
+e.
+
+See the LaTeX manual or LaTeX Companion for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.1246 ...es_send) {\textbf{db\_queries.js}\\\code
+                                                  {logFactory(...)} \& \code...
+You've lost some text.  Try typing  <return>  to proceed.
+If that doesn't work, type  X <return>  to quit.
+
+c:/Users/install/gyminf/redac/main.tex:1246: Missing } inserted.
+<inserted text> 
+                }
+l.1246 ...es_send) {\textbf{db\_queries.js}\\\code
+                                                  {logFactory(...)} \& \code...
+I've inserted something that you may have forgotten.
+(See the <inserted text> above.)
+With luck, this will get me unwedged. But if you
+really didn't forget anything, try typing `2' now; then
+my insertion and my current dilemma will both disappear.
+
+
+c:/Users/install/gyminf/redac/main.tex:1246: Package tikz Error: Giving up on t
+his path. Did you forget a semicolon?.
+
+See the tikz package documentation for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.1246 ...es_send) {\textbf{db\_queries.js}\\\code
+                                                  {logFactory(...)} \& \code...
+(That was another \errmessage.)
+
+c:/Users/install/gyminf/redac/main.tex:1246: Missing \endgroup inserted.
+<inserted text> 
+                \endgroup 
+l.1246 ...es_send) {\textbf{db\_queries.js}\\\code
+                                                  {logFactory(...)} \& \code...
+I've inserted something that you may have forgotten.
+(See the <inserted text> above.)
+With luck, this will get me unwedged. But if you
+really didn't forget anything, try typing `2' now; then
+my insertion and my current dilemma will both disappear.
+
+c:/Users/install/gyminf/redac/main.tex:1246: Undefined control sequence.
+<recently read> \tikz@expand@last@token@ 
+                                         
+l.1246 ...es_send) {\textbf{db\_queries.js}\\\code
+                                                  {logFactory(...)} \& \code...
+The control sequence at the end of the top line
+of your error message was never \def'ed. If you have
+misspelled it (e.g., `\hobx'), type `I' and the correct
+spelling (e.g., `I\hbox'). Otherwise just continue,
+and I'll forget about whatever was undefined.
+
+c:/Users/install/gyminf/redac/main.tex:1246: Missing number, treated as zero.
+<to be read again> 
+                   \let 
+l.1246 ...es_send) {\textbf{db\_queries.js}\\\code
+                                                  {logFactory(...)} \& \code...
+A number should have been here; I inserted `0'.
+(If you can't figure out why I needed to see a number,
+look up `weird error' in the index to The TeXbook.)
+
+c:/Users/install/gyminf/redac/main.tex:1246: Illegal unit of measure (pt inserte
+d).
+<to be read again> 
+                   \let 
+l.1246 ...es_send) {\textbf{db\_queries.js}\\\code
+                                                  {logFactory(...)} \& \code...
+Dimensions can be in units of em, ex, in, pt, pc,
+cm, mm, dd, cc, nd, nc, bp, or sp; but yours is a new one!
+I'll assume that you meant to say pt, for printer's points.
+To recover gracefully from this error, it's best to
+delete the erroneous units; e.g., type `2' to delete
+two letters. (See Chapter 27 of The TeXbook.)
+
+c:/Users/install/gyminf/redac/main.tex:1246: Extra }, or forgotten \endgroup.
+l.1246 ...gFactory(...)} \& \code{fetch()} (POST)}
+                                                  ;
+I've deleted a group-closing symbol because it seems to be
+spurious, as in `$x}$'. But perhaps the } is legitimate and
+you forgot something else, as in `\hbox{$x}'. In such cases
+the way to recover is to insert both the forgotten and the
+deleted material, e.g., by typing `I$}'.
+
+
+c:/Users/install/gyminf/redac/main.tex:1247: Package pgfkeys Error: I do not kn
+ow the key '/tikz/gateway' and I am going to ignore it. Perhaps you misspelled 
+it.
+
+See the pgfkeys package documentation for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.1247 ...below=of db_queries_send, yshift=-0.2cm]
+                                                   (js_handle_response) {Ré...
+(That was another \errmessage.)
+
+
+c:/Users/install/gyminf/redac/main.tex:1248: Package pgfkeys Error: I do not kn
+ow the key '/tikz/task' and I am going to ignore it. Perhaps you misspelled it.
+
+
+See the pgfkeys package documentation for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.1248 ...ow=of js_handle_response, yshift=-0.2cm]
+                                                   (js_success) {Traite la r...
+(That was another \errmessage.)
+
+
+c:/Users/install/gyminf/redac/main.tex:1249: Package pgfkeys Error: I do not kn
+ow the key '/tikz/event' and I am going to ignore it. Perhaps you misspelled it
+.
+
+See the pgfkeys package documentation for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.1249 \node[event, below=of js_success]
+                                         (end) {Log Terminé};
+(That was another \errmessage.)
+
+
+c:/Users/install/gyminf/redac/main.tex:1250: Package pgfkeys Error: I do not kn
+ow the key '/tikz/task' and I am going to ignore it. Perhaps you misspelled it.
+
+
+See the pgfkeys package documentation for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.1250 ...le_response, xshift=0.2cm, yshift=0.8cm]
+                                                   (js_error) {Console.Log E...
+(That was another \errmessage.)
+
+
+c:/Users/install/gyminf/redac/main.tex:1255: Package pgfkeys Error: I do not kn
+ow the key '/tikz/task' and I am going to ignore it. Perhaps you misspelled it.
+
+
+See the pgfkeys package documentation for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.1255 ..._queries_send, xshift=5.2cm, yshift=8mm]
+                                                   (flask_route) {\textbf{ap...
+(That was another \errmessage.)
+
+
+c:/Users/install/gyminf/redac/main.tex:1255: LaTeX Error: Not allowed in LR mod
+e.
+
+See the LaTeX manual or LaTeX Companion for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.1255 ... {\textbf{app.py (Route)}\\\footnotesize
+                                                   \texttt{/log/...}};
+You've lost some text.  Try typing  <return>  to proceed.
+If that doesn't work, type  X <return>  to quit.
+
+c:/Users/install/gyminf/redac/main.tex:1255: Missing } inserted.
+<inserted text> 
+                }
+l.1255 ... {\textbf{app.py (Route)}\\\footnotesize
+                                                   \texttt{/log/...}};
+I've inserted something that you may have forgotten.
+(See the <inserted text> above.)
+With luck, this will get me unwedged. But if you
+really didn't forget anything, try typing `2' now; then
+my insertion and my current dilemma will both disappear.
+
+
+c:/Users/install/gyminf/redac/main.tex:1255: Package tikz Error: Giving up on t
+his path. Did you forget a semicolon?.
+
+See the tikz package documentation for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.1255 ... {\textbf{app.py (Route)}\\\footnotesize
+                                                   \texttt{/log/...}};
+(That was another \errmessage.)
+
+c:/Users/install/gyminf/redac/main.tex:1255: Missing \endgroup inserted.
+<inserted text> 
+                \endgroup 
+l.1255 ... {\textbf{app.py (Route)}\\\footnotesize
+                                                   \texttt{/log/...}};
+I've inserted something that you may have forgotten.
+(See the <inserted text> above.)
+With luck, this will get me unwedged. But if you
+really didn't forget anything, try typing `2' now; then
+my insertion and my current dilemma will both disappear.
+
+c:/Users/install/gyminf/redac/main.tex:1255: Undefined control sequence.
+<recently read> \tikz@expand@last@token@ 
+                                         
+l.1255 ... {\textbf{app.py (Route)}\\\footnotesize
+                                                   \texttt{/log/...}};
+The control sequence at the end of the top line
+of your error message was never \def'ed. If you have
+misspelled it (e.g., `\hobx'), type `I' and the correct
+spelling (e.g., `I\hbox'). Otherwise just continue,
+and I'll forget about whatever was undefined.
+
+c:/Users/install/gyminf/redac/main.tex:1255: Missing number, treated as zero.
+<to be read again> 
+                   \let 
+l.1255 ... {\textbf{app.py (Route)}\\\footnotesize
+                                                   \texttt{/log/...}};
+A number should have been here; I inserted `0'.
+(If you can't figure out why I needed to see a number,
+look up `weird error' in the index to The TeXbook.)
+
+c:/Users/install/gyminf/redac/main.tex:1255: Illegal unit of measure (pt inserte
+d).
+<to be read again> 
+                   \let 
+l.1255 ... {\textbf{app.py (Route)}\\\footnotesize
+                                                   \texttt{/log/...}};
+Dimensions can be in units of em, ex, in, pt, pc,
+cm, mm, dd, cc, nd, nc, bp, or sp; but yours is a new one!
+I'll assume that you meant to say pt, for printer's points.
+To recover gracefully from this error, it's best to
+delete the erroneous units; e.g., type `2' to delete
+two letters. (See Chapter 27 of The TeXbook.)
+
+c:/Users/install/gyminf/redac/main.tex:1255: Extra }, or forgotten \endgroup.
+<recently read> }
+                 
+l.1255 ...oute)}\\\footnotesize \texttt{/log/...}}
+                                                  ;
+I've deleted a group-closing symbol because it seems to be
+spurious, as in `$x}$'. But perhaps the } is legitimate and
+you forgot something else, as in `\hbox{$x}'. In such cases
+the way to recover is to insert both the forgotten and the
+deleted material, e.g., by typing `I$}'.
+
+
+c:/Users/install/gyminf/redac/main.tex:1256: Package pgfkeys Error: I do not kn
+ow the key '/tikz/task' and I am going to ignore it. Perhaps you misspelled it.
+
+
+See the pgfkeys package documentation for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.1256 \node[task, below=of flask_route]
+                                         (flask_logic) {\textbf{app.py (Logi...
+(That was another \errmessage.)
+
+
+c:/Users/install/gyminf/redac/main.tex:1256: LaTeX Error: Not allowed in LR mod
+e.
+
+See the LaTeX manual or LaTeX Companion for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.1256 ...ask_logic) {\textbf{app.py (Logique)}\\V
+                                                  alide données \& appelle ...
+You've lost some text.  Try typing  <return>  to proceed.
+If that doesn't work, type  X <return>  to quit.
+
+c:/Users/install/gyminf/redac/main.tex:1256: Missing } inserted.
+<inserted text> 
+                }
+l.1256 ...ask_logic) {\textbf{app.py (Logique)}\\V
+                                                  alide données \& appelle ...
+I've inserted something that you may have forgotten.
+(See the <inserted text> above.)
+With luck, this will get me unwedged. But if you
+really didn't forget anything, try typing `2' now; then
+my insertion and my current dilemma will both disappear.
+
+
+c:/Users/install/gyminf/redac/main.tex:1256: Package tikz Error: Giving up on t
+his path. Did you forget a semicolon?.
+
+See the tikz package documentation for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.1256 ...ask_logic) {\textbf{app.py (Logique)}\\V
+                                                  alide données \& appelle ...
+(That was another \errmessage.)
+
+c:/Users/install/gyminf/redac/main.tex:1256: Missing \endgroup inserted.
+<inserted text> 
+                \endgroup 
+l.1256 ...ask_logic) {\textbf{app.py (Logique)}\\V
+                                                  alide données \& appelle ...
+I've inserted something that you may have forgotten.
+(See the <inserted text> above.)
+With luck, this will get me unwedged. But if you
+really didn't forget anything, try typing `2' now; then
+my insertion and my current dilemma will both disappear.
+
+c:/Users/install/gyminf/redac/main.tex:1256: Undefined control sequence.
+<recently read> \tikz@expand@last@token@ 
+                                         
+l.1256 ...ask_logic) {\textbf{app.py (Logique)}\\V
+                                                  alide données \& appelle ...
+The control sequence at the end of the top line
+of your error message was never \def'ed. If you have
+misspelled it (e.g., `\hobx'), type `I' and the correct
+spelling (e.g., `I\hbox'). Otherwise just continue,
+and I'll forget about whatever was undefined.
+
+c:/Users/install/gyminf/redac/main.tex:1256: Missing number, treated as zero.
+<to be read again> 
+                   \let 
+l.1256 ...ask_logic) {\textbf{app.py (Logique)}\\V
+                                                  alide données \& appelle ...
+A number should have been here; I inserted `0'.
+(If you can't figure out why I needed to see a number,
+look up `weird error' in the index to The TeXbook.)
+
+c:/Users/install/gyminf/redac/main.tex:1256: Illegal unit of measure (pt inserte
+d).
+<to be read again> 
+                   \let 
+l.1256 ...ask_logic) {\textbf{app.py (Logique)}\\V
+                                                  alide données \& appelle ...
+Dimensions can be in units of em, ex, in, pt, pc,
+cm, mm, dd, cc, nd, nc, bp, or sp; but yours is a new one!
+I'll assume that you meant to say pt, for printer's points.
+To recover gracefully from this error, it's best to
+delete the erroneous units; e.g., type `2' to delete
+two letters. (See Chapter 27 of The TeXbook.)
+
+c:/Users/install/gyminf/redac/main.tex:1256: Extra }, or forgotten \endgroup.
+l.1256 ...gique)}\\Valide données \& appelle BDD}
+                                                  ;
+I've deleted a group-closing symbol because it seems to be
+spurious, as in `$x}$'. But perhaps the } is legitimate and
+you forgot something else, as in `\hbox{$x}'. In such cases
+the way to recover is to insert both the forgotten and the
+deleted material, e.g., by typing `I$}'.
+
+
+c:/Users/install/gyminf/redac/main.tex:1257: Package pgfkeys Error: I do not kn
+ow the key '/tikz/data' and I am going to ignore it. Perhaps you misspelled it.
+
+
+See the pgfkeys package documentation for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.1257 \node[data, below=of flask_logic]
+                                         (json_response) {Réponse JSON (\co...
+(That was another \errmessage.)
+
+
+c:/Users/install/gyminf/redac/main.tex:1262: Package pgfkeys Error: I do not kn
+ow the key '/tikz/data' and I am going to ignore it. Perhaps you misspelled it.
+
+
+See the pgfkeys package documentation for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.1262 ...f flask_logic, xshift=2.5cm, yshift=8mm]
+                                                   (sql_query) {Requête SQL...
+(That was another \errmessage.)
+
+
+c:/Users/install/gyminf/redac/main.tex:1262: LaTeX Error: Not allowed in LR mod
+e.
+
+See the LaTeX manual or LaTeX Companion for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.1262 ...yshift=8mm] (sql_query) {Requête SQL\\(
+                                                  \code{INSERT}/\code{SELECT...
+You've lost some text.  Try typing  <return>  to proceed.
+If that doesn't work, type  X <return>  to quit.
+
+c:/Users/install/gyminf/redac/main.tex:1262: Missing } inserted.
+<inserted text> 
+                }
+l.1262 ...yshift=8mm] (sql_query) {Requête SQL\\(
+                                                  \code{INSERT}/\code{SELECT...
+I've inserted something that you may have forgotten.
+(See the <inserted text> above.)
+With luck, this will get me unwedged. But if you
+really didn't forget anything, try typing `2' now; then
+my insertion and my current dilemma will both disappear.
+
+
+c:/Users/install/gyminf/redac/main.tex:1262: Package tikz Error: Giving up on t
+his path. Did you forget a semicolon?.
+
+See the tikz package documentation for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.1262 ...yshift=8mm] (sql_query) {Requête SQL\\(
+                                                  \code{INSERT}/\code{SELECT...
+(That was another \errmessage.)
+
+c:/Users/install/gyminf/redac/main.tex:1262: Missing \endgroup inserted.
+<inserted text> 
+                \endgroup 
+l.1262 ...yshift=8mm] (sql_query) {Requête SQL\\(
+                                                  \code{INSERT}/\code{SELECT...
+I've inserted something that you may have forgotten.
+(See the <inserted text> above.)
+With luck, this will get me unwedged. But if you
+really didn't forget anything, try typing `2' now; then
+my insertion and my current dilemma will both disappear.
+
+c:/Users/install/gyminf/redac/main.tex:1262: Undefined control sequence.
+<recently read> \tikz@expand@last@token@ 
+                                         
+l.1262 ...yshift=8mm] (sql_query) {Requête SQL\\(
+                                                  \code{INSERT}/\code{SELECT...
+The control sequence at the end of the top line
+of your error message was never \def'ed. If you have
+misspelled it (e.g., `\hobx'), type `I' and the correct
+spelling (e.g., `I\hbox'). Otherwise just continue,
+and I'll forget about whatever was undefined.
+
+c:/Users/install/gyminf/redac/main.tex:1262: Missing number, treated as zero.
+<to be read again> 
+                   \let 
+l.1262 ...yshift=8mm] (sql_query) {Requête SQL\\(
+                                                  \code{INSERT}/\code{SELECT...
+A number should have been here; I inserted `0'.
+(If you can't figure out why I needed to see a number,
+look up `weird error' in the index to The TeXbook.)
+
+c:/Users/install/gyminf/redac/main.tex:1262: Illegal unit of measure (pt inserte
+d).
+<to be read again> 
+                   \let 
+l.1262 ...yshift=8mm] (sql_query) {Requête SQL\\(
+                                                  \code{INSERT}/\code{SELECT...
+Dimensions can be in units of em, ex, in, pt, pc,
+cm, mm, dd, cc, nd, nc, bp, or sp; but yours is a new one!
+I'll assume that you meant to say pt, for printer's points.
+To recover gracefully from this error, it's best to
+delete the erroneous units; e.g., type `2' to delete
+two letters. (See Chapter 27 of The TeXbook.)
+
+
+Overfull \hbox (24.0pt too wide) detected at line 1262
+[][][]Appellelafonctionadhoc;[]ConstruitJSON;[][][][][][][]&[][][][][][](POST);[][][][][]/log/...;[]Validedonn
+ées&appelleBDD;[][]([][][][][][]/[][][][][][])
+ []
+
+c:/Users/install/gyminf/redac/main.tex:1263: Undefined control sequence.
+l.1263 \node
+            [task, below=of sql_query] (db_execute) {\textbf{Serveur SQL}\\E...
+The control sequence at the end of the top line
+of your error message was never \def'ed. If you have
+misspelled it (e.g., `\hobx'), type `I' and the correct
+spelling (e.g., `I\hbox'). Otherwise just continue,
+and I'll forget about whatever was undefined.
+
+c:/Users/install/gyminf/redac/main.tex:1263: Missing $ inserted.
+<inserted text> 
+                $
+l.1263 \node[task, below=of sql_
+                                query] (db_execute) {\textbf{Serveur SQL}\\E...
+I've inserted a begin-math/end-math symbol since I think
+you left one out. Proceed, with fingers crossed.
+
+
+c:/Users/install/gyminf/redac/main.tex:1263: LaTeX Error: There's no line here 
+to end.
+
+See the LaTeX manual or LaTeX Companion for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.1263 ...ry] (db_execute) {\textbf{Serveur SQL}\\
+                                                  Exécute \& renvoie résul...
+Your command was ignored.
+Type  I <command> <return>  to replace it with another command,
+or  <return>  to continue without it.
+
+c:/Users/install/gyminf/redac/main.tex:1263: Missing $ inserted.
+<inserted text> 
+                $
+l.1263 ...ry] (db_execute) {\textbf{Serveur SQL}\\
+                                                  Exécute \& renvoie résul...
+I've inserted a begin-math/end-math symbol since I think
+you left one out. Proceed, with fingers crossed.
+
+c:/Users/install/gyminf/redac/main.tex:1263: Missing } inserted.
+<inserted text> 
+                }
+l.1263 ...ry] (db_execute) {\textbf{Serveur SQL}\\
+                                                  Exécute \& renvoie résul...
+I've inserted something that you may have forgotten.
+(See the <inserted text> above.)
+With luck, this will get me unwedged. But if you
+really didn't forget anything, try typing `2' now; then
+my insertion and my current dilemma will both disappear.
+
+
+c:/Users/install/gyminf/redac/main.tex:1263: LaTeX Error: Not allowed in LR mod
+e.
+
+See the LaTeX manual or LaTeX Companion for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.1263 ...y] (db_execute) {\textbf{Serveur SQL}\\E
+                                                  xécute \& renvoie résult...
+You've lost some text.  Try typing  <return>  to proceed.
+If that doesn't work, type  X <return>  to quit.
+
+c:/Users/install/gyminf/redac/main.tex:1263: Missing \endgroup inserted.
+<inserted text> 
+                \endgroup 
+l.1263 ...y] (db_execute) {\textbf{Serveur SQL}\\E
+                                                  xécute \& renvoie résult...
+I've inserted something that you may have forgotten.
+(See the <inserted text> above.)
+With luck, this will get me unwedged. But if you
+really didn't forget anything, try typing `2' now; then
+my insertion and my current dilemma will both disappear.
+
+c:/Users/install/gyminf/redac/main.tex:1263: Missing \endgroup inserted.
+<inserted text> 
+                \endgroup 
+l.1263 ...y] (db_execute) {\textbf{Serveur SQL}\\E
+                                                  xécute \& renvoie résult...
+I've inserted something that you may have forgotten.
+(See the <inserted text> above.)
+With luck, this will get me unwedged. But if you
+really didn't forget anything, try typing `2' now; then
+my insertion and my current dilemma will both disappear.
+
+c:/Users/install/gyminf/redac/main.tex:1263: Missing \endgroup inserted.
+<inserted text> 
+                \endgroup 
+l.1263 ...y] (db_execute) {\textbf{Serveur SQL}\\E
+                                                  xécute \& renvoie résult...
+I've inserted something that you may have forgotten.
+(See the <inserted text> above.)
+With luck, this will get me unwedged. But if you
+really didn't forget anything, try typing `2' now; then
+my insertion and my current dilemma will both disappear.
+
+c:/Users/install/gyminf/redac/main.tex:1263: Missing } inserted.
+<inserted text> 
+                }
+l.1263 ...y] (db_execute) {\textbf{Serveur SQL}\\E
+                                                  xécute \& renvoie résult...
+I've inserted something that you may have forgotten.
+(See the <inserted text> above.)
+With luck, this will get me unwedged. But if you
+really didn't forget anything, try typing `2' now; then
+my insertion and my current dilemma will both disappear.
+
+Missing character: There is no ; (U+003B) in font nullfont!
+Missing character: There is no [ (U+005B) in font nullfont!
+Missing character: There is no t (U+0074) in font nullfont!
+Missing character: There is no a (U+0061) in font nullfont!
+Missing character: There is no s (U+0073) in font nullfont!
+Missing character: There is no k (U+006B) in font nullfont!
+Missing character: There is no , (U+002C) in font nullfont!
+Missing character: There is no b (U+0062) in font nullfont!
+Missing character: There is no e (U+0065) in font nullfont!
+Missing character: There is no l (U+006C) in font nullfont!
+Missing character: There is no o (U+006F) in font nullfont!
+Missing character: There is no w (U+0077) in font nullfont!
+Missing character: There is no = (U+003D) in font nullfont!
+Missing character: There is no o (U+006F) in font nullfont!
+Missing character: There is no f (U+0066) in font nullfont!
+Missing character: There is no s (U+0073) in font nullfont!
+Missing character: There is no q (U+0071) in font nullfont!
+Missing character: There is no l (U+006C) in font nullfont!
+
+Overfull \hbox (84.77167pt too wide) detected at line 1263
+[][][][];[task,below=ofsql$[][]\OML/cmm/m/it/10.95 uery\OT1/cmr/m/n/10.95 ](\OM
+L/cmm/m/it/10.95 db[]xecute\OT1/cmr/m/n/10.95 )[]$
+ []
+
+c:/Users/install/gyminf/redac/main.tex:1263: Missing \endgroup inserted.
+<inserted text> 
+                \endgroup 
+l.1263 ...y] (db_execute) {\textbf{Serveur SQL}\\E
+                                                  xécute \& renvoie résult...
+I've inserted something that you may have forgotten.
+(See the <inserted text> above.)
+With luck, this will get me unwedged. But if you
+really didn't forget anything, try typing `2' now; then
+my insertion and my current dilemma will both disappear.
+
+c:/Users/install/gyminf/redac/main.tex:1263: Missing \endgroup inserted.
+<inserted text> 
+                \endgroup 
+l.1263 ...y] (db_execute) {\textbf{Serveur SQL}\\E
+                                                  xécute \& renvoie résult...
+I've inserted something that you may have forgotten.
+(See the <inserted text> above.)
+With luck, this will get me unwedged. But if you
+really didn't forget anything, try typing `2' now; then
+my insertion and my current dilemma will both disappear.
+
+c:/Users/install/gyminf/redac/main.tex:1263: Missing \endgroup inserted.
+<inserted text> 
+                \endgroup 
+l.1263 ...y] (db_execute) {\textbf{Serveur SQL}\\E
+                                                  xécute \& renvoie résult...
+I've inserted something that you may have forgotten.
+(See the <inserted text> above.)
+With luck, this will get me unwedged. But if you
+really didn't forget anything, try typing `2' now; then
+my insertion and my current dilemma will both disappear.
+
+c:/Users/install/gyminf/redac/main.tex:1263: Missing } inserted.
+<inserted text> 
+                }
+l.1263 ...y] (db_execute) {\textbf{Serveur SQL}\\E
+                                                  xécute \& renvoie résult...
+I've inserted something that you may have forgotten.
+(See the <inserted text> above.)
+With luck, this will get me unwedged. But if you
+really didn't forget anything, try typing `2' now; then
+my insertion and my current dilemma will both disappear.
+
+c:/Users/install/gyminf/redac/main.tex:1263: Extra }, or forgotten \endgroup.
+l.1263 ...eur SQL}\\Exécute \& renvoie résultat}
+                                                  ;
+I've deleted a group-closing symbol because it seems to be
+spurious, as in `$x}$'. But perhaps the } is legitimate and
+you forgot something else, as in `\hbox{$x}'. In such cases
+the way to recover is to insert both the forgotten and the
+deleted material, e.g., by typing `I$}'.
+
+c:/Users/install/gyminf/redac/main.tex:1269: Undefined control sequence.
+l.1269 \draw
+            [seq] (start) -- (main_js);
+The control sequence at the end of the top line
+of your error message was never \def'ed. If you have
+misspelled it (e.g., `\hobx'), type `I' and the correct
+spelling (e.g., `I\hbox'). Otherwise just continue,
+and I'll forget about whatever was undefined.
+
+c:/Users/install/gyminf/redac/main.tex:1269: Missing $ inserted.
+<inserted text> 
+                $
+l.1269 \draw[seq] (start) -- (main_
+                                   js);
+I've inserted a begin-math/end-math symbol since I think
+you left one out. Proceed, with fingers crossed.
+
+c:/Users/install/gyminf/redac/main.tex:1270: Undefined control sequence.
+l.1270 \draw
+            [seq] (main_js) -- node[midway, right, font=\scriptsize] {prépa...
+The control sequence at the end of the top line
+of your error message was never \def'ed. If you have
+misspelled it (e.g., `\hobx'), type `I' and the correct
+spelling (e.g., `I\hbox'). Otherwise just continue,
+and I'll forget about whatever was undefined.
+
+
+LaTeX Font Warning: Command \scriptsize invalid in math mode on input line 1270
+.
+
+c:/Users/install/gyminf/redac/main.tex:1271: Undefined control sequence.
+l.1271 \draw
+            [seq] (db_queries_prepare) -- node[midway, right, font=\scriptsi...
+The control sequence at the end of the top line
+of your error message was never \def'ed. If you have
+misspelled it (e.g., `\hobx'), type `I' and the correct
+spelling (e.g., `I\hbox'). Otherwise just continue,
+and I'll forget about whatever was undefined.
+
+
+LaTeX Font Warning: Command \scriptsize invalid in math mode on input line 1271
+.
+
+c:/Users/install/gyminf/redac/main.tex:1272: Undefined control sequence.
+l.1272 \draw
+            [seq] (flask_route) -- (flask_logic);
+The control sequence at the end of the top line
+of your error message was never \def'ed. If you have
+misspelled it (e.g., `\hobx'), type `I' and the correct
+spelling (e.g., `I\hbox'). Otherwise just continue,
+and I'll forget about whatever was undefined.
+
+c:/Users/install/gyminf/redac/main.tex:1273: Undefined control sequence.
+l.1273 \draw
+            [seq] (flask_logic) -- node[midway, right, font=\scriptsize] {co...
+The control sequence at the end of the top line
+of your error message was never \def'ed. If you have
+misspelled it (e.g., `\hobx'), type `I' and the correct
+spelling (e.g., `I\hbox'). Otherwise just continue,
+and I'll forget about whatever was undefined.
+
+
+LaTeX Font Warning: Command \scriptsize invalid in math mode on input line 1273
+.
+
+c:/Users/install/gyminf/redac/main.tex:1274: Undefined control sequence.
+l.1274 \draw
+            [seq] (js_handle_response) -- node[midway, right] {Oui} (js_succ...
+The control sequence at the end of the top line
+of your error message was never \def'ed. If you have
+misspelled it (e.g., `\hobx'), type `I' and the correct
+spelling (e.g., `I\hbox'). Otherwise just continue,
+and I'll forget about whatever was undefined.
+
+c:/Users/install/gyminf/redac/main.tex:1275: Undefined control sequence.
+l.1275 \draw
+            [seq] (js_handle_response) -- node[midway, above] {Non} (js_error);
+The control sequence at the end of the top line
+of your error message was never \def'ed. If you have
+misspelled it (e.g., `\hobx'), type `I' and the correct
+spelling (e.g., `I\hbox'). Otherwise just continue,
+and I'll forget about whatever was undefined.
+
+c:/Users/install/gyminf/redac/main.tex:1276: Undefined control sequence.
+l.1276 \draw
+            [seq] (js_success) -- (end);
+The control sequence at the end of the top line
+of your error message was never \def'ed. If you have
+misspelled it (e.g., `\hobx'), type `I' and the correct
+spelling (e.g., `I\hbox'). Otherwise just continue,
+and I'll forget about whatever was undefined.
+
+c:/Users/install/gyminf/redac/main.tex:1277: Undefined control sequence.
+l.1277 \draw
+            [seq] (js_error) -- (end);
+The control sequence at the end of the top line
+of your error message was never \def'ed. If you have
+misspelled it (e.g., `\hobx'), type `I' and the correct
+spelling (e.g., `I\hbox'). Otherwise just continue,
+and I'll forget about whatever was undefined.
+
+c:/Users/install/gyminf/redac/main.tex:1278: Missing $ inserted.
+<inserted text> 
+                $
+l.1278 
+       
+I've inserted a begin-math/end-math symbol since I think
+you left one out. Proceed, with fingers crossed.
+
+Missing character: There is no é (U+00E9) in font cmmi10!
+Missing character: There is no é (U+00E9) in font cmmi10!
+Missing character: There is no é (U+00E9) in font cmmi10!
+Missing character: There is no é (U+00E9) in font cmmi10!
+c:/Users/install/gyminf/redac/main.tex:1280: Undefined control sequence.
+l.1280 \draw
+            [call] (db_queries_send) -- node[midway, above] {HTTP POST} (fla...
+The control sequence at the end of the top line
+of your error message was never \def'ed. If you have
+misspelled it (e.g., `\hobx'), type `I' and the correct
+spelling (e.g., `I\hbox'). Otherwise just continue,
+and I'll forget about whatever was undefined.
+
+c:/Users/install/gyminf/redac/main.tex:1280: Missing $ inserted.
+<inserted text> 
+                $
+l.1280 \draw[call] (db_
+                       queries_send) -- node[midway, above] {HTTP POST} (fla...
+I've inserted a begin-math/end-math symbol since I think
+you left one out. Proceed, with fingers crossed.
+
+c:/Users/install/gyminf/redac/main.tex:1281: Undefined control sequence.
+l.1281 \draw
+            [call] (flask_logic) -- node[midway, above, font=\scriptsize] {e...
+The control sequence at the end of the top line
+of your error message was never \def'ed. If you have
+misspelled it (e.g., `\hobx'), type `I' and the correct
+spelling (e.g., `I\hbox'). Otherwise just continue,
+and I'll forget about whatever was undefined.
+
+
+LaTeX Font Warning: Command \scriptsize invalid in math mode on input line 1281
+.
+
+c:/Users/install/gyminf/redac/main.tex:1282: Undefined control sequence.
+l.1282 \draw
+            [ret]  (db_execute) -- node[midway, right, font=\scriptsize] {ré...
+The control sequence at the end of the top line
+of your error message was never \def'ed. If you have
+misspelled it (e.g., `\hobx'), type `I' and the correct
+spelling (e.g., `I\hbox'). Otherwise just continue,
+and I'll forget about whatever was undefined.
+
+
+LaTeX Font Warning: Command \scriptsize invalid in math mode on input line 1282
+.
+
+c:/Users/install/gyminf/redac/main.tex:1283: Undefined control sequence.
+l.1283 \draw
+            [ret]  (json_response) -- node[midway, above] {HTTP Response} (j...
+The control sequence at the end of the top line
+of your error message was never \def'ed. If you have
+misspelled it (e.g., `\hobx'), type `I' and the correct
+spelling (e.g., `I\hbox'). Otherwise just continue,
+and I'll forget about whatever was undefined.
+
+c:/Users/install/gyminf/redac/main.tex:1284: Missing $ inserted.
+<inserted text> 
+                $
+l.1284 
+       
+I've inserted a begin-math/end-math symbol since I think
+you left one out. Proceed, with fingers crossed.
+
+Missing character: There is no ê (U+00EA) in font cmmi10!
+Missing character: There is no ê (U+00EA) in font cmmi10!
+Missing character: There is no é (U+00E9) in font cmmi10!
+Missing character: There is no é (U+00E9) in font cmmi10!
+c:/Users/install/gyminf/redac/main.tex:1289: Missing $ inserted.
+<inserted text> 
+                $
+l.1289 ...north west) rectangle ([yshift=12mm]sql_
+                                                  query.east);
+I've inserted a begin-math/end-math symbol since I think
+you left one out. Proceed, with fingers crossed.
+
+c:/Users/install/gyminf/redac/main.tex:1290: Missing $ inserted.
+<inserted text> 
+                $
+l.1290 
+       
+I've inserted a begin-math/end-math symbol since I think
+you left one out. Proceed, with fingers crossed.
+
+
+c:/Users/install/gyminf/redac/main.tex:1291: LaTeX Error: Environment scope und
+efined.
+
+See the LaTeX manual or LaTeX Companion for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.1291 \begin{scope}
+                    [on background layer]
+Your command was ignored.
+Type  I <command> <return>  to replace it with another command,
+or  <return>  to continue without it.
+
+c:/Users/install/gyminf/redac/main.tex:1293: Undefined control sequence.
+l.1293   \node
+              [fit=(start)(main_js)(db_queries_prepare)(db_queries_send)
+The control sequence at the end of the top line
+of your error message was never \def'ed. If you have
+misspelled it (e.g., `\hobx'), type `I' and the correct
+spelling (e.g., `I\hbox'). Otherwise just continue,
+and I'll forget about whatever was undefined.
+
+c:/Users/install/gyminf/redac/main.tex:1293: Missing $ inserted.
+<inserted text> 
+                $
+l.1293   \node[fit=(start)(main_
+                                js)(db_queries_prepare)(db_queries_send)
+I've inserted a begin-math/end-math symbol since I think
+you left one out. Proceed, with fingers crossed.
+
+c:/Users/install/gyminf/redac/main.tex:1296: Undefined control sequence.
+l.1296   \node
+              [fit=(flask_route)(flask_logic)(json_response),
+The control sequence at the end of the top line
+of your error message was never \def'ed. If you have
+misspelled it (e.g., `\hobx'), type `I' and the correct
+spelling (e.g., `I\hbox'). Otherwise just continue,
+and I'll forget about whatever was undefined.
+
+c:/Users/install/gyminf/redac/main.tex:1298: Undefined control sequence.
+l.1298   \node
+              [fit=(sql_query)(db_execute),
+The control sequence at the end of the top line
+of your error message was never \def'ed. If you have
+misspelled it (e.g., `\hobx'), type `I' and the correct
+spelling (e.g., `I\hbox'). Otherwise just continue,
+and I'll forget about whatever was undefined.
+
+c:/Users/install/gyminf/redac/main.tex:1300: Missing $ inserted.
+<inserted text> 
+                $
+l.1300 
+       
+I've inserted a begin-math/end-math symbol since I think
+you left one out. Proceed, with fingers crossed.
+
+
+Overfull \hbox (26.60536pt too wide) in paragraph at lines 1291--1300
+ \TU/lmr/m/n/10.95 [fit=(start)(main$[][]\OML/cmm/m/it/10.95 s\OT1/cmr/m/n/10.9
+5 )(\OML/cmm/m/it/10.95 db[]ueries[]repare\OT1/cmr/m/n/10.95 )(\OML/cmm/m/it/10
+.95 db[]ueries[]end\OT1/cmr/m/n/10.95 )(\OML/cmm/m/it/10.95 js[]andle[]esponse\
+OT1/cmr/m/n/10.95 )(\OML/cmm/m/it/10.95 js[]uccess\OT1/cmr/m/n/10.95 )(\OML/cmm
+/m/it/10.95 end\OT1/cmr/m/n/10.95 )(\OML/cmm/m/it/10.95 js[]rror\OT1/cmr/m/n/10
+.95 )\OML/cmm/m/it/10.95 ; innersep \OT1/cmr/m/n/10.95 = 
+ []
+
+c:/Users/install/gyminf/redac/main.tex:1302: Undefined control sequence.
+l.1302   \coordinate
+                     (top)    at (current bounding box.north);
+The control sequence at the end of the top line
+of your error message was never \def'ed. If you have
+misspelled it (e.g., `\hobx'), type `I' and the correct
+spelling (e.g., `I\hbox'). Otherwise just continue,
+and I'll forget about whatever was undefined.
+
+c:/Users/install/gyminf/redac/main.tex:1303: Undefined control sequence.
+l.1303   \coordinate
+                     (bottom) at (current bounding box.south);
+The control sequence at the end of the top line
+of your error message was never \def'ed. If you have
+misspelled it (e.g., `\hobx'), type `I' and the correct
+spelling (e.g., `I\hbox'). Otherwise just continue,
+and I'll forget about whatever was undefined.
+
+c:/Users/install/gyminf/redac/main.tex:1311: Undefined control sequence.
+l.1311   \coordinate
+                     (l1_wt) at (lane1_fit.west |- top);
+The control sequence at the end of the top line
+of your error message was never \def'ed. If you have
+misspelled it (e.g., `\hobx'), type `I' and the correct
+spelling (e.g., `I\hbox'). Otherwise just continue,
+and I'll forget about whatever was undefined.
+
+c:/Users/install/gyminf/redac/main.tex:1311: Missing $ inserted.
+<inserted text> 
+                $
+l.1311   \coordinate (l1_
+                         wt) at (lane1_fit.west |- top);
+I've inserted a begin-math/end-math symbol since I think
+you left one out. Proceed, with fingers crossed.
+
+c:/Users/install/gyminf/redac/main.tex:1312: Undefined control sequence.
+l.1312   \coordinate
+                     (l1_et) at (lane1_fit.east |- top);
+The control sequence at the end of the top line
+of your error message was never \def'ed. If you have
+misspelled it (e.g., `\hobx'), type `I' and the correct
+spelling (e.g., `I\hbox'). Otherwise just continue,
+and I'll forget about whatever was undefined.
+
+c:/Users/install/gyminf/redac/main.tex:1313: Undefined control sequence.
+l.1313   \coordinate
+                     (l1_eb) at (lane1_fit.east |- bottom);
+The control sequence at the end of the top line
+of your error message was never \def'ed. If you have
+misspelled it (e.g., `\hobx'), type `I' and the correct
+spelling (e.g., `I\hbox'). Otherwise just continue,
+and I'll forget about whatever was undefined.
+
+c:/Users/install/gyminf/redac/main.tex:1314: Undefined control sequence.
+l.1314   \filldraw
+                  [fill=blue!5, draw=black, rounded corners]
+The control sequence at the end of the top line
+of your error message was never \def'ed. If you have
+misspelled it (e.g., `\hobx'), type `I' and the correct
+spelling (e.g., `I\hbox'). Otherwise just continue,
+and I'll forget about whatever was undefined.
+
+c:/Users/install/gyminf/redac/main.tex:1316: Missing number, treated as zero.
+<to be read again> 
+                   [
+l.1316   \fill[
+               blue!30] (l1_wt) rectangle ([yshift=-\titlebar]l1_et);
+A number should have been here; I inserted `0'.
+(If you can't figure out why I needed to see a number,
+look up `weird error' in the index to The TeXbook.)
+
+c:/Users/install/gyminf/redac/main.tex:1316: Illegal unit of measure (pt inserte
+d).
+<to be read again> 
+                   [
+l.1316   \fill[
+               blue!30] (l1_wt) rectangle ([yshift=-\titlebar]l1_et);
+Dimensions can be in units of em, ex, in, pt, pc,
+cm, mm, dd, cc, nd, nc, bp, or sp; but yours is a new one!
+I'll assume that you meant to say pt, for printer's points.
+To recover gracefully from this error, it's best to
+delete the erroneous units; e.g., type `2' to delete
+two letters. (See Chapter 27 of The TeXbook.)
+
+c:/Users/install/gyminf/redac/main.tex:1317: Undefined control sequence.
+l.1317   \node
+              [anchor=west, font=\bfseries\normalsize]
+The control sequence at the end of the top line
+of your error message was never \def'ed. If you have
+misspelled it (e.g., `\hobx'), type `I' and the correct
+spelling (e.g., `I\hbox'). Otherwise just continue,
+and I'll forget about whatever was undefined.
+
+
+c:/Users/install/gyminf/redac/main.tex:1317: LaTeX Error: Command \bfseries inv
+alid in math mode.
+
+See the LaTeX manual or LaTeX Companion for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.1317   \node[anchor=west, font=\bfseries
+                                          \normalsize]
+Please use the math alphabet \mathbf instead of the \bfseries command. 
+
+
+LaTeX Font Warning: Command \normalsize invalid in math mode on input line 1317
+.
+
+c:/Users/install/gyminf/redac/main.tex:1319: Missing $ inserted.
+<inserted text> 
+                $
+l.1319 
+       
+I've inserted a begin-math/end-math symbol since I think
+you left one out. Proceed, with fingers crossed.
+
+c:/Users/install/gyminf/redac/main.tex:1321: Undefined control sequence.
+l.1321   \coordinate
+                     (l2_wt) at ($(l1_et) + (\laneGap,0)$);
+The control sequence at the end of the top line
+of your error message was never \def'ed. If you have
+misspelled it (e.g., `\hobx'), type `I' and the correct
+spelling (e.g., `I\hbox'). Otherwise just continue,
+and I'll forget about whatever was undefined.
+
+c:/Users/install/gyminf/redac/main.tex:1321: Missing $ inserted.
+<inserted text> 
+                $
+l.1321   \coordinate (l2_
+                         wt) at ($(l1_et) + (\laneGap,0)$);
+I've inserted a begin-math/end-math symbol since I think
+you left one out. Proceed, with fingers crossed.
+
+c:/Users/install/gyminf/redac/main.tex:1321: Missing $ inserted.
+<inserted text> 
+                $
+l.1321   \coordinate (l2_wt) at ($(l1_
+                                      et) + (\laneGap,0)$);
+I've inserted a begin-math/end-math symbol since I think
+you left one out. Proceed, with fingers crossed.
+
+c:/Users/install/gyminf/redac/main.tex:1322: Undefined control sequence.
+l.1322   \coordinate
+                     (l2_et) at ($(lane2_fit.east |- top) + (\padLR,0)$);
+The control sequence at the end of the top line
+of your error message was never \def'ed. If you have
+misspelled it (e.g., `\hobx'), type `I' and the correct
+spelling (e.g., `I\hbox'). Otherwise just continue,
+and I'll forget about whatever was undefined.
+
+c:/Users/install/gyminf/redac/main.tex:1322: Missing $ inserted.
+<inserted text> 
+                $
+l.1322   \coordinate (l2_
+                         et) at ($(lane2_fit.east |- top) + (\padLR,0)$);
+I've inserted a begin-math/end-math symbol since I think
+you left one out. Proceed, with fingers crossed.
+
+c:/Users/install/gyminf/redac/main.tex:1322: Missing $ inserted.
+<inserted text> 
+                $
+l.1322   \coordinate (l2_et) at ($(lane2_
+                                         fit.east |- top) + (\padLR,0)$);
+I've inserted a begin-math/end-math symbol since I think
+you left one out. Proceed, with fingers crossed.
+
+c:/Users/install/gyminf/redac/main.tex:1323: Undefined control sequence.
+l.1323   \coordinate
+                     (l2_eb) at (l2_et |- bottom);
+The control sequence at the end of the top line
+of your error message was never \def'ed. If you have
+misspelled it (e.g., `\hobx'), type `I' and the correct
+spelling (e.g., `I\hbox'). Otherwise just continue,
+and I'll forget about whatever was undefined.
+
+c:/Users/install/gyminf/redac/main.tex:1323: Missing $ inserted.
+<inserted text> 
+                $
+l.1323   \coordinate (l2_
+                         eb) at (l2_et |- bottom);
+I've inserted a begin-math/end-math symbol since I think
+you left one out. Proceed, with fingers crossed.
+
+c:/Users/install/gyminf/redac/main.tex:1324: Undefined control sequence.
+l.1324   \filldraw
+                  [fill=orange!5, draw=black, rounded corners]
+The control sequence at the end of the top line
+of your error message was never \def'ed. If you have
+misspelled it (e.g., `\hobx'), type `I' and the correct
+spelling (e.g., `I\hbox'). Otherwise just continue,
+and I'll forget about whatever was undefined.
+
+c:/Users/install/gyminf/redac/main.tex:1326: Missing number, treated as zero.
+<to be read again> 
+                   [
+l.1326   \fill[
+               orange!30] (l2_wt) rectangle ([yshift=-\titlebar]l2_et);
+A number should have been here; I inserted `0'.
+(If you can't figure out why I needed to see a number,
+look up `weird error' in the index to The TeXbook.)
+
+c:/Users/install/gyminf/redac/main.tex:1326: Illegal unit of measure (pt inserte
+d).
+<to be read again> 
+                   [
+l.1326   \fill[
+               orange!30] (l2_wt) rectangle ([yshift=-\titlebar]l2_et);
+Dimensions can be in units of em, ex, in, pt, pc,
+cm, mm, dd, cc, nd, nc, bp, or sp; but yours is a new one!
+I'll assume that you meant to say pt, for printer's points.
+To recover gracefully from this error, it's best to
+delete the erroneous units; e.g., type `2' to delete
+two letters. (See Chapter 27 of The TeXbook.)
+
+c:/Users/install/gyminf/redac/main.tex:1327: Undefined control sequence.
+l.1327   \node
+              [anchor=west, font=\bfseries\normalsize]
+The control sequence at the end of the top line
+of your error message was never \def'ed. If you have
+misspelled it (e.g., `\hobx'), type `I' and the correct
+spelling (e.g., `I\hbox'). Otherwise just continue,
+and I'll forget about whatever was undefined.
+
+
+c:/Users/install/gyminf/redac/main.tex:1327: LaTeX Error: Command \bfseries inv
+alid in math mode.
+
+See the LaTeX manual or LaTeX Companion for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.1327   \node[anchor=west, font=\bfseries
+                                          \normalsize]
+Please use the math alphabet \mathbf instead of the \bfseries command. 
+
+
+LaTeX Font Warning: Command \normalsize invalid in math mode on input line 1327
+.
+
+c:/Users/install/gyminf/redac/main.tex:1329: Missing $ inserted.
+<inserted text> 
+                $
+l.1329 
+       
+I've inserted a begin-math/end-math symbol since I think
+you left one out. Proceed, with fingers crossed.
+
+c:/Users/install/gyminf/redac/main.tex:1331: Undefined control sequence.
+l.1331   \coordinate
+                     (l3_wt) at ($(l2_et) + (\laneGap,0)$);
+The control sequence at the end of the top line
+of your error message was never \def'ed. If you have
+misspelled it (e.g., `\hobx'), type `I' and the correct
+spelling (e.g., `I\hbox'). Otherwise just continue,
+and I'll forget about whatever was undefined.
+
+c:/Users/install/gyminf/redac/main.tex:1331: Missing $ inserted.
+<inserted text> 
+                $
+l.1331   \coordinate (l3_
+                         wt) at ($(l2_et) + (\laneGap,0)$);
+I've inserted a begin-math/end-math symbol since I think
+you left one out. Proceed, with fingers crossed.
+
+c:/Users/install/gyminf/redac/main.tex:1331: Missing $ inserted.
+<inserted text> 
+                $
+l.1331   \coordinate (l3_wt) at ($(l2_
+                                      et) + (\laneGap,0)$);
+I've inserted a begin-math/end-math symbol since I think
+you left one out. Proceed, with fingers crossed.
+
+c:/Users/install/gyminf/redac/main.tex:1332: Undefined control sequence.
+l.1332   \coordinate
+                     (l3_et) at ($(lane3_fit.east |- top) + (\padLR,0)$);
+The control sequence at the end of the top line
+of your error message was never \def'ed. If you have
+misspelled it (e.g., `\hobx'), type `I' and the correct
+spelling (e.g., `I\hbox'). Otherwise just continue,
+and I'll forget about whatever was undefined.
+
+c:/Users/install/gyminf/redac/main.tex:1332: Missing $ inserted.
+<inserted text> 
+                $
+l.1332   \coordinate (l3_
+                         et) at ($(lane3_fit.east |- top) + (\padLR,0)$);
+I've inserted a begin-math/end-math symbol since I think
+you left one out. Proceed, with fingers crossed.
+
+c:/Users/install/gyminf/redac/main.tex:1332: Missing $ inserted.
+<inserted text> 
+                $
+l.1332   \coordinate (l3_et) at ($(lane3_
+                                         fit.east |- top) + (\padLR,0)$);
+I've inserted a begin-math/end-math symbol since I think
+you left one out. Proceed, with fingers crossed.
+
+c:/Users/install/gyminf/redac/main.tex:1333: Undefined control sequence.
+l.1333   \coordinate
+                     (l3_eb) at (l3_et |- bottom);
+The control sequence at the end of the top line
+of your error message was never \def'ed. If you have
+misspelled it (e.g., `\hobx'), type `I' and the correct
+spelling (e.g., `I\hbox'). Otherwise just continue,
+and I'll forget about whatever was undefined.
+
+c:/Users/install/gyminf/redac/main.tex:1333: Missing $ inserted.
+<inserted text> 
+                $
+l.1333   \coordinate (l3_
+                         eb) at (l3_et |- bottom);
+I've inserted a begin-math/end-math symbol since I think
+you left one out. Proceed, with fingers crossed.
+
+c:/Users/install/gyminf/redac/main.tex:1334: Undefined control sequence.
+l.1334   \filldraw
+                  [fill=red!5, draw=black, rounded corners]
+The control sequence at the end of the top line
+of your error message was never \def'ed. If you have
+misspelled it (e.g., `\hobx'), type `I' and the correct
+spelling (e.g., `I\hbox'). Otherwise just continue,
+and I'll forget about whatever was undefined.
+
+c:/Users/install/gyminf/redac/main.tex:1336: Missing number, treated as zero.
+<to be read again> 
+                   [
+l.1336   \fill[
+               red!30] (l3_wt) rectangle ([yshift=-\titlebar]l3_et);
+A number should have been here; I inserted `0'.
+(If you can't figure out why I needed to see a number,
+look up `weird error' in the index to The TeXbook.)
+
+c:/Users/install/gyminf/redac/main.tex:1336: Illegal unit of measure (pt inserte
+d).
+<to be read again> 
+                   [
+l.1336   \fill[
+               red!30] (l3_wt) rectangle ([yshift=-\titlebar]l3_et);
+Dimensions can be in units of em, ex, in, pt, pc,
+cm, mm, dd, cc, nd, nc, bp, or sp; but yours is a new one!
+I'll assume that you meant to say pt, for printer's points.
+To recover gracefully from this error, it's best to
+delete the erroneous units; e.g., type `2' to delete
+two letters. (See Chapter 27 of The TeXbook.)
+
+c:/Users/install/gyminf/redac/main.tex:1337: Undefined control sequence.
+l.1337   \node
+              [anchor=west, font=\bfseries\normalsize]
+The control sequence at the end of the top line
+of your error message was never \def'ed. If you have
+misspelled it (e.g., `\hobx'), type `I' and the correct
+spelling (e.g., `I\hbox'). Otherwise just continue,
+and I'll forget about whatever was undefined.
+
+
+c:/Users/install/gyminf/redac/main.tex:1337: LaTeX Error: Command \bfseries inv
+alid in math mode.
+
+See the LaTeX manual or LaTeX Companion for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.1337   \node[anchor=west, font=\bfseries
+                                          \normalsize]
+Please use the math alphabet \mathbf instead of the \bfseries command. 
+
+
+LaTeX Font Warning: Command \normalsize invalid in math mode on input line 1337
+.
+
+
+c:/Users/install/gyminf/redac/main.tex:1339: LaTeX Error: \begin{adjustbox} on 
+input line 1228 ended by \end{scope}.
+
+See the LaTeX manual or LaTeX Companion for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.1339 \end{scope}
+                  
+Your command was ignored.
+Type  I <command> <return>  to replace it with another command,
+or  <return>  to continue without it.
+
+c:/Users/install/gyminf/redac/main.tex:1339: Missing $ inserted.
+<inserted text> 
+                $
+l.1339 \end{scope}
+                  
+I've inserted something that you may have forgotten.
+(See the <inserted text> above.)
+With luck, this will get me unwedged. But if you
+really didn't forget anything, try typing `2' now; then
+my insertion and my current dilemma will both disappear.
+
+Missing character: There is no é (U+00E9) in font cmmi10!
+Missing character: There is no é (U+00E9) in font cmmi10!
+
+c:/Users/install/gyminf/redac/main.tex:1344: LaTeX Error: Environment scope und
+efined.
+
+See the LaTeX manual or LaTeX Companion for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.1344 \begin{scope}
+                    
+Your command was ignored.
+Type  I <command> <return>  to replace it with another command,
+or  <return>  to continue without it.
+
+c:/Users/install/gyminf/redac/main.tex:1345: Undefined control sequence.
+l.1345   \coordinate
+                     (legendSE) at ($(current bounding box.south east)+(-1.2...
+The control sequence at the end of the top line
+of your error message was never \def'ed. If you have
+misspelled it (e.g., `\hobx'), type `I' and the correct
+spelling (e.g., `I\hbox'). Otherwise just continue,
+and I'll forget about whatever was undefined.
+
+c:/Users/install/gyminf/redac/main.tex:1346: Undefined control sequence.
+l.1346   \node
+              [draw, rounded corners, fill=gray!5, inner sep=4mm, anchor=sou...
+The control sequence at the end of the top line
+of your error message was never \def'ed. If you have
+misspelled it (e.g., `\hobx'), type `I' and the correct
+spelling (e.g., `I\hbox'). Otherwise just continue,
+and I'll forget about whatever was undefined.
+
+
+c:/Users/install/gyminf/redac/main.tex:1348: Package pgfkeys Error: I do not kn
+ow the key '/tikz/seq' and I am going to ignore it. Perhaps you misspelled it.
+
+See the pgfkeys package documentation for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.1348       \draw[seq]
+                         (0,0)--(1.6,0);      \node[anchor=west] at (1.8,0) ...
+(That was another \errmessage.)
+
+
+c:/Users/install/gyminf/redac/main.tex:1349: Package pgfkeys Error: I do not kn
+ow the key '/tikz/call' and I am going to ignore it. Perhaps you misspelled it.
+
+
+See the pgfkeys package documentation for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.1349       \draw[call]
+                         (0,-0.7)--(1.6,-0.7);\node[anchor=west] at (1.8,-0....
+(That was another \errmessage.)
+
+
+c:/Users/install/gyminf/redac/main.tex:1350: Package pgfkeys Error: I do not kn
+ow the key '/tikz/ret' and I am going to ignore it. Perhaps you misspelled it.
+
+See the pgfkeys package documentation for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.1350       \draw[ret]
+                         (0,-1.4)--(1.6,-1.4);\node[anchor=west] at (1.8,-1....
+(That was another \errmessage.)
+
+
+c:/Users/install/gyminf/redac/main.tex:1353: LaTeX Error: \begin{adjustbox} on 
+input line 1228 ended by \end{scope}.
+
+See the LaTeX manual or LaTeX Companion for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.1353 \end{scope}
+                  
+Your command was ignored.
+Type  I <command> <return>  to replace it with another command,
+or  <return>  to continue without it.
+
+c:/Users/install/gyminf/redac/main.tex:1355: Undefined control sequence.
+\endtikzpicture ...r@layerlist@globally \endscope 
+                                                  \let \pgf@baseline =\pgf@s...
+l.1355 \end{tikzpicture}
+                        
+The control sequence at the end of the top line
+of your error message was never \def'ed. If you have
+misspelled it (e.g., `\hobx'), type `I' and the correct
+spelling (e.g., `I\hbox'). Otherwise just continue,
+and I'll forget about whatever was undefined.
+
+c:/Users/install/gyminf/redac/main.tex:1355: Missing } inserted.
+<inserted text> 
+                }
+l.1355 \end{tikzpicture}
+                        
+I've inserted something that you may have forgotten.
+(See the <inserted text> above.)
+With luck, this will get me unwedged. But if you
+really didn't forget anything, try typing `2' now; then
+my insertion and my current dilemma will both disappear.
+
+c:/Users/install/gyminf/redac/main.tex:1355: Extra \endgroup.
+\endpgfpicture ...pe \pgfsys@endpicture \endgroup 
+                                                  \hss \egroup \pgfsys@types...
+l.1355 \end{tikzpicture}
+                        
+Things are pretty mixed up, but I think the worst is over.
+
+c:/Users/install/gyminf/redac/main.tex:1355: Too many }'s.
+\endpgfpicture ...dpicture \endgroup \hss \egroup 
+                                                  \pgfsys@typesetpicturebox ...
+l.1355 \end{tikzpicture}
+                        
+You've closed more groups than you opened.
+Such booboos are generally harmless, so keep going.
+
+c:/Users/install/gyminf/redac/main.tex:1355: Extra \endgroup.
+\endpgfpicture ...setpicturebox \pgfpic \endgroup 
+                                                  
+l.1355 \end{tikzpicture}
+                        
+Things are pretty mixed up, but I think the worst is over.
+
+c:/Users/install/gyminf/redac/main.tex:1355: Extra \endgroup.
+\endtikzpicture ...lobal \endpgfpicture \endgroup 
+                                                  
+l.1355 \end{tikzpicture}
+                        
+Things are pretty mixed up, but I think the worst is over.
+
+
+c:/Users/install/gyminf/redac/main.tex:1355: LaTeX Error: \begin{document} ende
+d by \end{tikzpicture}.
+
+See the LaTeX manual or LaTeX Companion for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.1355 \end{tikzpicture}
+                        
+Your command was ignored.
+Type  I <command> <return>  to replace it with another command,
+or  <return>  to continue without it.
+
+c:/Users/install/gyminf/redac/main.tex:1355: Extra \endgroup.
+\end  ...end#1\endcsname \@checkend {#1}\endgroup 
+                                                  \UseHook {env/#1/after}\if...
+l.1355 \end{tikzpicture}
+                        
+Things are pretty mixed up, but I think the worst is over.
+
+
+c:/Users/install/gyminf/redac/main.tex:1356: LaTeX Error: \begin{document} ende
+d by \end{adjustbox}.
+
+See the LaTeX manual or LaTeX Companion for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.1356 \end{adjustbox}
+                      
+Your command was ignored.
+Type  I <command> <return>  to replace it with another command,
+or  <return>  to continue without it.
+
+c:/Users/install/gyminf/redac/main.tex:1356: Extra \endgroup.
+\end  ...end#1\endcsname \@checkend {#1}\endgroup 
+                                                  \UseHook {env/#1/after}\if...
+l.1356 \end{adjustbox}
+                      
+Things are pretty mixed up, but I think the worst is over.
+
+
+c:/Users/install/gyminf/redac/main.tex:1357: Package caption Error: \caption ou
+tside float.
+
+See the caption package documentation for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.1357 \caption
+               {Diagramme BPMN du flux de journalisation des actions utilisa...
+If you do not understand this error, please take a closer look
+at the documentation of the `caption' package, especially the
+section about errors.
+Try typing  <return>  to proceed.
+If that doesn't work, type  X <return>  to quit.
+
+c:/Users/install/gyminf/redac/main.tex:1359: Infinite glue shrinkage found in a 
+paragraph.
+<argument> ...hskip:D \c_zero_dim \fi: \tex_par:D 
+                                                  \hook_use:n {para/after}\@...
+l.1359 \end{figure}
+                   
+The paragraph just ended includes some glue that has
+infinite shrinkability, e.g., `\hskip 0pt minus 1fil'.
+Such glue doesn't belong there---it allows a paragraph
+of any length to fit on one line. But it's safe to proceed,
+since the offensive shrinkability has been made finite.
+
+c:/Users/install/gyminf/redac/main.tex:1359: Too many }'s.
+\@endfloatbox ...pagefalse \outer@nobreak \egroup 
+                                                  \color@endbox 
+l.1359 \end{figure}
+                   
+You've closed more groups than you opened.
+Such booboos are generally harmless, so keep going.
+
+c:/Users/install/gyminf/redac/main.tex:1359: Extra \endgroup.
+\color@endgroup ->\endgraf \@endpefalse \endgroup 
+                                                  
+l.1359 \end{figure}
+                   
+Things are pretty mixed up, but I think the worst is over.
+
+c:/Users/install/gyminf/redac/main.tex:1359: Too many }'s.
+\color@endbox ->\color@endgroup \egroup 
+                                        
+l.1359 \end{figure}
+                   
+You've closed more groups than you opened.
+Such booboos are generally harmless, so keep going.
+
+
+c:/Users/install/gyminf/redac/main.tex:1359: LaTeX Error: \begin{document} ende
+d by \end{figure}.
+
+See the LaTeX manual or LaTeX Companion for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.1359 \end{figure}
+                   
+Your command was ignored.
+Type  I <command> <return>  to replace it with another command,
+or  <return>  to continue without it.
+
+c:/Users/install/gyminf/redac/main.tex:1359: Extra \endgroup.
+\end  ...end#1\endcsname \@checkend {#1}\endgroup 
+                                                  \UseHook {env/#1/after}\if...
+l.1359 \end{figure}
+                   
+Things are pretty mixed up, but I think the worst is over.
+
+(./_minted/EC244FF2476C29ABAF39A85742AC6605.highlight.minted
+
+[42
+
+
+]) (./_minted/896AAAC700B2AEAC065FDF7725D514C5.highlight.minted)
+(./_minted/9286F558659C59988338C42D74134B3A.highlight.minted)
+(./_minted/6FDAF4C9DEB0EDD2AE2F56CDB9795F19.highlight.minted
+
+[43]) (./_minted/0E64315A495E607A29A62E4F55DF60A3.highlight.minted)
+
+[44]
+<logging_archi.png, id=838, 1053.9375pt x 552.56438pt>
+File: logging_archi.png Graphic file (type png)
+<use logging_archi.png>
+Package luatex.def Info: logging_archi.png  used on input line 1444.
+(luatex.def)             Requested size: 507.03093pt x 265.83495pt.
+<tableau_journalisations.png, id=839, 837.1275pt x 487.8225pt>
+File: tableau_journalisations.png Graphic file (type png)
+<use tableau_journalisations.png>
+Package luatex.def Info: tableau_journalisations.png  used on input line 1452.
+(luatex.def)             Requested size: 507.03093pt x 295.45732pt.
+
+Overfull \hbox (17.0pt too wide) in paragraph at lines 1438--1458
+[]$[]$ 
+ []
+
+
+
+[45
+
+<./logging_archi.png><./tableau_journalisations.png>]
+Underfull \hbox (badness 8019) in paragraph at lines 1501--1501
+[]|\TU/lmr/bx/n/10.95 Ap-pel Uni-fié à Pyo-dide. \TU/lmr/m/n/10.95 Au lieu de
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 1501--1501
+\TU/lmr/m/n/10.95 mul-tiples ap-pels [][][][][][] pour chaque ar-
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 1501--1501
+\TU/lmr/m/n/10.95 te-fact, une mé-thode cen-trale en Py-thon,
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 1501--1501
+[][][][][][]\TU/lmr/m/n/10.95 , est ap-pe-lée
+ []
+
+
+
+[46
+
+]
+
+[47
+
+]
+
+[48]
+
+c:/Users/install/gyminf/redac/main.tex:1618: Package minted Error: Cannot highl
+ight code (minted executable is unavailable or disabled); attempting to typeset
+ without highlighting.
+
+See the minted package documentation for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.1618 \end{minted}
+                   
+(That was another \errmessage.)
+
+
+
+[49]
+
+[50]
+
+[51]
+Overfull \hbox (2.0617pt too wide) in paragraph at lines 1771--1771
+[]\TU/DejaVuSansMono(0)/m/n/10.95 │       │   ├── generateVariedOperat
+ion                   #1743 (logique anti-
+ []
+
+
+
+[52]
+Overfull \hbox (566.60323pt too wide) in paragraph at lines 1791--1792
+\TU/lmr/m/n/10.95 dées. La condi-tion de sé-cu-rité est exac-te-ment : [][][
+][][][] 
+ []
+
+
+
+[53]
+Overfull \hbox (46.58685pt too wide) in paragraph at lines 1832--1833
+[]\TU/lmr/m/n/10.95 Pour le type passé en pa-ra-mètre, ren-voie un nom de va-r
+iable gé-néré par ap-pel à \TU/DejaVuSansMono(0)/m/n/10.95 generateUniqueVar
+Name
+ []
+
+
+Overfull \hbox (192.41411pt too wide) in paragraph at lines 1833--1834
+\TU/lmr/bx/n/10.95 dic-tion-naire de fonc-tions \TU/DejaVuSansMono(0)/m/n/10.95
+ LITERALS_BY_TYPE[type](difficulty, 'int') $[]$
+ []
+
+
+Overfull \hbox (69.13339pt too wide) in paragraph at lines 1839--1840
+\TU/lmr/m/n/10.95 puis, si les op-tions de va-riables ont été choi-sies par l
+’uti-li-sa-teur, $[]$
+ []
+
+
+Overfull \hbox (10.86682pt too wide) in paragraph at lines 1840--1841
+[]\TU/lmr/m/n/10.95 Ini-tia-lise une va-riable list-Va-lue par ap-pel à \TU/De
+jaVuSansMono(0)/m/n/10.95 generateDiverseList(itemTypes,difficulty)
+ []
+
+
+c:/Users/install/gyminf/redac/main.tex:1850: Package minted Error: Cannot highl
+ight code (minted executable is unavailable or disabled); attempting to typeset
+ without highlighting.
+
+See the minted package documentation for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.1850 \end{minted}
+                   
+(That was another \errmessage.)
+
+
+Overfull \hbox (195.71301pt too wide) in paragraph at lines 1857--1858
+[]$[]$ 
+ []
+
+
+c:/Users/install/gyminf/redac/main.tex:1876: Package minted Error: Cannot highl
+ight code (minted executable is unavailable or disabled); attempting to typeset
+ without highlighting.
+
+See the minted package documentation for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.1876 \end{minted}
+                   
+(That was another \errmessage.)
+
+
+
+[54]
+Overfull \hbox (56.08658pt too wide) in paragraph at lines 1877--1881
+\TU/lmr/m/n/10.95 de code en choi-sis-sant aléa-toi-re-ment un élé-ment parmi
+ le ta-bleau \TU/lmr/m/it/10.95 ope-ra-tions \TU/lmr/m/n/10.95 : [][][][][][]
+ []
+
+
+Overfull \hbox (19.92107pt too wide) in paragraph at lines 1881--1882
+[]\TU/lmr/m/n/10.95 Si la condi-tion [][][][][][]
+ []
+
+
+Overfull \hbox (18.3048pt too wide) in paragraph at lines 1900--1901
+\TU/lmr/m/n/10.95 table de dis-patch pour sé-lec-tion-ner une opé-ra-tion pos-
+sible en fonc-tion du [][][][][][] et de la [][][][][][].
+ []
+
+
+
+[55]
+Overfull \hbox (9.65933pt too wide) in paragraph at lines 1913--1915
+[]\TU/DejaVuSansMono(0)/m/n/10.95 generateCondition(varTypes = ['int', 'bool', 
+'str', 'list'], preferExisting
+ []
+
+
+c:/Users/install/gyminf/redac/main.tex:1933: Package minted Error: Cannot highl
+ight code (minted executable is unavailable or disabled); attempting to typeset
+ without highlighting.
+
+See the minted package documentation for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.1933         \end{minted}
+                           
+(That was another \errmessage.)
+
+
+
+[56]
+Underfull \hbox (badness 10000) in paragraph at lines 1982--1983
+[]|\TU/lmr/m/n/10.95 Ana-lyse plus sé-man-tique, mais
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 1984--1984
+[]|\TU/lmr/bx/n/10.95 En-trée ac-cep-
+ []
+
+
+Underfull \hbox (badness 1968) in paragraph at lines 1986--1987
+\TU/lmr/m/n/10.95 fonc-tion (cf. mes \TU/DejaVuSansMono(0)/m/n/10.95 exemples.py
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 1986--1987
+\TU/lmr/m/n/10.95 un \TU/DejaVuSansMono(0)/m/n/10.95 SyntaxError: 'return'
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 1988--1988
+[]|\TU/lmr/bx/n/10.95 Construc-tion
+ []
+
+
+Underfull \hbox (badness 1092) in paragraph at lines 1990--1991
+\TU/lmr/m/n/10.95 (ex : \TU/DejaVuSansMono(0)/m/n/10.95 on_if\TU/lmr/m/n/10.95 
+, \TU/DejaVuSansMono(0)/m/n/10.95 on_for\TU/lmr/m/n/10.95 , ...) pour
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 1992--1992
+[]|\TU/lmr/bx/n/10.95 Ges-tion des
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 1992--1992
+\TU/lmr/bx/n/10.95 branches et
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 1996--1996
+[]|\TU/lmr/bx/n/10.95 Ges-tion des
+ []
+
+
+Underfull \hbox (badness 1043) in paragraph at lines 2002--2003
+[]|\TU/lmr/m/n/10.95 Ap-pels de fonc-tions na-tives sont
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 2004--2004
+[]|\TU/lmr/bx/n/10.95 Ges-tion des
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 2004--2004
+\TU/lmr/bx/n/10.95 dé-fi-ni-tions de
+ []
+
+
+Underfull \hbox (badness 1014) in paragraph at lines 2005--2005
+[]|\TU/lmr/m/n/10.95 Pro-blé-ma-tique quand le code est uni-
+ []
+
+
+Underfull \hbox (badness 6542) in paragraph at lines 2008--2008
+[]|\TU/lmr/bx/n/10.95 To-lé-rance aux
+ []
+
+
+Underfull \hbox (badness 2142) in paragraph at lines 2010--2011
+\TU/lmr/m/n/10.95 que-ment va-lide pour fonc-tion-ner
+ []
+
+
+Underfull \hbox (badness 1231) in paragraph at lines 2014--2015
+\TU/lmr/m/n/10.95 vi-sua-li-sa-tion avan-cée, cou-leurs et
+ []
+
+[57]
+
+[58]
+Overfull \hbox (11.5443pt too wide) in paragraph at lines 2044--2045
+\TU/lmr/m/n/10.95 Chaque élé-ment est un tuple [][][][][][]
+ []
+
+
+Overfull \hbox (26.96817pt too wide) in paragraph at lines 2052--2053
+\TU/lmr/m/n/10.95 fonc-tion-ner cor-rec-te-ment. Quand on est à la fin de la vi
+-site d’une fonc-tion (dans [][][][][][]),
+ []
+
+
+Overfull \hbox (2.08405pt too wide) in paragraph at lines 2066--2067
+[]\TU/lmr/m/it/10.95 new_id \TU/lmr/m/n/10.95 : []str[]. L’iden-ti-fiant de n
+œud nou-vel-le-ment gé-néré (par exemple,
+ []
+
+
+
+[59]
+Overfull \hbox (35.38947pt too wide) in paragraph at lines 2116--2117
+[][][][][][][] 
+ []
+
+
+
+[60]
+Overfull \hbox (84.39456pt too wide) in paragraph at lines 2130--2131
+[]\TU/lmr/m/it/10.95 pa-rent_id \TU/lmr/m/n/10.95 : []str[]. Un ID de nœud de 
+\TU/lmr/m/it/10.95 cur-rent_stmt_en-try_points\TU/lmr/m/n/10.95 , passé comme 
+pa-rent à [][][][][][]. 
+ []
+
+
+Overfull \hbox (161.82013pt too wide) in paragraph at lines 2161--2162
+[][][][][][][] 
+ []
+
+
+
+[61]
+Overfull \hbox (65.492pt too wide) in paragraph at lines 2180--2181
+[][][][][][][] 
+ []
+
+
+Overfull \hbox (83.55353pt too wide) in paragraph at lines 2201--2202
+[][][][][][][] 
+ []
+
+
+
+[62]
+Overfull \hbox (77.68927pt too wide) in paragraph at lines 2222--2223
+[][][][][][][] 
+ []
+
+
+Overfull \hbox (19.8154pt too wide) in paragraph at lines 2251--2251
+[][][][][][] \TU/lmr/m/n/10.95 pour ana-ly-ser l’ité-rable (s’agit-il d
+’une liste, d’une chaîne, d’un [][][][][][],
+ []
+
+
+
+[63]
+Overfull \hbox (28.76959pt too wide) in paragraph at lines 2258--2259
+[]\TU/lmr/m/it/10.95 ite-ra-tor_va-riable_str \TU/lmr/m/n/10.95 (re-nom-mée de \TU/lmr/m/it/10.95 ite-ra-tor_str\TU/lmr/m/n/10.95 ) :
+ []
+
+
+Overfull \hbox (24.35643pt too wide) in paragraph at lines 2306--2307
+[]\TU/lmr/m/n/10.95 La branche False de en-try_de-ci-sion_id de-vient une des so
+r-ties de la boucle (loop_ove-rall_exit_points). 
+ []
+
+
+
+[64]
+Overfull \hbox (26.22888pt too wide) in paragraph at lines 2331--2332
+[]\TU/lmr/m/n/10.95 La branche False de re-test_de-ci-sion_id de-vient une des 
+sor-ties de la boucle (loop_ove-rall_exit_points). 
+ []
+
+
+
+[65]
+Overfull \hbox (16.30731pt too wide) in paragraph at lines 2432--2433
+[]\TU/lmr/m/n/10.95 Vi-si-teur par dé-faut pour les types de nœuds AST qui n
+’ont pas de mé-thode [][][][][][]
+ []
+
+
+
+[66]
+
+[67]
+Overfull \hbox (77.53302pt too wide) in paragraph at lines 2506--2507
+[][][][][][][] 
+ []
+
+
+Overfull \hbox (19.00539pt too wide) in paragraph at lines 2510--2511
+[]\TU/lmr/m/it/10.95 sim-pli-fied_nodes_tuples \TU/lmr/m/n/10.95 (re-nom-mée de
+ \TU/lmr/m/it/10.95 sim-pli-fied_nodes\TU/lmr/m/n/10.95 ) : []List[Tuple[str,
+ []
+
+
+
+[68]
+Overfull \hbox (29.36896pt too wide) in paragraph at lines 2557--2558
+[][][][][][][] 
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 2586--2586
+[]|\TU/DejaVuSansMono(0)/m/n/10.95 ast.ExceptHandler
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 2587--2587
+[]|\TU/DejaVuSansMono(0)/m/n/10.95 ast.Try \TU/lmr/m/n/10.95 (par-tie
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 2588--2588
+[]|\TU/DejaVuSansMono(0)/m/n/10.95 ast.Try \TU/lmr/m/n/10.95 (par-tie
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 2589--2589
+[]|\TU/DejaVuSansMono(0)/m/n/10.95 ast.Try \TU/lmr/m/n/10.95 (par-
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 2589--2589
+\TU/lmr/m/n/10.95 tie \TU/DejaVuSansMono(0)/m/n/10.95 orelse\TU/lmr/m/n/10.95 ),
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 2589--2589
+\TU/DejaVuSansMono(0)/m/n/10.95 ast.For\TU/lmr/m/n/10.95 /\TU/DejaVuSansMono(0)
+/m/n/10.95 ast.While
+ []
+
+
+Underfull \hbox (badness 1448) in paragraph at lines 2589--2589
+\TU/lmr/m/n/10.95 une boucle se ter-mine *nor-ma-le-ment*
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 2591--2591
+[]|\TU/lmr/m/n/10.95 Context-Ma-na-ger
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 2591--2591
+[]|\TU/DejaVuSansMono(0)/m/n/10.95 ast.With\TU/lmr/m/n/10.95 ,
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 2592--2592
+[]|\TU/lmr/m/n/10.95 Vé-ri-fie une condi-tion et lève une
+ []
+
+
+Underfull \hbox (badness 3657) in paragraph at lines 2592--2592
+\TU/DejaVuSansMono(0)/m/n/10.95 AssertionError \TU/lmr/m/n/10.95 si elle est fau
+sse.
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 2594--2594
+[]|\TU/DejaVuSansMono(0)/m/n/10.95 ast.Yield\TU/lmr/m/n/10.95 ,
+ []
+
+
+Overfull \hbox (21.08214pt too wide) in paragraph at lines 2595--2595
+[]|\TU/DejaVuSansMono(0)/m/n/10.95 ast.AsyncFunctionDef\TU/lmr/m/n/10.95 ,
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 2595--2595
+\TU/DejaVuSansMono(0)/m/n/10.95 ast.Await\TU/lmr/m/n/10.95 ,
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 2595--2595
+\TU/DejaVuSansMono(0)/m/n/10.95 ast.AsyncFor\TU/lmr/m/n/10.95 ,
+ []
+
+[69]
+
+[70]
+
+c:/Users/install/gyminf/redac/main.tex:2632: Package minted Error: Cannot highl
+ight code (minted executable is unavailable or disabled); attempting to typeset
+ without highlighting.
+
+See the minted package documentation for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.2632 \end{minted}
+                   
+(That was another \errmessage.)
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 2608--2632
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 2635--2645
+
+ []
+
+
+
+[71]
+Underfull \hbox (badness 10000) in paragraph at lines 2646--2648
+
+ []
+
+
+Overfull \hbox (24.91023pt too wide) in paragraph at lines 2676--2677
+\TU/lmr/m/n/10.95 l’édi-teur se dé-clenche im-mé-dia-te-ment. Ce lis-te-ner
+ (dé-crit ci-dessous) verra que \TU/DejaVuSansMono(0)/m/n/10.95 lastDiagramAstD
+ump
+ []
+
+
+
+[72]
+Overfull \hbox (10.79306pt too wide) in paragraph at lines 2690--2690
+[][]\TU/lmr/m/sc/10.95 Wenger\TU/lmr/m/n/10.95 , E. (1998). |   []. Cam-bridge 
+Uni-ver-sity Press.
+ []
+
+
+Overfull \hbox (103.72946pt too wide) in paragraph at lines 2690--2690
+\TU/lmr/m/n/10.95 gram-ming in school. |   [],
+ []
+
+
+Overfull \hbox (173.49545pt too wide) in paragraph at lines 2690--2690
+[][]\TU/lmr/m/sc/10.95 Crews\TU/lmr/m/n/10.95 , T., & \TU/lmr/m/sc/10.95 Ziegler
+\TU/lmr/m/n/10.95 , U. (1998). The flow-chart in-ter-pre-ter for in-tro-duc-tory
+ pro-gram-ming courses. |   [],
+ []
+
+
+Overfull \hbox (300.46065pt too wide) in paragraph at lines 2690--2690
+[][]\TU/lmr/m/sc/10.95 Anderson\TU/lmr/m/n/10.95 , L. W., & \TU/lmr/m/sc/10.95 
+Krathwohl\TU/lmr/m/n/10.95 , D. R. (Éd.). (2001). |   [].
+ []
+
+
+Overfull \hbox (0.95259pt too wide) in paragraph at lines 2690--2690
+[][]\TU/lmr/m/sc/10.95 Fuller\TU/lmr/m/n/10.95 , U., et al. (2007). De-ve-lo-pin
+g a com-pu-ter science-specific lear-ning taxo-nomy. |   [],
+ []
+
+
+Overfull \hbox (0.64243pt too wide) in paragraph at lines 2690--2690
+[][]\TU/lmr/m/sc/10.95 Gopinath\TU/lmr/m/n/10.95 , R. (2024). |   []. Consult
+é le 24 août 2025 à [][]$https : / / github . com / rahulgopinath /
+ []
+
+
+
+[73
+
+] (c:/Users/install/gyminf/redac/build/main.aux)
+ ***********
+LaTeX2e <2025-06-01> patch level 1
+L3 programming layer <2025-07-20>
+ ***********
+
+
+LaTeX Warning: There were undefined references.
+
+
+LaTeX Warning: Label(s) may have changed. Rerun to get cross-references right.
+
+
+Package rerunfilecheck Warning: File `main.out' has changed.
+(rerunfilecheck)                Rerun to get outlines right
+(rerunfilecheck)                or use package `bookmark'.
+
+Package rerunfilecheck Info: Checksums for `main.out':
+(rerunfilecheck)             Before: 1DAD2DFA717509FEB787DBF9F5A033AB;19869
+(rerunfilecheck)             After:  F41599C108F619678C2B1B4A98E86256;22448.
+
+Package biblatex Warning: Please (re)run Biber on the file:
+(biblatex)                main
+(biblatex)                and rerun LaTeX afterwards.
+
+Package logreq Info: Writing requests to 'main.run.xml'.
+
+\openout1 = main.run.xml
+)
 
 Here is how much of LuaTeX's memory you used:
- 44566 strings out of 470118
- 156266,2373549 words of node,token memory allocated 45489 words of node memory still in use:
-   96 hlist, 1 vlist, 16 rule, 357 disc, 8 local_par, 1 dir, 1024 glue, 244 kern
-, 53 penalty, 3695 glyph, 1678 attribute, 303 glue_spec, 337 attribute_list, 1 i
-f_stack, 2 shape, 1 pdf_start_link, 1 pdf_end_link, 3 pdf_dest, 3 pdf_action, 10
-0 pdf_colorstack nodes
-   avail lists: 1:6,2:7899,3:2016,4:310,5:240,6:152,7:6790,8:82,9:749,10:30,11:7
-10
- 71783 multiletter control sequences out of 65536+600000
- 88 fonts using 12977919 bytes
- 10000i,12n,115p,1806b,2897s stack positions out of 10000i,1000n,20000p,200000b,200000s
-c:/Users/install/gyminf/redac/main.tex:1262:  ==> Fatal error occurred, no outpu
-t PDF file produced!
+ 45125 strings out of 470118
+ 195351,2373549 words of node,token memory allocated
+ 48832 words of node memory still in use:
+   191 hlist, 4 vlist, 5 rule, 27 disc, 12 local_par, 34 math, 1653 glue, 302 ke
+rn, 106 penalty, 2187 glyph, 5188 attribute, 981 glue_spec, 1039 attribute_list,
+ 2 write, 49 pdf_literal, 1 pdf_dest, 11 pdf_action, 16 pdf_colorstack nodes
+   avail lists: 1:11,2:5030,3:2500,4:1039,5:522,6:142,7:10305,8:396,9:1115,10:35
+,11:1018,12:2
+ 72022 multiletter control sequences out of 65536+600000
+ 102 fonts using 15461367 bytes
+ 85i,13n,115p,2120b,2897s stack positions out of 10000i,1000n,20000p,200000b,200000s
+
+warning  (pdf backend): unreferenced destination with name 'figure.caption.38'
+
+warning  (pdf backend): unreferenced destination with name 'figure.caption.37'
+
+warning  (pdf backend): unreferenced destination with name 'figure.caption.32'
+
+warning  (pdf backend): unreferenced destination with name 'figure.caption.31'
+
+warning  (pdf backend): unreferenced destination with name 'figure.caption.30'
+
+warning  (pdf backend): unreferenced destination with name 'figure.caption.27'
+
+warning  (pdf backend): unreferenced destination with name 'figure.caption.23'
+
+warning  (pdf backend): unreferenced destination with name 'figure.caption.12'
+
+warning  (pdf backend): unreferenced destination with name 'figure.caption.8'
+
+warning  (pdf backend): unreferenced destination with name 'figure.caption.7'
+
+warning  (pdf backend): unreferenced destination with name 'figure.caption.6'
+
+warning  (pdf backend): unreferenced destination with name 'subsection.7.9'
+
+warning  (pdf backend): unreferenced destination with name 'subsection.7.8'
+
+warning  (pdf backend): unreferenced destination with name 'subsection.7.7'
+
+warning  (pdf backend): unreferenced destination with name 'subsection.7.6'
+
+warning  (pdf backend): unreferenced destination with name 'subsection.7.5'
+
+warning  (pdf backend): unreferenced destination with name 'subsection.7.4'
+
+warning  (pdf backend): unreferenced destination with name 'subsection.7.3'
+
+warning  (pdf backend): unreferenced destination with name 'subsubsection.7.2.4'
+
+
+warning  (pdf backend): unreferenced destination with name 'subsubsection.7.2.3'
+
+
+warning  (pdf backend): unreferenced destination with name 'subsubsection.7.2.2'
+
+
+warning  (pdf backend): unreferenced destination with name 'subsubsection.7.2.1'
+
+
+warning  (pdf backend): unreferenced destination with name 'subsection.7.2'
+
+warning  (pdf backend): unreferenced destination with name 'subsection.7.1'
+
+warning  (pdf backend): unreferenced destination with name 'subsubsection.4.1.2'
+
+
+warning  (pdf backend): unreferenced destination with name 'subsubsection.4.1.1'
+
+
+warning  (pdf backend): unreferenced destination with name 'subsubsection.3.2.3'
+
+
+warning  (pdf backend): unreferenced destination with name 'subsubsection.3.2.2'
+
+
+warning  (pdf backend): unreferenced destination with name 'subsubsection.3.2.1'
+
+
+warning  (pdf backend): unreferenced destination with name 'subsubsection.2.4.2'
+
+
+warning  (pdf backend): unreferenced destination with name 'subsubsection.2.4.1'
+
+
+warning  (pdf backend): unreferenced destination with name 'subsection.2.4'
+
+warning  (pdf backend): unreferenced destination with name 'subsubsection.2.1.1'
+
+
+warning  (pdf backend): unreferenced destination with name 'subsubsection.1.4.6'
+
+
+warning  (pdf backend): unreferenced destination with name 'subsubsection.1.4.5'
+
+
+warning  (pdf backend): unreferenced destination with name 'subsubsection.1.4.4'
+
+
+warning  (pdf backend): unreferenced destination with name 'subsubsection.1.4.3'
+
+
+warning  (pdf backend): unreferenced destination with name 'subsubsection.1.4.2'
+
+
+warning  (pdf backend): unreferenced destination with name 'subsubsection.1.3.4'
+
+
+warning  (pdf backend): unreferenced destination with name 'subsubsection.1.2.3'
+
+<c:/users/install/appdata/local/programs/miktex/fonts/opentype/public/lm/lmroman
+slant10-regular.otf><C:/Users/install/AppData/Local/Programs/MiKTeX/fonts/truety
+pe/public/dejavu/dejavusansmono-oblique.ttf><C:/Users/install/AppData/Local/Prog
+rams/MiKTeX/fonts/truetype/public/dejavu/dejavusansmono-bold.ttf><c:/users/insta
+ll/appdata/local/programs/miktex/fonts/opentype/public/lm/lmroman10-bolditalic.o
+tf><c:/users/install/appdata/local/programs/miktex/fonts/opentype/public/lm/lmro
+mancaps10-regular.otf><C:/Users/install/AppData/Local/Programs/MiKTeX/fonts/true
+type/public/dejavu/dejavusansmono.ttf><c:/users/install/appdata/local/programs/m
+iktex/fonts/opentype/public/lm/lmroman10-italic.otf><c:/users/install/appdata/lo
+cal/programs/miktex/fonts/opentype/public/lm/lmroman10-regular.otf><c:/users/ins
+tall/appdata/local/programs/miktex/fonts/opentype/public/lm/lmroman10-bold.otf><
+c:/users/install/appdata/local/programs/miktex/fonts/opentype/public/lm/lmroman1
+2-regular.otf><c:/users/install/appdata/local/programs/miktex/fonts/opentype/pub
+lic/lm/lmroman17-regular.otf><c:/users/install/appdata/local/programs/miktex/fon
+ts/opentype/public/lm/lmroman12-bold.otf><C:/Users/install/AppData/Local/Program
+s/MiKTeX/fonts/type1/public/amsfonts/cm/cmmi10.pfb><C:/Users/install/AppData/Loc
+al/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmr10.pfb><C:/Users/install/Ap
+pData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmsy10.pfb><C:/Users/
+install/AppData/Local/Programs/MiKTeX/fonts/type1/urw/zapfding/uzdr.pfb>
+Output written on main.pdf (74 pages, 1513824 bytes).
+
+PDF statistics: 1212 PDF objects out of 1440 (max. 8388607)
+ 408 named destinations out of 1000 (max. 131072)
+ 592 words of extra memory for PDF output out of 10000 (max. 100000000)
+

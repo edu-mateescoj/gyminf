@@ -1,0 +1,329 @@
+\begin{figure}[H]
+%\centering
+\begin{adjustbox}{max width=\textwidth}
+\begin{tikzpicture}[node distance=1.8cm, auto]
+% Définition des styles
+    \tikzstyle{block} = [rectangle, draw, fill=blue!20, text width=10em, text centered, rounded corners, minimum height=3em]
+    \tikzstyle{action} = [rectangle, draw, fill=green!20, text width=8em, text centered, rounded corners, minimum height=2.5em]
+    \tikzstyle{output} = [rectangle, draw, fill=orange!20, text width=8em, text centered, rounded corners, minimum height=2.5em]
+    \tikzstyle{server} = [rectangle, draw, fill=yellow!20, text width=8em, text centered, rounded corners, minimum height=2.5em]
+    \tikzstyle{line} = [draw, -latex']
+    
+    % Placement des nœuds de base: l'interface
+    \node [block] (ui) {Interface utilisateur\\(layout.html)};
+    \node [action, below of=ui, yshift=-0.5cm] (config) {Configuration des options};
+    \node [block, below of=config, yshift=-0.5cm] (mainjs) {main.js};
+    
+    % Branches pour générer et lancer
+    \node [action, below left of=mainjs, xshift=-4cm, yshift=-1cm] (generate) {Bouton "Générer un Code Aléatoire"};
+    \node [action, below right of=mainjs, xshift=4cm, yshift=-1cm] (run) {Bouton "Lancer le diagramme et les défis"};
+    
+    % Nœuds liés à la génération de code
+    \node [block, below of=generate, yshift=-0.5cm] (codegen) {code-generator.js};
+    \node [output, below of=codegen, yshift=-0.5cm] (code) {code généré};
+    \node [server, below of=code, yshift=-0.5cm] (logcode) {Code journalisé};
+    
+    % Nœuds liés au flowchart
+    \node [block, below of=run, xshift=-2cm, yshift=-0.5cm] (flowgen) {flowchart-generator.js};
+    \node [block, below of=flowgen, yshift=-0.5cm] (mycfg) {MyCFG.py via Pyodide};
+    \node [output, below of=mycfg, yshift=-0.5cm] (flowchart) {Diagramme de flux};
+    
+    % Nœuds liés au défi
+    \node [block, below of=run, xshift=2cm, yshift=-0.5cm] (runtrace) {runAndTraceCode\\ForChallenge()};
+    \node [output, below of=runtrace, yshift=-0.5cm] (challenge) {Défi élève};
+    \node [server, below of=challenge, yshift=-0.5cm] (loganswers) {Interaction élève journalisée};
+    
+    % Connexions
+    \path [line] (ui) -- (config);
+    \path [line] (config) -- (mainjs);
+    \path [line] (mainjs) -- (generate);
+    \path [line] (mainjs) -- (run);
+    \path [line] (generate) -- node[left] {appelle} (codegen);
+    \path [line] (codegen) -- node[left] {generateRandomPythonCode()} (code);
+    \path [line] (run) -- (flowgen);
+    \path [line] (run) -- (runtrace);
+    \path [line] (flowgen) -- node[left] {triggerFlowchartUpdate()} (mycfg);
+    \path [line] (mycfg) -- node[left] {to\_mermaid()} (flowchart);
+    \path [line] (runtrace) -- (challenge);
+    \path [line] (code) -- (logcode);
+    \path [line] (challenge) -- (loganswers);
+    
+    % Connexions courbes ABANDONNÉES
+%    \path [line] (code)      edge[bend left=30]  node[above] {affiché dans l'éditeur}   (ui);
+ %   \path [line] (flowchart) edge[bend right=45] node[below] {affiché dans le panneau}  (ui);
+  %  \path [line] (challenge) edge[bend right=60] node[below] {affiché dans le panneau}  (ui);
+\end{tikzpicture}
+\end{adjustbox}
+\caption{Architecture résumée de l'exerciseur automatique}
+\label{fig:architecture}
+\end{figure}
+
+\begin{figure}[h!]%[htbp]
+\centering
+% "!" signifie "adapter la hauteur proportionnellement".
+\resizebox{\textwidth}{0.9\textheight}{%
+
+\begin{tikzpicture}[
+    node distance=0.5cm and 1.0cm,
+    block/.style={rectangle, draw, fill=blue!20, text width=10em, text centered, rounded corners, minimum height=3.2em},
+    decision/.style={diamond, draw, fill=green!20, text width=6.5em, text centered, aspect=2},
+    line/.style={draw, -latex'},
+    io/.style={trapezium, trapezium left angle=70, trapezium right angle=110, draw, fill=orange!20, text centered, minimum height=2.8em},
+    cloud/.style={ellipse, draw, fill=gray!20, text centered, text width=6em}
+]
+
+% Phase 1: Planification
+\node[block] (start) {Début \textit{generateFunction}};
+\node[block, below=of start] (get_params) {1. Choisir les noms de paramètres (\#1070)};
+\node[block, below=of get_params] (infer_types) {2. Inférer les types des paramètres (paramTypes)};
+\node[io, below=of infer_types] (gen_def) {3. Générer def func(...)};
+
+% Phase 2: Décisions
+\node[decision, below=of gen_def] (decide_return) {4. func\_return ou difficulté ?};
+\node[block, right=of decide_return, xshift=2.8cm] (set_return_true) {useReturnValue = true};
+\node[block, left=of decide_return, xshift=-2.8cm] (set_return_false) {useReturnValue = false};
+
+\node[decision, below=of decide_return] (decide_call) {5. Fonction importante ou aléa ?};
+\node[decision, below=of decide_call] (check_print) {6. builtin\_print est absent ?};
+
+% Phase 3: Corps et appel
+\node[block, below=of check_print] (gen_body) {7. Générer le corps de la fonction};
+\node[decision, below=of gen_body] (final_call_check) {8. shouldCallFunction ?};
+\node[block, below=of final_call_check] (get_args) {9. Obtenir les arguments (ensureVariableExists)};
+\node[decision, below=of get_args] (final_return_check) {10. useReturnValue ?};
+
+\node[block, right=of final_return_check, xshift=2.8cm] (gen_assign) {11a. result = func(...)};
+\node[block, left=of final_return_check, xshift=-2.8cm] (gen_simple_call) {11b. func(...)};
+
+\node[decision, below=of gen_assign] (check_print_result) {12. builtin\_print ?};
+\node[io, below=of check_print_result] (gen_print) {Ajouter print(result)};
+
+\node[cloud, below=of gen_simple_call, yshift=-1.6cm] (end) {Fin du processus};
+
+% Connexions
+\path[line] (start) -- (get_params);
+\path[line] (get_params) -- (infer_types);
+\path[line] (infer_types) -- (gen_def);
+\path[line] (gen_def) -- (decide_return);
+\path[line] (decide_return) -- node[above] {Oui} (set_return_true);
+\path[line] (decide_return) -- node[above] {Non} (set_return_false);
+\path[line] (set_return_true) |- (decide_call);
+\path[line] (set_return_false) |- (decide_call);
+
+\path[line] (decide_call) -- node[left] {Oui} (check_print);
+\path[line] (check_print) -- node[left] {Non} (gen_body);
+\path[line] (check_print) -| node[right, pos=0.2] {Oui} (set_return_true);
+
+\path[line] (gen_body) -- (final_call_check);
+\path[line] (final_call_check) -- node[left] {Oui} (get_args);
+\path[line] (get_args) -- (final_return_check);
+
+\path[line] (final_return_check) -- node[above] {Oui} (gen_assign);
+\path[line] (final_return_check) -- node[above] {Non} (gen_simple_call);
+
+\path[line] (gen_assign) -- (check_print_result);
+\path[line] (check_print_result) -- node[left] {Oui} (gen_print);
+\path[line] (check_print_result) -- node[right] {Non} (end);
+\path[line] (gen_print) -- (end);
+\path[line] (gen_simple_call) -- (end);
+
+% Autres chemins
+\path[line] (decide_call.west) -| ++(-3.5,0) |- node[above, pos=0.9] {Non} (gen_body);
+\path[line] (final_call_check.east) -| ++(3,0) |- node[above, pos=0.9] {Non} (end);
+
+\end{tikzpicture}
+}% Fin de la commande resizebox
+\caption{Diagramme de flux de la logique de la fonction \textit{generateFunction}.}
+\label{fig:genfunc_flow}
+\end{figure}
+
+\noindent
+\begin{figure}[htbp]
+\centering
+\begin{tikzpicture}[node distance=1.5cm, auto]
+    % Définition des styles avec la syntaxe moderne \tikzset
+    \tikzset{
+        block/.style = {rectangle, draw, fill=blue!20, text width=12em, text centered, rounded corners, minimum height=3em},
+        phase/.style = {rectangle, draw, fill=green!20, text width=10em, text centered, rounded corners, minimum height=2em},
+        line/.style  = {draw, -latex'}
+    }
+   
+    % Phases principales - avec beaucoup plus d'espace entre elles
+    \node [phase] (phase1) {1. Initialisation du générateur};
+    \node [phase, below of=phase1, yshift=-.5cm] (phase2) {2. Planification \& Préparation des variables};
+    \node [phase, below of=phase2, yshift=-3.5cm] (phase3) {3. Génération des structures};
+    \node [phase, below of=phase3, yshift=-1.5cm] (phase4) {4. Finalisation \& remplissage};
+    
+    % Fonctions de l'étape 1
+    \node [block, right of=phase1, xshift=4cm] (init) {Réception des inputs \& Initialisation de ses structures de données};
+    
+    % Fonctions de l'étape 2 - Alignées verticalement avec leur phase
+    \node [block, right of=phase2, xshift=7cm] (plan1) {calculateRequiredLines};
+    \node [block, below of=plan1, yshift=-.1cm] (plan2) {generateInitialVariables};
+    \node [block, below of=plan2, yshift=-.1cm] (plan3) {ensureVariablesForOptions};
+
+    
+    % Fonctions de l'étape 3 - Alignées verticalement avec leur phase
+    \node [block, right of=phase3, xshift=7cm] (gen1) {generateControlStructures};
+    \node [block, below of=gen1, yshift=-.1cm] (gen2) {ensureTypeSpecificOperations};
+    
+    % Fonctions de l'étape 4 - Alignées verticalement avec leur phase
+    \node [block, right of=phase4, xshift=7cm] (final1) {addFiller};
+    \node [block, below of=final1, yshift=-.1cm] (final2) {finalVariableCheck};
+    
+    % Connexions
+    \path [line] (phase1) -- (phase2);
+    \path [line] (phase2) -- (phase3);
+    \path [line] (phase3) -- (phase4);
+    
+    \path [line] (init) -- (phase1);
+    
+    \path [line] (phase2) -- (plan1);
+    \path [line] (phase2) -- (plan2);
+    \path [line] (phase2) -- (plan3);
+
+    \path [line] (phase3) -- (gen1);
+    \path [line] (phase3) -- (gen2);
+    
+    \path [line] (phase4) -- (final1);
+    \path [line] (phase4) -- (final2);
+\end{tikzpicture}
+\caption{Architecture fonctionnelle du générateur de code. Le processus suit quatre phases séquentielles, chacune invoquant un ensemble de fonctions spécifiques pour planifier, générer et finaliser le code.}
+    \label{fig:proposed_architecture_v3}
+\end{figure}
+
+\begin{figure}[p]
+\centering
+\begin{adjustbox}{max width=\textwidth, max height=0.98\textheight, keepaspectratio, center}
+\begin{tikzpicture}[
+  node distance=1.0cm and 1.6cm,
+  every node/.style={font=\normalsize},
+]
+% --- Styles de flèches unifiés ---
+\tikzset{
+  seq/.style  = {-Latex, ultra thick, draw=black},              % intra-lane
+  call/.style = {-Latex, thick, dashed, draw=orange!85!black},  % interaction : appel
+  ret/.style  = {-Latex, thick, dashed, draw=violet!85},        % interaction : retour
+}
+
+% =========================
+% Lane 1 : Navigateur (Front-end JS) : main.js + db_queries.js
+% =========================
+\node[event] (start) {Action à logger};
+\node[task, below=of start] (main_js) {\textbf{main.js}\\Appelle la fonction ad hoc};
+\node[task, below=of main_js] (db_queries_prepare) {\textbf{db\_queries.js}\\Construit JSON};
+\node[task, below=of db_queries_prepare] (db_queries_send) {\textbf{db\_queries.js}\\\code{logFactory(...)} \& \code{fetch()} (POST)};
+\node[gateway, below=of db_queries_send, yshift=-0.2cm] (js_handle_response) {Réponse OK ?};
+\node[task, below=of js_handle_response, yshift=-0.2cm] (js_success) {Traite la réponse (affichages)};
+\node[event, below=of js_success] (end) {Log Terminé};
+\node[task, right=of js_handle_response, xshift=0.2cm, yshift=0.8cm] (js_error) {Console.Log Error};
+
+% =========================
+% Lane 2 : Serveur Web (Flask) — remontée et rapprochée
+% =========================
+\node[task, right=of db_queries_send, xshift=5.2cm, yshift=8mm] (flask_route) {\textbf{app.py (Route)}\\\footnotesize \texttt{/log/...}};
+\node[task, below=of flask_route] (flask_logic) {\textbf{app.py (Logique)}\\Valide données \& appelle BDD};
+\node[data, below=of flask_logic] (json_response) {Réponse JSON (\code{status}, \code{id})};
+
+% =========================
+% Lane 3 : Base de Données (SQL) — remontée et rapprochée
+% =========================
+\node[data, right=of flask_logic, xshift=2.5cm, yshift=8mm] (sql_query) {Requête SQL\\(\code{INSERT}/\code{SELECT})};
+\node[task, below=of sql_query] (db_execute) {\textbf{Serveur SQL}\\Exécute \& renvoie résultat};
+
+% ============
+% Flèches
+% ============
+% Intra-lane (seq)
+\draw[seq] (start) -- (main_js);
+\draw[seq] (main_js) -- node[midway, right, font=\scriptsize] {prépare données} (db_queries_prepare);
+\draw[seq] (db_queries_prepare) -- node[midway, right, font=\scriptsize] {\code{logFactory()}} (db_queries_send);
+\draw[seq] (flask_route) -- (flask_logic);
+\draw[seq] (flask_logic) -- node[midway, right, font=\scriptsize] {construit} (json_response);
+\draw[seq] (js_handle_response) -- node[midway, right] {Oui} (js_success);
+\draw[seq] (js_handle_response) -- node[midway, above] {Non} (js_error);
+\draw[seq] (js_success) -- (end);
+\draw[seq] (js_error) -- (end);
+
+% Interactions (call / ret)
+\draw[call] (db_queries_send) -- node[midway, above] {HTTP POST} (flask_route);
+\draw[call] (flask_logic) -- node[midway, above, font=\scriptsize] {envoie requête} (sql_query);
+\draw[ret]  (db_execute) -- node[midway, right, font=\scriptsize] {résultat} (flask_logic);
+\draw[ret]  (json_response) -- node[midway, above] {HTTP Response} (js_handle_response);
+
+% ============
+% Lanes + barres de titre (top/bottom communs), centrées autour des nœuds
+% ============
+% Pré-pad haut global pour dégager les bandeaux
+\path[draw=none] ([yshift=12mm]start.north west) rectangle ([yshift=12mm]sql_query.east);
+
+\begin{scope}[on background layer]
+  % Groupes "fit" par lane (sans pads latéraux artificiels)
+  \node[fit=(start)(main_js)(db_queries_prepare)(db_queries_send)
+            (js_handle_response)(js_success)(end)(js_error),
+        inner sep=10pt] (lane1_fit) {};
+  \node[fit=(flask_route)(flask_logic)(json_response),
+        inner sep=12pt] (lane2_fit) {};
+  \node[fit=(sql_query)(db_execute),
+        inner sep=12pt] (lane3_fit) {};
+
+  % Bordures communes
+  \coordinate (top)    at (current bounding box.north);
+  \coordinate (bottom) at (current bounding box.south);
+
+  % Paramètres
+  \def\titlebar{12mm}
+  \def\laneGap{8mm}   % écart horizontal entre lanes
+  \def\padLR{10mm}    % padding latéral symétrique contenu↔bord
+
+  % --- Lane 1 ---
+  \coordinate (l1_wt) at (lane1_fit.west |- top);
+  \coordinate (l1_et) at (lane1_fit.east |- top);
+  \coordinate (l1_eb) at (lane1_fit.east |- bottom);
+  \filldraw[fill=blue!5, draw=black, rounded corners]
+    (l1_wt) rectangle (l1_eb);
+  \fill[blue!30] (l1_wt) rectangle ([yshift=-\titlebar]l1_et);
+  \node[anchor=west, font=\bfseries\normalsize]
+    at ([xshift=2mm,yshift=-2.5\titlebar]l1_wt) {Navigateur (Front-end JS)};
+
+  % --- Lane 2 : à droite de la lane 1 + gap ; largeur = (contenu) + padLR
+  \coordinate (l2_wt) at ($(l1_et) + (\laneGap,0)$);
+  \coordinate (l2_et) at ($(lane2_fit.east |- top) + (\padLR,0)$);
+  \coordinate (l2_eb) at (l2_et |- bottom);
+  \filldraw[fill=orange!5, draw=black, rounded corners]
+    (l2_wt) rectangle (l2_eb);
+  \fill[orange!30] (l2_wt) rectangle ([yshift=-\titlebar]l2_et);
+  \node[anchor=west, font=\bfseries\normalsize]
+    at ([xshift=2mm,yshift=-2.5\titlebar]l2_wt) {Serveur Web (Flask)};
+
+  % --- Lane 3 : à droite de la lane 2 + gap ; largeur = (contenu) + padLR
+  \coordinate (l3_wt) at ($(l2_et) + (\laneGap,0)$);
+  \coordinate (l3_et) at ($(lane3_fit.east |- top) + (\padLR,0)$);
+  \coordinate (l3_eb) at (l3_et |- bottom);
+  \filldraw[fill=red!5, draw=black, rounded corners]
+    (l3_wt) rectangle (l3_eb);
+  \fill[red!30] (l3_wt) rectangle ([yshift=-\titlebar]l3_et);
+  \node[anchor=west, font=\bfseries\normalsize]
+    at ([xshift=2mm,yshift=-2.5\titlebar]l3_wt) {Base de Données (SQL)};
+\end{scope}
+
+% ============
+% Légende en bas à droite (plus basse pour éviter tout chevauchement)
+% ============
+\begin{scope}
+  \coordinate (legendSE) at ($(current bounding box.south east)+(-1.2cm,0.4cm)$);
+  \node[draw, rounded corners, fill=gray!5, inner sep=4mm, anchor=south east] (legend) at (legendSE) {
+    \begin{tikzpicture}[baseline]
+      \draw[seq]  (0,0)--(1.6,0);      \node[anchor=west] at (1.8,0)       {\footnotesize Flux intra-participant};
+      \draw[call] (0,-0.7)--(1.6,-0.7);\node[anchor=west] at (1.8,-0.7)    {\footnotesize Interaction — Appel (HTTP/SQL)};
+      \draw[ret]  (0,-1.4)--(1.6,-1.4);\node[anchor=west] at (1.8,-1.4)    {\footnotesize Interaction — Retour (HTTP/SQL)};
+    \end{tikzpicture}
+  };
+\end{scope}
+
+\end{tikzpicture}
+\end{adjustbox}
+\caption{Diagramme BPMN du flux de journalisation des actions utilisateur}
+\label{fig:logging_process_v3}
+\end{figure}
+

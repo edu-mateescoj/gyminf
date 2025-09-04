@@ -26,25 +26,12 @@
 \usepackage{tikz}               % Pour les schémas
 \usetikzlibrary{shapes.geometric, arrows, positioning, automata, arrows.meta, fit, calc, backgrounds}
 \usepackage{adjustbox}          % Pour ajuster des boîtes 
-\graphicspath{ {figures/} }
+
 \usepackage{array}
 
 % Définition des styles pour les nœuds BPMN/Flowchart
 \usepackage{pdflscape} 
-\tikzset{
-    % Style pour les événements (début/fin)
-    event/.style={circle, draw, fill=green!20, minimum size=1.0cm, text width=1.8cm, text centered},
-    % Style pour les tâches/processus
-    task/.style={rectangle, draw, fill=blue!20, rounded corners, minimum height=1.0cm, minimum width=2.2cm, text width=2.8cm, text centered},
-    % Style pour les données/artefacts échangés
-    data/.style={trapezium, trapezium left angle=70, trapezium right angle=110, draw, fill=yellow!20, minimum height=0.8cm, text width=2.5cm, text centered, inner xsep=0pt},
-    % Style pour les passerelles/décisions (non utilisé ici)
-    gateway/.style={diamond, draw, fill=orange!20, aspect=1.5, inner sep=0pt},
-    % Style pour les flèches de séquence
-    seq/.style={-Latex, thick},
-    % Style pour les flèches de message (communication entre couloirs)
-    msg/.style={-Latex, thick, dashed}
-}
+
 
 % --- MISE EN FORME DU TEXTE ET TABLEAUX ---
 \usepackage{enumitem}   % Pour personnaliser les listes
@@ -104,14 +91,6 @@
 %footnote 'sous la direction de', juré expert
 \date{8 septembre 2025}
 
-% --- Réglages esthétiques du titre (titling) ---
-\setlength{\droptitle}{2.5cm}
-\pretitle{\begin{center}\LARGE\bfseries}
-\posttitle{\par\end{center}\vspace{0.8cm}}
-\preauthor{\begin{center}\large}
-\postauthor{\par\end{center}\vspace{0.5cm}}
-\predate{\begin{center}\large}
-\postdate{\par\end{center}\vspace{1.2cm}}
 \renewcommand{\abstractname}{Résumé}
 
 
@@ -130,9 +109,9 @@ Ce rapport présentera un outil-auteur et sa réalisation, faite dans le cadre d
     \item[\ding{51}] la constitution sur serveur d'une base de données enregistrant les codes Python générés et les interactions élèves correspondantes, laissant la possibilité de suivre individuellement l'évolution des élèves dans leurs interactions avec les codes proposés.
 \end{itemize}   
 Nous présenterons d'abord les contextes qui ont présidé à la réalisation de cet outil prévu pour être utilisé en classe à très brève échéance, ainsi que son architecture logique. Nous alternerons donc entre les côtés technique et fonctionnel. Le travail de développement informatique prenant une coloration didactique, nous donnerons une description logicielle de l'ensemble, ne fournissant des détails d'implémentation que sur les contributions essentielles que sont: \begin{enumerate}
-    \item le générateur Javascript de codes Python tournant dans le navigateur, aléatoires mais contrôlables et de niveau pédagogique
-    \item le traducteur Javascript de code Python en graphique logigramme rendu dans le navigateur par Mermaid
-    \item le serveur Flask (Python) enregistrant les interactions élèves face aux codes proposés pour construire une base de données didactiques. 
+    \item le générateur Javascript de codes Python aléatoires mais contrôlables et de niveau pédagogique, exécuté dans le navigateur, 
+    \item le traducteur de code Python en graphique logigramme, écrit en Python exécuté par Pyodide et rendu dans le navigateur par Mermaid.js
+    \item le serveur Flask (Python) enregistrant les interactions élèves face aux codes proposés pour construire une base de données didactiques MySQL. 
 \end{enumerate}
 \vspace{2cm}
 Le présent rapport n'a pas vocation à être un mode d'emploi ou une documentation technique exhaustive, mais une explication des fonctionnalités implémentées et des choix qui ont été faits.
@@ -140,7 +119,8 @@ Le présent rapport n'a pas vocation à être un mode d'emploi ou une documentat
 
 \end{abstract}
 
-\textbf{Superviseur :} Patrick Wang, HEP Lausanne\\
+\textbf{Superviseur :} Patrick Wang, HEP Lausanne
+\newline
 \textbf{Juré expert :} Micha Hersch, HEP Lausanne, Gymnase de Renens
 
 \end{titlepage}
@@ -183,7 +163,7 @@ Maintenant dans une perspective d'\textit{empowerment}, telle que les fournisseu
     \item \textbf{Pour la relation enseignants - apprenants}, en mettant à libre disposition un outil-auteur adaptable et capable de proposer des codes prédéfinis par l'enseignant doublé d'un système de journalisation des interactions élèves qui a le potentiel de permettre à l'enseignant un suivi très fin des élèves pour pouvoir apporter une rétroaction différenciée jusqu'au niveau individuel.
     \item \textbf{Chez les enseignants} : en proposant à la communauté enseignante un outil évolutif, nous cherchons à inviter les collègues à la collaboration pour améliorer le projet, et à l'échange sur leurs pratiques. Nous nous situons dans l'esprit de la constitution d'une ``communauté de pratique'' \cite{wenger} \item \textbf{Chez les enseignants} : en refusant de déléguer la rétroaction élève à un LLM d'IA générative et en donnant les moyens aux enseignants d'évaluer immédiatement et à long terme l'efficacité de leur action enseignante, notre espoir est de donner les moyens de développer une expertise didactique à des experts informatiques qui s'adressent maintenant à des apprenants culturellement très éloignés.
 \end{itemize}
-\\Maintenant que nous avons défini le cadre social, voyons tout d'abord d'où vient le projet, en alternant les points de vue : professionnel, personnel, pédagogique et pratique.
+Maintenant que nous avons défini le cadre social, voyons tout d'abord d'où vient le projet, en alternant les points de vue : professionnel, personnel, pédagogique et pratique.
 
 \subsection{Éléments de contexte}
 Notre démarche tire son essence dans un but : aider les enseignants chargés de faire découvrir la programmation textuelle à des élèves débutants et culturellement aux antipodes. Situons donc ici le public cible et l'environnement concerné afin de justifier les objectifs poursuivis dans la création de notre outil. 
@@ -231,8 +211,8 @@ Pour engager à la fois néophytes et aficionados, l'éditeur offre un rendu fam
 \subsubsection{Un rendu logigramme}
 Le soutien visuel paraît approprié pour aider des élèves dans leur découverte de leur premier langage de programmation textuelle. Le logigramme est un objectif d'apprentissage curriculaire en soi, au même titre que des pseudo-codes. De façon à proposer un soutien visuel le logigramme parait donc un choix naturel car il matérialise le flux d'exécution logique du programme. Un outil proposant des bouts de code Python et leur représentation logigramme a le défaut de mettre au même niveau deux langages qui n'ont pas le même statut : un seul est un langage de programmation ! mais nous faisons l'hypothèse que c'est le prix à payer pour pouvoir entraîner de façon systématique les élèves à cet exercice particulier qui est de passer d'une syntaxe à l'autre.
 Pour créer le rendu logigramme pour des codes valides, deux options étaient a priori envisageables:\begin{itemize}
-    \item \textbf{Soit à la génération du script, un logigramme statique (plus facile car le rendu logigramme est encapsulé avec la génération du code)
-    \item \textbf{Soit dynamique, modifiable en continu avec le code Python modifiable (ce qui alourdit l'UI qui devient moins lisible).
+    \item Soit à la génération du script, un logigramme statique (plus facile car le rendu logigramme est encapsulé avec la génération du code)
+    \item Soit dynamique, modifiable en continu avec le code Python modifiable (ce qui alourdit l'UI qui devient moins lisible).
     \end{itemize}
 La première option aurait été en contradiction avec l'objectif d'\emph{investigation} et de \emph{modification} active ! aussi c'est la seconde option qui a été choisie. Le résultat est un couplage direct entre code affiché et logigramme — le support visuel se met à jour avec le script modifié, ce qui renforce l'activité de lecture, de prédiction et de vérification.
 
@@ -482,66 +462,13 @@ L'éditeur de code est une instance CodeMirror 6 \cite{codemirror6} choisi pour 
 \subsubsection{Résumé en un schéma général}
 \begin{minipage}{\textwidth}
     Le processus global peut se schématiser comme ceci: 
-
 \begin{figure}[H]
-%\centering
-\begin{adjustbox}{max width=\textwidth}
-\begin{tikzpicture}[node distance=1.8cm, auto]
-% Définition des styles
-    \tikzstyle{block} = [rectangle, draw, fill=blue!20, text width=10em, text centered, rounded corners, minimum height=3em]
-    \tikzstyle{action} = [rectangle, draw, fill=green!20, text width=8em, text centered, rounded corners, minimum height=2.5em]
-    \tikzstyle{output} = [rectangle, draw, fill=orange!20, text width=8em, text centered, rounded corners, minimum height=2.5em]
-    \tikzstyle{server} = [rectangle, draw, fill=yellow!20, text width=8em, text centered, rounded corners, minimum height=2.5em]
-    \tikzstyle{line} = [draw, -latex']
-    
-    % Placement des nœuds de base: l'interface
-    \node [block] (ui) {Interface utilisateur\\(layout.html)};
-    \node [action, below of=ui, yshift=-0.5cm] (config) {Configuration des options};
-    \node [block, below of=config, yshift=-0.5cm] (mainjs) {main.js};
-    
-    % Branches pour générer et lancer
-    \node [action, below left of=mainjs, xshift=-4cm, yshift=-1cm] (generate) {Bouton "Générer un Code Aléatoire"};
-    \node [action, below right of=mainjs, xshift=4cm, yshift=-1cm] (run) {Bouton "Lancer le diagramme et les défis"};
-    
-    % Nœuds liés à la génération de code
-    \node [block, below of=generate, yshift=-0.5cm] (codegen) {code-generator.js};
-    \node [output, below of=codegen, yshift=-0.5cm] (code) {code généré};
-    \node [server, below of=code, yshift=-0.5cm] (logcode) {Code journalisé};
-    
-    % Nœuds liés au flowchart
-    \node [block, below of=run, xshift=-2cm, yshift=-0.5cm] (flowgen) {flowchart-generator.js};
-    \node [block, below of=flowgen, yshift=-0.5cm] (mycfg) {MyCFG.py via Pyodide};
-    \node [output, below of=mycfg, yshift=-0.5cm] (flowchart) {Diagramme de flux};
-    
-    % Nœuds liés au défi
-    \node [block, below of=run, xshift=2cm, yshift=-0.5cm] (runtrace) {runAndTraceCode\\ForChallenge()};
-    \node [output, below of=runtrace, yshift=-0.5cm] (challenge) {Défi élève};
-    \node [server, below of=challenge, yshift=-0.5cm] (loganswers) {Interaction élève journalisée};
-    
-    % Connexions
-    \path [line] (ui) -- (config);
-    \path [line] (config) -- (mainjs);
-    \path [line] (mainjs) -- (generate);
-    \path [line] (mainjs) -- (run);
-    \path [line] (generate) -- node[left] {appelle} (codegen);
-    \path [line] (codegen) -- node[left] {generateRandomPythonCode()} (code);
-    \path [line] (run) -- (flowgen);
-    \path [line] (run) -- (runtrace);
-    \path [line] (flowgen) -- node[left] {triggerFlowchartUpdate()} (mycfg);
-    \path [line] (mycfg) -- node[left] {to\_mermaid()} (flowchart);
-    \path [line] (runtrace) -- (challenge);
-    \path [line] (code) -- (logcode);
-    \path [line] (challenge) -- (loganswers);
-    
-    % Connexions courbes ABANDONNÉES
-%    \path [line] (code)      edge[bend left=30]  node[above] {affiché dans l'éditeur}   (ui);
- %   \path [line] (flowchart) edge[bend right=45] node[below] {affiché dans le panneau}  (ui);
-  %  \path [line] (challenge) edge[bend right=60] node[below] {affiché dans le panneau}  (ui);
-\end{tikzpicture}
-\end{adjustbox}
-\caption{Architecture résumée de l'exerciseur automatique}
-\label{fig:architecture}
-\end{figure}
+    \centering
+    \includegraphics[width=0.99\textwidth, keepaspectratio]{architecture_generateur.png}
+    \caption{Architecture résumée de l'exerciseur automatique}
+    \label{fig:architecture}
+\end{figure} 
+
 
 \subsubsection{Résumé en quatre phrases}
 Le fonctionnement du générateur repose sur une interaction entre l'interface utilisateur (HTML - CSS - JavaScript) permettant de définir les options et le moteur de génération de code (JavaScript) qui écrit sur la page dans l'éditeur de script CodeMirror. \\
@@ -723,84 +650,13 @@ Un soin particulier a été apporté aux variables d'itération. Il nous a sembl
 
 Le diagramme ci-dessous \ref{fig:genfunc_flow} illustre la séquence de décisions et d'actions prises par la fonction \methodname{generateFunction} pour construire une fonction Python complète, de la planification de sa signature à la génération de son appel.
 
-\begin{figure}[h!]%[htbp]
-\centering
-% "!" signifie "adapter la hauteur proportionnellement".
-\resizebox{\textwidth}{0.9\textheight}{%
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.8\textwidth, keepaspectratio]{gen_func_flow.png}
+    \caption{Diagramme de flux de la logique de la fonction \textit{generateFunction}}
+    \label{fig:genfunc_flow}
+\end{figure} 
 
-\begin{tikzpicture}[
-    node distance=0.5cm and 1.0cm,
-    block/.style={rectangle, draw, fill=blue!20, text width=10em, text centered, rounded corners, minimum height=3.2em},
-    decision/.style={diamond, draw, fill=green!20, text width=6.5em, text centered, aspect=2},
-    line/.style={draw, -latex'},
-    io/.style={trapezium, trapezium left angle=70, trapezium right angle=110, draw, fill=orange!20, text centered, minimum height=2.8em},
-    cloud/.style={ellipse, draw, fill=gray!20, text centered, text width=6em}
-]
-
-% Phase 1: Planification
-\node[block] (start) {Début \textit{generateFunction}};
-\node[block, below=of start] (get_params) {1. Choisir les noms de paramètres (\#1070)};
-\node[block, below=of get_params] (infer_types) {2. Inférer les types des paramètres (paramTypes)};
-\node[io, below=of infer_types] (gen_def) {3. Générer def func(...)};
-
-% Phase 2: Décisions
-\node[decision, below=of gen_def] (decide_return) {4. func\_return ou difficulté ?};
-\node[block, right=of decide_return, xshift=2.8cm] (set_return_true) {useReturnValue = true};
-\node[block, left=of decide_return, xshift=-2.8cm] (set_return_false) {useReturnValue = false};
-
-\node[decision, below=of decide_return] (decide_call) {5. Fonction importante ou aléa ?};
-\node[decision, below=of decide_call] (check_print) {6. builtin\_print est absent ?};
-
-% Phase 3: Corps et appel
-\node[block, below=of check_print] (gen_body) {7. Générer le corps de la fonction};
-\node[decision, below=of gen_body] (final_call_check) {8. shouldCallFunction ?};
-\node[block, below=of final_call_check] (get_args) {9. Obtenir les arguments (ensureVariableExists)};
-\node[decision, below=of get_args] (final_return_check) {10. useReturnValue ?};
-
-\node[block, right=of final_return_check, xshift=2.8cm] (gen_assign) {11a. result = func(...)};
-\node[block, left=of final_return_check, xshift=-2.8cm] (gen_simple_call) {11b. func(...)};
-
-\node[decision, below=of gen_assign] (check_print_result) {12. builtin\_print ?};
-\node[io, below=of check_print_result] (gen_print) {Ajouter print(result)};
-
-\node[cloud, below=of gen_simple_call, yshift=-1.6cm] (end) {Fin du processus};
-
-% Connexions
-\path[line] (start) -- (get_params);
-\path[line] (get_params) -- (infer_types);
-\path[line] (infer_types) -- (gen_def);
-\path[line] (gen_def) -- (decide_return);
-\path[line] (decide_return) -- node[above] {Oui} (set_return_true);
-\path[line] (decide_return) -- node[above] {Non} (set_return_false);
-\path[line] (set_return_true) |- (decide_call);
-\path[line] (set_return_false) |- (decide_call);
-
-\path[line] (decide_call) -- node[left] {Oui} (check_print);
-\path[line] (check_print) -- node[left] {Non} (gen_body);
-\path[line] (check_print) -| node[right, pos=0.2] {Oui} (set_return_true);
-
-\path[line] (gen_body) -- (final_call_check);
-\path[line] (final_call_check) -- node[left] {Oui} (get_args);
-\path[line] (get_args) -- (final_return_check);
-
-\path[line] (final_return_check) -- node[above] {Oui} (gen_assign);
-\path[line] (final_return_check) -- node[above] {Non} (gen_simple_call);
-
-\path[line] (gen_assign) -- (check_print_result);
-\path[line] (check_print_result) -- node[left] {Oui} (gen_print);
-\path[line] (check_print_result) -- node[right] {Non} (end);
-\path[line] (gen_print) -- (end);
-\path[line] (gen_simple_call) -- (end);
-
-% Autres chemins
-\path[line] (decide_call.west) -| ++(-3.5,0) |- node[above, pos=0.9] {Non} (gen_body);
-\path[line] (final_call_check.east) -| ++(3,0) |- node[above, pos=0.9] {Non} (end);
-
-\end{tikzpicture}
-}% Fin de la commande resizebox
-\caption{Diagramme de flux de la logique de la fonction \textit{generateFunction}.}
-\label{fig:genfunc_flow}
-\end{figure}
 
 
 \begin{description}
@@ -980,6 +836,14 @@ Cette dernière écriture de l'AST est lisible car elle fait apparaitre des noeu
     \item Les \textbf{nœuds} représentent des blocs d'instructions exécutés séquentiellement sans branchement.
     \item Les \textbf{arêtes} représentent les transferts de contrôle (sauts) entre ces blocs.
 \end{itemize}
+Enfin, voici ce que le navigateur rend, par Mermaid.js, à partir de la chaien de texte que mon traducteur de code lui a passé (pour rappel, le code Python MyCFG est exécuté côté navigateur grâce à Pyodide) :
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.3\textwidth, keepaspectratio]{logigramme_minimal.png}
+    \caption{Rendu final dans le navigateur du logigramme correspondant au code \textit{minimal} ci-dessus.}
+    \label{fig:logigramme_minimal}
+\end{figure} 
+
 Tant que le CFG fourni par le module ast de Python n'a pas été ``visité'' il est vide:
 \begin{verbatim}
 --- CFG : les noeuds ---
@@ -1254,23 +1118,14 @@ Contrairement à \code{PyCFG.py} de \textit{Fuzzing Book} qui traduit une boucle
     \item Une mise à jour : "Prendre l'élément suivant"
 \end{itemize}
 Voici concrètement un exemple de rendu graphique d'une boucle ``for'' parcourant une chaîne, mis en regard d'une structure théorique ``for each''.
+
+
 \begin{figure}[H]
     \centering
-    \begin{subfigure}{t}{0.45\textwidth}
-         \centering
-         \includegraphics[width=\linewidth, keepaspectratio]{FqKSJ.jpg}
-        \caption{Exemple de flowchart "for each"}}
-        \label{fig:foreach_flowchart}
-    \end{subfigure}\hfill
-    \begin{subfigure}{t}{0.45\textwidth}
-        \centering
-        \includegraphics[width=\linewidth, keepaspectratio]{for_str_screenshot.png}
-        \caption{Copie d'écran d'une partie de logigramme visualisant une boucle ``for ... str''}
-        \label{fig:for_str_screenshot}
-    \end{subfigure}
-    \caption{Comparaison de notre ``for ... in <str>'' avec un exemple de ``for each''}
-    \label{fig:deux_for}
-\end{figure}
+    \includegraphics[width=0.8\textwidth, keepaspectratio]{foreach_forstr.png}
+    \caption{Comparaison d'un ``for each'' théorique avec le rendu final Mermaid dans le navigateur pour une boucle ``for...str''}
+    \label{fig:foreach_forstr}
+\end{figure} 
 
 Cette décomposition, bien que plus verbeuse, vise à rendre le mécanisme d'itération plus explicite pour l'apprenant, faisant abstraction des constructions internes et méthodes \code{has_next}. Une heuristique est également utilisée pour décrire la nature de l'itérable (chaîne, liste, variable, etc.) et 
 de ses éléments (caractère, nombre, etc.) en langage naturel. C'est peut être encore un peu trop verbeux malgré l'attention qui a été porté pour réduire la longueur des chaînes (couper les longues chaines et les faire suivre de ``...'').
@@ -2088,11 +1943,6 @@ if (addedOperations.has(operation)) {
     
 \end{enumerate}
 
-\subsubsection{Documentation technique de l'implémentation MyCFG.py}
-
-\subsubsection*{Comparaison avec l'implémentation PyCFG}
-
-
 \subsubsection{Comparaison: \texorpdfstring{MyCFG $\neq$ PyCFG}{MyCFG != PyCFG}}
 
 Comme mentionné plus haut, plusieurs sources disponibles fournissent des exemples intéressants d'utilisation du module \code{ast}. Ce module est en effet fourni avec les implémentations standards de Python et avec Pyodide, ce qui nous permis d'en tirer profit dans notre environnement initialement uniquement \textit{front-end}. D'autres auteurs - comme Rahul Gopinath qui a contribué au projet FuzzingBook - ont fourni la preuve de la pertinence de l'outil \code{ast}, avec différents projets sur Github \cite{rahulgopinath}.
@@ -2106,7 +1956,7 @@ En hommage et en clin d'œil aux auteurs de cette approche nous avons nommé not
 %\vspace{0.5cm}
 
 \begin{longtable}{|p{3cm}|p{7cm}|p{6cm}|}
-  \caption{Comparaison des logiques de construction de graphe de flot de contrôle}
+  \caption{Comparaison des logiques de construction de graphe de flux de contrôle}
   \label{tab:comparatif}
   \\ \hline
   \textbf{Aspect} & \textbf{MyCFG} & \textbf{PyCFG} \\

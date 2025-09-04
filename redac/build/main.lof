@@ -1,0 +1,18 @@
+\babel@toc {french}{}\relax 
+\contentsline {figure}{\numberline {1}{\ignorespaces Présentation générale de l'application, vierge}}{11}{figure.caption.13}%
+\contentsline {figure}{\numberline {2}{\ignorespaces Flowchart d'un code avec appel d'une fonction 'f(a)' \& 'return'}}{12}{figure.caption.15}%
+\contentsline {figure}{\numberline {3}{\ignorespaces "Défi Élève" avec appel de fonction 'return'. La variable locale est bien absente.}}{12}{figure.caption.16}%
+\contentsline {figure}{\numberline {4}{\ignorespaces Présentation des choix de génération}}{13}{figure.caption.17}%
+\contentsline {figure}{\numberline {5}{\ignorespaces Identification des éléments de choix pour la création d'un exercice}}{14}{figure.caption.18}%
+\contentsline {figure}{\numberline {6}{\ignorespaces Architecture résumée de l'exerciseur automatique}}{16}{figure.caption.19}%
+\contentsline {figure}{\numberline {7}{\ignorespaces Architecture fonctionnelle du générateur de code. Le processus suit quatre phases séquentielles, chacune invoquant un ensemble de fonctions spécifiques pour planifier, générer et finaliser le code.}}{18}{figure.caption.20}%
+\contentsline {figure}{\numberline {8}{\ignorespaces Diagramme de flux de la logique de la fonction \textit {generateFunction}}}{21}{figure.caption.26}%
+\contentsline {figure}{\numberline {9}{\ignorespaces Rendu final dans le navigateur du logigramme correspondant au code \textit {minimal} ci-dessus.}}{27}{figure.caption.29}%
+\contentsline {figure}{\numberline {10}{\ignorespaces Apport d'une aide visuelle à la lecture des logigrammes}}{29}{figure.caption.33}%
+\contentsline {figure}{\numberline {11}{\ignorespaces Comparaison d'un ``for each'' théorique avec le rendu final Mermaid dans le navigateur pour une boucle ``for...str''}}{35}{figure.caption.42}%
+\contentsline {figure}{\numberline {12}{\ignorespaces Génération du logigramme: Business Process Model des appels et des objets retournés}}{37}{figure.caption.44}%
+\contentsline {figure}{\numberline {13}{\ignorespaces Présentation générale de l'application, vierge}}{39}{figure.caption.45}%
+\contentsline {figure}{\numberline {14}{\ignorespaces L'UI : événements journalisés}}{40}{figure.caption.46}%
+\contentsline {figure}{\numberline {15}{\ignorespaces Diagramme Entité Relations complet de GYMINF\_POC}}{41}{figure.caption.47}%
+\contentsline {figure}{\numberline {16}{\ignorespaces Présentation générale de l'application, vierge}}{45}{figure.caption.53}%
+\contentsline {figure}{\numberline {17}{\ignorespaces L'UI : événements journalisés}}{45}{figure.caption.54}%
