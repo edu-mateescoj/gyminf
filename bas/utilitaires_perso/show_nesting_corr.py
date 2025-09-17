@@ -40,7 +40,12 @@ class SyntaxVisitor(ast.NodeVisitor):
 
         self.nesting_level -= 1
 
-code = "for i in range(10):\n    if i % 2 == 0:\n        print(i)"
+code = '''x = 1
+if x > 0:
+    y = 1
+else:
+    y = -1
+print(y)'''
 
 tree = ast.parse(code)
 v = SyntaxVisitor()
