@@ -739,49 +739,9 @@ import pyodide
 from pyodide.ffi import to_js
 import ast
 
-def extract_function_calls(code):
-    try:
-        tree = ast.parse(code)
-        calls = []
-
-        class FunctionCallExtractor(ast.NodeVisitor):
-            def visit_Assign(self, node):
-                if isinstance(node.value, ast.Call):
-                    call = node.value
-                    if isinstance(call.func, ast.Name):
-                        calls.append({
-                            'func_name': call.func.id,
-                            'result_var': node.targets[0].id if isinstance(node.targets[0], ast.Name) else None
-                        })
-                self.generic_visit(node)
-
-            def visit_Expr(self, node):
-                if isinstance(node.value, ast.Call):
-                    call = node.value
-                    if isinstance(call.func, ast.Name):
-                        calls.append({
-                            'func_name': call.func.id,
-                            'result_var': None
-                        })
-                self.generic_visit(node)
-
-        extractor = FunctionCallExtractor()
-        extractor.visit(tree)
-        return calls
-    except:
-        return []
-
-class AwaitInputTransformer(ast.NodeTransformer):
-    def visit_Call(self, node):
-        if isinstance(node.func, ast.Name) and node.func.id == "input":
-            return ast.Await(value=node)
-        return self.generic_visit(node)
-
+# --- Redirection des entrées/sorties (I/O) ---
 _original_print = builtins.print
 _original_input = builtins.input
-user_ns = {}
-_final_vars = {}
-_error_detail_trace = None
 
 def custom_print(*args, **kwargs):
     s_io = io.StringIO()
@@ -798,28 +758,97 @@ async def custom_input(prompt=""):
 builtins.print = custom_print
 builtins.input = custom_input
 
+# --- Moteur d'exécution et transformateurs d'AST ---
+
+user_ns = {} 
+_error_detail_trace = None
+# Variable globale pour stocker les noms des fonctions que nous rendons asynchrones
+_async_function_names = set()
+
+# Transformateur 1: Trouve 'def' et le transforme en 'async def',
+# tout en mémorisant les noms des fonctions transformées.
+class AsyncFunctionTransformer(ast.NodeTransformer):
+    def visit_FunctionDef(self, node):
+        global _async_function_names
+        _async_function_names.add(node.name)
+        # On reconstruit le noeud de fonction en tant que AsyncFunctionDef,
+        # en conservant tous ses attributs (nom, arguments, corps, etc.).
+        self.generic_visit(node) # S'assurer de visiter les enfants d'abord
+        return ast.AsyncFunctionDef(
+            name=node.name,
+            args=node.args,
+            body=node.body,
+            decorator_list=node.decorator_list,
+            returns=node.returns,
+            type_comment=getattr(node, 'type_comment', None)
+        )
+
+# Transformateur 2: 'input()' -> 'await input()'
+class AwaitInputTransformer(ast.NodeTransformer):
+    def visit_Call(self, node):
+        if isinstance(node.func, ast.Name) and node.func.id == "input":
+            return ast.Await(value=node)
+        return self.generic_visit(node)
+
+# RAPPEL Un appel de fonction de premier niveau est un noeud 'Expr' contenant un noeud 'Call'.
+
+
+# Transformateur 3 utilise visit_Call
+class AwaitCallTransformer(ast.NodeTransformer):
+    def visit_Call(self, node):
+        # D'abord transformer récursivement les sous-nœuds (arguments, mots-clés, fonction cible)
+        self.generic_visit(node)
+
+        # Identification du nom de la fonction appelée
+        func_name = None
+        if isinstance(node.func, ast.Name):
+            func_name = node.func.id
+        elif isinstance(node.func, ast.Attribute):
+            # Pour obj.methode, on prend .attr; ajustez si vous avez une autre logique
+            func_name = node.func.attr
+
+        # Vérifier si déjà dans un ast.Await (pas de parent direct dans l’AST standard;
+        # ce cas ne se produit que si l’élève a écrit 'await f()' => alors node est value d'un ast.Await)
+        # Ici on protège en ne re-plaçant pas si le parent était déjà un Await lors d'un passage précédent.
+        # Sans parent tracking, on peut au moins éviter un double enveloppement en testant un marqueur.
+        if hasattr(node, '_already_awaited'):
+            return node  # Sécurité (marqueur interne)
+
+        if func_name and func_name in _async_function_names:
+            awaited = ast.Await(value=node)
+            # Marquer pour éviter double traitement si revisité
+            node._already_awaited = True
+            ast.copy_location(awaited, node)
+            ast.fix_missing_locations(awaited)
+            return awaited
+
+        return node
+
+# Fonction 'main' asynchrone MISE À JOUR pour orchestrer les 3 transformations
 async def main():
     global _error_detail_trace, user_ns
 
     try:
         from ast import unparse
         tree = ast.parse(student_code_to_run)
-        transformed_tree = AwaitInputTransformer().visit(tree)
-        ast.fix_missing_locations(transformed_tree)
-        transformed_code_string = unparse(transformed_tree)
+
+        # ÉTAPE 1: Rendre les fonctions asynchrones ('def' -> 'async def')
+        asyncified_tree = AsyncFunctionTransformer().visit(tree)
+
+        # ÉTAPE 2: Gérer les 'await' pour input()
+        # C'est seulement après que les fonctions sont 'async' qu'on peut y insérer des 'await'.
+        input_awaited_tree = AwaitInputTransformer().visit(asyncified_tree)
+        
+        # ÉTAPE 3: Gérer les 'await' pour les appels aux fonctions maintenant asynchrones
+        final_tree = AwaitCallTransformer().visit(input_awaited_tree)
+
+        ast.fix_missing_locations(final_tree)
+        transformed_code_string = unparse(final_tree)
+
+        # Le code qui sera exécuté contient maintenant 'async def' pour les fonctions
+        # et 'await input()', ce qui est une syntaxe Python valide.
         await pyodide.code.eval_code_async(transformed_code_string, globals=user_ns)
 
-        function_calls = extract_function_calls(student_code_to_run)
-        for call_info in function_calls:
-            if call_info['func_name'] in user_ns and callable(user_ns[call_info['func_name']]):
-                func_name = call_info['func_name']
-                if not call_info['result_var'] and hasattr(user_ns[func_name], '__code__'):
-                    try:
-                        result = user_ns[func_name](4)
-                        result_var_name = f"{func_name}_result"
-                        user_ns[result_var_name] = result
-                    except:
-                        pass
     except Exception as e:
         import traceback
         _error_detail_trace = traceback.format_exc()
@@ -829,6 +858,9 @@ async def main():
 
 await main()
 
+# --- Extraction des résultats pour le Défi (INCHANGÉ) ---
+# j'en rajoute qui ne devraient pas avoir à être filtrées car traumatisé par bug pyodide de persistance de variables dans le namespace
+_final_vars = {}
 if _error_detail_trace is None:
     for _var_name, _val in user_ns.items():
         if _var_name.startswith('__') or isinstance(_val, (types.ModuleType, types.FunctionType, type)):
@@ -840,8 +872,8 @@ if _error_detail_trace is None:
                          '_syntax_check_result', '_error_detail_trace', 'user_ns', '_final_vars',
                          '_original_print', '_original_input', 'custom_print', 'custom_input', 's_io',
                          'js_print_handler', 'js_input_handler', 'main',
-                         'turtle_setup_script', 'student_code_to_run',
-                         '_var_name', '_val']:
+                         'turtle_setup_script', 'AwaitInputTransformer', 'AsyncFunctionTransformer',
+                         '_var_name', '_val', 'to_js', 'asyncio', 'student_code_to_run']:
             continue
         if isinstance(_val, (str, int, float, bool, list, dict, tuple, set)) or _val is None:
             _final_vars[_var_name] = _val
