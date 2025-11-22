@@ -1,4 +1,40 @@
-/* Custom styles for the Python Code Exercise Authoring Tool */
+:root {
+    /* --- THÈME SOMBRE (Défaut - correspond au Bootstrap Dark) --- */
+    --bg-body: #212529;       /* Bootstrap dark body-bg */
+    --bg-card: #2b3035;       /* Bootstrap dark tertiary-bg approx */
+    --text-main: #dee2e6;     /* Bootstrap dark body-color */
+    --border-color: #495057;  /* Bootstrap dark border-color */
+    
+    /* Couleurs sémantiques */
+    --primary-color: #0d6efd;
+    --success-color: #198754;
+    --info-color: #0dcaf0;
+
+    /* Spécifique Mermaid / CodeMirror */
+    --mermaid-bg: #2b3035;
+    --mermaid-stroke: #dee2e6;
+}
+
+/* --- THÈME CLAIR (Accessible / Daltonien) --- */
+[data-bs-theme="light"] {
+    --bg-body: #ffffff;
+    --bg-card: #f8f9fa;
+    --text-main: #212529;
+    --border-color: #dee2e6;
+
+    /* Palette Haut Contraste & Daltonien Friendly */
+    --primary-color: #0056b3; /* Bleu profond */
+    --success-color: #006837; /* Vert émeraude foncé */
+    --info-color: #005cbf;    /* Bleu info plus sombre que le cyan illisible */
+
+    --mermaid-bg: #ffffff;
+    --mermaid-stroke: #000000; /* Traits noirs pour le contraste */
+}
+
+/* Transition douce lors du changement */
+body, .card, .btn, .form-control {
+    transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+}
 
 /* CodeMirror styling */
 .CodeMirror {
@@ -147,4 +183,10 @@
 
 .loading {
     animation: pulse 1.5s infinite ease-in-out;
+}
+/* --- Style de la Toolbar CodeMirror --- */
+#code-toolbar {
+    /* On gère les couleurs via les classes Bootstrap HTML pour la simplicité */
+    border-radius: 0 0 0.25rem 0.25rem; /* Arrondi uniquement en bas */
+    border-top: 1px solid rgba(255, 255, 255, 0.2); /* Séparateur subtil avec l'éditeur */
 }

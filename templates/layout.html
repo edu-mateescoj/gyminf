@@ -9,7 +9,12 @@
     <script src="https://cdn.jsdelivr.net/pyodide/v0.24.1/full/pyodide.js"></script>
 
     <!-- Inclusion de Bootstrap - thèem Replit - pour le style -->
-    <link rel="stylesheet" href="https://cdn.replit.com/agent/bootstrap-agent-dark-theme.min.css">
+    <!--<link rel="stylesheet" href="https://cdn.replit.com/agent/bootstrap-agent-dark-theme.min.css">-->
+    
+    <!-- Bootstrap 5.3 Standard (Supporte natif Dark & Light via data-bs-theme) -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.13/theme/solarized.min.css">
     
     <!-- Inclusion de CodeMirror pour l'éditeur -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.13/codemirror.min.css">
@@ -141,10 +146,16 @@
             <div class="d-flex justify-content-between align-items-center flex-wrap">
                 <!-- Titre principal -->
                 <h1 class="h3 mb-2 mb-md-0 text-white">Outil de Création d'Exercices Python</h1>
+                
+                <button id="theme-toggle" class="btn btn-outline-secondary btn-sm">
+                    <i id="theme-icon" class="fas fa-sun"></i>
+                </button>
+                
                 <!-- Badge indiquant l'apprentissage interactif -->
                 <div class="d-flex align-items-center">
                     <span class="badge bg-primary d-none d-sm-inline">Apprentissage Interactif</span>
                 </div>
+            
             </div>
         </div>
     </header>
@@ -196,11 +207,9 @@
                             <!-- Cadre Variables -->
                             <div class="col-12 col-md-auto mb-1 mb-md-0">
                                 <div class="border rounded bg-dark-subtle p-2 d-flex flex-column align-items-start">
-                                    <div class="form-check form-switch mb-2">
-                                        <input class="form-check-input" type="checkbox" id="frame-variables" checked disabled>
-                                        <label class="form-check-label fw-bold" for="frame-variables">
-                                            <i class="fas fa-cube me-1"></i> Vars
-                                        </label>
+                                    
+                                    <div class="mb-2 fw-bold">
+                                        <i class="fas fa-cube me-1"></i> Vars
                                     </div>
 
                                     <div id="variables-options" class="d-flex flex-column gap-1 ms-2">
@@ -252,12 +261,11 @@
                             <!-- Cadre Opérations -->
                             <div class="col-12 col-md-auto mb-1 mb-md-0">
                                 <div class="border rounded bg-dark-subtle p-2 d-flex flex-column align-items-start">
-                                    <div class="form-check form-switch mb-2">
-                                        <input class="form-check-input" type="checkbox" id="frame-operations" checked disabled>
-                                        <label class="form-check-label fw-bold" for="frame-operations">
-                                            <i class="fas fa-calculator me-1"></i> Op
-                                        </label>
+                                    
+                                    <div class="mb-2 fw-bold">
+                                        <i class="fas fa-calculator me-1"></i> Op
                                     </div>
+
                                     <div id="operations-options" class="d-flex flex-column gap-1 ms-2">
                                         <div class="form-check form-check-inline">
                                             <input class="form-check-input" type="checkbox" id="op-plus-minus" checked disabled>
@@ -430,23 +438,32 @@
                 </div>
                 <!-- Zone d'édition de code -->
                 <textarea id="code-editor"></textarea>
-                <div id="code-toolbar" class="d-flex align-items-center justify-content-start py-1 px-2" style="background: #23272b; border-radius: 0 0 0.25rem 0.25rem; border-top: 1px solid #444; font-size: 1rem;">
+                <!-- <div id="code-toolbar" class="d-flex align-items-center justify-content-start py-1 px-2" style="background: #23272b; border-radius: 0 0 0.25rem 0.25rem; border-top: 1px solid #444; font-size: 1rem;">-->
+                <!-- Toolbar avec fond gris (bg-secondary) et texte blanc (text-white) pour forcer le contraste -->
+                <div id="code-toolbar" class="d-flex align-items-center justify-content-start py-1 px-2 bg-secondary text-white">
+                    
                     <button id="toggle-editable-btn" class="btn btn-sm btn-outline-light me-2" title="Rendre non éditable">
                         <i class="fas fa-edit"></i>
-                </button>
+                    </button>
+                    
                     <button id="download-code-btn" class="btn btn-sm btn-outline-light me-2" title="Sauver le code dans un fichier .py">
-                <i class="fas fa-download"></i>
-                </button>
-                <button id="open-file-btn" class="btn btn-sm btn-outline-light me-2" title="Ouvrir un fichier .py">
-                    <i class="fas fa-folder-open"></i>
-                    <input type="file" id="file-input" accept=".py" style="display:none;">
-                </button>
-                <button id="share-code-btn" class="btn btn-sm btn-outline-light me-2" title="Copier dans le presse-papier">
-                    <i class="fas fa-share-alt"></i>
-                </button>
-                <button id="reload-code-btn" class="btn btn-sm btn-outline-light" title="Restaurer le code à la dernière génération/chargement">
-                    <i class="fas fa-undo"></i>
-                </button>
+                        <i class="fas fa-download"></i>
+                    </button>
+                    
+                    <button id="open-file-btn" class="btn btn-sm btn-outline-light me-2" title="Ouvrir un fichier .py">
+                        <i class="fas fa-folder-open"></i>
+                        <input type="file" id="file-input" accept=".py" style="display:none;">
+                    </button>
+                    
+                    <button id="share-code-btn" class="btn btn-sm btn-outline-light me-2" title="Copier dans le presse-papier">
+                        <i class="fas fa-share-alt"></i>
+                    </button>
+
+                    <!-- Le dernier bouton n'a pas besoin de 'me-2' car il n'y a rien après lui -->
+                    <button id="reload-code-btn" class="btn btn-sm btn-outline-light" title="Restaurer le code à la dernière génération/chargement">
+                        <i class="fas fa-undo"></i>
+                    </button>
+
                 </div>
             </div>
         </div>

@@ -932,6 +932,45 @@ function reprPythonVal(value) {
     return String(value);
 }
 
+/**
+ * Bascule entre le thème clair et sombre.
+ * Gère Bootstrap, CodeMirror et l'icône du bouton.
+ */
+function toggleTheme() {
+    const html = document.documentElement;
+    const currentTheme = html.getAttribute('data-bs-theme');
+    const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+    
+    // 1. Appliquer au document (Bootstrap gère le reste via CSS variables)
+    html.setAttribute('data-bs-theme', newTheme);
+    localStorage.setItem('theme', newTheme);
+    
+    // 2. Mettre à jour l'icône du bouton
+    const icon = document.getElementById('theme-icon');
+    if (icon) {
+        // Note: Assurez-vous d'avoir <i id="theme-icon" class="..."></i> dans votre HTML
+        icon.className = newTheme === 'dark' ? 'fas fa-sun' : 'fas fa-moon';
+    }
+
+    // 3. Mettre à jour CodeMirror (Éditeur Python)
+    if (codeEditorInstance) {
+        // Si newTheme est 'light', on utilise 'solarized light' (fond clair)
+        // Si newTheme est 'dark', on utilise 'dracula' (fond sombre)
+        const cmTheme = newTheme === 'light' ? 'solarized light' : 'dracula'; 
+        codeEditorInstance.setOption('theme', cmTheme);
+    }
+
+    // 4. (Optionnel) Forcer le rafraîchissement Mermaid si un diagramme est affiché
+    // Mermaid ne réagit pas toujours dynamiquement aux variables CSS sans re-rendu.
+    const flowchartDiv = document.getElementById('flowchart');
+    if (flowchartDiv && flowchartDiv.querySelector('svg')) {
+        // On relance simplement la génération si le code n'a pas changé
+        const runBtn = document.getElementById('run-code-btn');
+        if (runBtn && !runBtn.disabled) {
+            runBtn.click(); // Solution brutale mais efficace pour redessiner avec les bonnes couleurs
+        }
+    }
+}
 
 // --- Gestion de la Console et des I/O personnalisées ---
 
@@ -1054,10 +1093,39 @@ function formatPythonError(traceback) {
 // --- Point d'entrée principal de l'application ---
 document.addEventListener('DOMContentLoaded', function() {
 
+    // --- Gestion du Thème (Dark/Light) ---
+    const themeToggleBtn = document.getElementById('theme-toggle'); // Assurez-vous que ce bouton existe dans layout.html
+    
+    // Appliquer le thème sauvegardé au chargement
+    const savedTheme = localStorage.getItem('theme') || 'dark';
+    document.documentElement.setAttribute('data-bs-theme', savedTheme);
+    
+    // Ajuster l'éditeur CodeMirror au démarrage si on est en mode clair
+    // A SUPPRIMER: NE SERT À RIEN (car l'instance n'existe pas encore)
+    /*
+    if (savedTheme === 'light' && codeEditorInstance) {
+        codeEditorInstance.setOption('theme', 'default');
+    }
+    */
+    
+    // Ajuster l'icône au démarrage
+    const themeIcon = document.getElementById('theme-icon');
+    if (themeIcon) {
+        themeIcon.className = savedTheme === 'dark' ? 'fas fa-sun' : 'fas fa-moon';
+    }
+
+    if (themeToggleBtn) {
+        themeToggleBtn.addEventListener('click', toggleTheme);
+    }
+
     // --- Initialisation de l'éditeur CodeMirror ---
+
+    // Définir le thème AVANT l'initialisation
+    const initialCmTheme = savedTheme === 'light' ? 'solarized light' : 'dracula';
+
     codeEditorInstance = CodeMirror.fromTextArea(document.getElementById('code-editor'), {
         mode: 'python',
-        theme: 'dracula',
+        theme: initialCmTheme, // <--- Utiliser la variable ici au lieu de 'dracula' en dur
         lineNumbers: true,
         firstLineNumber: 0,
         indentUnit: 4,
