@@ -2,6 +2,7 @@
  * fichier intermédiaire entre layout.html (l'UI) et app.py (serveur Flask)
  * contient des fonctions pour envoyer des requêtes POST au serveur Flask
 */
+const IS_STATIC_VERSION = true; // 'false'== version Flask/MySQL
 
 /* description du processus: 
  * 1. l'utilisateur effectue une action dans l'UI qui peut être de 2 types: soit la création d'un code PYthon soit la suite correspondante (flowchart et défis)
