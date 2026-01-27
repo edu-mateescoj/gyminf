@@ -26,8 +26,8 @@ function setLoadingState(show) {
 async function initPyodideAndLoadScript() {
     console.log("Initialisation de Pyodide...");
     try {
-        // 1. Charger le moteur Pyodide
-        pyodide = await loadPyodide();
+        const pyodideBaseUrl = "/static/assets/pyodide/"; // Chargement local
+        pyodide = await loadPyodide({ indexURL: pyodideBaseUrl });
         console.log("Pyodide chargé avec succès.");
 
         // DEBUG COROUTINE

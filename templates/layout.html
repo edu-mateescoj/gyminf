@@ -5,31 +5,21 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Outil de Création d'Exercices Python</title>
     
-    <!-- Inclusion de Pyodide EN PREMIER -->
-    <script src="https://cdn.jsdelivr.net/pyodide/v0.24.1/full/pyodide.js"></script>
+    <!-- Pyodide local -->
+    <script src="{{ url_for('static', filename='assets/pyodide/pyodide.js') }}"></script>
 
-    <!-- Inclusion de Bootstrap - thèem Replit - pour le style -->
-    <!--<link rel="stylesheet" href="https://cdn.replit.com/agent/bootstrap-agent-dark-theme.min.css">-->
-    
-    <!-- Bootstrap 5.3 Standard (Supporte natif Dark & Light via data-bs-theme) -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.13/theme/solarized.min.css">
-    
-    <!-- Inclusion de CodeMirror pour l'éditeur -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.13/codemirror.min.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.13/theme/dracula.min.css">
-    
-    <!-- Inclusion de Font Awesome pour les icônes -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    
-    <!-- Inclusion de Mermaid pour les diagrammes -->
-    <script src="https://cdn.jsdelivr.net/npm/mermaid@10.2.4/dist/mermaid.min.js"></script>
+    <!-- Bootstrap local -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='assets/bootstrap/bootstrap.min.css') }}">
+    <!-- CodeMirror CSS local -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='assets/codemirror/codemirror.min.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='assets/codemirror/theme/solarized.min.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='assets/codemirror/theme/dracula.min.css') }}">
+    <!-- FontAwesome local -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='assets/fontawesome/css/all.min.css') }}">
+    <!-- Mermaid local -->
+    <script src="{{ url_for('static', filename='assets/mermaid/mermaid.min.js') }}"></script>
     
     <!-- Inclusion du CSS personnalisé -->
-    <!--
-    <link rel="stylesheet" href="../static/css/styles.css">
--->
     <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
      
     <!-- Favicon à insérer ici -->
@@ -658,11 +648,11 @@
     <!-- Fin du pied de page -->
 
     <!-- Inclusion du bundle JavaScript de Bootstrap -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="{{ url_for('static', filename='assets/bootstrap/bootstrap.bundle.min.js') }}"></script>
     
     <!-- Inclusion de CodeMirror pour l'éditeur -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.13/codemirror.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.13/mode/python/python.min.js"></script>
+    <script src="{{ url_for('static', filename='assets/codemirror/codemirror.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='assets/codemirror/mode/python/python.min.js') }}"></script>
     
   
 </body>

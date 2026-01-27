@@ -1,5 +1,5 @@
 import ast
-from typing import List, Dict, Set, Tuple, Optional
+from typing import List, Dict, Set, Tuple, Optional, Any
 
 class ControlFlowGraph:
     def __init__(self, code: str):
@@ -387,8 +387,10 @@ class ControlFlowGraph:
         if not skip_first_check:
             # 1. Première Décision: Y a-t-il des éléments à traiter ?
             # Utiliser une formulation neutre pour le type d'itérable.
-            entry_decision_label = f"{iterable_kind_desc.capitalize()} {iterable_display_name}\
-                <br>contient des {elements_type_desc_raw}s ?" # Garder un pluriel simple avec 's'
+            entry_decision_label = (
+                f"{iterable_kind_desc.capitalize()} {iterable_display_name}"
+                f"<br>contient des {elements_type_desc_raw}s ?"
+            )
             entry_decision_id = self.add_node(entry_decision_label, node_type="Decision")
             self.add_edge(parent_id, entry_decision_id)
             current_parent_for_loop_structure = entry_decision_id

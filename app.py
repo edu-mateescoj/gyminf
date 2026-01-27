@@ -22,6 +22,9 @@ from flask_mysqldb import MySQL  # MODIFIÉ : Import correct pour la bibliothèq
 
 import config
 
+import mimetypes
+mimetypes.add_type('application/wasm', '.wasm')
+
 app = Flask(__name__)
 app.secret_key = config.SECRET_KEY
 
@@ -400,4 +403,6 @@ def load_example_log(username, example_name):
 #######################################
 
 if __name__ == "__main__":
-    app.run(debug=True)
+    app.run(host='0.0.0.0', port=5000, debug=True)  # Pour rendre Flask accessible sur le réseau local
+##############################################
+
