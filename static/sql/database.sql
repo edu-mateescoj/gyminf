@@ -85,3 +85,7 @@ CREATE TABLE IF NOT EXISTS load_event (
     timestamp DATETIME DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (user_id) REFERENCES user(id)
 );
+
+-- Rappels utiles en session:
+-- SHOW TABLES;
+-- DESCRIBE user;
