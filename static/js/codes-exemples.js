@@ -111,6 +111,51 @@ for c in colors:
 # Changer la forme de la tortue
 t.shape("turtle")
 `
-    }
+    },
+{
+        name: "Erreur dans le maximum",
+        code: `def trouver_maximum(liste_nombres):
+    maximum_actuel = 0
+    for nombre in liste_nombres:
+        if nombre > maximum_actuel:
+            maximum_actuel = nombre
+        return maximum_actuel
+        
+print(trouver_maximum([10, 50, 20]))
+# Résultat obtenu : 10
+# Résultat attendu : 50
+`},
+{
+        name: "Erreur dans les félicitations",
+        code: `note = 5.5
+
+if note >= 4.0:
+    print("Admis")
+elif note >= 5.0:
+    print("Félicitations du jury")
+else:
+    print("Recalé")
+
+# Résultat obtenu : "Admis"
+# Résultat attendu : "Félicitations du jury"
+`
+},
+{
+        name: "Erreur dans la moyenne",
+        code: `nombres = [12, 15, 20]
+        total = 0
+compteur = 0
+
+for n in nombres:
+    total = total + n
+compteur = compteur + 1
+
+moyenne = total / compteur
+print(moyenne)
+
+# Résultat obtenu : 47.0
+# Résultat attendu : 15.66...
+`
+}
 
 ];
