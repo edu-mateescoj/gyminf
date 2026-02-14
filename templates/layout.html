@@ -138,19 +138,42 @@
                 <!-- Titre principal -->
                 <h1 class="h3 mb-2 mb-md-0 text-white">Outil de Création d'Exercices Python</h1>
                 
-                <button id="theme-toggle" class="btn btn-outline-secondary btn-sm">
-                    <i id="theme-icon" class="fas fa-sun"></i>
-                </button>
-                
-                <!-- Badge indiquant l'apprentissage interactif -->
-                <div class="d-flex align-items-center">
-                    <span class="badge bg-primary d-none d-sm-inline">Apprentissage Interactif</span>
+                <!-- Zone boutons (Thème + Dashboard + User) -->
+                <div class="d-flex align-items-center gap-2">
+                    
+                    <!-- Bouton Thème -->
+                    <button id="theme-toggle" class="btn btn-outline-secondary btn-sm" style="height: 31px;" title="Changer le thème">
+                        <i id="theme-icon" class="fas fa-sun"></i>
+                    </button>
+
+                    <!-- Affichage User / Logout -->
+                    {% if username %}
+                        <div class="btn-group">
+                            <span class="btn btn-outline-light btn-sm disabled opacity-100">
+                                <i class="fas fa-user me-2"></i>{{ username }}
+                            </span>
+                            <a href="{{ url_for('logout') }}" class="btn btn-outline-danger btn-sm" title="Se déconnecter">
+                                <i class="fas fa-sign-out-alt"></i>
+                            </a>
+                        </div>
+                    {% else %}
+                        <span class="badge bg-primary d-none d-sm-inline py-2">Apprentissage Interactif</span>
+                    {% endif %}
                 </div>
             
             </div>
         </div>
     </header>
     <!-- Fin de l'en-tête -->
+
+    <!-- Lien vers le dashboard enseignant (UNIQUEMENT pour les profs) -->
+    {% if role == 'teacher' %}
+    <div class="container mt-2">
+        <a href="{{ url_for('dashboard') }}" class="btn btn-outline-warning btn-sm" title="Dashboard enseignant">
+            <i class="fas fa-chalkboard-teacher me-1"></i>Dashboard
+        </a>
+    </div>
+    {% endif %}
 
     <!-- Début du contenu principal -->
     <main class="container py-4 flex-grow-1">

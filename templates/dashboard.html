@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html lang="fr" data-bs-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard Enseignant — GYMINF</title>
+
+    <!-- Bootstrap local (même que layout.html) -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='assets/bootstrap/bootstrap.min.css') }}">
+    <!-- FontAwesome local (même que layout.html) -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='assets/fontawesome/css/all.min.css') }}">
+    <!-- Favicon -->
+    <link rel="icon" href="{{ url_for('static', filename='favicon.ico') }}">
+
+    <style>
+        /* ====================================================================
+           STYLES SPÉCIFIQUES AU DASHBOARD ENSEIGNANT
+           ==================================================================== */
+
+        /* --- Cartes de métriques globales (vue d'ensemble) --- */
+        .metric-card {
+            transition: transform 0.2s;
+            cursor: default;
+        }
+        .metric-card:hover {
+            transform: translateY(-2px);
+        }
+        .metric-value {
+            font-size: 2rem;
+            font-weight: bold;
+        }
+        .metric-label {
+            font-size: 0.85rem;
+            color: #adb5bd;
+        }
+
+        /* --- Lignes du tableau des élèves (cliquables) --- */
+        .student-row {
+            cursor: pointer;
+            transition: background-color 0.15s;
+        }
+        .student-row:hover {
+            background-color: rgba(13, 110, 253, 0.1);
+        }
+
+        /* --- Badges de type de variable (légende des graphiques) --- */
+        .badge-type {
+            font-size: 0.75rem;
+            margin: 1px;
+        }
+
+        /* --- Barre de progression fine (dans le tableau) --- */
+        .progress-thin {
+            height: 6px;
+        }
+
+        /* --- Panneau de détail d'un élève (caché par défaut) --- */
+        .detail-panel {
+            display: none;
+            animation: fadeIn 0.3s ease;
+        }
+        .detail-panel.active {
+            display: block;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to   { opacity: 1; transform: translateY(0); }
+        }
+
+        /* --- Tooltip pour les en-têtes de colonne --- */
+        .tooltip-metric {
+            border-bottom: 1px dotted #adb5bd;
+            cursor: help;
+        }
+
+        /* --- Limiter la hauteur des graphiques Chart.js --- */
+        canvas {
+            max-height: 300px;
+        }
+    </style>
+</head>
+
+<body class="d-flex flex-column min-vh-100">
+
+    <!-- ================================================================
+         BARRE DE NAVIGATION
+         ================================================================ -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark border-bottom">
+        <div class="container-fluid">
+            <!-- Logo et titre -->
+            <a class="navbar-brand" href="#">
+                <i class="fas fa-chalkboard-teacher me-2"></i>Dashboard Enseignant
+            </a>
+            <!-- Boutons de navigation -->
+            <div class="d-flex align-items-center">
+                <span class="text-muted me-3">
+                    <i class="fas fa-user me-1"></i>{{ username }}
+                </span>
+                <a href="{{ url_for('main_app_route') }}" class="btn btn-outline-info btn-sm me-2">
+                    <i class="fas fa-code me-1"></i>Retour à l'App
+                </a>
+                <a href="{{ url_for('logout') }}" class="btn btn-outline-secondary btn-sm">
+                    <i class="fas fa-sign-out-alt me-1"></i>Déconnexion
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- ================================================================
+         CONTENU PRINCIPAL
+         ================================================================ -->
+    <main class="container-fluid py-4 flex-grow-1">
+
+        <!-- ============================================================
+             SECTION 1 : VUE D'ENSEMBLE (5 cartes de métriques globales)
+             ============================================================ -->
+        <div class="row mb-4" id="overview-section">
+            <div class="col-12 mb-3">
+                <h4><i class="fas fa-chart-line me-2"></i>Vue d'ensemble</h4>
+            </div>
+
+            <!-- Carte : Nombre d'élèves actifs -->
+            <div class="col-lg col-md-4 col-sm-6 mb-3">
+                <div class="card metric-card text-center h-100">
+                    <div class="card-body">
+                        <i class="fas fa-users fa-2x text-info mb-2"></i>
+                        <div class="metric-value" id="metric-users">—</div>
+                        <div class="metric-label">Élèves inscrits</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Carte : Nombre de codes générés -->
+            <div class="col-lg col-md-4 col-sm-6 mb-3">
+                <div class="card metric-card text-center h-100">
+                    <div class="card-body">
+                        <i class="fas fa-cogs fa-2x text-success mb-2"></i>
+                        <div class="metric-value" id="metric-generations">—</div>
+                        <div class="metric-label">Codes générés</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Carte : Nombre de défis exécutés -->
+            <div class="col-lg col-md-4 col-sm-6 mb-3">
+                <div class="card metric-card text-center h-100">
+                    <div class="card-body">
+                        <i class="fas fa-play-circle fa-2x text-warning mb-2"></i>
+                        <div class="metric-value" id="metric-executions">—</div>
+                        <div class="metric-label">Défis exécutés</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Carte : Nombre de vérifications -->
+            <div class="col-lg col-md-4 col-sm-6 mb-3">
+                <div class="card metric-card text-center h-100">
+                    <div class="card-body">
+                        <i class="fas fa-check-double fa-2x text-primary mb-2"></i>
+                        <div class="metric-value" id="metric-verifications">—</div>
+                        <div class="metric-label">Vérifications</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Carte : Nombre de solutions révélées -->
+            <div class="col-lg col-md-4 col-sm-6 mb-3">
+                <div class="card metric-card text-center h-100">
+                    <div class="card-body">
+                        <i class="fas fa-eye fa-2x text-danger mb-2"></i>
+                        <div class="metric-value" id="metric-reveals">—</div>
+                        <div class="metric-label">Solutions révélées</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ============================================================
+             SECTION 2 : TABLEAU DES ÉLÈVES (métriques par élève)
+             ============================================================ -->
+        <div class="row mb-4">
+            <div class="col-12">
+                <div class="card">
+                    <!-- En-tête du tableau avec bouton Actualiser -->
+                    <div class="card-header d-flex justify-content-between align-items-center">
+                        <h5 class="mb-0">
+                            <i class="fas fa-table me-2"></i>Suivi par élève
+                        </h5>
+                        <button class="btn btn-outline-info btn-sm" id="refresh-btn">
+                            <i class="fas fa-sync-alt me-1"></i>Actualiser
+                        </button>
+                    </div>
+
+                    <div class="card-body p-0">
+                        <div class="table-responsive">
+                            <table class="table table-hover mb-0">
+                                <thead class="table-dark">
+                                    <tr>
+                                        <th>Élève</th>
+                                        <!-- En-têtes avec tooltip explicatif -->
+                                        <th class="text-center">
+                                            <span class="tooltip-metric" title="Nombre de codes générés par l'élève">
+                                                <i class="fas fa-cogs"></i> Générations
+                                            </span>
+                                        </th>
+                                        <th class="text-center">
+                                            <span class="tooltip-metric" title="Nombre de défis lancés (diagramme + défi)">
+                                                <i class="fas fa-play"></i> Exécutions
+                                            </span>
+                                        </th>
+                                        <th class="text-center">
+                                            <span class="tooltip-metric" title="Ratio exécutions/générations — l'élève va-t-il jusqu'au bout ?">
+                                                <i class="fas fa-bullseye"></i> Engagement
+                                            </span>
+                                        </th>
+                                        <th class="text-center">
+                                            <span class="tooltip-metric" title="Ratio vérifications/exécutions — combien de tentatives par défi ?">
+                                                <i class="fas fa-fist-raised"></i> Ténacité
+                                            </span>
+                                        </th>
+                                        <th class="text-center">
+                                            <span class="tooltip-metric" title="1 - (révélations/vérifications) — résout-il seul ?">
+                                                <i class="fas fa-shield-alt"></i> Autonomie
+                                            </span>
+                                        </th>
+                                        <th class="text-center">
+                                            <span class="tooltip-metric" title="Difficulté moyenne des codes exécutés (1 à 5)">
+                                                <i class="fas fa-mountain"></i> Diff. moy.
+                                            </span>
+                                        </th>
+                                        <th>Dernière activité</th>
+                                        <th></th>
+                                    </tr>
+                                </thead>
+                                <tbody id="students-table-body">
+                                    <!-- Contenu chargé dynamiquement par dashboard.js -->
+                                    <tr>
+                                        <td colspan="9" class="text-center text-muted py-4">
+                                            <i class="fas fa-spinner fa-spin me-2"></i>Chargement...
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ============================================================
+             SECTION 3 : PANNEAU DE DÉTAIL D'UN ÉLÈVE
+             Affiché dynamiquement quand on clique sur une ligne du tableau.
+             Contient les graphiques Chart.js et le résumé.
+             ============================================================ -->
+        <div class="row mb-4 detail-panel" id="student-detail-panel">
+            <div class="col-12">
+                <div class="card border-info">
+                    <!-- En-tête avec nom de l'élève et bouton fermer -->
+                    <div class="card-header d-flex justify-content-between align-items-center">
+                        <h5 class="mb-0">
+                            <i class="fas fa-user-graduate me-2"></i>
+                            Détail : <span id="detail-student-name">—</span>
+                        </h5>
+                        <button class="btn btn-outline-secondary btn-sm" id="close-detail-btn">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </div>
+
+                    <div class="card-body">
+                        <div class="row">
+                            <!-- Graphique 1 : Taux de succès par type de variable -->
+                            <div class="col-lg-6 mb-4">
+                                <h6><i class="fas fa-chart-bar me-2"></i>Taux de succès par type de variable</h6>
+                                <p class="text-muted small">
+                                    Proportion de prédictions correctes selon le type Python (int, str, list…)
+                                </p>
+                                <canvas id="chart-success-by-type"></canvas>
+                                <!-- Légende custom sous le graphique -->
+                                <div id="chart-success-legend" class="mt-2 small"></div>
+                            </div>
+
+                            <!-- Graphique 2 : Évolution chronologique du taux de succès -->
+                            <div class="col-lg-6 mb-4">
+                                <h6><i class="fas fa-chart-area me-2"></i>Évolution du taux de succès</h6>
+                                <p class="text-muted small">
+                                    Progression au fil des défis — avec moyenne mobile (fenêtre de 3)
+                                </p>
+                                <canvas id="chart-timeline"></canvas>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <!-- Graphique 3 : Dispersion — couverture des types et structures -->
+                            <div class="col-lg-6 mb-4">
+                                <h6><i class="fas fa-project-diagram me-2"></i>Dispersion — Couverture des concepts</h6>
+                                <p class="text-muted small">
+                                    Variété des types de données et structures de contrôle explorés
+                                </p>
+                                <canvas id="chart-dispersion"></canvas>
+                            </div>
+
+                            <!-- Résumé numérique de l'élève -->
+                            <div class="col-lg-6 mb-4">
+                                <h6><i class="fas fa-info-circle me-2"></i>Résumé</h6>
+                                <div id="detail-summary" class="p-3 bg-dark rounded">
+                                    <p class="text-muted">Cliquez sur un élève pour voir les détails.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- ================================================================
+         FOOTER
+         ================================================================ -->
+    <footer class="bg-dark text-center text-muted py-2 mt-auto border-top">
+        <small>GYMINF — Dashboard Enseignant — © 2026</small>
+    </footer>
+
+    <!-- ================================================================
+         SCRIPTS
+         ================================================================ -->
+    <!-- Bootstrap JS (même que layout.html) -->
+    <script src="{{ url_for('static', filename='assets/bootstrap/bootstrap.bundle.min.js') }}"></script>
+    <!-- Chart.js pour les graphiques du dashboard -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    <!-- Script JS dédié au dashboard -->
+    <script src="{{ url_for('static', filename='js/dashboard.js') }}"></script>
+
+</body>
+</html>
