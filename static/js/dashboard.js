@@ -99,6 +99,7 @@ async function loadOverview() {
     document.getElementById('metric-executions').textContent    = data.total_executions;
     document.getElementById('metric-verifications').textContent = data.total_verifications;
     document.getElementById('metric-reveals').textContent       = data.total_reveals;
+    document.getElementById('metric-examples').textContent     = data.total_examples;
 }
 
 
@@ -186,17 +187,17 @@ async function loadStudents() {
     });
 
     // --- Légende custom sous le graphique ---
-    const legendDiv = document.getElementById('chart-success-legend');
-    legendDiv.innerHTML = types.map(t => {
-        const stats = byType[t];
-        const rate = stats.success_rate !== null
-            ? (stats.success_rate * 100).toFixed(0) + '%'
-            : 'N/A';
-        const color = (TYPE_COLORS[t] || TYPE_COLORS['unknown']).border;
-        return `<span class="badge badge-type me-1" style="background-color:${color}">
-                    ${t}: ${rate}
-                </span>`;
-    }).join('');
+    // const legendDiv = document.getElementById('chart-success-legend');
+    // legendDiv.innerHTML = types.map(t => {
+    //     const stats = byType[t];
+    //     const rate = stats.success_rate !== null
+    //         ? (stats.success_rate * 100).toFixed(0) + '%'
+    //         : 'N/A';
+    //     const color = (TYPE_COLORS[t] || TYPE_COLORS['unknown']).border;
+    //     return `<span class="badge badge-type me-1" style="background-color:${color}">
+    //                 ${t}: ${rate}
+    //             </span>`;
+    // }).join('');
 }
 
 
@@ -316,17 +317,17 @@ function renderSuccessByTypeChart(byType) {
     });
 
     // --- Légende custom sous le graphique ---
-    const legendDiv = document.getElementById('chart-success-legend');
-    legendDiv.innerHTML = types.map(t => {
-        const stats = byType[t];
-        const rate = stats.success_rate !== null
-            ? (stats.success_rate * 100).toFixed(0) + '%'
-            : 'N/A';
-        const color = (TYPE_COLORS[t] || TYPE_COLORS['unknown']).border;
-        return `<span class="badge badge-type me-1" style="background-color:${color}">
-                    ${t}: ${rate}
-                </span>`;
-    }).join('');
+    // const legendDiv = document.getElementById('chart-success-legend');
+    // legendDiv.innerHTML = types.map(t => {
+    //     const stats = byType[t];
+    //     const rate = stats.success_rate !== null
+    //         ? (stats.success_rate * 100).toFixed(0) + '%'
+    //         : 'N/A';
+    //     const color = (TYPE_COLORS[t] || TYPE_COLORS['unknown']).border;
+    //     return `<span class="badge badge-type me-1" style="background-color:${color}">
+    //                 ${t}: ${rate}
+    //             </span>`;
+    // }).join('');
 }
 
 

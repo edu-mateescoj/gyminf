@@ -2,7 +2,7 @@
  * fichier intermédiaire entre layout.html (l'UI) et app.py (serveur Flask)
  * contient des fonctions pour envoyer des requêtes POST au serveur Flask
 */
-const IS_STATIC_VERSION = true; // 'false'== version Flask/MySQL
+const IS_STATIC_VERSION = false; // 'false'== version Flask/MySQL
 
 // ==========================================================================
 // ÉNUMÉRATION DES TYPES DE LOG
@@ -11,6 +11,7 @@ const IS_STATIC_VERSION = true; // 'false'== version Flask/MySQL
 
 const log_enum = Object.freeze({
     GENERATION:          'generation',
+    EXECUTION:          'execution',
     FLOWCHART_GENERATION:'flowchart_generation',
     VERIFY_ANSWERS:      'verify_answers',
     REVEAL_SOLUTION:     'reveal_solution',
@@ -51,12 +52,16 @@ async function logFactory(type, body) {
         case log_enum.LOAD_EXAMPLE:
             log_url = '/log/load_example';
             break;
+        case log_enum.EXECUTION:
+            log_url = '/log/execution';
+            break;
         // NOUVEAU : endpoint pour les métadonnées du défi
         case log_enum.CHALLENGE_METADATA:
             log_url = '/log/challenge_metadata';
             break;
         default:
-            log_url = null;
+            console.warn("[db_queries] Type de log inconnu:", type);
+            return null;
     }
 
     // Si le type est inconnu, ne rien envoyer
@@ -131,7 +136,8 @@ async function logExecutedCode(originalCode, canonicalCode, difficulty) {
         canonical_code: canonicalCode,
         difficulty: difficulty
     });
-    return await logFactory(log_enum.GENERATION, body);
+    // return await logFactory(log_enum.GENERATION, body);
+    return await logFactory(log_enum.EXECUTION, body);
 }
 
 /**
@@ -164,12 +170,13 @@ async function logRevealSolution(codeId) {
 
 /**
  * Journalise le chargement d'un exemple prédéfini.
- * 
- * @param {string} eventType - Le type d'événement (nom de l'exemple)
+ * @param {string} exampleName - Le nom de l'exemple chargé
+ * @param {string} [eventType='load_example'] - Type d'événement (optionnel)
  */
-async function logLoadExample(eventType) {
+async function logLoadExample(exampleName, eventType = 'load_example') {
     let body = JSON.stringify({
-        event_type: eventType
+        event_type: eventType,
+        example_name: exampleName
     });
     return await logFactory(log_enum.LOAD_EXAMPLE, body);
 }

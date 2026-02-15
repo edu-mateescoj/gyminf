@@ -20,6 +20,18 @@ app.config['MYSQL_CURSORCLASS'] = 'DictCursor'
 
 mysql = MySQL(app)
 
+def has_column(table, col):
+    cur = mysql.connection.cursor()
+    cur.execute("""
+        SELECT COUNT(*) AS cnt
+        FROM information_schema.columns
+        WHERE table_schema = DATABASE()
+          AND table_name = %s
+          AND column_name = %s
+    """, (table, col))
+    r = cur.fetchone()
+    cur.close()
+    return r and r['cnt'] > 0
 
 # ==========================================================================
 # FONCTIONS UTILITAIRES
@@ -194,7 +206,7 @@ def log_generation():
     try:
         cursor = mysql.connection.cursor()
         cursor.execute("""
-            INSERT INTO generation (user_id, code, difficulty, variable_manifest, requested_options, time_created)
+            INSERT INTO generation (user_id, script, difficulty, variable_manifest, requested_options, time_created)
             VALUES (%s, %s, %s, %s, %s, %s)
         """, (
             user_id, code, difficulty,
@@ -234,10 +246,35 @@ def log_execution():
 
     try:
         cursor = mysql.connection.cursor()
-        cursor.execute("""
-            INSERT INTO code (user_id, original_code, canonical_code, difficulty, time_created)
-            VALUES (%s, %s, %s, %s, %s)
-        """, (user_id, original_code, canonical_code, difficulty, datetime.now()))
+
+        # Choix des colonnes selon le schéma réel
+        has_orig = has_column('code', 'original_code')
+        has_canon = has_column('code', 'canonical_code')
+        has_script = has_column('code', 'script')
+        has_ts = has_column('code', 'time_created') or has_column('code', 'timestamp')
+        ts_col = 'time_created' if has_column('code', 'time_created') else 'timestamp'
+
+        # Construire dynamiquement la requête et les valeurs
+        cols = ['user_id']
+        vals = [user_id]
+        placeholders = ['%s']
+
+        if has_orig:
+            cols.append('original_code'); placeholders.append('%s'); vals.append(original_code)
+        elif has_script:
+            cols.append('script'); placeholders.append('%s'); vals.append(original_code)
+
+        if has_canon:
+            cols.append('canonical_code'); placeholders.append('%s'); vals.append(canonical_code)
+
+        if has_ts:
+            cols.append(ts_col); placeholders.append('%s'); vals.append(datetime.now())
+
+        if has_column('code', 'difficulty'):
+            cols.append('difficulty'); placeholders.append('%s'); vals.append(difficulty)
+
+        sql = f"INSERT INTO code ({', '.join(cols)}) VALUES ({', '.join(placeholders)})"
+        cursor.execute(sql, tuple(vals))
         mysql.connection.commit()
         code_id = cursor.lastrowid
         cursor.close()
@@ -299,8 +336,9 @@ def log_verify_answers():
 
     try:
         cursor = mysql.connection.cursor()
-        cursor.execute("""
-            INSERT INTO verify_answer (user_id, code_id, predictions, correctness, time_created)
+        ts_col = 'time_created' if has_column('verify_answer', 'time_created') else 'timestamp'
+        cursor.execute(f"""
+            INSERT INTO verify_answer (user_id, code_id, predictions, correctness, {ts_col})
             VALUES (%s, %s, %s, %s, %s)
         """, (
             user_id, code_id,
@@ -333,8 +371,9 @@ def log_reveal_solution():
 
     try:
         cursor = mysql.connection.cursor()
-        cursor.execute("""
-            INSERT INTO reveal_solution (user_id, code_id, time_created)
+        ts_col = 'time_created' if has_column('reveal_solution', 'time_created') else 'timestamp'
+        cursor.execute(f"""
+            INSERT INTO reveal_solution (user_id, code_id, {ts_col})
             VALUES (%s, %s, %s)
         """, (user_id, code_id, datetime.now()))
         mysql.connection.commit()
@@ -355,7 +394,10 @@ def log_load_example():
 
     data = request.get_json()
     event_type = data.get('event_type', 'load_example')
-
+    example_name = data.get('example_name', None)
+    if not example_name:
+        return jsonify({"status": "error", "message": "example_name manquant"}), 400
+        
     user_id = get_user_id(username)
     if not user_id:
         return jsonify({"status": "error", "message": "Utilisateur introuvable"}), 404
@@ -363,9 +405,9 @@ def log_load_example():
     try:
         cursor = mysql.connection.cursor()
         cursor.execute("""
-            INSERT INTO load_event (user_id, event_type, time_created)
-            VALUES (%s, %s, %s)
-        """, (user_id, event_type, datetime.now()))
+            INSERT INTO load_event (user_id, event_type, example_name, timestamp)
+            VALUES (%s, %s, %s, %s)
+        """, (user_id, event_type, example_name, datetime.now()))
         mysql.connection.commit()
         cursor.close()
         return jsonify({"status": "success"})
@@ -479,6 +521,7 @@ def api_dashboard_overview():
     - total_executions : nombre total de codes exécutés (défis lancés)
     - total_verifications : nombre total de vérifications de réponses
     - total_reveals : nombre total de solutions révélées
+    - total_examples : nombre total de chargements d'exemples
     """
     # Protection : seul un enseignant connecté peut accéder à l'API
     if 'username' not in session or not is_teacher(session['username']):
@@ -491,21 +534,40 @@ def api_dashboard_overview():
         cursor.execute("SELECT COUNT(*) as total FROM user WHERE role = 'student'")
         total_users = cursor.fetchone()['total']
 
-        # Compter les générations de code
-        cursor.execute("SELECT COUNT(*) as total FROM generation")
+        cursor.execute("""
+            SELECT COUNT(*) as total
+            FROM generation
+            WHERE user_id IN (SELECT ID FROM user WHERE role='student')
+        """)
         total_generations = cursor.fetchone()['total']
 
-        # Compter les exécutions de code (défis lancés)
-        cursor.execute("SELECT COUNT(*) as total FROM code")
+        cursor.execute("""
+            SELECT COUNT(*) as total
+            FROM code
+            WHERE user_id IN (SELECT ID FROM user WHERE role='student')
+        """)
         total_executions = cursor.fetchone()['total']
 
-        # Compter les vérifications de réponses
-        cursor.execute("SELECT COUNT(*) as total FROM verify_answer")
+        cursor.execute("""
+            SELECT COUNT(*) as total
+            FROM verify_answer
+            WHERE user_id IN (SELECT ID FROM user WHERE role='student')
+        """)
         total_verifications = cursor.fetchone()['total']
 
-        # Compter les solutions révélées
-        cursor.execute("SELECT COUNT(*) as total FROM reveal_solution")
+        cursor.execute("""
+            SELECT COUNT(*) as total
+            FROM reveal_solution
+            WHERE user_id IN (SELECT ID FROM user WHERE role='student')
+        """)
         total_reveals = cursor.fetchone()['total']
+
+        cursor.execute("""
+            SELECT COUNT(*) as total
+            FROM load_event
+            WHERE user_id IN (SELECT ID FROM user WHERE role='student')
+        """)
+        total_examples = cursor.fetchone()['total']
 
         cursor.close()
 
@@ -514,7 +576,8 @@ def api_dashboard_overview():
             "total_generations": total_generations,
             "total_executions": total_executions,
             "total_verifications": total_verifications,
-            "total_reveals": total_reveals
+            "total_reveals": total_reveals,
+            "total_examples": total_examples
         })
     except Exception as e:
         print(f"Erreur api_dashboard_overview: {e}")

@@ -1617,10 +1617,18 @@ document.addEventListener('DOMContentLoaded', function() {
 
                 if (typeof logVerifyAnswers === 'function') {
                 if (currentChallengeCodeId) {
-                    logVerifyAnswers(results, currentChallengeCodeId);
-                } else {
-                    console.warn("Impossible de journaliser la vérification : aucun code_id de défi n'est disponible.");
-                }
+            const predictions = {};
+            const correctness = {};
+            for (const [varName, res] of Object.entries(results)) {
+                predictions[varName]  = res.studentAnswer ?? '';
+                correctness[varName] = (res.studentAnswer ?? '') === ''
+                    ? 'empty'
+                    : (res.isCorrect ? 'vrai' : 'faux');
+            }
+            logVerifyAnswers(currentChallengeCodeId, predictions, correctness);
+        } else {
+            console.warn("Impossible de journaliser la vérification : aucun code_id de défi n'est disponible.");
+        }
             }
                 const feedbackData = buildFeedbackModalContent(results);
                 const feedbackContentElement = document.getElementById('feedback-modal-content');

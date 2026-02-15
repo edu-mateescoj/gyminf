@@ -143,7 +143,7 @@ else:
 {
         name: "Erreur dans la moyenne",
         code: `nombres = [12, 15, 20]
-        total = 0
+total = 0
 compteur = 0
 
 for n in nombres:
