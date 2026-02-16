@@ -11,7 +11,9 @@ from flask_mysqldb import MySQL
 app = Flask(__name__)
 app.secret_key = 'gyminf_secret_key_change_me_in_production'
 
-# --- Configuration MySQL ---
+## --- Configuration MySQL ici plutôt que dans config.py (devenu obsolète du coup)---
+# import config
+# app.config.from_object(config)
 app.config['MYSQL_HOST'] = 'localhost'
 app.config['MYSQL_USER'] = 'root'
 app.config['MYSQL_PASSWORD'] = 'root'
@@ -955,5 +957,5 @@ def api_dashboard_student_dispersion(student_id):
 # ==========================================================================
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(debug=True, host='0.0.0.0', port=5000)
 
