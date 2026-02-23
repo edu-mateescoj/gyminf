@@ -274,15 +274,23 @@ document.addEventListener('DOMContentLoaded', function() {
     initPyodideAndLoadScript(); // affichera le bandeau
 
     // Initialiser Mermaid (configuration globale si nécessaire)
-    mermaid.initialize({
-        startOnLoad: false, // Nous allons appeler mermaid.run() manuellement
-        // theme: 'dark', // Mermaid devrait hériter du thème Bootstrap via data-bs-theme="dark" sur <html> (peut entrer en conflit avec Bootstrap??)
-        securityLevel: 'loose', // Si vous avez des problèmes avec des labels HTML complexes
-        flowchart: {
-            htmlLabels: true // Important pour que <br/> fonctionne bien dans les labels
-            // useMaxWidth: false // Pourrait aider si les diagrammes sont coupés
+    const initMermaid = () => {
+        if (typeof window.mermaid === 'undefined') {
+            console.warn("Mermaid n'est pas encore chargé. Nouvelle tentative dans 300ms...");
+            setTimeout(initMermaid, 300);
+            return;
         }
-    });
+        window.mermaid.initialize({
+            startOnLoad: false, // Nous allons appeler mermaid.run() manuellement
+            securityLevel: 'loose',
+            flowchart: {
+                htmlLabels: true
+            }
+        });
+        console.log("Mermaid initialisé.");
+    };
+
+    initMermaid();
 });
 
 // Fonction globale pour être appelée depuis d'autres scripts

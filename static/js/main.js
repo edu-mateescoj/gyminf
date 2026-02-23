@@ -691,7 +691,7 @@ function setDiagramAndChallengeCardState(state) {
 // --- Fonctions pour le Défi (déplacées de l'intérieur de DOMContentLoaded pour être globales si nécessaire, mais restent dans ce scope) ---
 
 async function runAndTraceCodeForChallenge(code, pyodideInstance) {
-    console.log("Exécution du code pour le défi maintenant avec I/O personnalisés...");
+    //console.log("Exécution du code pour le défi maintenant avec I/O personnalisés...");
     clearConsole();
 
     const turtleCard = document.getElementById('turtle-graphics-card');
@@ -886,7 +886,7 @@ if _error_detail_trace is None:
 json.dumps({"variables": _final_vars, "error": _error_detail_trace})
 `;
 
-    console.log("Wrapper de traçage (avec I/O) passé à Pyodide:", tracingWrapper);
+    //console.log("Wrapper de traçage (avec I/O) passé à Pyodide:", tracingWrapper);
     let tracedVariables = {};
     try {
         let resultJson = await pyodideInstance.runPythonAsync(tracingWrapper);
@@ -900,7 +900,7 @@ json.dumps({"variables": _final_vars, "error": _error_detail_trace})
             }
             tracedVariables = result.variables;
         }
-        console.log("Variables tracées pour le défi:", tracedVariables);
+        //console.log("Variables tracées pour le défi:", tracedVariables);
     } catch (error) {
         console.error("Erreur majeure lors de l'exécution tracée pour le défi (wrapper):", error);
         const friendlyError = formatPythonError(error.message);

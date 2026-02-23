@@ -420,24 +420,29 @@ class ControlFlowGraph:
             next_var_label = f"{iterator_variable_str} ← {article_defini_element} {elements_type_desc_raw} suivante<br>de {iterable_display_name}"
         else: # "des" ou autre
             next_var_label = f"{iterator_variable_str} ← {article_defini_element} {elements_type_desc_raw}s suivants<br>de {iterable_display_name}"
+        
+        # Nœud "prendre le suivant"
         next_var_id = self.add_node(next_var_label, node_type="Process")
+
+        # Noeud de sortie unique de la boucle (cible de break et des branches "Non")
+        loop_exit_id = self.add_node(".", node_type="Junction")
 
         # --- Connexions et Flux ---
         loop_overall_exit_points: List[str] = []        
         if entry_decision_id:
-            # La branche "Non" de entry_decision_id est une sortie de la structure de boucle.
-            # L'arête sera créée par visit_body si loop_overall_exit_points contient entry_decision_id.
-            loop_overall_exit_points.append(entry_decision_id) 
+            # Traitement explicite. Si pas d'élément dès le départ : sortie de boucle
+            self.add_edge(entry_decision_id, loop_exit_id, "Non")        
         
-        # Configuration de la pile pour break/continue
-        # continue -> va au retest_decision_id (pour vérifier s'il y a un suivant)
-        # break -> sort de la boucle (géré par le fait que retest_decision_id est une sortie "Non")
-        # retest (après le corps) -> va au retest_decision_id
-        self.loop_stack.append((retest_decision_id, retest_decision_id, retest_decision_id))
+        # Configuration de la pile pour break/continue (-> destination)
+        # pour continue -> retest (re-check avant de "prendre le suivant")
+        # pour break    -> loop_exit_id (sortie de boucle explicite)
+        # pour retest   -> retest_decision_id (cible de re-test après le corps)
+        self.loop_stack.append((retest_decision_id, loop_exit_id, retest_decision_id))
 
         # Visiter le corps de la boucle
         body_exit_nodes: List[str] = []
         first_node_of_body: Optional[str] = None
+
         if node.body:
             nodes_before_body = {nid for nid, _ in self.nodes}
             # Le corps de la boucle commence après l'initialisation de la variable (init_var_id)
@@ -459,6 +464,7 @@ class ControlFlowGraph:
             for exit_node in body_exit_nodes:
                 if exit_node not in self.terminal_nodes:
                     self.add_edge(exit_node, retest_decision_id)
+        
         else: 
             # Corps vide : init_var_id mène directement au retest_decision_id
             self.add_edge(init_var_id, retest_decision_id)
@@ -466,8 +472,8 @@ class ControlFlowGraph:
 
         # Connexion de la deuxième décision (retest_decision_id)
         self.add_edge(retest_decision_id, next_var_id, "Oui") # Si encore des éléments, prendre le suivant
-        # La branche "Non" de retest_decision_id est une sortie de la structure de boucle.
-        loop_overall_exit_points.append(retest_decision_id) 
+        # Fin normale de boucle (plus d'éléments)
+        self.add_edge(retest_decision_id, loop_exit_id, "Non") 
 
         # L'élément suivant (next_var_id) retourne au début du traitement du corps.
         if first_node_of_body: # Si le corps n'était pas vide et qu'on a identifié son début
@@ -479,21 +485,30 @@ class ControlFlowGraph:
         else: # Corps vide, next_var_id retourne directement au retest
             self.add_edge(next_var_id, retest_decision_id)
 
-        # Gestion de la clause 'orelse'
+        # --- Branches de fin de boucle ---
+        # Par défaut : fin normale => sortie unique
+        retest_non_target = loop_exit_id
+
+        # Si un "for ... else" existe, la fin normale (Non) mène à orelse.
         if node.orelse:
-            # orelse est exécuté après que retest_decision_id est "Non" (et si pas de break).
-            # On doit s'assurer que retest_decision_id n'est plus une sortie directe si orelse existe.
-            if retest_decision_id in loop_overall_exit_points:
-                loop_overall_exit_points.remove(retest_decision_id)
+            ## orelse est exécuté après que retest_decision_id est "Non" (et si pas de break).
+            ## On doit s'assurer que retest_decision_id n'est plus une sortie directe si orelse existe.
+            #if retest_decision_id in loop_overall_exit_points:
+            #    loop_overall_exit_points.remove(retest_decision_id)
             
             # Labelliser l'arête retest_decision_id -> début de orelse avec "Non"
             nodes_before_orelse = {nid for nid,_ in self.nodes}
             orelse_exit_nodes = self.visit_body(node.orelse, [retest_decision_id])
-            nodes_after_orelse = {nid for nid,_ in self.nodes}
-            new_nodes_in_orelse = sorted(list(nodes_after_orelse - nodes_before_orelse), key=lambda x: int(x.replace("node","")))
+            nodes_after_orelse = {nid for nid, _ in self.nodes}
+            new_nodes_in_orelse = sorted(
+                list(nodes_after_orelse - nodes_before_orelse), 
+                key=lambda x: int(x.replace("node",""))
+                )
             
             if new_nodes_in_orelse:
                 first_node_orelse  = new_nodes_in_orelse[0]
+                retest_non_target = first_node_orelse
+
                 if (retest_decision_id, first_node_orelse, "") in self.edges:
                     self.edges.remove((retest_decision_id, first_node_orelse, ""))
                 self.add_edge(retest_decision_id, first_node_orelse, "Non") 
@@ -501,12 +516,23 @@ class ControlFlowGraph:
                  # La branche "Non" de retest_decision_id doit mener à la suite.
                  # On la remet comme point de sortie.
                  loop_overall_exit_points.append(retest_decision_id)
+            else:
+                # orelse vide : on sort comme d’habitude
+                retest_non_target = loop_exit_id            
             
-            # Les sorties de orelse sont des sorties globales de la structure for.
-            loop_overall_exit_points.extend(orelse_exit_nodes)
+            # Toute sortie "normale" du orelse rejoint la sortie unique du for
+            for exit_node in orelse_exit_nodes:
+                if exit_node not in self.terminal_nodes:
+                    self.add_edge(exit_node, loop_exit_id)
+            
+            ## Les sorties de orelse sont des sorties globales de la structure for.
+            #loop_overall_exit_points.extend(orelse_exit_nodes)
         
+        self.add_edge(retest_decision_id, next_var_id, "Oui")
+        self.add_edge(retest_decision_id, retest_non_target, "Non")
+
         self.loop_stack.pop() # Fin de la gestion de cette boucle.
-        return list(set(loop_overall_exit_points))
+        return [loop_exit_id]
     
 
     def _visit_for_generic_iterable(self, node: ast.For, parent_id: str, iterator_variable_str: str) -> List[str]:
@@ -536,17 +562,29 @@ class ControlFlowGraph:
         next_var_label = f"{iterator_variable_str} ← {elements_type_desc} suivant<br>de la {iterable_type_desc} '{iterable_display_name}'"
         next_var_id = self.add_node(next_var_label, node_type="Process")
 
+        loop_exit_id = self.add_node(".", node_type="Junction")
+
         # --- Connexions ---
+        #
+        # Si pas d'éléments dès le départ
+        self.add_edge(entry_decision_id, loop_exit_id, "Non")
+        # Fin normale de boucle
+        self.add_edge(retest_decision_id, loop_exit_id, "Non")
         loop_overall_exit_points: List[str] = []        
-        # Connexion de la première décision (entry_decision_id)
+        
+        ## Connexion de la première décision (entry_decision_id)
         self.add_edge(entry_decision_id, init_var_id, "Oui") # Si éléments existent, initialiser
         loop_overall_exit_points.append(entry_decision_id)   # La branche "False" de entry_decision_id est une sortie
 
-        # Mettre à jour la pile des boucles
-        #1. continue_target: retest_decision_id (on re-teste s'il y a un suivant AVANT de prendre le suivant)
-        #2. break_target: retest_decision_id (la sortie "False" de ce test est la sortie de boucle)
-        #3. retest_target (après le corps): retest_decision_id
-        self.loop_stack.append((retest_decision_id, retest_decision_id, retest_decision_id))
+        ## Mettre à jour la pile des boucles
+        ##1. continue_target: retest_decision_id (on re-teste s'il y a un suivant AVANT de prendre le suivant)
+        ##2. break_target: retest_decision_id (la sortie "False" de ce test est la sortie de boucle)
+        ##3. retest_target (après le corps): retest_decision_id
+        #self.loop_stack.append((retest_decision_id, retest_decision_id, retest_decision_id))
+        
+        # continue -> retest (re-check)
+        # break    -> loop_exit_id (sortie définitive)
+        self.loop_stack.append((retest_decision_id, loop_exit_id, retest_decision_id))
 
         # 3. VISITER LE CORPS DE LA BOUCLE
         # Le corps commence APRÈS l'initialisation de la variable avec le premier élément (init_var_id).
@@ -656,65 +694,102 @@ class ControlFlowGraph:
         # elif not node.orelse: L'arête "Terminée / Vide" sera implicite via loop_overall_exit_points.
 '''
         self.loop_stack.pop() # Fin de la gestion de cette boucle.
-        return list(set(loop_overall_exit_points))
+        #return list(set(loop_overall_exit_points))
+        return [loop_exit_id]
     
     def visit_While(self, node: ast.While, parent_id: str) -> List[str]: 
-        """Visite une boucle 'while' AST."""
+        """
+        Visite une boucle 'while' AST.
+        Gère le flux avec support pour Break/Continue et Else.
+        """
+        # Noeud de test
         condition_text = ast.unparse(node.test).replace('"', '"')
         while_decision_id = self.add_node(f"{condition_text}", node_type="Decision")
         self.add_edge(parent_id, while_decision_id)
         
-        # La branche "False" (terminaison normale) part de while_decision_id.
-        loop_overall_exit_points: List[str] = [while_decision_id] 
+        # Point de convergence (sortie unique) pour les 'break' et la fin normale 'Non'
+        loop_exit_id = self.add_node(".", node_type="Junction")
 
-        # break_target: while_decision_id (sortie "False").
-        # continue_target et retest_target: while_decision_id (re-tester la condition).
-        self.loop_stack.append((while_decision_id, while_decision_id, while_decision_id))
+        # Pile pour les sauts : (continue -> test, break -> sortie, retest -> test)
+        # continue_target = while_decision_id (retest)
+        # break_target    = loop_exit_id      (sortie définitive)
+        # retest_target   = while_decision_id (après corps)
+        self.loop_stack.append((while_decision_id, loop_exit_id, while_decision_id))
 
-        # Visiter le corps (branche "True").
-        true_branch_first_node_id: Optional[str] = None
+        # --- Corps de la boucle (Branche "Oui") ---
+        first_node_of_body: Optional[str] = None
+        body_exit_nodes: List[str] = []
+
         if node.body:
-            nodes_before_body = {nid for nid,_ in self.nodes}
+            nodes_before_body = {nid for nid, _ in self.nodes}
+            # Appel récursif pour le corps
             body_exit_nodes = self.visit_body(node.body, [while_decision_id]) 
-            nodes_after_body = {nid for nid,_ in self.nodes}
-            new_nodes_in_body = sorted(list(nodes_after_body - nodes_before_body), key=lambda x: int(x.replace("node","")))
-            if new_nodes_in_body:
-                true_branch_first_node_id = new_nodes_in_body[0]
+            nodes_after_body = {nid for nid, _ in self.nodes}
             
-            # Les sorties normales du corps retournent au test.
+            # Identifier le premier noeud pour l'étiquette "Oui"
+            new_nodes_in_body = sorted(
+                list(nodes_after_body - nodes_before_body), 
+                key=lambda x: int(x.replace("node", ""))
+                )
+            if new_nodes_in_body:
+                first_node_of_body = new_nodes_in_body[0]
+            
+            # Bouclage : les fins normales du corps (non terminales) retournent au test
             for exit_node in body_exit_nodes:
                 if exit_node not in self.terminal_nodes:
                     self.add_edge(exit_node, while_decision_id) 
-        
-        if true_branch_first_node_id:
-            if (while_decision_id, true_branch_first_node_id, "") in self.edges: 
-                self.edges.remove((while_decision_id, true_branch_first_node_id, ""))
-            self.add_edge(while_decision_id, true_branch_first_node_id, "Oui")
-        elif not node.body: # Corps vide, "Oui" revient directement au test.
-            self.add_edge(while_decision_id, while_decision_id, "Oui")
+        #else:
+            # Corps vide : boucle infinie sur elle-même
+            #self.add_edge(while_decision_id, while_decision_id, "Oui")
 
-        # Gérer 'orelse' (sortie "False").
-        false_branch_first_node_id: Optional[str] = None
-        if node.orelse:
-            if while_decision_id in loop_overall_exit_points:
-                loop_overall_exit_points.remove(while_decision_id) # orelse remplace la sortie directe.
-            
-            nodes_before_orelse = {nid for nid,_ in self.nodes}
-            orelse_exit_nodes = self.visit_body(node.orelse, [while_decision_id]) 
-            nodes_after_orelse = {nid for nid,_ in self.nodes}
-            new_nodes_in_orelse = sorted(list(nodes_after_orelse - nodes_before_orelse), key=lambda x: int(x.replace("node","")))
-            if new_nodes_in_orelse:
-                false_branch_first_node_id = new_nodes_in_orelse[0]
-            loop_overall_exit_points.extend(orelse_exit_nodes)
+        # Gestion propre de l'étiquette "Oui": Labelliser l’arête du test vers le corps en "Oui"
+        if first_node_of_body:
+            # Supprimer l'arête non nommée créée par visit_body pour mettre "Oui"
+            if (while_decision_id, first_node_of_body, "") in self.edges: 
+                self.edges.remove((while_decision_id, first_node_of_body, ""))
+            self.add_edge(while_decision_id, first_node_of_body, "Oui")
+        else:
+            # Corps vide: si condition vraie, on reboucle immédiatement sur le test
+            self.add_edge(while_decision_id, while_decision_id, "Oui")
         
-        if false_branch_first_node_id:
-            if (while_decision_id, false_branch_first_node_id, "") in self.edges: 
-                self.edges.remove((while_decision_id, false_branch_first_node_id, ""))
-            self.add_edge(while_decision_id, false_branch_first_node_id, "Non")
-        # elif not node.orelse: L'arête "False" sera implicite via loop_overall_exit_points.
+        # --- Gestion de la sortie Branche "Non" (fin naturelle) et Orelse ---
+        
+        # Par défaut : Si condition Fausse -> on va à la sortie unique
+        target_for_false_branch = loop_exit_id
+
+        # Si while-else existe, la fin naturelle va vers orelse
+        if node.orelse:
+            # S'il y a un bloc 'else', la sortie "Non" va d'abord dans ce bloc
+            nodes_before_orelse = {nid for nid, _ in self.nodes}
+            orelse_exit_nodes = self.visit_body(node.orelse, [while_decision_id]) 
+            nodes_after_orelse = {nid for nid, _ in self.nodes}
             
-        self.loop_stack.pop()
-        return list(set(loop_overall_exit_points))
+            new_nodes_in_orelse = sorted(list(nodes_after_orelse - nodes_before_orelse), key=lambda x: int(x.replace("node", "")))
+            
+            if new_nodes_in_orelse:
+                first_node_orelse = new_nodes_in_orelse[0]
+                # On redirige la cible "Non" vers le début du else
+                target_for_false_branch = first_node_orelse
+                
+                # Nettoyage de l'arête automatique créée par visit_body
+                if (while_decision_id, first_node_orelse, "") in self.edges:
+                    self.edges.remove((while_decision_id, first_node_orelse, ""))
+            else:
+            # orelse vide -> comportement identique à pas de orelse
+                target_for_false_branch = loop_exit_id
+
+            # Les sorties normales du orelse vont à la sortie unique (jonction)
+            for exit_node in orelse_exit_nodes:
+                if exit_node not in self.terminal_nodes:
+                    self.add_edge(exit_node, loop_exit_id)
+
+        # Labelliser explicitement la branche "Non" (fin naturelle):
+        # Création de l'arête "Non" finale (soit vers Exit, soit vers Else)
+        self.add_edge(while_decision_id, target_for_false_branch, "Non")
+            
+        self.loop_stack.pop() # Dépiler le contexte de la boucle
+        
+        return [loop_exit_id]
 
     def visit_Return(self, node: ast.Return, parent_id: str) -> List[str]:
         """Visite une instruction 'return' AST."""
@@ -725,25 +800,48 @@ class ControlFlowGraph:
         return [return_node_id] 
 
     def visit_Break(self, node: ast.Break, parent_id: str) -> List[str]: 
-        """Visite une instruction 'break' AST."""
+        """
+        Objectif CFG:
+        - Créer un noeud Jump "Break"
+        - Ajouter l'arête explicite vers break_target la cible de sortie de la boucle courante.
+        - Marquer le noeud comme terminal (fait par visit()).
+
+        Remarque:
+        - add_edge autorise des arêtes sortantes depuis un noeud terminal
+        si son type est "Jump"ou "Return" (cf. add_edge()).
+        """
         break_node_id = self.add_node("Break", node_type="Jump")
         self.add_edge(parent_id, break_node_id)
-        # Le 'break' saute à la sortie de la boucle.
-        # Aucune arête explicite n'est ajoutée ici pour le saut lui-même;
-        # le fait que le nœud soit terminal et que la boucle ait des points de sortie définis gère cela.
-        # if self.loop_stack:
-        #     _, loop_exit_target, _ = self.loop_stack[-1]
-        #     # self.add_edge(break_node_id, loop_exit_target, "break") # Optionnel pour visualiser le saut
-        return [break_node_id] # visit() le marquera comme terminal.
+        
+        if self.loop_stack:
+            # loop_stack: (continue_target, break_target, retest_target)
+            _, break_target, _ = self.loop_stack[-1]
+            # Visualiser explicitement le saut.
+            # Label optionnel: "break" pour la lisibilité
+            self.add_edge(break_node_id, break_target, "break")
+        else:
+            # Cas pathologique : break hors boucle (ne devrait pas arriver si AST valide)
+            # On ne connecte pas de cible pour éviter de polluer le graphe.
+            pass
+
+        return [break_node_id]
 
     def visit_Continue(self, node: ast.Continue, parent_id: str) -> List[str]: 
-        """Visite une instruction 'continue' AST."""
+        """
+        continue :
+        - crée un noeud Jump "Continue"
+        - saute explicitement vers le re-test de la boucle (continue_target)
+        * for   -> retest_decision_id ("Encore un élément ?")
+        * while -> while_decision_id (condition)
+        """
         continue_node_id = self.add_node("Continue", node_type="Jump")
         self.add_edge(parent_id, continue_node_id)
+
         if self.loop_stack:
             loop_continue_target, _, _ = self.loop_stack[-1]
             self.add_edge(continue_node_id, loop_continue_target) # Explicitement connecter à la cible du continue.
         # else: # 'continue' en dehors d'une boucle (erreur Python).
+        
         return [continue_node_id] # visit() le marquera comme terminal.
 
     def generic_visit(self, node: ast.AST, parent_id: str) -> List[str]:
