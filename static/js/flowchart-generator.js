@@ -81,7 +81,8 @@ async function initPyodideAndLoadScript() {
 /**
  * Génère le diagramme Mermaid à partir du code Python fourni.
  * @param {string} pythonCode Le code Python à analyser.
- * @returns {Promise<string|null>} Une promesse qui se résout avec la chaîne Mermaid, ou null en cas d'erreur.
+ * @returns {Promise<{mermaid:string, canonicalCode:string, ast_dump:string, detectedTypes:Object}|null>}
+ *          Une promesse qui se résout avec les résultats complets, ou null en cas d'erreur.
  */
 async function generateFlowchartFromCode(pythonCode) {
 
@@ -117,47 +118,50 @@ import ast # S'assurer qu'ast est importé si ce n'est pas déjà fait
 output_dict = {}
 error_message = ""
 try:
-    # Récupérer le code utilisateur passé depuis JavaScript
-    current_code = user_python_code # Variable globale JS rendue accessible à Python
-    
-    # Créer une instance de la classe ControlFlowGraph
-    #    Le __init__ de ControlFlowGraph fait ast.parse(current_code) et initialise les structures.
-    cfg_instance = ControlFlowGraph(current_code) 
-    
-    # Appel de la nouvelle méthode unifiée qui exécute la visite, la génération Mermaid et la normalisation du code.
-    # Ceci remplace les appels séparés à .visit() et .to_mermaid() pour optimiser les performances.
+    current_code = user_python_code
+    cfg_instance = ControlFlowGraph(current_code)
     output_dict = cfg_instance.process_and_get_results()
-    
+
+    # Garde-fou : si la clé n'existe pas (ancienne version Python), on la force.
+    if not isinstance(output_dict, dict):
+        output_dict = {}
+    if "detected_types" not in output_dict:
+        output_dict["detected_types"] = {}
+
 except Exception as e:
     import traceback
     error_message = f"Erreur Python lors de la génération du CFG: {type(e).__name__}: {str(e)}\\n{traceback.format_exc()}"
-    print(error_message) # Afficher dans la console Pyodide (visible dans la console du navigateur)
-    # Créer un dictionnaire d'erreur cohérent avec la sortie normale
-    output_dict = {"mermaid": "", "canonical_code": "", "error": error_message}
+    print(error_message)
+    # Structure d'erreur alignée avec la structure normale
+    output_dict = {
+        "mermaid": "",
+        "canonical_code": "",
+        "ast_dump": "",
+        "detected_types": {},
+        "error": error_message
+    }
 
-# Renvoyer le dictionnaire complet à JavaScript
-output_dict # C'est le dict retourné à JS
+output_dict
 `;
         // Exécuter le script runner
         const resultProxy = await pyodide.runPythonAsync(pythonRunnerScript);
-        // Convertir le résultat en objet JS. Si c'est un Map, il faut le traiter comme tel.
+        // Conversion PyProxy -> JS
+        // Objectif: convertir proprement les dict Python (dont detected_types) en objets JS.
         var outputData;
         if (typeof resultProxy.toJs === 'function') {
-            // La méthode standard pour convertir un PyProxy en objet JS.
-            // Elle devrait retourner un objet simple si le Python retourne un dict.
-            // ... Mais si elle retourne un Map, nous devons le gérer!
-            let potentialMap = resultProxy.toJs(); 
-            if (potentialMap instanceof Map) {
-                console.log("Pyodide a retourné un Map, conversion en objet...");
-                outputData = Object.fromEntries(potentialMap); // Convertit Map en objet simple
-            } else {
-                outputData = potentialMap; // C'était déjà un objet simple
+            try {
+                // dict_converter convertit les dict Python en objets JS simples
+                outputData = resultProxy.toJs({ dict_converter: Object.fromEntries });
+            } catch (convError) {
+                console.warn("Conversion toJs avec dict_converter a échoué, fallback standard.", convError);
+                let potentialMap = resultProxy.toJs();
+                outputData = (potentialMap instanceof Map) ? Object.fromEntries(potentialMap) : potentialMap;
             }
         } else {
-            // Fallback si toJs n'est pas une fonction (ne devrait pas arriver avec PyProxy)
             console.warn("resultProxy.toJs n'est pas une fonction. Tentative d'accès direct.");
-            outputData = resultProxy; // Peut être risqué
+            outputData = resultProxy;
         }
+
         resultProxy.destroy(); // Libérer la mémoire du proxy
         setLoadingState(false); // Masquer le chargement après la génération
          
@@ -172,11 +176,19 @@ output_dict # C'est le dict retourné à JS
             return null; // Indiquer une erreur à la fonction appelante
         }
 
-       // Retourner l'objet avec les deux résultats si tout s'est bien passé
+        // Normalisation défensive des types détectés
+        const detectedTypes = (
+            outputData &&
+            typeof outputData.detected_types === 'object' &&
+            outputData.detected_types !== null
+        ) ? outputData.detected_types : {};
+
+        // Retourner l'objet avec tous les résultats
         return {
             mermaid: outputData.mermaid,
             canonicalCode: outputData.canonical_code,
-            ast_dump: outputData.ast_dump
+            ast_dump: outputData.ast_dump,
+            detectedTypes: detectedTypes
         };
 
     } catch (error) {
@@ -297,6 +309,7 @@ document.addEventListener('DOMContentLoaded', function() {
 // Fonction principale pour mettre à jour le diagramme, appelée par un événement externe (bouton).
 /**
  * Récupère le code, génère le diagramme et l'affiche.
+ * Retourne désormais aussi detectedTypes au code appelant (main.js).
  */
 async function triggerFlowchartUpdate() {
     // S'assurer que codeEditorInstance est accessible (doit être défini globalement ou passé en paramètre)
@@ -321,6 +334,7 @@ async function triggerFlowchartUpdate() {
         }
         
         // 4. On retourne l'objet complet pour que main.js puisse l'utiliser
+        //    (mermaid, canonicalCode, ast_dump, detectedTypes)
         return results;
 
     } else {

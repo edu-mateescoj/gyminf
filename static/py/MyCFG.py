@@ -43,20 +43,157 @@ class ControlFlowGraph:
             return {
                 "mermaid": "graph TD\n    error[Code syntaxiquement invalide]",
                 "canonical_code": f"# Erreur de syntaxe:\n# {getattr(self, 'syntax_error', 'Erreur inconnue')}",
-                "error": str(getattr(self, 'syntax_error', 'Erreur inconnue'))
+                "error": str(getattr(self, 'syntax_error', 'Erreur inconnue')),
+                "detected_types": {}
             }
 
         self.visit(self.tree, None)
         mermaid_string = self.to_mermaid()
         canonical_code_string = ast.unparse(self.tree)
+        detected_types = self.get_variable_types()
 
         return {
             "mermaid": mermaid_string,
             "canonical_code": canonical_code_string,
             "ast_dump": ast.dump(self.tree),
+            "detected_types": detected_types,
             "error": None
         }
-        
+
+    def _normalize_assignment_entry_type(self, assigned_ast_type: type, assigned_value_or_desc: Any) -> str:
+        """
+        Convertit une entrée de self.variable_assignments vers un type simple:
+        'int' | 'float' | 'str' | 'bool' | 'list' | 'unknown'
+        """
+        allowed = {"int", "float", "str", "bool", "list", "unknown"}
+
+        # Si déjà normalisé
+        if isinstance(assigned_value_or_desc, str) and assigned_value_or_desc in allowed:
+            return assigned_value_or_desc
+
+        if assigned_ast_type == ast.Constant:
+            v = assigned_value_or_desc
+            # bool doit être testé avant int (bool est un sous-type de int en Python)
+            if isinstance(v, bool):
+                return "bool"
+            if isinstance(v, int):
+                return "int"
+            if isinstance(v, float):
+                return "float"
+            if isinstance(v, str):
+                return "str"
+            return "unknown"
+
+        if assigned_ast_type == ast.List:
+            return "list"
+
+        if assigned_ast_type in (ast.Tuple, ast.Set, ast.Dict):
+            return "unknown"
+
+        if assigned_ast_type == ast.Call and isinstance(assigned_value_or_desc, str):
+            low = assigned_value_or_desc.lower()
+            if "chaîne" in low or "string" in low:
+                return "str"
+            if "entier" in low:
+                return "int"
+            if "bool" in low:
+                return "bool"
+            if "list" in low or "liste" in low:
+                return "list"
+            if "nombre" in low:
+                # nombre peut être int ou float -> ambigu
+                return "unknown"
+
+        return "unknown"
+
+    def _infer_type_from_value_node(self, value_node: ast.AST) -> str:
+        """
+        Infère le type simple d'une expression d'assignation.
+        """
+        if isinstance(value_node, ast.Constant):
+            v = value_node.value
+            if isinstance(v, bool):
+                return "bool"
+            if isinstance(v, int):
+                return "int"
+            if isinstance(v, float):
+                return "float"
+            if isinstance(v, str):
+                return "str"
+            return "unknown"
+
+        if isinstance(value_node, ast.List):
+            return "list"
+
+        if isinstance(value_node, ast.Name):
+            if value_node.id in self.variable_assignments:
+                t_ast, t_val = self.variable_assignments[value_node.id]
+                return self._normalize_assignment_entry_type(t_ast, t_val)
+            return "unknown"
+
+        if isinstance(value_node, ast.Call) and isinstance(value_node.func, ast.Name):
+            fn = value_node.func.id
+            builtin_map = {
+                "int": "int",
+                "float": "float",
+                "str": "str",
+                "bool": "bool",
+                "list": "list",
+                "len": "int",
+                "input": "str",
+                "ord": "int",
+                "chr": "str",
+            }
+            return builtin_map.get(fn, "unknown")
+
+        if isinstance(value_node, ast.Compare):
+            return "bool"
+
+        if isinstance(value_node, ast.BoolOp):
+            return "bool"
+
+        if isinstance(value_node, ast.UnaryOp):
+            if isinstance(value_node.op, ast.Not):
+                return "bool"
+            operand_t = self._infer_type_from_value_node(value_node.operand)
+            if isinstance(value_node.op, (ast.UAdd, ast.USub)) and operand_t in ("int", "float"):
+                return operand_t
+            return "unknown"
+
+        if isinstance(value_node, ast.BinOp):
+            lt = self._infer_type_from_value_node(value_node.left)
+            rt = self._infer_type_from_value_node(value_node.right)
+
+            # Numérique
+            if lt in ("int", "float") and rt in ("int", "float"):
+                if "float" in (lt, rt):
+                    return "float"
+                return "int"
+
+            # Concaténations simples
+            if lt == "str" and rt == "str" and isinstance(value_node.op, ast.Add):
+                return "str"
+            if lt == "list" and rt == "list" and isinstance(value_node.op, ast.Add):
+                return "list"
+
+            return "unknown"
+
+        if isinstance(value_node, ast.IfExp):
+            bt = self._infer_type_from_value_node(value_node.body)
+            et = self._infer_type_from_value_node(value_node.orelse)
+            return bt if bt == et else "unknown"
+
+        return "unknown"
+
+    def get_variable_types(self) -> Dict[str, str]:
+        """
+        Retourne un dictionnaire simple: variable -> type ('int', 'float', 'str', 'bool', 'list', 'unknown').
+        """
+        detected: Dict[str, str] = {}
+        for var_name, (assigned_ast_type, assigned_value_or_desc) in self.variable_assignments.items():
+            detected[var_name] = self._normalize_assignment_entry_type(assigned_ast_type, assigned_value_or_desc)
+        return detected
+
     def get_node_id(self) -> str:
         """Génère un nouvel ID de nœud unique et l'ajoute à la portée de fonction actuelle si applicable."""
         self.node_counter += 1
@@ -602,99 +739,62 @@ class ControlFlowGraph:
             )
             if new_nodes_in_body:
                 first_node_of_body = new_nodes_in_body[0]
-                # S'assurer que l'arête init_var_id -> first_node_of_body n'a pas de label (ou le bon)
-                # visit_body crée cette arête via son premier appel à self.visit.
-                # On ne met pas de label "True" ici, c'est un flux direct après init_var_id.
-                if (init_var_id, first_node_of_body, "Oui") in self.edges: # Au cas où une logique l'aurait mis
-                    self.edges.remove((init_var_id, first_node_of_body, "Oui"))
-                    self.add_edge(init_var_id, first_node_of_body, "") # Flux direct
-
-            # Les sorties normales du corps mènent au nœud de re-test (retest_decision_id)
-            for exit_node in body_exit_nodes:
-                if exit_node not in self.terminal_nodes:
-                    self.add_edge(exit_node, retest_decision_id)
-        else: 
-            # Corps vide : init_var_id mène directement au retest_decision_id
-            self.add_edge(init_var_id, retest_decision_id)
-            body_exit_nodes = [init_var_id] # Pour la logique de retour de boucle
-
-        # Connexion de la deuxième décision (retest_decision_id)
-        self.add_edge(retest_decision_id, next_var_id, "Oui") # Si encore des éléments, prendre le suivant
-        loop_overall_exit_points.append(retest_decision_id) # La branche "False" de retest_decision_id est une sortie
-
-        # L'élément suivant (next_var_id) retourne au début du traitement du corps.
-        if first_node_of_body: # Si le corps n'était pas vide et qu'on a identifié son début
-            self.add_edge(next_var_id, first_node_of_body)
-        elif node.body : # Corps non vide, mais first_node_of_body non trouvé (ne devrait pas arriver)
-            print(f"Warning: Impossible de connecter next_var_id au début du corps de la boucle for {iterator_variable_str}")
-            self.add_edge(next_var_id, retest_decision_id) # Fallback moins précis
-        else: # Corps vide, next_var_id retourne directement au retest
-            self.add_edge(next_var_id, retest_decision_id)
-
-# AVANT 
-        '''
-        # Visiter le corps (branche "itération").
-        iteration_branch_first_node_id: Optional[str] = None
-
-        if node.body:
-            nodes_before_body = {nid for nid,_ in self.nodes}
-            body_exit_nodes = self.visit_body(node.body, [loop_decision_id])
-            nodes_after_body = {nid for nid,_ in self.nodes}
-            new_nodes_in_body = sorted(list(nodes_after_body - nodes_before_body), key=lambda x: int(x.replace("node","")))
-            if new_nodes_in_body:
-                iteration_branch_first_node_id = new_nodes_in_body[0]
             
-            # Les sorties normales du corps retournent au test de la boucle.
+            # Bouclage : les fins normales du corps (non terminales) retournent au test
             for exit_node in body_exit_nodes:
                 if exit_node not in self.terminal_nodes:
-                    self.add_edge(exit_node, loop_decision_id) 
+                    self.add_edge(exit_node, while_decision_id) 
+        #else:
+            # Corps vide : boucle infinie sur elle-même
+            #self.add_edge(while_decision_id, while_decision_id, "Oui")
 
-
-        if iteration_branch_first_node_id:
-            if (loop_decision_id, iteration_branch_first_node_id, "") in self.edges: 
-                self.edges.remove((loop_decision_id, iteration_branch_first_node_id, ""))
-            self.add_edge(loop_decision_id, iteration_branch_first_node_id, "itération")
-        elif not node.body: # Corps vide, la branche "itération" revient directement au test.
-             self.add_edge(loop_decision_id, loop_decision_id, "itération")
-        '''
-
-        # Gérer 'orelse' (sortie "Terminée/Vide").
-        ## terminated_branch_first_node_id: Optional[str] = None
+        # Gestion propre de l'étiquette "Oui": Labelliser l’arête du test vers le corps en "Oui"
+        if first_node_of_body:
+            # Supprimer l'arête non nommée créée par visit_body pour mettre "Oui"
+            if (while_decision_id, first_node_of_body, "") in self.edges: 
+                self.edges.remove((while_decision_id, first_node_of_body, ""))
+            self.add_edge(while_decision_id, first_node_of_body, "Oui")
+        else:
+            # Corps vide: si condition vraie, on reboucle immédiatement sur le test
+            self.add_edge(while_decision_id, while_decision_id, "Oui")
         
+        # --- Gestion de la sortie Branche "Non" (fin naturelle) et Orelse ---
+        
+        # Par défaut : Si condition Fausse -> on va à la sortie unique
+        target_for_false_branch = loop_exit_id
+
+        # Si while-else existe, la fin naturelle va vers orelse
         if node.orelse:
-            # orelse est exécuté après que retest_decision_id est False.
-            # Donc, la branche "False" de retest_decision_id mène à orelse.
-            if retest_decision_id  in loop_overall_exit_points:
-                loop_overall_exit_points.remove(retest_decision_id ) # orelse remplace la sortie directe.
+            # S'il y a un bloc 'else', la sortie "Non" va d'abord dans ce bloc
+            nodes_before_orelse = {nid for nid, _ in self.nodes}
+            orelse_exit_nodes = self.visit_body(node.orelse, [while_decision_id]) 
+            nodes_after_orelse = {nid for nid, _ in self.nodes}
             
-            # Labelliser l'arête retest_decision_id -> début de orelse avec "False"
-            nodes_before_orelse = {nid for nid,_ in self.nodes}
-            orelse_exit_nodes = self.visit_body(node.orelse, [retest_decision_id])
-            nodes_after_orelse = {nid for nid,_ in self.nodes}
-            new_nodes_in_orelse = sorted(list(nodes_after_orelse - nodes_before_orelse), key=lambda x: int(x.replace("node","")))
+            new_nodes_in_orelse = sorted(list(nodes_after_orelse - nodes_before_orelse), key=lambda x: int(x.replace("node", "")))
             
             if new_nodes_in_orelse:
-                first_node_orelse  = new_nodes_in_orelse[0]
-                if (retest_decision_id, first_node_orelse, "") in self.edges:
-                    self.edges.remove((retest_decision_id, first_node_orelse, ""))
-                self.add_edge(retest_decision_id, first_node_orelse, "Non")
-            elif not orelse_exit_nodes : # orelse est vide mais existe
-                 # L'arête False de retest_decision_id pointe vers la suite
-                 # On doit s'assurer que retest_decision_id est une sortie si orelse est vide
-                 loop_overall_exit_points.append(retest_decision_id) 
-            # else: Si pas de orelse, la branche "False" de retest_decision_id est déjà une sortie via loop_overall_exit_points.
+                first_node_orelse = new_nodes_in_orelse[0]
+                # On redirige la cible "Non" vers le début du else
+                target_for_false_branch = first_node_orelse
+                
+                # Nettoyage de l'arête automatique créée par visit_body
+                if (while_decision_id, first_node_orelse, "") in self.edges:
+                    self.edges.remove((while_decision_id, first_node_orelse, ""))
+            else:
+            # orelse vide -> comportement identique à pas de orelse
+                target_for_false_branch = loop_exit_id
 
-            # Les sorties de orelse sont des sorties globales.
-            loop_overall_exit_points.extend(orelse_exit_nodes)
+            # Les sorties normales du orelse vont à la sortie unique (jonction)
+            for exit_node in orelse_exit_nodes:
+                if exit_node not in self.terminal_nodes:
+                    self.add_edge(exit_node, loop_exit_id)
+
+        # Labelliser explicitement la branche "Non" (fin naturelle):
+        # Création de l'arête "Non" finale (soit vers Exit, soit vers Else)
+        self.add_edge(while_decision_id, target_for_false_branch, "Non")
+            
+        self.loop_stack.pop() # Dépiler le contexte de la boucle
         
-        '''if terminated_branch_first_node_id:
-            if (loop_decision_id, terminated_branch_first_node_id, "") in self.edges: 
-                self.edges.remove((loop_decision_id, terminated_branch_first_node_id, ""))
-            self.add_edge(loop_decision_id, terminated_branch_first_node_id, "Terminée / Vide")
-        # elif not node.orelse: L'arête "Terminée / Vide" sera implicite via loop_overall_exit_points.
-'''
-        self.loop_stack.pop() # Fin de la gestion de cette boucle.
-        #return list(set(loop_overall_exit_points))
         return [loop_exit_id]
     
     def visit_While(self, node: ast.While, parent_id: str) -> List[str]: 

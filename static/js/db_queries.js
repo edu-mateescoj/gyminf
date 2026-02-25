@@ -128,15 +128,17 @@ async function logGeneratedCode(code, difficulty, manifest) {
  * @param {string} originalCode - Le code Python tel que saisi par l'élève
  * @param {string} canonicalCode - Le code normalisé (pour comparaison)
  * @param {number} difficulty - La difficulté
+ * @param {Object} [detectedTypes={}] - Types détectés remontés depuis Pyodide/MyCFG
  * @returns {Promise<Object|null>} Réponse contenant { code_id: ... } ou null
  */
-async function logExecutedCode(originalCode, canonicalCode, difficulty) {
+async function logExecutedCode(originalCode, canonicalCode, difficulty, detectedTypes = {}) {
     let body = JSON.stringify({
         original_code: originalCode,
         canonical_code: canonicalCode,
-        difficulty: difficulty
+        difficulty: difficulty,
+        // clé alignée avec le process front; le backend peut l'ignorer sans casser le flux
+        detected_types: detectedTypes
     });
-    // return await logFactory(log_enum.GENERATION, body);
     return await logFactory(log_enum.EXECUTION, body);
 }
 

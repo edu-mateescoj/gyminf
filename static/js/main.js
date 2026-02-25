@@ -64,6 +64,7 @@ let variableValuesFromExecution = {}; // Pour stocker les valeurs des variables 
 let lastDiagramAstDump = ""; // Pour la synchronisation diagramme/code
 let lastLoggedCanonicalCode = ""; // Stocke le dernier code normalisé qui a été journalisé
 let currentChallengeCodeId = null; // Pour stocker l'ID du code de défi actuel
+let currentChallengeVariableTypes = {}; // Types détectés pour le défi courant (ex: { x: 'int', nom: 'str' })
 
 // --- Variables DOM globales (déclarées ici pour être accessibles partout) ---
 let difficultyGlobalSelect;
@@ -1527,29 +1528,45 @@ document.addEventListener('DOMContentLoaded', function() {
             // On ne journalise que si le code a structurellement changé.
             if (processingResults && processingResults.canonicalCode) {
                 const canonicalCode = processingResults.canonicalCode;
-                
+
                 if (canonicalCode !== lastLoggedCanonicalCode) {
                     console.log("Changement structurel détecté. Journalisation des deux versions du code.");
                     
                     // On récupère la difficulté au moment de l'exécution.
                     const difficulty = parseInt(difficultyGlobalSelect.value, 10);
 
-                    // APPEL MODIFIÉ: On utilise la nouvelle fonction avec tous les arguments.
                     if (typeof logExecutedCode === 'function') {
                         try {
-                            // CORRECTION : On attend le résultat de la journalisation.
-                            const logResult = await logExecutedCode(originalCode, canonicalCode, difficulty); 
+                            // Signature alignée: on passe maintenant les types détectés
+                            const logResult = await logExecutedCode(
+                                originalCode,
+                                canonicalCode,
+                                difficulty,
+                                processingResults.detectedTypes
+                            );
+
                             if (logResult && logResult.code_id) {
-                                // On stocke l'ID du code qui vient d'être créé.
                                 currentChallengeCodeId = logResult.code_id;
                                 console.log(`Défi initialisé avec code_id: ${currentChallengeCodeId}`);
+
+                                // Envoi explicite des métadonnées de défi pour stockage analytics
+                                if (
+                                    typeof logChallengeMetadata === 'function' &&
+                                    processingResults.detectedTypes &&
+                                    Object.keys(processingResults.detectedTypes).length > 0
+                                ) {
+                                    await logChallengeMetadata(
+                                        currentChallengeCodeId,
+                                        processingResults.detectedTypes,
+                                        null // requestedOptions non disponible ici
+                                    );
+                                }
                             }
                         } catch (e) {
                             console.error("Erreur lors de la journalisation du code exécuté:", e);
                         }
                     }
-                    
-                    // Mettre à jour la référence pour éviter les logs redondants.
+
                     lastLoggedCanonicalCode = canonicalCode;
                 } else {
                     console.log("Aucun changement structurel. Journalisation ignorée.");

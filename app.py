@@ -230,33 +230,40 @@ def log_generation():
 def log_execution():
     """
     Journalise une exécution de code (bouton Lancer).
-    Enregistre le code original, le code canonique et la difficulté.
-    Retourne le code_id pour référencer les actions suivantes (vérification, révélation, etc.).
+    Enregistre le code original, le code canonique, la difficulté
+    et, si disponible, les types détectés.
     """
     username = session.get('username')
     if not username:
         return jsonify({"status": "error", "message": "Non authentifié"}), 401
 
-    data = request.get_json()
+    data = request.get_json() or {}
     original_code = data.get('original_code', '')
     canonical_code = data.get('canonical_code', '')
     difficulty = data.get('difficulty', 3)
+    detected_types = data.get('detected_types') or {}
+
+    # Sécurité type: on force dict sinon vide
+    if not isinstance(detected_types, dict):
+        detected_types = {}
 
     user_id = get_user_id(username)
     if not user_id:
         return jsonify({"status": "error", "message": "Utilisateur introuvable"}), 404
 
+    cursor = None
     try:
         cursor = mysql.connection.cursor()
 
-        # Choix des colonnes selon le schéma réel
+        # --- INSERT dans code (prioritaire) ---
         has_orig = has_column('code', 'original_code')
         has_canon = has_column('code', 'canonical_code')
         has_script = has_column('code', 'script')
-        has_ts = has_column('code', 'time_created') or has_column('code', 'timestamp')
-        ts_col = 'time_created' if has_column('code', 'time_created') else 'timestamp'
+        has_time_created = has_column('code', 'time_created')
+        has_timestamp = has_column('code', 'timestamp')
+        has_ts = has_time_created or has_timestamp
+        ts_col = 'time_created' if has_time_created else 'timestamp'
 
-        # Construire dynamiquement la requête et les valeurs
         cols = ['user_id']
         vals = [user_id]
         placeholders = ['%s']
@@ -277,14 +284,67 @@ def log_execution():
 
         sql = f"INSERT INTO code ({', '.join(cols)}) VALUES ({', '.join(placeholders)})"
         cursor.execute(sql, tuple(vals))
-        mysql.connection.commit()
         code_id = cursor.lastrowid
-        cursor.close()
-        return jsonify({"status": "success", "code_id": code_id})
+
+        # --- INSERT metadata (best effort, ne doit JAMAIS faire échouer l'exécution) ---
+        metadata_warning = None
+        if detected_types:
+            try:
+                cm_cols = []
+                cm_vals = []
+                cm_placeholders = []
+
+                if has_column('challenge_metadata', 'code_id'):
+                    cm_cols.append('code_id'); cm_placeholders.append('%s'); cm_vals.append(code_id)
+
+                if has_column('challenge_metadata', 'user_id'):
+                    cm_cols.append('user_id'); cm_placeholders.append('%s'); cm_vals.append(user_id)
+
+                if has_column('challenge_metadata', 'variable_types'):
+                    cm_cols.append('variable_types'); cm_placeholders.append('%s'); cm_vals.append(json.dumps(detected_types))
+
+                if has_column('challenge_metadata', 'requested_options'):
+                    cm_cols.append('requested_options'); cm_placeholders.append('%s'); cm_vals.append(None)
+
+                if has_column('challenge_metadata', 'variable_count'):
+                    cm_cols.append('variable_count'); cm_placeholders.append('%s'); cm_vals.append(len(detected_types))
+
+                if has_column('challenge_metadata', 'type_diversity'):
+                    unique_types = {str(v) for v in detected_types.values() if v is not None}
+                    cm_cols.append('type_diversity'); cm_placeholders.append('%s'); cm_vals.append(len(unique_types))
+
+                if has_column('challenge_metadata', 'time_created'):
+                    cm_cols.append('time_created'); cm_placeholders.append('%s'); cm_vals.append(datetime.now())
+                elif has_column('challenge_metadata', 'timestamp'):
+                    cm_cols.append('timestamp'); cm_placeholders.append('%s'); cm_vals.append(datetime.now())
+
+                # On n'insert que si on a au moins user_id + variable_types
+                if 'user_id' in cm_cols and 'variable_types' in cm_cols:
+                    cm_sql = f"""
+                        INSERT INTO challenge_metadata ({', '.join(cm_cols)})
+                        VALUES ({', '.join(cm_placeholders)})
+                    """
+                    cursor.execute(cm_sql, tuple(cm_vals))
+
+            except Exception as meta_e:
+                metadata_warning = str(meta_e)
+                print(f"[WARN] log_execution metadata skipped: {meta_e}")
+
+        mysql.connection.commit()
+
+        return jsonify({
+            "status": "success",
+            "code_id": code_id,
+            "warning": metadata_warning
+        })
+
     except Exception as e:
         print(f"Erreur log_execution: {e}")
         mysql.connection.rollback()
         return jsonify({"status": "error", "message": str(e)}), 500
+    finally:
+        if cursor:
+            cursor.close()
 
 
 @app.route('/log/flowchart_generation', methods=['POST'])
@@ -769,8 +829,7 @@ def api_dashboard_student_predictions(student_id):
     try:
         cursor = mysql.connection.cursor()
 
-        # Récupérer toutes les vérifications de cet élève
-        # avec les types de variables associés (via challenge_metadata)
+        # Join sur UNE SEULE metadata par (code_id, user_id): la plus récente
         cursor.execute("""
             SELECT 
                 va.code_id,
@@ -779,9 +838,20 @@ def api_dashboard_student_predictions(student_id):
                 va.time_created,
                 cm.variable_types
             FROM verify_answer va
-            LEFT JOIN challenge_metadata cm 
-                ON va.code_id = cm.code_id 
-                AND va.user_id = cm.user_id
+            LEFT JOIN (
+                SELECT cm1.code_id, cm1.user_id, cm1.variable_types
+                FROM challenge_metadata cm1
+                INNER JOIN (
+                    SELECT code_id, user_id, MAX(time_created) AS max_time
+                    FROM challenge_metadata
+                    GROUP BY code_id, user_id
+                ) latest
+                  ON latest.code_id = cm1.code_id
+                 AND latest.user_id = cm1.user_id
+                 AND latest.max_time = cm1.time_created
+            ) cm
+              ON va.code_id = cm.code_id
+             AND va.user_id = cm.user_id
             WHERE va.user_id = %s
             ORDER BY va.time_created ASC
         """, (student_id,))
@@ -789,55 +859,40 @@ def api_dashboard_student_predictions(student_id):
         rows = cursor.fetchall()
         cursor.close()
 
-        # --- Agrégation par type de variable ---
-        # Structure : {"int": {"correct": 5, "incorrect": 3, "empty": 2}, ...}
         type_stats = {}
-
-        # --- Chronologie : taux de succès par vérification ---
         timeline = []
 
         for row in rows:
-            # Décoder le JSON de correctness et variable_types
             correctness = json.loads(row['correctness']) if row['correctness'] else {}
             var_types = json.loads(row['variable_types']) if row['variable_types'] else {}
 
-            # Compteurs pour cette vérification (pour la timeline)
             batch_correct = 0
             batch_total = 0
 
-            # Parcourir chaque variable vérifiée
             for var_name, status in correctness.items():
-                # Retrouver le type Python de cette variable
                 var_type = var_types.get(var_name, 'unknown')
-
-                # Initialiser les compteurs pour ce type si nécessaire
                 if var_type not in type_stats:
                     type_stats[var_type] = {"correct": 0, "incorrect": 0, "empty": 0}
 
-                # Incrémenter selon le résultat
                 if status == "vrai":
                     type_stats[var_type]["correct"] += 1
                     batch_correct += 1
                 elif status == "faux":
                     type_stats[var_type]["incorrect"] += 1
                 else:
-                    # Champ laissé vide par l'élève
                     type_stats[var_type]["empty"] += 1
 
                 batch_total += 1
 
-            # Ajouter un point à la timeline (un point par vérification)
             if batch_total > 0:
                 timeline.append({
-                    "code_id": row['code_id'],
-                    "time": str(row['time_created']),
+                    "code_id": row["code_id"],
+                    "time": str(row["time_created"]),
                     "success_rate": round(batch_correct / batch_total, 2)
                 })
 
-        # --- Calculer le taux de succès par type ---
         type_success_rates = {}
         for var_type, stats in type_stats.items():
-            # On ne compte que les tentatives réelles (correct + incorrect, pas les vides)
             total_attempts = stats["correct"] + stats["incorrect"]
             type_success_rates[var_type] = {
                 "success_rate": round(stats["correct"] / total_attempts, 2) if total_attempts > 0 else None,
@@ -847,10 +902,7 @@ def api_dashboard_student_predictions(student_id):
                 "incorrect": stats["incorrect"]
             }
 
-        return jsonify({
-            "by_type": type_success_rates,
-            "timeline": timeline
-        })
+        return jsonify({"by_type": type_success_rates, "timeline": timeline})
 
     except Exception as e:
         print(f"Erreur api_dashboard_student_predictions: {e}")
