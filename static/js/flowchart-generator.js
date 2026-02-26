@@ -207,74 +207,102 @@ output_dict
  * @param {string} mermaidCode La chaîne de caractères Mermaid.
  * @param {string} targetDivId L'ID du div où afficher le diagramme.
  */
-async function displayFlowchart(mermaidCode, targetDivId) {
+function isFlowchartVisible() {
+    const el = document.getElementById('flowchart');
+    if (!el) return false;
+    return !!(el.offsetParent || el.getClientRects().length);
+}
 
-    console.log("displayFlowchart appelée avec mermaidCode de type:", typeof mermaidCode);
-    console.log("Contenu mermaidCode:", mermaidCode); // DEBUG
-    // 
-    var flowchartContainer = document.getElementById(targetDivId);
-    if (!flowchartContainer) {
-        console.error("Le conteneur de diagramme avec l'ID '" + targetDivId + "' n'a pas été trouvé.");
+window.__mermaidRenderInProgress = window.__mermaidRenderInProgress || false;
+window.__pendingMermaidRender = window.__pendingMermaidRender || false;
+
+window.renderPendingFlowchart = function() {
+    const c = document.getElementById('flowchart');
+    if (!c || !c.dataset || typeof c.dataset.mermaidSource !== 'string') return;
+    if (!isFlowchartVisible()) { window.__pendingMermaidRender = true; return; }
+    displayFlowchart(c.dataset.mermaidSource, 'flowchart');
+};
+
+async function displayFlowchart(mermaidCode, targetDivId) {
+    const flowchartContainer = document.getElementById(targetDivId);
+    const zoomControls = document.getElementById('zoom-controls');
+    if (!flowchartContainer) return;
+
+    flowchartContainer.dataset.mermaidSource = mermaidCode || "";
+    if (!isFlowchartVisible()) {
+        window.__pendingMermaidRender = true;
         return;
     }
 
-    if (mermaidCode === null || typeof mermaidCode === 'undefined') { 
-         if (typeof mermaidCode === 'undefined') { console.warn("mermaidCode de type undefined"); }
-        else { // C'était null, donc une erreur a déjà été affichée
-            return; // La fonction displayFlowchart s'arrête ici.
-        }
+    if (window.__mermaidRenderInProgress) {
+        window.__pendingMermaidRender = true;
+        return;
     }
-    // Si mermaidCode est undefined (ne devrait plus arriver avec les garde-fous dans generateFlowchartFromCode)
-    // ou une chaîne vide.
-    if (typeof mermaidCode !== 'string' || mermaidCode.trim() === "") {
-        console.warn("mermaidCode est invalide ou vide. Affichage du message par défaut.");
-        flowchartContainer.innerHTML = '<p class="text-center text-muted mt-3">Aucun diagramme à afficher ou code invalide. Entrez du code Python et cliquez sur "Exécuter le code".</p>';
-        // Si la chaîne est vide mais valide (ex: "graph TD"), Mermaid pourrait quand même essayer de la rendre.
-        // On s'assure ici que si c'est vide après trim, on affiche notre message.
-        if (typeof mermaidCode === 'string' && mermaidCode.trim() === "" && mermaidCode.indexOf("graph") === -1) {
-             return;
-        }
+    window.__mermaidRenderInProgress = true;
+
+    if (window.panZoomInstance && typeof window.panZoomInstance.destroy === 'function') {
+        try {
+            const svgEl = flowchartContainer.querySelector('svg');
+            if (svgEl && bboxReady(svgEl)) window.panZoomInstance.destroy();
+        } catch(e) { console.warn(e); }
+        window.panZoomInstance = null;
     }
-/*
- * MOD:
-    // Gérer explicitement undefined en plus de null
-    if (mermaidCode === null || typeof mermaidCode === 'undefined') {
-        // Le message d'erreur est déjà affiché par generateFlowchartFromCode si null
-        // Si undefined, on peut afficher un message générique ou ne rien faire si generateFlowchartFromCode
-        // est censé toujours retourner string ou null.
-        // Pour être sûr, si c'est undefined, on peut le traiter comme une chaîne vide.
-        if (typeof mermaidCode === 'undefined') {
-            console.warn("displayFlowchart a reçu 'undefined' pour mermaidCode. Traité comme une chaîne vide.");
-            mermaidCode = ""; // Traiter undefined comme une chaîne vide
-        } else { // C'était null, donc une erreur a déjà été affichée
-            return;
-        }
+
+    if (!mermaidCode) {
+        flowchartContainer.innerHTML = '<p class="text-center text-muted mt-3">Aucun diagramme à afficher.</p>';
+        if (zoomControls) zoomControls.classList.remove('show');
+        window.__mermaidRenderInProgress = false;
+        return;
     }
-*/
+
+    flowchartContainer.innerHTML = '';
+    const tempDiv = document.createElement('div');
+    tempDiv.className = 'mermaid';
+    tempDiv.textContent = mermaidCode;
+    flowchartContainer.appendChild(tempDiv);
+
     try {
-        // Nettoyer le conteneur avant d'ajouter le nouveau diagramme
-        flowchartContainer.innerHTML = ''; 
-        
-        // Créer un élément temporaire pour que Mermaid puisse le traiter
-        var tempDiv = document.createElement('div');
-        tempDiv.className = 'mermaid'; // La classe que Mermaid recherche
-        tempDiv.textContent = mermaidCode; // Mettre le code Mermaid ici
-        flowchartContainer.appendChild(tempDiv);
-
-        // Forcer Mermaid à re-parser et rendre le nouveau contenu
-        // delete tempDiv.dataset.processed; // Au cas où Mermaid marque les éléments
-        await mermaid.run({
-            nodes: [tempDiv] // Spécifier le nœud à rendre pour éviter de re-rendre les anciens
-        });
-        console.log("Diagramme Mermaid rendu.");
-
-    } catch (error) {
-        console.error("Erreur lors du rendu du diagramme Mermaid:", error, "Avec le code Mermaid:", mermaidCode);
-        var errorText = error.message || "Erreur inconnue de rendu Mermaid.";
-        if (mermaidCode.trim() === "") { // Si la chaîne était vide, l'erreur est normale
-            errorText = "La chaîne Mermaid était vide. " + errorText;
+        await mermaid.run({ nodes: [tempDiv] });
+        const svgEl = flowchartContainer.querySelector('svg');
+        if (svgEl) {
+            svgEl.removeAttribute('height');
+            svgEl.removeAttribute('width');
+            svgEl.removeAttribute('style');
+            svgEl.style.width = '100%';
+            svgEl.style.height = '100%';
+            svgEl.style.maxWidth = 'none';
+            const tryInit = () => {
+                if (!svgEl.getClientRects().length || !bboxReady(svgEl)) return false;
+                if (typeof svgPanZoom === 'undefined') return false;
+                window.panZoomInstance = svgPanZoom(svgEl, {
+                    zoomEnabled: true,
+                    controlIconsEnabled: false,
+                    fit: true,
+                    center: true,
+                    minZoom: 0.1,
+                    maxZoom: 10,
+                    dblClickZoomEnabled: false
+                });
+                try {
+                    window.panZoomInstance.resize();
+                    window.panZoomInstance.fit();
+                    window.panZoomInstance.center();
+                } catch(e) { console.warn(e); }
+                if (zoomControls) zoomControls.classList.add('show');
+                return true;
+            };
+            if (!tryInit()) setTimeout(tryInit, 120);
         }
-        flowchartContainer.innerHTML = '<div class="alert alert-danger" role="alert">Erreur lors de l\'affichage du diagramme :<br><pre style="white-space: pre-wrap; word-break: break-all;">' + errorText + '</pre></div>';
+    } catch (error) {
+        console.error("Erreur lors du rendu du diagramme Mermaid:", error);
+        flowchartContainer.innerHTML = '<div class="alert alert-danger" role="alert">Erreur lors de l\'affichage du diagramme.</div>';
+        if (zoomControls) zoomControls.classList.remove('show');
+    } finally {
+        window.__mermaidRenderInProgress = false;
+        if (window.__pendingMermaidRender && isFlowchartVisible()) {
+            window.__pendingMermaidRender = false;
+            window.renderPendingFlowchart();
+        }
     }
 }
 
@@ -293,9 +321,11 @@ document.addEventListener('DOMContentLoaded', function() {
             return;
         }
         window.mermaid.initialize({
-            startOnLoad: false, // Nous allons appeler mermaid.run() manuellement
+            startOnLoad: false,
+            theme: 'base',
             securityLevel: 'loose',
             flowchart: {
+                useMaxWidth: false,
                 htmlLabels: true
             }
         });
@@ -343,3 +373,27 @@ async function triggerFlowchartUpdate() {
         return null; // Retourner null si pas de code
     }
 }
+
+// S'assurer que panZoomInstance existe dans le scope global
+if (typeof window.panZoomInstance === 'undefined') {
+    window.panZoomInstance = null;
+}
+
+function bboxReady(svgEl) {
+    if (!svgEl) return false;
+    const bb = svgEl.getBBox();
+    return Number.isFinite(bb.width) && Number.isFinite(bb.height) && bb.width > 0 && bb.height > 0;
+}
+
+window.rerenderStoredFlowchart = function() {
+    const c = document.getElementById('flowchart');
+    if (!c || !c.dataset || typeof c.dataset.mermaidSource !== 'string') return;
+    if (!isFlowchartVisible()) { window.__pendingMermaidRender = true; return; }
+    displayFlowchart(c.dataset.mermaidSource, 'flowchart');
+};
+
+document.addEventListener('theme:changed', function() {
+    if (typeof window.rerenderStoredFlowchart === 'function') {
+        window.rerenderStoredFlowchart();
+    }
+});

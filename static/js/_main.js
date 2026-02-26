@@ -1,9 +1,11 @@
+// js/main.js
 /**
  * @file main.js
- * Version fusionnée intégrant la logique métier Flask/MySQL et l'interface améliorée GitHub Pages.
+ * Fichier principal orchestrant l'ensemble de l'interface utilisateur.
+ * Gère l'initialisation de l'éditeur, les gestionnaires d'événements pour les boutons,
+ * la configuration de la génération de code, et la communication avec le moteur Pyodide.
+ * Il délègue la logique spécifique au "Défi" au module validation.js.
  */
-
-// --- CONSTANTES ---
 const MAX_CODE_LINES = 30;
 const MAX_TOTAL_VARIABLES_GLOBAL = 20;
 const MIN_POSSIBLE_CODE_LINES = 3;
@@ -31,7 +33,6 @@ const BUILTINS_ADVANCED = [
     { id: 'builtin-sum', label: 'sum()' }
 ];
 
-// --- Templates HTML pour les options ---
 const conditionsOptionsHTML_Base = `
     <div class="d-flex flex-column gap-1">
         <div class="form-check form-check-inline"><input class="form-check-input ctrl-option" data-ctrl-type="if_simple" type="checkbox" id="cond-if"><label class="form-check-label small" for="cond-if">if:</label></div>
@@ -54,18 +55,18 @@ const functionsOptionsHTML_Base = `
         <div class="form-check form-check-inline" id="func-builtins-main-container"></div>
     </div>`;
 
+
 // --- Variables d'état globales ---
-let lastLoadedCode = "";
+let lastLoadedCode = ""; // Pour restaurer l'état après génération/chargement
 let isEditorEditable = false;
 var codeEditorInstance;
 let variableValuesFromExecution = {}; // Pour stocker les valeurs des variables après l'exécution du code
 let lastDiagramAstDump = ""; // Pour la synchronisation diagramme/code
 let lastLoggedCanonicalCode = ""; // Stocke le dernier code normalisé qui a été journalisé
 let currentChallengeCodeId = null; // Pour stocker l'ID du code de défi actuel
-let currentFontSize = 16; // NOUVEAU: Taille de police par défaut
 let currentChallengeVariableTypes = {}; // Types détectés pour le défi courant (ex: { x: 'int', nom: 'str' })
 
-// --- Variables DOM globales ---
+// --- Variables DOM globales (déclarées ici pour être accessibles partout) ---
 let difficultyGlobalSelect;
 let numLinesGlobalSelect;
 let numTotalVariablesGlobalSelect;
@@ -74,375 +75,8 @@ let challengeVariablesContainer;
 let checkAnswersButton;
 let showSolutionButton;
 let feedbackModal;
-let panZoomInstance; // keep reference but also mirror to window
 
-// ==========================================
-// FONCTIONS UI (POLICE, THEME, RESIZE)
-// ==========================================
-
-// --- Gestion de la taille de police ---
-function applyCurrentFontSize() {
-    // Éditeur
-    if (codeEditorInstance) {
-        const wrapper = codeEditorInstance.getWrapperElement();
-        if (wrapper) {
-            wrapper.style.fontSize = currentFontSize + "px";
-            codeEditorInstance.refresh();
-        }
-    }
-    // Section Défi
-    const challengeContainer = document.getElementById('variables-container');
-    if (challengeContainer) {
-        challengeContainer.style.fontSize = currentFontSize + "px";
-        const elements = challengeContainer.querySelectorAll('input, span, div, label, button, .input-group-text, .form-control');
-        elements.forEach(el => {
-            el.style.cssText += `; font-size: ${currentFontSize}px !important;`;
-        });
-    }
-    // Console
-    const consoleOutput = document.getElementById('execution-console-output');
-    if (consoleOutput) {
-        consoleOutput.style.fontSize = currentFontSize + "px";
-        const consoleElements = consoleOutput.querySelectorAll('*');
-        consoleElements.forEach(el => {
-            el.style.cssText += `; font-size: ${currentFontSize}px !important;`;
-        });
-    }   
-}
-
-function changeFontSize(delta) {
-    if (!codeEditorInstance) return;
-    currentFontSize += delta;
-    if (currentFontSize < 10) currentFontSize = 10;
-    if (currentFontSize > 32) currentFontSize = 32;
-    applyCurrentFontSize();
-}
-
-// --- Gestion du Thème et Refresh Mermaid ---
-function applyTheme(theme) {
-    const normalized = (theme === 'light' || theme === 'dark') ? theme : 'dark';
-    document.documentElement.setAttribute('data-bs-theme', normalized);
-    localStorage.setItem('theme', normalized);
-    if (codeEditorInstance) {
-        codeEditorInstance.setOption('theme', normalized === 'light' ? 'solarized light' : 'dracula');
-        codeEditorInstance.refresh();
-    }
-    const icon = document.getElementById('theme-icon');
-    if (icon) icon.className = normalized === 'light' ? 'fas fa-moon' : 'fas fa-sun';
-    document.dispatchEvent(new CustomEvent('theme:changed', { detail: { theme: normalized } }));
-    if (typeof window.rerenderStoredFlowchart === 'function') window.rerenderStoredFlowchart();
-}
-
-function getInitialTheme() {
-    const stored = localStorage.getItem('theme');
-    if (stored === 'light' || stored === 'dark') return stored;
-    const attr = document.documentElement.getAttribute('data-bs-theme');
-    if (attr === 'light' || attr === 'dark') return attr;
-    if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) return 'dark';
-    return 'light';
-}
-
-function toggleTheme() {
-    const currentTheme = document.documentElement.getAttribute('data-bs-theme') || 'dark';
-    applyTheme(currentTheme === 'dark' ? 'light' : 'dark');
-}
-
-// --- Pan/Zoom helpers (globaux) ---
-function isFlowchartVisible() {
-    const container = document.getElementById('flowchart');
-    if (!container) return false;
-    return !!(container.offsetParent || container.getClientRects().length);
-}
-
-function refreshPanZoom() {
-    const inst = window.panZoomInstance;
-    if (!inst || !isFlowchartVisible()) return;
-    const svgEl = document.querySelector('#flowchart svg');
-    if (!svgEl || !svgEl.getClientRects().length) return;
-    const bb = svgEl.getBBox();
-    if (!bb || bb.width <= 0 || bb.height <= 0) return;
-    try {
-        inst.resize();
-        inst.fit();
-        inst.center();
-    } catch (e) {
-        console.warn('PanZoom refresh skipped:', e);
-    }
-}
-
-function safePanZoomOp(op) {
-    const inst = window.panZoomInstance;
-    if (!inst || !isFlowchartVisible()) return;
-    const svgEl = document.querySelector('#flowchart svg');
-    if (!svgEl || !svgEl.getClientRects().length) return;
-    const bb = svgEl.getBBox();
-    if (!bb || bb.width <= 0 || bb.height <= 0) return;
-    try { op(inst); } catch (e) { console.warn('PanZoom op skipped:', e); }
-}
-window.zoomIn = () => safePanZoomOp(p => p.zoomIn());
-window.zoomOut = () => safePanZoomOp(p => p.zoomOut());
-window.resetZoom = () => safePanZoomOp(p => { if (typeof p.reset === 'function') p.reset(); p.fit(); p.center(); });
-
-
-// --- Fonctions Resizers / Splitter ---
-function initResizer() {
-    const resizer = document.getElementById('resizer');
-    const leftSide = document.getElementById('col-editor');
-    const rightSide = document.getElementById('col-diagram');
-    const container = document.getElementById('workspace-container');
-
-    if (!resizer || !leftSide || !rightSide || !container) return;
-
-    let x = 0;
-    let leftWidth = 0;
-
-    const mouseDownHandler = function(e) {
-        if (window.innerWidth < 992) return; // desktop only
-
-        container.classList.add('split-active');
-        resizer.classList.add('active');
-
-        x = e.clientX;
-        leftWidth = leftSide.getBoundingClientRect().width;
-
-        document.addEventListener('mousemove', mouseMoveHandler);
-        document.addEventListener('mouseup', mouseUpHandler);
-
-        document.body.style.userSelect = 'none';
-        document.body.style.cursor = 'col-resize';
-        leftSide.style.pointerEvents = 'none';
-        rightSide.style.pointerEvents = 'none';
-    };
-
-    const mouseMoveHandler = function(e) {
-        const dx = e.clientX - x;
-        const containerWidth = container.getBoundingClientRect().width;
-        const resizerWidth = resizer.getBoundingClientRect().width || 6;
-
-        const minPx = Math.max(240, containerWidth * 0.2);
-        const maxPx = containerWidth - minPx - resizerWidth;
-
-        let newLeftPx = leftWidth + dx;
-        newLeftPx = Math.max(minPx, Math.min(maxPx, newLeftPx));
-        const newRightPx = containerWidth - newLeftPx - resizerWidth;
-
-        // FIX: flex-basis au lieu de width/calc fragile
-        leftSide.style.flex = `0 0 ${newLeftPx}px`;
-        rightSide.style.flex = `0 0 ${newRightPx}px`;
-    };
-
-    const mouseUpHandler = function() {
-        resizer.classList.remove('active');
-        document.body.style.removeProperty('user-select');
-        document.body.style.removeProperty('cursor');
-        leftSide.style.removeProperty('pointer-events');
-        rightSide.style.removeProperty('pointer-events');
-
-        document.removeEventListener('mousemove', mouseMoveHandler);
-        document.removeEventListener('mouseup', mouseUpHandler);
-
-        if (codeEditorInstance) codeEditorInstance.refresh();
-        if (typeof panZoomInstance !== 'undefined' && panZoomInstance) {
-            panZoomInstance.resize();
-            panZoomInstance.fit();
-            panZoomInstance.center();
-        }
-    };
-
-    resizer.addEventListener('mousedown', mouseDownHandler);
-}
-
-function switchView(mode) {
-    const colEditor = document.getElementById('col-editor');
-    const colDiagram = document.getElementById('col-diagram');
-    const resizer = document.getElementById('resizer');
-    const container = document.getElementById('workspace-container');
-    const zoomControls = document.getElementById('zoom-controls');
-
-    const resetCol = (el) => {
-        el.style.width = '';
-        el.style.flex = '';
-        el.style.maxWidth = '';
-        el.classList.remove('col-full', 'col-hidden');
-    };
-
-    container.classList.remove('split-active');
-    resetCol(colEditor);
-    resetCol(colDiagram);
-
-    resizer.classList.remove('d-none');
-    resizer.classList.add('d-lg-block');
-
-    if (mode === 'code') {
-        colEditor.classList.add('col-full');
-        colDiagram.classList.add('col-hidden');
-        resizer.classList.add('d-none');
-        resizer.classList.remove('d-lg-block');
-        if (zoomControls) zoomControls.classList.remove('show');
-    } else if (mode === 'chart') {
-        colEditor.classList.add('col-hidden');
-        colDiagram.classList.add('col-full');
-        resizer.classList.add('d-none');
-        resizer.classList.remove('d-lg-block');
-    }
-
-    setTimeout(() => {
-        if (codeEditorInstance) codeEditorInstance.refresh();
-        refreshPanZoom();
-        if (typeof window.renderPendingFlowchart === 'function') {
-            window.renderPendingFlowchart();
-        }
-    }, 80);
-}
-
-window.toggleFullScreen = function() {
-    const elem = document.getElementById('flowchart');
-    if (!elem) return;
-    if (!document.fullscreenElement) {
-        if (elem.requestFullscreen) elem.requestFullscreen();
-        else if (elem.webkitRequestFullscreen) elem.webkitRequestFullscreen();
-        elem.classList.add('is-fullscreen');
-    } else {
-        if (document.exitFullscreen) document.exitFullscreen();
-        elem.classList.remove('is-fullscreen');
-    }
-};
-
-function initHorizontalResizer() {
-    const hResizer = document.getElementById('horizontal-resizer');
-    if (!hResizer) return;
-    const editorCardBody = document.querySelector('#col-editor .card-body');
-    const diagramCardBody = document.querySelector('#col-diagram .card-body');
-    if (!editorCardBody || !diagramCardBody) return;
-
-    let startY = 0; let startHeight = 0;
-
-    const mouseDownHandler = function(e) {
-        startY = e.clientY;
-        startHeight = editorCardBody.getBoundingClientRect().height;
-        hResizer.classList.add('active');
-        document.body.style.userSelect = 'none';
-        document.body.style.cursor = 'row-resize';
-        document.addEventListener('mousemove', mouseMoveHandler);
-        document.addEventListener('mouseup', mouseUpHandler);
-    };
-
-    const mouseMoveHandler = function(e) {
-        const dy = e.clientY - startY;
-        let newHeight = startHeight + dy;
-        if (newHeight < 250) newHeight = 250;
-        if (newHeight > window.innerHeight * 0.8) newHeight = window.innerHeight * 0.8;
-        editorCardBody.style.height  = `${newHeight}px`;
-        diagramCardBody.style.height = `${newHeight}px`;
-    };
-
-    const mouseUpHandler = function() {
-        hResizer.classList.remove('active');
-        document.body.style.removeProperty('user-select');
-        document.body.style.removeProperty('cursor');
-        document.removeEventListener('mousemove', mouseMoveHandler);
-        document.removeEventListener('mouseup', mouseUpHandler);
-        if (codeEditorInstance) codeEditorInstance.refresh();
-        if (typeof panZoomInstance !== 'undefined' && panZoomInstance) {
-            panZoomInstance.resize(); panZoomInstance.fit(); panZoomInstance.center();
-        }
-    };
-    hResizer.addEventListener('mousedown', mouseDownHandler);
-}
-
-// --- Fonctions Export ---
-function cleanInlineMermaidStyles(svg) {
-    svg.querySelectorAll('[style]').forEach(el => el.removeAttribute('style'));
-    svg.querySelectorAll('rect, polygon, circle, path').forEach(el => {
-        el.removeAttribute('fill'); el.removeAttribute('stroke');
-    });
-    svg.querySelectorAll('style').forEach(el => el.parentNode.removeChild(el));
-}
-
-function injectMermaidStylesIntoSvg(svg) {
-    // Style CSS minimal pour l'export (noir/blanc)
-    const styleContent = `
-         .node rect, .node polygon, .node circle, .node path { fill: #ffffff; stroke: #000000; stroke-width: 2px; }
-         .edgePath .path, .flowchart-link { stroke: #000000; stroke-width: 2px; fill: none; }
-         marker, marker path, marker circle { fill: #000000; stroke: #000000; }
-         .cluster rect { fill: none; stroke: #000000; stroke-width: 1px; opacity: 0.4; }
-         .node .label, .node .nodeLabel, .cluster text, .edgeLabel, foreignObject div {
-            font-family: 'Segoe UI', sans-serif; font-size: 16px; font-weight: 500; fill: #000000; stroke: none;
-        }
-    `;
-    const styleEl = document.createElementNS('http://www.w3.org/2000/svg', 'style');
-    styleEl.setAttribute('type', 'text/css');
-    styleEl.textContent = styleContent;
-    svg.insertBefore(styleEl, svg.firstChild);
-}
-
-async function exportFlowchartAsPng() {
-    const container = document.getElementById('flowchart');
-    const svg = container ? container.querySelector('svg') : null;
-    if (!svg) { alert("Aucun diagramme."); return; }
-
-    const bbox = svg.getBBox();
-    const width = bbox.width || 800;
-    const height = bbox.height || 600;
-    const scale = Math.min(2.5, Math.max(1.0, 1200 / width));
-    const dpiScale = 2;
-    
-    const clonedSvg = svg.cloneNode(true);
-    clonedSvg.setAttribute('width', width * scale);
-    clonedSvg.setAttribute('height', height * scale);
-    clonedSvg.setAttribute('viewBox', `${bbox.x} ${bbox.y} ${bbox.width} ${bbox.height}`);
-    
-    cleanInlineMermaidStyles(clonedSvg);
-    injectMermaidStylesIntoSvg(clonedSvg);
-
-    const serializer = new XMLSerializer();
-    const svgString = serializer.serializeToString(clonedSvg);
-    const img = new Image();
-    img.src = 'data:image/svg+xml;base64,' + window.btoa(unescape(encodeURIComponent(svgString)));
-    
-    img.onload = function() {
-        const canvas = document.createElement('canvas');
-        canvas.width = width * scale * dpiScale;
-        canvas.height = height * scale * dpiScale;
-        const ctx = canvas.getContext('2d');
-        ctx.fillStyle = "#ffffff";
-        ctx.fillRect(0, 0, canvas.width, canvas.height);
-        ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
-        
-        canvas.toBlob(function(blob) {
-            const a = document.createElement('a');
-            a.href = URL.createObjectURL(blob);
-            a.download = `logigramme_${Date.now()}.png`;
-            a.click();
-        }, 'image/png');
-    };
-}
-
-function exportFlowchartAsSvg() {
-    const container = document.getElementById('flowchart');
-    const svg = container ? container.querySelector('svg') : null;
-    if (!svg) return;
-
-    const clonedSvg = svg.cloneNode(true);
-    cleanInlineMermaidStyles(clonedSvg);
-    injectMermaidStylesIntoSvg(clonedSvg);
-    
-    const serializer = new XMLSerializer();
-    let svgString = serializer.serializeToString(clonedSvg);
-    if (!svgString.startsWith('<?xml')) svgString = '<?xml version="1.0" standalone="no"?>\r\n' + svgString;
-    
-    const blob = new Blob([svgString], {type: 'image/svg+xml;charset=utf-8'});
-    const a = document.createElement('a');
-    a.href = URL.createObjectURL(blob);
-    a.download = `logigramme_${Date.now()}.svg`;
-    a.click();
-}
-
-
-// ==========================================
-// LOGIQUE EXISTANTE (CODE EDITOR, LOGS)
-// ==========================================
-
+// --- Fonctions de gestion de l'éditeur ---
 function setEditorEditable(editable) {
     isEditorEditable = editable;
     if (codeEditorInstance) {
@@ -450,15 +84,20 @@ function setEditorEditable(editable) {
     }
     const btn = document.getElementById('toggle-editable-btn');
     if (btn) {
-        btn.innerHTML = editable ? '<i class="far fa-edit"></i> Rendre non éditable' : '<i class="fas fa-edit"></i> Rendre éditable';
+        btn.innerHTML = editable
+            ? '<i class="far fa-edit"></i> Rendre non éditable'
+            : '<i class="fas fa-edit"></i> Rendre éditable';
     }
 }
-// --- Mémoriser le code après génération ou chargement d'exemple ---
-function memorizeLoadedCode(code) { lastLoadedCode = code; }
 
-// ... (Fonctions addAdvancedOperationOptionsIfNeeded, addAdvancedConditionOptionsIfNeeded, 
-//      addAdvancedLoopOptionsIfNeeded, addAdvancedFunctionOptionsIfNeeded, 
-//      setupConditionalParenting, 
+// --- Mémoriser le code après génération ou chargement d'exemple ---
+function memorizeLoadedCode(code) {
+    lastLoadedCode = code;
+}
+
+// --- Fonctions pour ajouter/supprimer les options AVANCÉES ---
+// NOTE: Ces fonctions sont déplacées avant leur utilisation pour corriger les erreurs de référence.
+
 // Gère les options avancées pour le cadre "Op" (opérateurs logiques, slicing)
 function addAdvancedOperationOptionsIfNeeded(isAdvancedModeActiveOverride = null) {
     const opOptionsDiv = document.getElementById('operations-options');
@@ -619,7 +258,11 @@ function setupConditionalParenting(container) {
 }
 
 /**
- * Remplit un <select> avec des options [min..max] et sélectionne valueToSelect si possible.
+ * Remplit un élément select avec des options de min à max, et sélectionne valueToSelect.
+ * @param {HTMLSelectElement} selectElement - L'élément select à remplir.
+ * @param {number} min - La valeur minimale.
+ * @param {number} max - La valeur maximale.
+ * @param {number} valueToSelect - La valeur à sélectionner.
  */
 function populateSelectWithOptions(selectElement, min, max, valueToSelect) {
     if (!selectElement) return;
@@ -651,10 +294,108 @@ function populateSelectWithOptions(selectElement, min, max, valueToSelect) {
     }
 }
 
+// --- Fonction d'initialisation et d'exécution ---
+function initializeUI() {
+    // 1. Définir et charger le code Python par défaut dans l'éditeur.
+    const defaultPythonCode =
+`# Code Python d'exemple
+# Modifiez-le ou générez un nouveau code.
+x = 5
+y = 10
+if x > y:
+    result = "x est plus grand"
+else:
+    result = "y est plus grand ou égal"
+z = x + y`;
 
-// createBuiltinsMainCheckbox, toggleBuiltinOptionsVisibility, 
-//      populateBuiltinOptionsColumns, setupFunctionOptionsExtras, 
-//      calculateGlobalRequirements, updateGlobalConfigSelectors, handleVisualInterdependencies
+    if (codeEditorInstance) {
+        codeEditorInstance.setValue(defaultPythonCode);
+        memorizeLoadedCode(defaultPythonCode); // Mémoriser ce code comme "dernier état connu"
+    }
+
+    // 2. Afficher les messages d'accueil dans les cartes "Diagramme" et "Défi".
+    const flowchartDisplayArea = document.getElementById('flowchart');
+    if (flowchartDisplayArea) {
+        flowchartDisplayArea.innerHTML = '<p class="text-center text-muted mt-3">Cliquez sur "Lancer le diagramme et les défis" pour générer le diagramme de flux.</p>';
+    }
+
+    // 3. Appel à la fonction de validation.js pour réinitialiser la section défi.
+    if (typeof resetChallengeInputs === 'function') {
+        resetChallengeInputs(challengeVariablesContainer);
+    } else {
+        // Fallback vers la fonction interne si validation.js n'est pas chargé
+        const container = document.getElementById('variables-container');
+        if (container) {
+            container.innerHTML = `
+                <div class="col-12 text-center text-muted">
+                    <p><i class="fas fa-code me-2"></i>Lancer le diagramme et les défis pour voir les variables...</p>
+                </div>`;
+        }
+    }
+
+    // 4. Désactiver les boutons du défi, car aucun code n'a encore été exécuté.
+    if (checkAnswersButton) checkAnswersButton.disabled = true;
+    if (showSolutionButton) showSolutionButton.disabled = true;
+
+    // 5. Mettre les cartes dans leur état visuel par défaut (bordure bleue/info).
+    setDiagramAndChallengeCardState("default");
+}
+
+// --- Initialisation et gestion des options de syntaxe dynamiques (Ctrl, Loop, Func) ---
+function initializeDynamicSyntaxOptions() {
+    // console.log("Initialisation des options dynamiques des cadres de syntaxe...");
+    // Vérifier que l'élément critique existe
+    if (!advancedModeCheckbox) {
+        console.warn("advancedModeCheckbox non disponible - initializeDynamicSyntaxOptions reporté");
+        return;
+    }
+
+    const syntaxSectionsConfig = [
+        { checkboxId: 'frame-conditions', containerId: 'conditions-options-container', baseHtmlGetter: () => conditionsOptionsHTML_Base, advancedHandler: addAdvancedConditionOptionsIfNeeded, specialSetup: setupConditionalParenting },
+        { checkboxId: 'frame-loops', containerId: 'loops-options-container', baseHtmlGetter: () => loopsOptionsHTML_Base, advancedHandler: addAdvancedLoopOptionsIfNeeded },
+        { checkboxId: 'frame-functions', containerId: 'functions-options-container', baseHtmlGetter: () => functionsOptionsHTML_Base, advancedHandler: addAdvancedFunctionOptionsIfNeeded, specialSetup: setupFunctionOptionsExtras }
+    ];
+
+    syntaxSectionsConfig.forEach(section => {
+        const checkbox = document.getElementById(section.checkboxId);
+        const targetContainer = document.getElementById(section.containerId);
+
+        if (!checkbox || !targetContainer) {
+            console.error(`Éléments manquants pour la section ${section.checkboxId}. IDs: ${section.checkboxId}, ${section.containerId}`);
+            return;
+        }
+
+        const updateDOM = () => {
+            if (checkbox.checked) {
+                targetContainer.innerHTML = section.baseHtmlGetter();
+                //  Logique pour cocher l'option de base par défaut
+                if (section.checkboxId === 'frame-conditions') {
+                    const ifCheckbox = targetContainer.querySelector('#cond-if');
+                    if (ifCheckbox) ifCheckbox.checked = true;
+                } else if (section.checkboxId === 'frame-functions') {
+                    const funcSimpleCheckbox = targetContainer.querySelector('#func-def-simple');
+                    if (funcSimpleCheckbox) funcSimpleCheckbox.checked = true;
+                }
+                const internalContainer = targetContainer.querySelector('.d-flex.flex-column.gap-1');
+                if (internalContainer && section.advancedHandler) {
+                    section.advancedHandler(internalContainer, advancedModeCheckbox.checked);
+                }
+                if (section.specialSetup) { // Appel des configurations spécifiques
+                    section.specialSetup(internalContainer);
+                }
+            } else {
+                targetContainer.innerHTML = '';
+            }
+            updateGlobalConfigSelectors();
+        };
+
+        checkbox.removeEventListener('change', updateDOM);
+        checkbox.addEventListener('change', updateDOM);
+        updateDOM(); // Appel initial pour définir l'état
+    });
+    console.log("Options dynamiques des cadres de syntaxe initialisées.");
+}
+
 /**
  * Crée la case à cocher principale pour les fonctions builtin et son conteneur.
  * @param {HTMLElement} parentContainer - L'élément où ajouter la case à cocher.
@@ -880,111 +621,6 @@ function handleVisualInterdependencies() {
 }
 
 
-// --- Fonction d'initialisation et d'exécution ---
-function initializeUI() {
-    // 1. Définir et charger le code Python par défaut dans l'éditeur.
-    const defaultPythonCode =
-`# Code Python d'exemple
-# Modifiez-le ou générez un nouveau code.
-x = 5
-y = 10
-if x > y:
-    result = "x est plus grand"
-else:
-    result = "y est plus grand ou égal"
-z = x + y`;
-
-    if (codeEditorInstance) {
-        codeEditorInstance.setValue(defaultPythonCode);
-        memorizeLoadedCode(defaultPythonCode); // Mémoriser ce code comme "dernier état connu"
-    }
-
-    // 2. Afficher les messages d'accueil dans les cartes "Diagramme" et "Défi".
-    const flowchartDisplayArea = document.getElementById('flowchart');
-    if (flowchartDisplayArea) {
-        flowchartDisplayArea.innerHTML = '<p class="text-center text-muted mt-3">Cliquez sur "Lancer le diagramme et les défis" pour générer le diagramme de flux.</p>';
-    }
-
-    // 3. Appel à la fonction de validation.js pour réinitialiser la section défi.
-    if (typeof resetChallengeInputs === 'function') {
-        resetChallengeInputs(challengeVariablesContainer);
-    } else {
-        // Fallback vers la fonction interne si validation.js n'est pas chargé
-        const container = document.getElementById('variables-container');
-        if (container) {
-            container.innerHTML = `
-                <div class="col-12 text-center text-muted">
-                    <p><i class="fas fa-code me-2"></i>Lancer le diagramme et les défis pour voir les variables...</p>
-                </div>`;
-        }
-    }
-
-    // 4. Désactiver les boutons du défi, car aucun code n'a encore été exécuté.
-    if (checkAnswersButton) checkAnswersButton.disabled = true;
-    if (showSolutionButton) showSolutionButton.disabled = true;
-
-    // 5. Mettre les cartes dans leur état visuel par défaut (bordure bleue/info).
-    setDiagramAndChallengeCardState("default");
-    
-    // Application de la taille de police par défaut
-    applyCurrentFontSize();
-}
-// --- Initialisation et gestion des options de syntaxe dynamiques (Ctrl, Loop, Func) ---
-function initializeDynamicSyntaxOptions() {
-    // console.log("Initialisation des options dynamiques des cadres de syntaxe...");
-    // Vérifier que l'élément critique existe
-    if (!advancedModeCheckbox) {
-        console.warn("advancedModeCheckbox non disponible - initializeDynamicSyntaxOptions reporté");
-        return;
-    }
-
-    const syntaxSectionsConfig = [
-        { checkboxId: 'frame-conditions', containerId: 'conditions-options-container', baseHtmlGetter: () => conditionsOptionsHTML_Base, advancedHandler: addAdvancedConditionOptionsIfNeeded, specialSetup: setupConditionalParenting },
-        { checkboxId: 'frame-loops', containerId: 'loops-options-container', baseHtmlGetter: () => loopsOptionsHTML_Base, advancedHandler: addAdvancedLoopOptionsIfNeeded },
-        { checkboxId: 'frame-functions', containerId: 'functions-options-container', baseHtmlGetter: () => functionsOptionsHTML_Base, advancedHandler: addAdvancedFunctionOptionsIfNeeded, specialSetup: setupFunctionOptionsExtras }
-    ];
-
-    syntaxSectionsConfig.forEach(section => {
-        const checkbox = document.getElementById(section.checkboxId);
-        const targetContainer = document.getElementById(section.containerId);
-
-        if (!checkbox || !targetContainer) {
-            console.error(`Éléments manquants pour la section ${section.checkboxId}. IDs: ${section.checkboxId}, ${section.containerId}`);
-            return;
-        }
-
-        const updateDOM = () => {
-            if (checkbox.checked) {
-                targetContainer.innerHTML = section.baseHtmlGetter();
-                //  Logique pour cocher l'option de base par défaut
-                if (section.checkboxId === 'frame-conditions') {
-                    const ifCheckbox = targetContainer.querySelector('#cond-if');
-                    if (ifCheckbox) ifCheckbox.checked = true;
-                } else if (section.checkboxId === 'frame-functions') {
-                    const funcSimpleCheckbox = targetContainer.querySelector('#func-def-simple');
-                    if (funcSimpleCheckbox) funcSimpleCheckbox.checked = true;
-                }
-                const internalContainer = targetContainer.querySelector('.d-flex.flex-column.gap-1');
-                if (internalContainer && section.advancedHandler) {
-                    section.advancedHandler(internalContainer, advancedModeCheckbox.checked);
-                }
-                if (section.specialSetup) { // Appel des configurations spécifiques
-                    section.specialSetup(internalContainer);
-                }
-            } else {
-                targetContainer.innerHTML = '';
-            }
-            updateGlobalConfigSelectors();
-        };
-
-        checkbox.removeEventListener('change', updateDOM);
-        checkbox.addEventListener('change', updateDOM);
-        updateDOM(); // Appel initial pour définir l'état
-    });
-    console.log("Options dynamiques des cadres de syntaxe initialisées.");
-}
-
-// ... (Fonction getAstDumpFromCode, setDiagramAndChallengeCardState, runAndTraceCodeForChallenge, 
 // Fonction utilitaire pour obtenir le dump AST du code courant via Pyodide
 async function getAstDumpFromCode(code) {
     if (!pyodide) {
@@ -1275,7 +911,70 @@ json.dumps({"variables": _final_vars, "error": _error_detail_trace})
     return tracedVariables;
 }
 
+/**
+ * Helper function to get a Python-like string representation for non-basic types.
+ * @param {*} value - The value to represent.
+ * @returns {string} - The string representation.
+ */
+function reprPythonVal(value) {
+    if (typeof value === 'string') {
+        if (value.includes("'") && !value.includes('"')) return `"${value}"`;
+        return `'${value}'`;
+    }
+    if (Array.isArray(value)) {
+        return `[${value.map(reprPythonVal).join(', ')}]`;
+    }
+    if (typeof value === 'object' && value !== null) { // Dictionaries
+        const items = Object.keys(value).map(key => `${reprPythonVal(key)}: ${reprPythonVal(value[key])}`);
+        return `{${items.join(', ')}}`;
+    }
+    if (value === null) return 'None';
+    if (typeof value === 'boolean') return value ? 'True' : 'False';
+    return String(value);
+}
+
+/**
+ * Bascule entre le thème clair et sombre.
+ * Gère Bootstrap, CodeMirror et l'icône du bouton.
+ */
+function toggleTheme() {
+    const html = document.documentElement;
+    const currentTheme = html.getAttribute('data-bs-theme');
+    const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+    
+    // 1. Appliquer au document (Bootstrap gère le reste via CSS variables)
+    html.setAttribute('data-bs-theme', newTheme);
+    localStorage.setItem('theme', newTheme);
+    
+    // 2. Mettre à jour l'icône du bouton
+    const icon = document.getElementById('theme-icon');
+    if (icon) {
+        // Note: Assurez-vous d'avoir <i id="theme-icon" class="..."></i> dans votre HTML
+        icon.className = newTheme === 'dark' ? 'fas fa-sun' : 'fas fa-moon';
+    }
+
+    // 3. Mettre à jour CodeMirror (Éditeur Python)
+    if (codeEditorInstance) {
+        // Si newTheme est 'light', on utilise 'solarized light' (fond clair)
+        // Si newTheme est 'dark', on utilise 'dracula' (fond sombre)
+        const cmTheme = newTheme === 'light' ? 'solarized light' : 'dracula'; 
+        codeEditorInstance.setOption('theme', cmTheme);
+    }
+
+    // 4. (Optionnel) Forcer le rafraîchissement Mermaid si un diagramme est affiché
+    // Mermaid ne réagit pas toujours dynamiquement aux variables CSS sans re-rendu.
+    const flowchartDiv = document.getElementById('flowchart');
+    if (flowchartDiv && flowchartDiv.querySelector('svg')) {
+        // On relance simplement la génération si le code n'a pas changé
+        const runBtn = document.getElementById('run-code-btn');
+        if (runBtn && !runBtn.disabled) {
+            runBtn.click(); // Solution brutale mais efficace pour redessiner avec les bonnes couleurs
+        }
+    }
+}
+
 // --- Gestion de la Console et des I/O personnalisées ---
+
 /**
  * Affiche un message dans la console d'exécution.
  * @param {string} message Le message à afficher.
@@ -1390,35 +1089,55 @@ function formatPythonError(traceback) {
     return `Erreur détectée : ${errorLine}\n\n💡 Piste : ${hint}`;
 }
 
-
-// ==========================================
-// DOM CONTENT LOADED - POINT D'ENTRÉE
-// ==========================================
+/**********************************************************/
+/**********************************************************/
+// --- Point d'entrée principal de l'application ---
 document.addEventListener('DOMContentLoaded', function() {
 
-    // 1. Initialisation Thème
-    const savedTheme = getInitialTheme();
+    // --- Gestion du Thème (Dark/Light) ---
+    const themeToggleBtn = document.getElementById('theme-toggle'); // Assurez-vous que ce bouton existe dans layout.html
+    
+    // Appliquer le thème sauvegardé au chargement
+    const savedTheme = localStorage.getItem('theme') || 'dark';
+    document.documentElement.setAttribute('data-bs-theme', savedTheme);
+    
+    // Ajuster l'éditeur CodeMirror au démarrage si on est en mode clair
+    // A SUPPRIMER: NE SERT À RIEN (car l'instance n'existe pas encore)
+    /*
+    if (savedTheme === 'light' && codeEditorInstance) {
+        codeEditorInstance.setOption('theme', 'default');
+    }
+    */
+    
+    // Ajuster l'icône au démarrage
+    const themeIcon = document.getElementById('theme-icon');
+    if (themeIcon) {
+        themeIcon.className = savedTheme === 'dark' ? 'fas fa-sun' : 'fas fa-moon';
+    }
 
-    // 2. Initialisation CodeMirror
+    if (themeToggleBtn) {
+        themeToggleBtn.addEventListener('click', toggleTheme);
+    }
+
+    // --- Initialisation de l'éditeur CodeMirror ---
+
+    // Définir le thème AVANT l'initialisation
     const initialCmTheme = savedTheme === 'light' ? 'solarized light' : 'dracula';
+
     codeEditorInstance = CodeMirror.fromTextArea(document.getElementById('code-editor'), {
         mode: 'python',
-        theme: initialCmTheme,
+        theme: initialCmTheme, // <--- Utiliser la variable ici au lieu de 'dracula' en dur
         lineNumbers: true,
         firstLineNumber: 0,
         indentUnit: 4,
         tabSize: 4,
         indentWithTabs: false,
         lineWrapping: true,
-        readOnly: !isEditorEditable
+        readOnly: !isEditorEditable // Initialement non éditable
+
     });
 
-    applyTheme(savedTheme);
-
-    const themeToggleBtn = document.getElementById('theme-toggle');
-    if (themeToggleBtn) themeToggleBtn.addEventListener('click', toggleTheme);
-
-    // 3. Références DOM
+    // --- Initialisation des variables DOM globales ---
     difficultyGlobalSelect = document.getElementById('difficulty-level-global');
     numLinesGlobalSelect = document.getElementById('num-lines-global');
     numTotalVariablesGlobalSelect = document.getElementById('num-total-variables-global');
@@ -1429,25 +1148,99 @@ document.addEventListener('DOMContentLoaded', function() {
     const feedbackModalElement = document.getElementById('feedback-modal');
     feedbackModal = feedbackModalElement ? new bootstrap.Modal(feedbackModalElement) : null;
 
-    // 4. Initialisation des composants UI avancés (Splitter, Resizer)
-    initResizer();
-    initHorizontalResizer();
-    
-    // 5. Listeners Boutons UI
+    // --- Initialisation des boutons de la barre d'outils de l'éditeur ---
     const toggleBtn = document.getElementById('toggle-editable-btn');
-    if (toggleBtn) toggleBtn.addEventListener('click', () => setEditorEditable(!isEditorEditable));
-    
-    const fontDec = document.getElementById('font-decrease-btn');
-    if (fontDec) fontDec.addEventListener('click', () => changeFontSize(-2));
-    const fontInc = document.getElementById('font-increase-btn');
-    if (fontInc) fontInc.addEventListener('click', () => changeFontSize(+2));
+    if (toggleBtn) {
+        toggleBtn.addEventListener('click', () => setEditorEditable(!isEditorEditable));
+    }
 
-    const exportPng = document.getElementById('diagram-export-png-btn');
-    if (exportPng) exportPng.addEventListener('click', exportFlowchartAsPng);
-    const exportSvg = document.getElementById('diagram-export-svg-btn');
-    if (exportSvg) exportSvg.addEventListener('click', exportFlowchartAsSvg);
+    const downloadBtn = document.getElementById('download-code-btn');
+    if (downloadBtn) {
+        downloadBtn.addEventListener('click', () => {
+            if (!codeEditorInstance) return;
+            const code = codeEditorInstance.getValue();
+            const blob = new Blob([code], {type: "text/x-python"});
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            const now = new Date();
+            const yyyy = now.getFullYear().toString();
+            const yy = yyyy[2] + yyyy[3];
+            const mm = String(now.getMonth() + 1).padStart(2, '0');
+            const dd = String(now.getDate()).padStart(2, '0');
+            a.download = `mon_code_${dd}${mm}${yy}.py`;
+            document.body.appendChild(a);
+            a.click();
+            setTimeout(() => {
+                document.body.removeChild(a);
+                URL.revokeObjectURL(url);
+            }, 0);
+        });
+    }
 
-    // 6. Listener Bouton GÉNÉRER (avec LOG Flask)
+    const openFileBtn = document.getElementById('open-file-btn');
+    const fileInput = document.getElementById('file-input');
+    if (openFileBtn && fileInput) {
+        openFileBtn.addEventListener('click', () => fileInput.click());
+        fileInput.addEventListener('change', (e) => {
+            const file = e.target.files[0];
+            if (file && file.name.endsWith('.py')) {
+                const reader = new FileReader();
+                reader.onload = function(evt) {
+                    if (codeEditorInstance) {
+                        lastDiagramAstDump = "";
+                        document.getElementById('flowchart').innerHTML = '<p class="text-center text-muted mt-3">Nouveau fichier chargé. Cliquez sur "Lancer..." pour voir le diagramme et le défi.</p>';
+                        if (typeof resetChallengeInputs === 'function') {
+                            resetChallengeInputs(challengeVariablesContainer);
+                        }
+                        document.getElementById('check-answers-btn').disabled = true;
+                        document.getElementById('show-solution-btn').disabled = true;
+                        codeEditorInstance.setValue(evt.target.result);
+                        lastLoadedCode = evt.target.result;
+                        setDiagramAndChallengeCardState("default");
+                    }
+                };
+                reader.readAsText(file, "UTF-8");
+            } else {
+                alert("Choisissez un fichier .py UNIQUEMENT");
+            }
+            fileInput.value = "";
+        });
+    }
+
+    const shareBtn = document.getElementById('share-code-btn');
+    if (shareBtn) {
+        shareBtn.addEventListener('click', async () => {
+            if (!codeEditorInstance) return;
+            const code = codeEditorInstance.getValue();
+            try {
+                await navigator.clipboard.writeText(code);
+                shareBtn.classList.add('btn-success');
+                setTimeout(() => shareBtn.classList.remove('btn-success'), 1000);
+            } catch (err) {
+                alert("Impossible de copier dans le presse-papier.");
+            }
+        });
+    }
+
+    const reloadBtn = document.getElementById("reload-code-btn");
+    if (reloadBtn) {
+        reloadBtn.addEventListener('click', () => {
+            if (lastLoadedCode && codeEditorInstance) {
+                lastDiagramAstDump = "";
+                document.getElementById('flowchart').innerHTML = '<p class="text-center text-muted mt-3">Code rechargé. Cliquez sur "Lancer..." pour voir le diagramme et le défi.</p>';
+                if (typeof resetChallengeInputs === 'function') {
+                    resetChallengeInputs(challengeVariablesContainer);
+                }
+                document.getElementById('check-answers-btn').disabled = true;
+                document.getElementById('show-solution-btn').disabled = true;
+                codeEditorInstance.setValue(lastLoadedCode);
+                setDiagramAndChallengeCardState("default");
+                console.log("Code rechargé depuis la dernière sauvegarde. Diagramme invalidé.");
+            }
+        });
+    }
+
     // --- Gestionnaire pour "Générer un Code Aléatoire" ---
     const generateCodeButton = document.getElementById('generate-code-btn');
     if (generateCodeButton) {
@@ -1516,7 +1309,6 @@ document.addEventListener('DOMContentLoaded', function() {
             };
             console.log("Options de génération finales pour code-generator:", generationOptions);
 
-            // Appel Générateur
             var newGeneratedCode = "";
             if (typeof generateRandomPythonCode === 'function') {
                 newGeneratedCode = generateRandomPythonCode(generationOptions);
@@ -1524,7 +1316,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 console.warn("generateRandomPythonCode n'est pas définie.");
                 newGeneratedCode = "# Erreur: Le générateur de code aléatoire n'est pas disponible.";
             }
-            
+
             lastDiagramAstDump = "";
             if(codeEditorInstance) codeEditorInstance.setValue(newGeneratedCode);
             memorizeLoadedCode(newGeneratedCode);
@@ -1547,27 +1339,23 @@ document.addEventListener('DOMContentLoaded', function() {
     } else {
         console.warn("Bouton 'generate-code-btn' non trouvé.");
     }
-    const predefinedExamplesList =
-        document.getElementById('predefined-code-list') ||
-        document.getElementById('predefined-examples-list');
 
-    const examples =
-        (typeof window.PREDEFINED_EXAMPLES !== 'undefined') ? window.PREDEFINED_EXAMPLES :
-        (typeof PREDEFINED_EXAMPLES !== 'undefined') ? PREDEFINED_EXAMPLES : null;
+    const predefinedExamplesList = document.getElementById('predefined-examples-list');
+    if (predefinedExamplesList) {
+        predefinedExamplesList.querySelectorAll('a[data-example-index]').forEach(link => {
+            link.addEventListener('click', function() {
+                lastDiagramAstDump = "";
+                console.log("chargement du code par ailleurs... on va mémoriser et invalider le diagramme");
+                if (codeEditorInstance) memorizeLoadedCode(codeEditorInstance.getValue());
+            });
+        });
+    }
+
 
     const loadPredefinedCodeBtn = document.getElementById('load-predefined-code-btn');
 
-    if (!predefinedExamplesList) {
-        console.warn("Liste d'exemples introuvable (#predefined-code-list / #predefined-examples-list).");
-        if (loadPredefinedCodeBtn) loadPredefinedCodeBtn.disabled = true;
-    } else if (!Array.isArray(examples) || examples.length === 0) {
-        console.warn("PREDEFINED_EXAMPLES absent ou vide.");
-        if (loadPredefinedCodeBtn) loadPredefinedCodeBtn.disabled = true;
-        const noExamplesItem = document.createElement('li');
-        noExamplesItem.innerHTML = '<span class="dropdown-item disabled">Aucun exemple disponible</span>';
-        predefinedExamplesList.appendChild(noExamplesItem);
-    } else {
-        examples.forEach((example, index) => {
+    if (predefinedExamplesList && typeof PREDEFINED_EXAMPLES !== 'undefined' && PREDEFINED_EXAMPLES.length > 0) {
+        PREDEFINED_EXAMPLES.forEach((example, index) => {
             const listItem = document.createElement('li');
             const link = document.createElement('a');
             link.className = 'dropdown-item';
@@ -1575,27 +1363,37 @@ document.addEventListener('DOMContentLoaded', function() {
             link.textContent = example.name;
             link.dataset.exampleIndex = index;
 
-            link.addEventListener('click', function (e) {
+            link.addEventListener('click', function(e) {
                 e.preventDefault();
-                const selectedExample = examples[parseInt(this.dataset.exampleIndex, 10)];
+                const exampleIndex = parseInt(this.dataset.exampleIndex);
+                const selectedExample = PREDEFINED_EXAMPLES[exampleIndex];
                 if (selectedExample && codeEditorInstance) {
+                    
+                    if (typeof logLoadExample === 'function') {
+                        logLoadExample(selectedExample.name);
+                    }
                     lastDiagramAstDump = "";
                     codeEditorInstance.setValue(selectedExample.code);
                     memorizeLoadedCode(selectedExample.code);
                     setDiagramAndChallengeCardState("default");
-                    if (typeof resetChallengeInputs === 'function') resetChallengeInputs(challengeVariablesContainer);
-                    const checkBtn = document.getElementById('check-answers-btn');
-                    const solBtn = document.getElementById('show-solution-btn');
-                    if (checkBtn) checkBtn.disabled = true;
-                    if (solBtn) solBtn.disabled = true;
-                    const flow = document.getElementById('flowchart');
-                    if (flow) flow.innerHTML = '<p class="text-center text-muted mt-3">Code chargé. Cliquez sur "Lancer..."</p>';
+                    console.log(`Exemple chargé et mémorisé: ${selectedExample.name}. Diagramme invalidé.`);
+                    if (typeof resetChallengeInputs === 'function') {
+                        resetChallengeInputs(challengeVariablesContainer);
+                    }
+                    document.getElementById('check-answers-btn').disabled = true;
+                    document.getElementById('show-solution-btn').disabled = true;
+                    document.getElementById('flowchart').innerHTML = '<p class="text-center text-muted mt-3">Code chargé. Cliquez sur "Lancer..." pour voir le diagramme et le défi.</p>';
                 }
             });
-
             listItem.appendChild(link);
             predefinedExamplesList.appendChild(listItem);
-            });
+        });
+    } else if (loadPredefinedCodeBtn) {
+        loadPredefinedCodeBtn.disabled = true;
+        const noExamplesItem = document.createElement('li');
+        noExamplesItem.innerHTML = '<span class="dropdown-item disabled">Aucun exemple disponible</span>';
+        if (predefinedExamplesList) predefinedExamplesList.appendChild(noExamplesItem);
+        console.warn("PREDEFINED_EXAMPLES n'est pas défini ou est vide. Le chargement d'exemples est désactivé.");
     }
 
 
@@ -1695,53 +1493,104 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
-    // 7. Listener Bouton LANCER (CRITIQUE: Fusion Logique Flask + UI Statique)
     const runCodeButton = document.getElementById('run-code-btn');
     if (runCodeButton) {
         runCodeButton.addEventListener('click', async function() {
-            console.log("Bouton 'Lancer...' cliqué.");
-            const originalCode = codeEditorInstance.getValue();
-
-            // A. Appel Unifié Diagramme + Normalisation
+            console.log("Bouton 'Lancer...' cliqué. Processus unifié démarré.");
+            if (!codeEditorInstance) {
+                console.error("L'instance de CodeMirror n'est pas disponible.");
+                alert("Erreur : L'éditeur de code n'est pas initialisé.");
+                return;
+            }
+            // Le code brut de l'éditeur est notre seule source de vérité.
+           const originalCode = codeEditorInstance.getValue();
+            // const currentCode = codeEditorInstance.getValue();
+            // const currentCode = originalCode.replace(/^\s*#.*$/gm, '').trim(); // Enlève les commentaires et espaces inutiles
+             
+             // 1. APPEL UNIFIÉ :
+            // Un seul appel asynchrone pour obtenir le diagramme, le code normalisé, et le dump de l'AST.
             let processingResults;
             try {
                 if (typeof triggerFlowchartUpdate === 'function') {
+                    // On s'attend à ce que triggerFlowchartUpdate retourne un objet :
+                    // { mermaid: "...", canonicalCode: "...", ast_dump: "..." }
                     processingResults = await triggerFlowchartUpdate();
-                    
-                    // NOUVEAU : Activer PanZoom sur le SVG généré
-                    const svgEl = document.querySelector('#flowchart svg');
-                    if (svgEl && typeof svgPanZoom !== 'undefined') {
-                        if (window.panZoomInstance && typeof window.panZoomInstance.destroy === 'function') {
-                            try { window.panZoomInstance.destroy(); } catch(e){ console.warn(e); }
-                        }
-                        window.panZoomInstance = svgPanZoom(svgEl, {
-                            zoomEnabled: true, controlIconsEnabled: false, fit: true, center: true, minZoom: 0.1, maxZoom: 10
-                        });
-                        panZoomInstance = window.panZoomInstance;
-                    }
+                } else {
+                    throw new Error("La fonction triggerFlowchartUpdate n'est pas définie.");
                 }
-            } catch (e) { console.error(e); return; }
-
-            // B. Journalisation (Logique Flask)
-            if (processingResults && processingResults.canonicalCode) {
-                 if (processingResults.canonicalCode !== lastLoggedCanonicalCode) {
-                     if (typeof logExecutedCode === 'function') {
-                         const difficulty = parseInt(difficultyGlobalSelect.value, 10);
-                         const logResult = await logExecutedCode(originalCode, processingResults.canonicalCode, difficulty);
-                         if (logResult && logResult.code_id) currentChallengeCodeId = logResult.code_id;
-                     }
-                     lastLoggedCanonicalCode = processingResults.canonicalCode;
-                 }
+            } catch (e) {
+                console.error("Erreur lors de la mise à jour du diagramme de flux:", e);
+                alert("Erreur : Impossible de mettre à jour le diagramme de flux. Veuillez vérifier la console pour plus de détails.");
+                return; // Arrêter le processus en cas d'échec critique.
             }
 
-            // C. Mise à jour dump AST
-            if (processingResults && processingResults.ast_dump) lastDiagramAstDump = processingResults.ast_dump;
+            // 2. JOURNALISATION INTELLIGENTE :
+            // On ne journalise que si le code a structurellement changé.
+            if (processingResults && processingResults.canonicalCode) {
+                const canonicalCode = processingResults.canonicalCode;
 
-            // D. Exécution Défi (Logique Flask + UI Font Size)
+                if (canonicalCode !== lastLoggedCanonicalCode) {
+                    console.log("Changement structurel détecté. Journalisation des deux versions du code.");
+                    
+                    // On récupère la difficulté au moment de l'exécution.
+                    const difficulty = parseInt(difficultyGlobalSelect.value, 10);
+
+                    if (typeof logExecutedCode === 'function') {
+                        try {
+                            // Signature alignée: on passe maintenant les types détectés
+                            const logResult = await logExecutedCode(
+                                originalCode,
+                                canonicalCode,
+                                difficulty,
+                                processingResults.detectedTypes
+                            );
+
+                            if (logResult && logResult.code_id) {
+                                currentChallengeCodeId = logResult.code_id;
+                                console.log(`Défi initialisé avec code_id: ${currentChallengeCodeId}`);
+
+                                // Envoi explicite des métadonnées de défi pour stockage analytics
+                                if (
+                                    typeof logChallengeMetadata === 'function' &&
+                                    processingResults.detectedTypes &&
+                                    Object.keys(processingResults.detectedTypes).length > 0
+                                ) {
+                                    await logChallengeMetadata(
+                                        currentChallengeCodeId,
+                                        processingResults.detectedTypes,
+                                        null // requestedOptions non disponible ici
+                                    );
+                                }
+                            }
+                        } catch (e) {
+                            console.error("Erreur lors de la journalisation du code exécuté:", e);
+                        }
+                    }
+
+                    lastLoggedCanonicalCode = canonicalCode;
+                } else {
+                    console.log("Aucun changement structurel. Journalisation ignorée.");
+                }
+            }
+
+            // 3. MISE À JOUR DE L'AST POUR LA SYNCHRONISATION DE L'UI :
+            // CORRECTION : On supprime l'appel redondant et on utilise le dump AST
+            // déjà récupéré lors de l'appel unifié. C'est la clé de la fiabilité.
+            if (processingResults && processingResults.ast_dump) {
+                lastDiagramAstDump = processingResults.ast_dump;
+                console.log("lastDiagramAstDump mis à jour via le processus unifié.");
+            } else {
+                // Si le traitement a échoué ou n'a pas retourné de dump, on réinitialise la référence.
+                lastDiagramAstDump = "";
+                console.warn("Impossible de mettre à jour le dump AST de référence via le processus unifié.");
+            }
+            
+            // 4. EXÉCUTION DU DÉFI :
+            // Mettre l'UI en état "par défaut" avant de lancer le défi.
             setDiagramAndChallengeCardState("default");
             try {
                 variableValuesFromExecution = {};
-                if (typeof pyodide !== 'undefined' && pyodide && typeof runAndTraceCodeForChallenge === 'function') {
+                if (typeof pyodide !== 'undefined' && pyodide) {
                      // On exécute le code original de l'éditeur pour le défi.
                      variableValuesFromExecution = await runAndTraceCodeForChallenge(originalCode, pyodide);
                 } else {
@@ -1752,15 +1601,15 @@ document.addEventListener('DOMContentLoaded', function() {
                     return;
                 }
                 
+                // Mettre à jour l'interface du défi avec les résultats.
                 if (typeof populateChallengeInputs === 'function') {
                     populateChallengeInputs(variableValuesFromExecution, challengeVariablesContainer);
-                    applyCurrentFontSize(); // Appliquer la taille de police aux nouveaux inputs
                 }
-                
                 const hasVariables = Object.keys(variableValuesFromExecution).length > 0;
                 if (checkAnswersButton) checkAnswersButton.disabled = !hasVariables;
                 if (showSolutionButton) showSolutionButton.disabled = !hasVariables;
-            } catch(error) {
+
+            } catch (error) {
                 console.error("Erreur lors de l'exécution du code pour le défi:", error);
                 const container = document.getElementById('variables-container');
                 if (container) {
@@ -1775,8 +1624,7 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         });
     }
-    
-    // 8. Listeners Vérifier / Révéler (Logique Flask Log)
+
     if (checkAnswersButton) {
         checkAnswersButton.addEventListener('click', function() {
             console.log("Bouton 'Vérifier les réponses' cliqué.");
@@ -1861,7 +1709,7 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
-    // 9. Initialisation Finale
+    // --- Initialisation sécurisée à la fin ---
     initializeDynamicSyntaxOptions();
     updateGlobalConfigSelectors();
     handleVisualInterdependencies();

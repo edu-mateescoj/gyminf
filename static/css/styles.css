@@ -11,8 +11,8 @@
     --info-color: #0dcaf0;
 
     /* Spécifique Mermaid / CodeMirror */
-    --mermaid-bg: #2b3035;
-    --mermaid-stroke: #dee2e6;
+    --mermaid-bg: var(--bg-card);
+    --mermaid-stroke: var(--text-main);
 }
 
 /* --- THÈME CLAIR (Accessible / Daltonien) --- */
@@ -38,17 +38,22 @@ body, .card, .btn, .form-control {
 
 /* CodeMirror styling */
 .CodeMirror {
-    height: 300px;
+    height: 100%;
+    min-height: 300px;
     font-family: 'Consolas', 'Monaco', monospace;
     font-size: 14px;
     line-height: 1.5;
     border-radius: 0.25rem;
 }
 
+.CodeMirror-scroll {
+    height: 100% !important;
+}
+
 /* On mobile devices, adjust the editor height */
 @media (max-width: 768px) {
     .CodeMirror {
-        height: 220px;
+        min-height: 220px;
         font-size: 13px;
     }
 }
@@ -56,16 +61,54 @@ body, .card, .btn, .form-control {
 /* Mermaid flowchart container */
 .mermaid-container {
     min-height: 300px;
-    background-color: var(--bs-dark);
+    background-color: var(--bg-card);
+    color: var(--text-main);
     border-radius: 0.25rem;
     padding: 15px;
     overflow: auto;
+    display: flex;
 }
 
 @media (max-width: 768px) {
     .mermaid-container {
         min-height: 220px;
     }
+}
+
+.mermaid-container .mermaid {
+    width: 100%;
+    height: 100%;
+}
+
+.mermaid-container svg {
+    width: 100%;
+    height: 100%;
+    display: block;
+}
+
+.mermaid-container svg .node rect,
+.mermaid-container svg .node polygon,
+.mermaid-container svg .cluster rect {
+    fill: var(--bg-card) !important;
+    stroke: var(--text-main) !important;
+}
+
+.mermaid-container svg .label,
+.mermaid-container svg text,
+.mermaid-container svg .edgeLabel {
+    fill: var(--text-main) !important;
+}
+
+.mermaid-container svg .edgePath .path,
+.mermaid-container svg .flowchart-link,
+.mermaid-container svg .edgePath path {
+    stroke: var(--mermaid-stroke) !important;
+}
+
+.mermaid-container svg marker path,
+.mermaid-container svg marker circle {
+    fill: var(--mermaid-stroke) !important;
+    stroke: var(--mermaid-stroke) !important;
 }
 
 /* Variable inputs styling */
@@ -189,4 +232,49 @@ body, .card, .btn, .form-control {
     /* On gère les couleurs via les classes Bootstrap HTML pour la simplicité */
     border-radius: 0 0 0.25rem 0.25rem; /* Arrondi uniquement en bas */
     border-top: 1px solid rgba(255, 255, 255, 0.2); /* Séparateur subtil avec l'éditeur */
+}
+
+/* Resizers (look index.html) */
+#resizer {
+    width: 6px;
+    cursor: col-resize;
+    background: linear-gradient(180deg, #5f6b77, #3f4953);
+    border-radius: 4px;
+    margin: 0 6px;
+    transition: background-color .2s ease;
+}
+#resizer.active, #resizer:hover { background: #0dcaf0; }
+
+#horizontal-resizer {
+    height: 6px;
+    cursor: row-resize;
+    background: linear-gradient(90deg, #5f6b77, #3f4953);
+    border-radius: 4px;
+    margin: 8px 0;
+    transition: background-color .2s ease;
+}
+#horizontal-resizer.active, #horizontal-resizer:hover { background: #0dcaf0; }
+
+/* Logigramme: éviter clipping haut */
+#flowchart, #flowchart svg {
+    width: 100%;
+    height: 100%;
+}
+#flowchart svg {
+    display: block;
+    overflow: visible;
+}
+
+/* Zoom controls visibles quand activés par JS */
+#zoom-controls.show {
+    display: flex !important;
+}
+
+.col-hidden #zoom-controls {
+    display: none !important;
+}
+
+body {
+    background-color: var(--bg-body);
+    color: var(--text-main);
 }

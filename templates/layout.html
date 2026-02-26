@@ -4,18 +4,26 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Outil de Création d'Exercices Python</title>
-    
-    <!-- Pyodide local -->
+
+    <!-- Inclusion de Pyodide (Local Flask) -->
     <script src="{{ url_for('static', filename='assets/pyodide/pyodide.js') }}"></script>
+    
+    <!-- NOUVEAU : Inclusion de svg-pan-zoom pour la navigation dans le diagramme -->
+    <!-- <script src="https://cdn.jsdelivr.net/npm/svg-pan-zoom@3.6.1/dist/svg-pan-zoom.min.js"></script> -->
+    <!-- en local -->
+    <script src="{{ url_for('static', filename='assets/svg-pan-zoom/svg-pan-zoom.min.js') }}"></script>
 
     <!-- Bootstrap local -->
     <link rel="stylesheet" href="{{ url_for('static', filename='assets/bootstrap/bootstrap.min.css') }}">
+    
     <!-- CodeMirror CSS local -->
     <link rel="stylesheet" href="{{ url_for('static', filename='assets/codemirror/codemirror.min.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='assets/codemirror/theme/solarized.min.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='assets/codemirror/theme/dracula.min.css') }}">
+    
     <!-- FontAwesome local -->
     <link rel="stylesheet" href="{{ url_for('static', filename='assets/fontawesome/css/all.min.css') }}">
+    
     <!-- Mermaid local -->
     <script src="{{ url_for('static', filename='assets/mermaid/mermaid.min.js') }}"></script>
     
@@ -24,100 +32,112 @@
      
     <link rel="icon" href="{{ url_for('static', filename='favicon.ico') }}">
 
-
     <style>
-        /* nouveautés */
-        #func-builtins-options-wrapper .row {
-        /* ajuster les gouttières si besoin, mais gx-2 est déjà petit */
-        }
+        /* =========================================
+           STYLES UI AVANCÉS (Issus de la version statique)
+           ========================================= */
 
-        #func-builtins-options-wrapper .col-auto {
-            padding-right: 5px; /* Un peu d'espace entre les colonnes */
-        }
+        /* Styles spécifiques pour les options builtins (inchangés) */
+        #func-builtins-options-wrapper .col-auto { padding-right: 5px; }
+        #func-builtins-options-wrapper .form-check { margin-bottom: 0.1rem; padding-left: 1.5em; }
+        #func-builtins-options-wrapper .form-check-input { margin-left: -1.5em; }
 
-        #func-builtins-options-wrapper .form-check {
-            margin-bottom: 0.1rem; /* Petit espace vertical entre les checkboxes de builtins */
-            padding-left: 1.5em; /* Standard pour Bootstrap form-check */
-        }
-        #func-builtins-options-wrapper .form-check-input {
-            margin-left: -1.5em; /* Standard */
-        }
-        /* Style pour le bandeau de chargement */
+        /* Bandeau de chargement */
         #loading-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0, 0, 0, 0.7);
-            z-index: 1050; /* Au-dessus de la plupart des éléments */
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            color: white;
-            font-size: 1.2rem;
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background-color: rgba(0, 0, 0, 0.7); z-index: 1050;
+            display: flex; justify-content: center; align-items: center;
+            color: white; font-size: 1.2rem;
         }
-        #loading-overlay .spinner-border {
-            width: 3rem;
-            height: 3rem;
-            margin-right: 15px;
-        }
-        /* Style pour les sélecteurs de nombre de variables (initialement masqués) */
+        #loading-overlay .spinner-border { width: 3rem; height: 3rem; margin-right: 15px; }
+
+        /* Sélecteurs de nombre de variables */
         .var-count-select {
-            display: none; /* Masqué par défaut, affiché par JS */
-            width: auto;   /* Laisser le navigateur déterminer la largeur minimale */
-            /* min-width: 55px;/* Un peu de place pour le chiffre et la flèche */
-            padding: 0.1rem 0.25rem; /* Padding réduit */
-            font-size: 0.8rem; /* Police plus petite */
-            margin-left: 5px;
-            height: calc(1.5em + 0.2rem + 2px); /* Aligner la hauteur avec les checkboxes Bootstrap */
-            vertical-align: middle; /* Meilleur alignement vertical */
+            display: none; width: auto; padding: 0.1rem 0.25rem;
+            font-size: 0.8rem; margin-left: 5px; height: calc(1.5em + 0.2rem + 2px);
+            vertical-align: middle;
         }
-        .form-check-inline { /* Pour aider à l'alignement vertical des labels et selects */
-            align-items: center;
-        }
+        .form-check-inline { align-items: center; }
 
-        /* Mode avancé plus compact */
+        /* Mode avancé */
         .advanced-mode-container {
-            background-color: var(--bs-tertiary-bg); /* Un fond pour le distinguer */
-            padding: 0.5rem 1rem; /* Padding interne */
-            margin-bottom: 0.5rem; /* Espace en dessous, avant les cadres */
-            border-radius: var(--bs-border-radius);
-        }   
+            background-color: var(--bs-tertiary-bg); padding: 0.5rem 1rem;
+            margin-bottom: 0.5rem; border-radius: var(--bs-border-radius);
+        }
 
+        /* Surlignage des suggestions */
         .suggestion-highlight {
-        border: 1px solid #28a745 !important; /* Vert Bootstrap pour 'success' */
-        border-radius: 0.25rem; /* Correspondre au style des cadres */
-        padding: 0.1rem 0.2rem; /* Petit padding pour que la bordure ne colle pas au texte */
-        margin: -0.1rem -0.2rem; /* Compenser le padding pour l'alignement global */
-        /* box-shadow: 0 0 5px rgba(40, 167, 69, 0.5); /* Optionnel: une légère ombre */
-        transition: border-color 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
-        }
-
-        /* Ajustement pour que la bordure s'applique bien autour du form-check-inline */
-        /* sans trop perturber le layout des éléments qui ne sont pas surlignés. */
-        /* On cible le parent .form-check.form-check-inline qui contient le label et l'input. */
-        .form-check.form-check-inline.suggestion-highlight-container {
-            border: 1px solid #28a745; /* Vert Bootstrap */
-            border-radius: var(--bs-border-radius-sm, 0.2rem); /* Utiliser une variable Bootstrap si possible, sinon une valeur fixe */
-            padding: 2px 4px; /* Ajustez pour l'espacement visuel */
-            margin: 1px; /* Pour éviter que les bordures ne se chevauchent trop */
+            border: 1px solid #28a745 !important; border-radius: 0.25rem;
+            padding: 0.1rem 0.2rem; margin: -0.1rem -0.2rem;
             transition: border-color 0.3s ease-in-out;
-            background-color: rgba(40, 167, 69, 0.1); /* Fond très léger pour renforcer la suggestion */
         }
-
-        .card {
-            transition: border-color 0.3s;
+        .form-check.form-check-inline.suggestion-highlight-container {
+            border: 1px solid #28a745; border-radius: 0.2rem;
+            padding: 2px 4px; margin: 1px; background-color: rgba(40, 167, 69, 0.1);
+            transition: border-color 0.3s ease-in-out;
         }
-
-        /* Style pour surligner un select (par exemple, le compteur de booléens) */
         select.suggestion-highlight-select {
-            border-color: #28a745 !important; /* Vert Bootstrap */
-            box-shadow: 0 0 0 0.25rem rgba(40, 167, 69, .25) !important; /* Ombre de focus Bootstrap success */
+            border-color: #28a745 !important;
+            box-shadow: 0 0 0 0.25rem rgba(40, 167, 69, .25) !important;
         }
 
-    </style>
+        /* --- NOUVEAUX STYLES POUR LE SPLITTER ET VUES --- */
+        
+        /* Resizer Vertical (entre Editeur et Diagramme) */
+        #resizer {
+            background-color: #444; width: 6px; cursor: col-resize;
+            user-select: none; z-index: 10;
+            /* Flex layout handling handled in JS */
+        }
+        #resizer:hover, #resizer.active {
+            background-color: #0d6efd; /* Bleu Bootstrap */
+            width: 8px; margin-left: -1px; margin-right: -1px;
+        }
 
+        /* Resizer Horizontal (Hauteur des cartes) */
+        #horizontal-resizer {
+            height: 8px; background-color: transparent; cursor: row-resize;
+            width: 100%; margin-top: -4px; margin-bottom: 4px; z-index: 5;
+            position: relative;
+        }
+        #horizontal-resizer::after {
+            content: ''; display: block; height: 1px; background-color: #444;
+            margin-top: 3px;
+        }
+        #horizontal-resizer:hover::after, #horizontal-resizer.active::after {
+            background-color: #0d6efd; height: 3px; margin-top: 2px;
+        }
+
+        /* Classes utilitaires pour le basculement de vue */
+        .col-hidden { display: none !important; }
+        .col-full { width: 100% !important; flex: 0 0 100%; max-width: 100%; }
+
+        /* Plein écran pour le diagramme */
+        #flowchart.is-fullscreen {
+            position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+            z-index: 9999; background: var(--bs-body-bg); padding: 20px;
+        }
+
+        /* FIX split desktop: évite que le resizer casse la largeur du diagramme */
+        @media (min-width: 992px) {
+            #workspace-container {
+                display: flex;
+                flex-wrap: nowrap;
+                align-items: stretch;
+            }
+
+            #col-editor,
+            #col-diagram {
+                flex: 1 1 0;
+                min-width: 0; /* critique pour Mermaid/CodeMirror */
+                max-width: none;
+            }
+
+            #resizer {
+                flex: 0 0 6px;
+            }
+        }
+    </style>
 </head>
 
 <body class="d-flex flex-column min-vh-100">
@@ -133,20 +153,16 @@
     <!-- Début de l'en-tête -->
     <header class="bg-dark py-3">
         <div class="container">
-            <!-- Ligne : titre et badge -->
             <div class="d-flex justify-content-between align-items-center flex-wrap">
-                <!-- Titre principal -->
                 <h1 class="h3 mb-2 mb-md-0 text-white">Outil de Création d'Exercices Python</h1>
                 
-                <!-- Zone boutons (Thème + Dashboard + User) -->
                 <div class="d-flex align-items-center gap-2">
-                    
                     <!-- Bouton Thème -->
-                    <button id="theme-toggle" class="btn btn-outline-secondary btn-sm" style="height: 31px;" title="Changer le thème">
+                    <button id="theme-toggle" type="button" class="btn btn-outline-secondary btn-sm" style="height: 31px;" title="Changer le thème" aria-label="Changer le thème">
                         <i id="theme-icon" class="fas fa-sun"></i>
                     </button>
 
-                    <!-- Affichage User / Logout -->
+                    <!-- Affichage User / Logout (Logique FLASK conservée) -->
                     {% if username %}
                         <div class="btn-group">
                             <span class="btn btn-outline-light btn-sm disabled opacity-100">
@@ -160,13 +176,11 @@
                         <span class="badge bg-primary d-none d-sm-inline py-2">Apprentissage Interactif</span>
                     {% endif %}
                 </div>
-            
             </div>
         </div>
     </header>
-    <!-- Fin de l'en-tête -->
 
-    <!-- Lien vers le dashboard enseignant (UNIQUEMENT pour les profs) -->
+    <!-- Lien vers le dashboard enseignant (UNIQUEMENT pour les profs - FLASK) -->
     {% if role == 'teacher' %}
     <div class="container mt-2">
         <a href="{{ url_for('dashboard') }}" class="btn btn-outline-warning btn-sm" title="Dashboard enseignant">
@@ -177,35 +191,25 @@
 
     <!-- Début du contenu principal -->
     <main class="container py-4 flex-grow-1">
+        
+        <!-- SECTION CONFIGURATION (Carte Générateur) -->
         <div class="row mb-4">
             <div class="col-12">
                 <div class="card">
-
-                    <!-- En-tête de la carte du générateur de code -->
                     <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
-                        <!-- Titre de la carte -->
                         <h2 class="h5 mb-1">Générateur de Code Python</h2>
-                        <!-- Badge de configuration -->
                         <span class="badge bg-light text-dark d-none d-sm-inline">Configuration</span>
                     </div>
                     
-                    <!-- Premier card-body pour les cadres thématiques -->
-                    <div class="card-body pb-0"> <!-- Ajusté pour enlever padding bottom si le footer suit directement des éléments stylés -->
-                        
-                        
-                        <!-- Section : Choix des éléments de syntaxe -->
-                        <div class="mb-1"> <!-- mb-1 ici, pourrait être mb-2 ou mb-3 pour plus d'espace -->
-                            <h3 class="h6 mb-2"> <!-- mb-1 à mb-2 pour espacer du contenu -->
-                                <i class="fas fa-code me-2"></i>
-                                Éléments de Syntaxe à Inclure
+                    <div class="card-body pb-0">
+                        <div class="mb-1">
+                            <h3 class="h6 mb-2">
+                                <i class="fas fa-code me-2"></i>Éléments de Syntaxe à Inclure
                             </h3>
                         </div>
                                         
-                        <!-- Section Mode Avancé -->
-                         <!-- ajouté la classe d-none pour masquer le mode avancé par défaut -->
                         <div class="advanced-mode-container d-flex justify-content-between align-items-center d-none">
                             <div>
-                                <!-- ajouter l'attribut checked pour faire comme si la case était cochée par défaut -->
                                 <input type="checkbox" class="form-check-input me-1" id="advanced-mode">
                                 <label class="form-check-label fw-bold small" for="advanced-mode">
                                     <i class="fas fa-cogs me-1"></i> Mode avancé
@@ -214,72 +218,47 @@
                             <span class="text-muted small">Plus d'options</span>
                         </div>
 
-                        <!-- Cadres thématiques côte à côte en responsive -->
-                        <!-- Wrapper pour les cadres, j'ai ajouté un padding p-0 et retiré le px-0 du card-body parent pour un meilleur contrôle -->
+                        <!-- Options de variables, opérations, conditions, boucles, fonctions -->
+                        <!-- ... (Blocs d'options inchangés de layout.html) ... -->
                         <div class="row g-2 flex-wrap align-items-start mb-3">
-
-                            <!-- Cadre Variables -->
-                            <div class="col-12 col-md-auto mb-1 mb-md-0">
+                             <!-- Cadre Variables -->
+                             <div class="col-12 col-md-auto mb-1 mb-md-0">
                                 <div class="border rounded bg-dark-subtle p-2 d-flex flex-column align-items-start">
-                                    
-                                    <div class="mb-2 fw-bold">
-                                        <i class="fas fa-cube me-1"></i> Vars
-                                    </div>
-
+                                    <div class="mb-2 fw-bold"><i class="fas fa-cube me-1"></i> Vars</div>
                                     <div id="variables-options" class="d-flex flex-column gap-1 ms-2">
-
-                                        <!-- int -->
+                                        <!-- int, float, str, list, bool checkboxes... -->
                                         <div class="form-check form-check-inline">
                                             <input class="form-check-input var-type-checkbox" data-target-select="var-int-count" type="checkbox" id="var-int">
-                                            <label class="form-check-label small" for="var-int">int</label> <!-- 'for' pointe vers 'var-int' -->
-                                            <select class="form-select form-select-sm var-count-select" id="var-int-count">
-                                                <!-- Options peuplées par JS -->
-                                            </select>
+                                            <label class="form-check-label small" for="var-int">int</label>
+                                            <select class="form-select form-select-sm var-count-select" id="var-int-count"></select>
                                         </div>
-                                        <!-- float -->
                                         <div class="form-check form-check-inline">
                                             <input class="form-check-input var-type-checkbox" data-target-select="var-float-count" type="checkbox" id="var-float">
-                                            <label class="form-check-label small" for="var-float">float</label> <!-- 'for' pointe vers 'var-float' -->
-                                            <select class="form-select form-select-sm var-count-select" id="var-float-count">
-                                                <!-- Options peuplées par JS -->
-                                            </select>
+                                            <label class="form-check-label small" for="var-float">float</label>
+                                            <select class="form-select form-select-sm var-count-select" id="var-float-count"></select>
                                         </div>
-                                        <!-- str -->
                                         <div class="form-check form-check-inline">
                                             <input class="form-check-input var-type-checkbox" data-target-select="var-str-count" type="checkbox" id="var-str">
                                             <label class="form-check-label small" for="var-str">str</label>
-                                            <select class="form-select form-select-sm var-count-select" id="var-str-count">
-                                                <!-- Options 1-4 peuplées par JS -->
-                                            </select>
+                                            <select class="form-select form-select-sm var-count-select" id="var-str-count"></select>
                                         </div>
-                                        <!-- list -->
                                         <div class="form-check form-check-inline">
                                             <input class="form-check-input var-type-checkbox" data-target-select="var-list-count" type="checkbox" id="var-list">
                                             <label class="form-check-label small" for="var-list">list</label>
-                                            <select class="form-select form-select-sm var-count-select" id="var-list-count">
-                                                <!-- Options 1-4 peuplées par JS -->
-                                            </select>
+                                            <select class="form-select form-select-sm var-count-select" id="var-list-count"></select>
                                         </div>
-                                        <!-- bool -->
                                         <div class="form-check form-check-inline">
                                             <input class="form-check-input var-type-checkbox" data-target-select="var-bool-count" type="checkbox" id="var-bool">
                                             <label class="form-check-label small" for="var-bool">bool</label>
-                                            <select class="form-select form-select-sm var-count-select" id="var-bool-count">
-                                                <!-- Options 1-4 peuplées par JS -->
-                                            </select>
+                                            <select class="form-select form-select-sm var-count-select" id="var-bool-count"></select>
                                         </div>
                                     </div>
                                 </div>
                             </div>
-
                             <!-- Cadre Opérations -->
                             <div class="col-12 col-md-auto mb-1 mb-md-0">
                                 <div class="border rounded bg-dark-subtle p-2 d-flex flex-column align-items-start">
-                                    
-                                    <div class="mb-2 fw-bold">
-                                        <i class="fas fa-calculator me-1"></i> Op
-                                    </div>
-
+                                    <div class="mb-2 fw-bold"><i class="fas fa-calculator me-1"></i> Op</div>
                                     <div id="operations-options" class="d-flex flex-column gap-1 ms-2">
                                         <div class="form-check form-check-inline">
                                             <input class="form-check-input" type="checkbox" id="op-plus-minus" checked disabled>
@@ -296,352 +275,259 @@
                                     </div>
                                 </div>
                             </div>
-
-                            <!-- Cadre Conditions -->
-                            <div class="col-12 col-md-auto mb-2 mb-md-0"> <!-- mb-1 mb-md-0 pour cohérence -->
+                            <!-- Cadres Ctrl, Loop, Func (vides, peuplés par JS) -->
+                            <div class="col-12 col-md-auto mb-2 mb-md-0">
                                 <div class="border rounded bg-dark-subtle p-2 d-flex flex-column align-items-start">
                                     <div class="form-check form-switch mb-2">
                                         <input class="form-check-input" type="checkbox" id="frame-conditions">
-                                        <label class="form-check-label fw-bold" for="frame-conditions">
-                                            <i class="fas fa-code-branch me-1"></i> Ctrl
-                                        </label>
+                                        <label class="form-check-label fw-bold" for="frame-conditions"><i class="fas fa-code-branch me-1"></i> Ctrl</label>
                                     </div>
-                                    <!-- Le conteneur pour les options, initialement vide -->
-                                    <div id="conditions-options-container" class="mt-2 ms-2">
-                                        <!-- Les options seront injectées ici par JS -->
-                                    </div> 
+                                    <div id="conditions-options-container" class="mt-2 ms-2"></div> 
                                 </div>
                             </div>
-
-                            <!-- Cadre Boucles -->
-                            <div class="col-12 col-md-auto mb-1 mb-md-0"> <!-- mb-0 mb-md-0 original, changé pour mb-1 pour espacement -->
-                                <div class="border rounded bg-dark-subtle p-2 d-flex flex-column align-items-start">
-                                    <div class="form-check form-switch mb-2"> <!-- mb-0 original, changé pour mb-2 pour cohérence -->
-                                        <input class="form-check-input" type="checkbox" id="frame-loops">
-                                        <label class="form-check-label fw-bold" for="frame-loops">
-                                            <i class="fas fa-sync-alt me-1"></i> Loop
-                                        </label>
-                                    </div>
-                                    <!-- Le conteneur des boucles, initialement vide -->
-                                    <div id="loops-options-container" class="mt-2 ms-2">
-                                        <!-- Ce div doit être vide ou avoir un commentaire -->
-                                    </div>
-                                </div>
-                            </div>
-
-                            <!-- Cadre Fonctions (Func) -->
                             <div class="col-12 col-md-auto mb-1 mb-md-0">
                                 <div class="border rounded bg-dark-subtle p-2 d-flex flex-column align-items-start">
                                     <div class="form-check form-switch mb-2">
-                                        <input class="form-check-input" type="checkbox" id="frame-functions"> <!-- Nouvel ID pour la section principale -->
-                                        <label class="form-check-label fw-bold" for="frame-functions">
-                                            <i class="fas fa-gears me-1"></i> Func <!-- Icône pour fonctions/méthodes, ou fa-cogs, fa-code, fa-sitemap -->
-                                        </label>
+                                        <input class="form-check-input" type="checkbox" id="frame-loops">
+                                        <label class="form-check-label fw-bold" for="frame-loops"><i class="fas fa-sync-alt me-1"></i> Loop</label>
                                     </div>
-                                    <!-- Le conteneur où les options des fonctions seront injectées -->
-                                    <div id="functions-options-container" class="mt-2 ms-2">
-                                        <!-- Les options seront injectées ici par JS -->
-                                    </div>
-                                    <!-- ... (options func-def-a) ... -->
-                                     
-                                    <!-- <div class="form-check form-check-inline">
-                                        <input class="form-check-input" type="checkbox" id="func-builtins">
-                                        <label class="form-check-label small" for="func-builtins">builtins</label>
-                                    </div> -->
-                                    
-                                    <!-- Nouveau conteneur pour les options de builtins, initialement masqué ou vide -->
-                                    <!-- Il sera affiché et peuplé par JS si "func-builtins" est cochée -->
-                                    <div id="func-builtins-options-container" class="ms-4 mt-1" style="display: none;"> 
-                                        <!-- Les checkboxes des builtins spécifiques seront injectées ici -->
-                                    </div>
-                                    <!-- ... (option func-return) ... -->
+                                    <div id="loops-options-container" class="mt-2 ms-2"></div>
                                 </div>
                             </div>
+                            <div class="col-12 col-md-auto mb-1 mb-md-0">
+                                <div class="border rounded bg-dark-subtle p-2 d-flex flex-column align-items-start">
+                                    <div class="form-check form-switch mb-2">
+                                        <input class="form-check-input" type="checkbox" id="frame-functions">
+                                        <label class="form-check-label fw-bold" for="frame-functions"><i class="fas fa-gears me-1"></i> Func</label>
+                                    </div>
+                                    <div id="functions-options-container" class="mt-2 ms-2"></div>
+                                    <div id="func-builtins-options-container" class="ms-4 mt-1" style="display: none;"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
 
-                            
-                        </div> <!-- Fin .row g-2 (Cadres thématiques) -->
-                    </div> <!-- Fin du premier card-body -->
-
-                    <!-- Fin section des éléments de syntaxe -->
-
-                    <!-- Deuxième card-body pour les options de configuration et le bouton Générer -->
                     <div class="card-body">
-                    <!-- Section des options de configuration -->
-                    <div class="row g-3 mb-4">
-                        <!-- Option : Difficulté -->
-                        <div class="col-md-4 col-sm-6">
-                            <div class="form-group">
-                                <label for="difficulty-level-global" class="form-label"> <!-- Changé l'ID pour la cohérence -->
-                                    <i class="fas fa-tachometer-alt me-1"></i> Niveau Global
-                                </label>
-                                <select class="form-select" id="difficulty-level-global">
-                                    <option value="1">Très Facile (1)</option>
-                                    <option value="2">Facile (2)</option>
-                                    <option value="3" selected>Moyen (3)</option>
-                                    <option value="4">Difficile (4)</option>
-                                    <option value="5">Très Difficile (5)</option>
-                                    <option value="6">Expert (6)</option>
-                                </select>
+                        <!-- Options Difficulté / Lignes / Vars -->
+                        <div class="row g-3 mb-4">
+                            <div class="col-md-4 col-sm-6">
+                                <div class="form-group">
+                                    <label for="difficulty-level-global" class="form-label"><i class="fas fa-tachometer-alt me-1"></i> Niveau Global</label>
+                                    <select class="form-select" id="difficulty-level-global">
+                                        <option value="1">Très Facile (1)</option>
+                                        <option value="2">Facile (2)</option>
+                                        <option value="3" selected>Moyen (3)</option>
+                                        <option value="4">Difficile (4)</option>
+                                        <option value="5">Très Difficile (5)</option>
+                                        <option value="6">Expert (6)</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-4 col-sm-6">
+                                <div class="form-group">
+                                    <label for="num-lines-global" class="form-label"><i class="fas fa-align-left me-1"></i> Nb. Lignes Min</label>
+                                    <select class="form-select" id="num-lines-global"></select>
+                                </div>
+                            </div>
+                            <div class="col-md-4 col-sm-6">
+                                <div class="form-group">
+                                    <label for="num-total-variables-global" class="form-label"><i class="fas fa-cube me-1"></i> Nb. Vars (approx.)</label>
+                                    <select class="form-select" id="num-total-variables-global"></select>
+                                </div>
                             </div>
                         </div>
-                        <!-- Option : Longueur du code -->
-                        <div class="col-md-4 col-sm-6">
-                            <div class="form-group">
-                                <label for="num-lines-global" class="form-label"> <!-- Changé l'ID -->
-                                    <i class="fas fa-align-left me-1"></i> Nb. Lignes Min
-                                </label>
-                                <select class="form-select" id="num-lines-global">
-                                    <!-- Les options seront peuplées par JavaScript -->
-                                </select>
-                            </div>
-                        </div>
-                        <!-- Option : Nombre de variables -->
-                        <div class="col-md-4 col-sm-6">
-                            <div class="form-group">
-                                <label for="num-total-variables-global" class="form-label"> <!-- Changé l'ID -->
-                                    <i class="fas fa-cube me-1"></i> Nb. Vars (approx.)
-                                </label>
-                                <select class="form-select" id="num-total-variables-global">
-                                    <!-- Les options seront peuplées par JavaScript -->
-                                </select>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="d-flex gap-2 mb-3"> <!-- Wrapper pour les deux boutons -->
-                        <!-- Bouton pour générer un code aléatoire -->
-                        <button id="generate-code-btn" class="btn btn-primary d-flex align-items-center">
-                            <i class="fas fa-random me-2"></i> Générer un Code Aléatoire
-                        </button>
 
-                        <div class="dropdown">
-                            <button class="btn btn-info d-flex align-items-center dropdown-toggle" type="button" id="load-predefined-code-btn" data-bs-toggle="dropdown" aria-expanded="false">
-                                <i class="fas fa-file-code me-2"></i> Charger un Exemple
+                        <!-- Boutons principaux (avec chargement exemples) -->
+                        <div class="d-flex gap-2 mb-3 flex-wrap align-items-center"> 
+                            <button id="generate-code-btn" class="btn btn-primary d-flex align-items-center">
+                                <i class="fas fa-random me-2"></i> Générer
                             </button>
-                            <ul class="dropdown-menu" aria-labelledby="load-predefined-code-btn" id="predefined-examples-list">
-                                <!-- Les exemples seront peuplés par JavaScript -->
-                                <!-- <li><a class="dropdown-item" href="#">Exemple 1</a></li> -->
-                            </ul>
-                        </div> <!-- fin du 2ème bouton -->
-                    </div> <!-- fin du wrapper des 2 boutons -->
-                </div> <!-- Fin du .card principal -->
-            </div> <!-- Fin .col-12 -->
-        </div> <!-- Fin .row mb-4 -->
-        <!-- Fin de la section  -->
- 
-<!-- Card section for code execution and flowchart display -->
-<div class="row mb-4">
-    <div class="col-lg-6 mb-4 mb-lg-0">
-        <div class="card h-100">
-            <!-- En-tête de la carte : Code Python -->
-            <div class="card-header bg-secondary text-white d-flex justify-content-between align-items-center flex-wrap">
-                <!-- Titre de la carte -->
-                <h2 class="h5 mb-0">Code Python</h2>
-                <div class="d-flex align-items-center mt-2 mt-sm-0">
-                    <!-- Bouton pour exécuter le code -->
-                    <button id="run-code-btn" class="btn btn-sm btn-success">
-                        <i class="fas fa-play me-1"></i> Lancer le diagramme et les défis
-                    </button>
-                </div>
-            </div>
-            <div class="card-body">
-                <!-- Message pour les petits écrans -->
-                <div class="mb-2 d-md-none">
-                    <small class="text-muted">
-                        <i class="fas fa-info-circle me-1"></i> Faites pivoter votre appareil pour une meilleure expérience d'édition
-                    </small>
-                </div>
-                <!-- Zone d'édition de code -->
-                <textarea id="code-editor"></textarea>
-                <!-- <div id="code-toolbar" class="d-flex align-items-center justify-content-start py-1 px-2" style="background: #23272b; border-radius: 0 0 0.25rem 0.25rem; border-top: 1px solid #444; font-size: 1rem;">-->
-                <!-- Toolbar avec fond gris (bg-secondary) et texte blanc (text-white) pour forcer le contraste -->
-                <div id="code-toolbar" class="d-flex align-items-center justify-content-start py-1 px-2 bg-secondary text-white">
-                    
-                    <button id="toggle-editable-btn" class="btn btn-sm btn-outline-light me-2" title="Rendre non éditable">
-                        <i class="fas fa-edit"></i>
-                    </button>
-                    
-                    <button id="download-code-btn" class="btn btn-sm btn-outline-light me-2" title="Sauver le code dans un fichier .py">
-                        <i class="fas fa-download"></i>
-                    </button>
-                    
-                    <button id="open-file-btn" class="btn btn-sm btn-outline-light me-2" title="Ouvrir un fichier .py">
-                        <i class="fas fa-folder-open"></i>
-                        <input type="file" id="file-input" accept=".py" style="display:none;">
-                    </button>
-                    
-                    <button id="share-code-btn" class="btn btn-sm btn-outline-light me-2" title="Copier dans le presse-papier">
-                        <i class="fas fa-share-alt"></i>
-                    </button>
-
-                    <!-- Le dernier bouton n'a pas besoin de 'me-2' car il n'y a rien après lui -->
-                    <button id="reload-code-btn" class="btn btn-sm btn-outline-light" title="Restaurer le code à la dernière génération/chargement">
-                        <i class="fas fa-undo"></i>
-                    </button>
-
-                </div>
-            </div>
-        </div>
-    </div>
-    
-    <div class="col-lg-6">
-        <div class="card h-100">
-            <!-- En-tête de la carte : Représentation en Diagramme -->
-            <div class="card-header bg-secondary text-white d-flex justify-content-between align-items-center">
-                <!-- Titre de la carte -->
-                <h2 class="h5 mb-0">Représentation en Diagramme</h2>
-                <span class="badge bg-dark d-none d-sm-inline">Algorithme Visuel</span>
-            </div>
-            <div class="card-body overflow-auto">
-                <!-- Conteneur pour le diagramme Mermaid -->
-                <div id="flowchart" class="mermaid-container"></div>
-            </div>
-        </div>
-    </div>
-</div>
-
-<!-- Section Défi  -->
-<div class="row">
-    <div class="col-12">
-        <div class="card">
-            <!-- En-tête de la carte : Défi  -->
-            <div class="card-header bg-info text-white d-flex justify-content-between align-items-center flex-wrap">
-                <h2 class="h5 mb-0">Défi Élève</h2>
-                <div class="d-flex align-items-center mt-2 mt-sm-0">
-                    <span class="badge bg-light text-dark me-2 d-none d-sm-inline">Testez Votre Compréhension</span>
-                </div>
-            </div>
-            <div class="card-body">
-                <!-- Alerte d'information -->
-                <div class="alert alert-info alert-dismissible fade show d-flex align-items-center" role="alert">
-                    <i class="fas fa-info-circle me-2"></i>
-                    <div>
-                        Tracez (exécutez) le code d'abord, puis répondez aux questions.
-                    </div>
-                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Fermer"></button>
-                </div>
-                
-                <!-- Conteneur pour l'affichage des variables -->
-                <div id="variables-container" class="mb-4">
-                    <!-- Message par défaut, sera remplacé par JavaScript -->
-                    <div class="col-12 text-center text-muted">
-                        <p>
-                            <i class="fas fa-code me-2"></i>
-                            Générez ou exécutez le code pour voir les variables...
-                        </p>
-                    </div>
-                </div>
-                
-                <!-- Boutons d'action pour le défi -->
-                <div class="d-flex justify-content-between flex-wrap">
-                    <button id="check-answers-btn" class="btn btn-info mb-2 mb-md-0" disabled>
-                        <i class="fas fa-check-circle me-1"></i> Vérifier les réponses
-                    </button>
-                    <button id="show-solution-btn" class="btn btn-outline-secondary" disabled>
-                        <i class="fas fa-lightbulb me-1"></i> Révéler la solution
-                    </button>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
-
-<!-- Section Console d'Exécution -->
-<div class="row mt-4">
-    <div class="col-12">
-        <div class="card">
-            <div class="card-header bg-dark text-white d-flex justify-content-between align-items-center"
-                id="execution-console-header" style="cursor:pointer;">
-                <h2 class="h5 mb-0"><i class="fas fa-terminal me-2"></i>Console d'Exécution</h2>
-                <button id="clear-console-btn" class="btn btn-sm btn-outline-light" title="Effacer la console">
-                    <i class="fas fa-eraser"></i> Effacer
-                </button>
-            </div>
-            <div class="card-body bg-black p-0" id="execution-console-body" style="display:none;">
-                <pre id="execution-console-output" class="text-white m-0 p-3" style="min-height: 100px; white-space: pre-wrap; word-wrap: break-word;"></pre>
-            </div>
-        </div>
-    </div>
-</div>
-
-<!-- Modal pour la fonction input() -->
-<div class="modal fade" id="input-modal" tabindex="-1" data-bs-backdrop="static" data-bs-keyboard="false" aria-labelledby="input-modal-label" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="input-modal-label">Saisie Requise</h5>
-            </div>
-            <div class="modal-body">
-                <p id="input-modal-prompt"></p>
-                <input type="text" class="form-control" id="input-modal-field">
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-primary" id="input-modal-submit-btn">Valider</button>
-            </div>
-        </div>
-    </div>
-</div>
-
-<!-- Modal de Feedback -->
-<div class="modal fade" id="feedback-modal" tabindex="-1" aria-labelledby="feedback-modal-label" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable modal-lg">
-        <div class="modal-content">
-            <!-- En-tête du modal -->
-            <div class="modal-header bg-dark text-white">
-                <h5 class="modal-title" id="feedback-modal-label">
-                    <i class="fas fa-chart-bar me-2"></i> Résultats
-                </h5>
-                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Fermer"></button>
-            </div>
-            <!-- Corps du modal -->
-            <div class="modal-body" id="feedback-modal-content">
-                <!-- Contenu chargé dynamiquement -->
-                <div class="d-flex justify-content-center">
-                    <div class="spinner-border text-primary" role="status">
-                        <span class="visually-hidden">Chargement...</span>
+                            <div class="dropdown">
+                                <button class="btn btn-info d-flex align-items-center dropdown-toggle" type="button" id="load-predefined-code-btn" data-bs-toggle="dropdown" aria-expanded="false">
+                                    <i class="fas fa-file-code me-2"></i> Exemples
+                                </button>
+                                <ul class="dropdown-menu" aria-labelledby="load-predefined-code-btn" id="predefined-code-list">
+                                    <!-- Peuplé par JS -->
+                                </ul>
+                            </div>
+                            <div class="flex-grow-1"></div>
+                            <button id="run-code-btn" class="btn btn-success d-flex align-items-center shadow-sm">
+                                <i class="fas fa-play me-2"></i> <span class="d-none d-sm-inline">Lancer le Traitement</span>
+                            </button>
+                        </div>
                     </div>
                 </div>
             </div>
-            <!-- Pied de page du modal -->
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
-                    <i class="fas fa-times me-1"></i> Fermer
-                </button>
-                <a href="#" class="btn btn-primary d-none" id="modal-try-again-btn" data-bs-dismiss="modal">
-                    <i class="fas fa-redo-alt me-1"></i> Réessayer
-                </a>
+        </div>
+
+        <!-- NOUVEAU : Boutons de mode d'affichage (Split/Code/Chart) -->
+        <div class="row mb-2 justify-content-center">
+            <div class="col-auto">
+                <div class="btn-group shadow-sm" role="group" aria-label="Mode d'affichage">
+                    <input type="radio" class="btn-check" name="viewMode" id="view-code" autocomplete="off" onclick="switchView('code')">
+                    <label class="btn btn-outline-secondary" for="view-code" title="Code uniquement"><i class="fas fa-code me-1"></i> Code</label>
+
+                    <input type="radio" class="btn-check" name="viewMode" id="view-split" autocomplete="off" checked onclick="switchView('split')">
+                    <label class="btn btn-outline-secondary" for="view-split" title="Vue partagée"><i class="fas fa-columns me-1"></i> Partagé</label>
+
+                    <input type="radio" class="btn-check" name="viewMode" id="view-chart" autocomplete="off" onclick="switchView('chart')">
+                    <label class="btn btn-outline-secondary" for="view-chart" title="Diagramme uniquement"><i class="fas fa-project-diagram me-1"></i> Diagramme</label>
+                </div>
             </div>
         </div>
-    </div>
-</div> 
 
-<!-- Section Affichage Graphique Turtle -->
-<div class="row mt-4" id="turtle-graphics-card" style="display: none;"> <!-- Initialement masquée -->
-    <div class="col-12">
-        <div class="card">
-            <div class="card-header bg-success text-white d-flex justify-content-between align-items-center">
-                <h2 class="h5 mb-0"><i class="fas fa-paint-brush me-2"></i>Affichage Graphique (Turtle)</h2>
-                <button id="clear-turtle-canvas-btn" class="btn btn-sm btn-outline-light" title="Effacer le dessin">
-                    <i class="fas fa-eraser"></i> Effacer
-                </button>
+        <!-- WORKSPACE : Editeur + Resizer + Diagramme -->
+        <div class="row mb-4" id="workspace-container">
+            <!-- COLONNE ÉDITEUR -->
+            <div class="col-lg-6 mb-3 mb-lg-0" id="col-editor">
+                <div class="card h-100">
+                    <div class="card-header bg-secondary text-white d-flex justify-content-between align-items-center flex-wrap">
+                        <h2 class="h5 mb-0">Éditeur Python</h2>
+                        <!-- Contrôles taille police -->
+                        <div class="btn-group" role="group" aria-label="Taille police éditeur">
+                            <button id="font-decrease-btn" class="btn btn-sm btn-outline-light" title="Réduire la taille du texte"><i class="fas fa-minus"></i></button>
+                            <button id="font-increase-btn" class="btn btn-sm btn-outline-light" title="Augmenter la taille du texte"><i class="fas fa-plus"></i></button>
+                        </div>
+                    </div>
+                    <!-- Body avec hauteur contrôlée pour resizer horizontal -->
+                    <div class="card-body p-0 d-flex flex-column" style="height: 500px; min-height: 350px;">
+                        <div class="mb-1 d-md-none px-3 pt-2">
+                            <small class="text-muted"><i class="fas fa-info-circle me-1"></i> Faites pivoter votre appareil</small>
+                        </div>
+                        <div class="flex-grow-1 px-2 pb-2">
+                            <textarea id="code-editor"></textarea>
+                        </div>       
+                        <!-- Toolbar éditeur -->
+                        <div id="code-toolbar" class="d-flex align-items-center justify-content-start py-1 px-2 bg-secondary text-white">
+                            <button id="toggle-editable-btn" class="btn btn-sm btn-outline-light me-2" title="Rendre non éditable"><i class="fas fa-edit"></i></button>
+                            <button id="download-code-btn" class="btn btn-sm btn-outline-light me-2" title="Sauver le code"><i class="fas fa-download"></i></button>
+                            <button id="open-file-btn" class="btn btn-sm btn-outline-light me-2" title="Ouvrir un fichier"><i class="fas fa-folder-open"></i>
+                                <input type="file" id="file-input" accept=".py" style="display:none;">
+                            </button>
+                            <button id="share-code-btn" class="btn btn-sm btn-outline-light me-2" title="Copier"><i class="fas fa-share-alt"></i></button>
+                            <button id="reload-code-btn" class="btn btn-sm btn-outline-light" title="Restaurer"><i class="fas fa-undo"></i></button>
+                        </div>
+                    </div>
+                </div>
             </div>
+            
+            <!-- RESIZER VERTICAL -->
+            <div id="resizer" class="d-none d-lg-block"></div>
 
-            <!-- HEURISTIQUE pyo_js : ajouter un ID au conteneur du canvas incluant "term" -->
-            <div id="turtle-terminal" class="card-body text-center p-2">
-                <canvas id="turtle-canvas" width="600" height="400" style="background-color: #f0f0f0; border-radius: 4px; max-width: 100%;"></canvas>
+            <!-- COLONNE DIAGRAMME -->
+            <div class="col-lg-6" id="col-diagram">
+                <div class="card h-100">
+                    <div class="card-header bg-secondary text-white d-flex justify-content-between align-items-center">
+                        <h2 class="h5 mb-0">Logigramme</h2>
+                        <!-- Outils Diagramme (Export, Fullscreen) -->
+                        <div class="btn-group btn-group-sm" role="group">
+                            <button id="diagram-export-png-btn" class="btn btn-outline-light" title="Exporter en PNG"><i class="fas fa-file-image"></i></button>
+                            <button id="diagram-export-svg-btn" class="btn btn-outline-light" title="Exporter en SVG"><i class="fas fa-file-code"></i></button>
+                            <button id="diagram-fullscreen-btn" class="btn btn-outline-light" onclick="toggleFullScreen()" title="Plein écran"><i class="fas fa-expand"></i></button>
+                        </div>
+                    </div>
+                    <div class="card-body overflow-hidden position-relative p-0 border-top border-light" style="height: 500px;">
+                        <!-- Barre d'outils flottante pour le zoom -->
+                        <div id="zoom-controls" class="position-absolute top-0 end-0 m-2 btn-group-vertical" style="z-index: 10; display: none;">
+                            <button class="btn btn-sm btn-light border" onclick="zoomIn()" title="Zoom Avant"><i class="fas fa-plus"></i></button>
+                            <button class="btn btn-sm btn-light border" onclick="resetZoom()" title="Réinitialiser"><i class="fas fa-compress-arrows-alt"></i></button>
+                            <button class="btn btn-sm btn-light border" onclick="zoomOut()" title="Zoom Arrière"><i class="fas fa-minus"></i></button>
+                        </div>
+
+                        <div id="flowchart" class="mermaid-container h-100 w-100"></div>
+                    </div>
+                </div>
             </div>
         </div>
-    </div>
-</div>
 
-        <!-- JavaScript VERSION LOCALE -->
-        <!--
-        <script src="../static/js/codes-exemples.js"></script>
-        <script src="../static/js/code-generator.js"></script>
-        <script src="../static/js/flowchart-generator.js"></script>
-        <script src="../static/js/validation.js"></script>
-        <script src="../static/js/main.js"></script>
--->
-        <!-- JavaScript VERSION BACKEND -->
+        <!-- RESIZER HORIZONTAL (Hauteur) -->
+        <div id="horizontal-resizer"></div>
+
+        <!-- Section Défi -->
+        <div class="row mt-1">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-header bg-info text-white d-flex justify-content-between align-items-center flex-wrap">
+                        <h2 class="h5 mb-0">Défi Élève</h2>
+                        <span class="badge bg-light text-dark me-2 d-none d-sm-inline">Testez Votre Compréhension</span>
+                    </div>
+                    <div class="card-body">
+                        <div id="variables-container" class="mb-4">
+                            <div class="col-12 text-center text-muted">
+                                <p><i class="fas fa-code me-2"></i>Générez ou exécutez le code pour voir les variables...</p>
+                            </div>
+                        </div>
+                        <div class="d-flex justify-content-between flex-wrap">
+                            <button id="check-answers-btn" class="btn btn-info mb-2 mb-md-0" disabled><i class="fas fa-check-circle me-1"></i> Vérifier les réponses</button>
+                            <button id="show-solution-btn" class="btn btn-outline-secondary" disabled><i class="fas fa-lightbulb me-1"></i> Révéler la solution</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Section Console -->
+        <div class="row mt-4">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-header bg-dark text-white d-flex justify-content-between align-items-center" id="execution-console-header" style="cursor:pointer;">
+                        <h2 class="h5 mb-0"><i class="fas fa-terminal me-2"></i>Console d'Exécution</h2>
+                        <button id="clear-console-btn" class="btn btn-sm btn-outline-light" title="Effacer"><i class="fas fa-eraser"></i> Effacer</button>
+                    </div>
+                    <div class="card-body bg-black p-0" id="execution-console-body" style="display:none;">
+                        <pre id="execution-console-output" class="text-white m-0 p-3" style="min-height: 100px; white-space: pre-wrap; word-wrap: break-word;"></pre>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Modals -->
+        <div class="modal fade" id="input-modal" tabindex="-1" data-bs-backdrop="static" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+                    <div class="modal-header"><h5 class="modal-title">Saisie Requise</h5></div>
+                    <div class="modal-body">
+                        <p id="input-modal-prompt"></p>
+                        <input type="text" class="form-control" id="input-modal-field">
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-primary" id="input-modal-submit-btn">Valider</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="modal fade" id="feedback-modal" tabindex="-1" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable modal-lg">
+                <div class="modal-content">
+                    <div class="modal-header bg-dark text-white">
+                        <h5 class="modal-title" id="feedback-modal-label"><i class="fas fa-chart-bar me-2"></i> Résultats</h5>
+                        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Fermer"></button>
+                    </div>
+                    <div class="modal-body" id="feedback-modal-content"></div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fermer</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Section Turtle (Masquée) -->
+        <div class="row mt-4" id="turtle-graphics-card" style="display: none;">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-header bg-success text-white d-flex justify-content-between align-items-center">
+                        <h2 class="h5 mb-0"><i class="fas fa-paint-brush me-2"></i>Affichage Graphique (Turtle)</h2>
+                        <button id="clear-turtle-canvas-btn" class="btn btn-sm btn-outline-light"><i class="fas fa-eraser"></i> Effacer</button>
+                    </div>
+                    <div id="turtle-terminal" class="card-body text-center p-2">
+                        <canvas id="turtle-canvas" width="600" height="400" style="background-color: #f0f0f0; border-radius: 4px; max-width: 100%;"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Scripts JS (FLASK) -->
         <script src="{{ url_for('static', filename='js/codes-exemples.js') }}"></script>
         <script src="{{ url_for('static', filename='js/code-generator.js') }}"></script>
         <script src="{{ url_for('static', filename='js/flowchart-generator.js') }}"></script>
@@ -649,35 +535,20 @@
         <script src="{{ url_for('static', filename='js/db_queries.js') }}"></script>
         <script src="{{ url_for('static', filename='js/main.js') }}"></script>
 
-    
-    
-    
     </main>
 
-    <!-- Pied de page -->
     <footer class="bg-dark py-3">
         <div class="container">
             <div class="row align-items-center">
-                <!-- Texte de gauche -->
-                <div class="col-md-6 text-center text-md-start mb-2 mb-md-0">
-                    <p class="mb-0 text-white">Outil de Création d'Exercices Python</p>
-                </div>
-                <!-- Texte de droite -->
-                <div class="col-md-6 text-center text-md-end">
-                    <p class="mb-0 text-white-50">© 2025 - Julien Mateesco</p>
-                </div>
+                <div class="col-md-6 text-center text-md-start mb-2 mb-md-0"><p class="mb-0 text-white">Outil de Création d'Exercices Python</p></div>
+                <div class="col-md-6 text-center text-md-end"><p class="mb-0 text-white-50">© 2025 - Julien Mateesco</p></div>
             </div>
         </div>
     </footer>
-    <!-- Fin du pied de page -->
 
-    <!-- Inclusion du bundle JavaScript de Bootstrap -->
+    <!-- Bootstrap JS + CodeMirror -->
     <script src="{{ url_for('static', filename='assets/bootstrap/bootstrap.bundle.min.js') }}"></script>
-    
-    <!-- Inclusion de CodeMirror pour l'éditeur -->
     <script src="{{ url_for('static', filename='assets/codemirror/codemirror.min.js') }}"></script>
     <script src="{{ url_for('static', filename='assets/codemirror/mode/python/python.min.js') }}"></script>
-    
-  
 </body>
 </html>
