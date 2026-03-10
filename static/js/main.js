@@ -150,6 +150,15 @@ function toggleTheme() {
 }
 
 // --- Pan/Zoom helpers (globaux) ---
+
+function getCurrentLogin() {
+    return document.body?.dataset?.login ||
+           document.body?.dataset?.username ||
+           window.currentUserLogin ||
+           localStorage.getItem('user_login') ||
+           'user';
+}
+
 function isFlowchartVisible() {
     const container = document.getElementById('flowchart');
     if (!container) return false;
@@ -1432,6 +1441,18 @@ document.addEventListener('DOMContentLoaded', function() {
     const feedbackModalElement = document.getElementById('feedback-modal');
     feedbackModal = feedbackModalElement ? new bootstrap.Modal(feedbackModalElement) : null;
 
+    const inferredLogin =
+        document.body?.dataset?.login ||
+        document.body?.dataset?.username ||
+        document.getElementById('current-user-login')?.value ||
+        window.currentUserLogin ||
+        localStorage.getItem('user_login');
+
+    if (inferredLogin) {
+        window.currentUserLogin = inferredLogin;
+        localStorage.setItem('user_login', inferredLogin);
+    }
+
     // 4. Initialisation des composants UI avancés (Splitter, Resizer)
     initResizer();
     initHorizontalResizer();
@@ -1668,6 +1689,94 @@ document.addEventListener('DOMContentLoaded', function() {
                 updateGlobalConfigSelectors();
                 handleVisualInterdependencies();
             }, 100);
+        });
+    }
+
+    const downloadBtn = document.getElementById('download-code-btn');
+    if (downloadBtn) {
+        downloadBtn.addEventListener('click', () => {
+            if (!codeEditorInstance) return;
+            const code = codeEditorInstance.getValue();
+            const blob = new Blob([code], {type: "text/x-python"});
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            const login = getCurrentLogin();
+            const now = new Date();
+            const yyyy = now.getFullYear().toString();
+            const yy = yyyy[2] + yyyy[3];
+            const mm = String(now.getMonth() + 1).padStart(2, '0');
+            const dd = String(now.getDate()).padStart(2, '0');
+            a.download = `code_${login}_${dd}${mm}${yy}.py`;
+            document.body.appendChild(a);
+            a.click();
+            setTimeout(() => {
+                document.body.removeChild(a);
+                URL.revokeObjectURL(url);
+            }, 0);
+        });
+    }
+
+    const openFileBtn = document.getElementById('open-file-btn');
+    const fileInput = document.getElementById('file-input');
+    if (openFileBtn && fileInput) {
+        openFileBtn.addEventListener('click', () => fileInput.click());
+        fileInput.addEventListener('change', (e) => {
+            const file = e.target.files[0];
+            if (file && file.name.endsWith('.py')) {
+                const reader = new FileReader();
+                reader.onload = function(evt) {
+                    if (codeEditorInstance) {
+                        lastDiagramAstDump = "";
+                        document.getElementById('flowchart').innerHTML = '<p class="text-center text-muted mt-3">Nouveau fichier chargé. Cliquez sur "Lancer..." pour voir le diagramme et le défi.</p>';
+                        if (typeof resetChallengeInputs === 'function') {
+                            resetChallengeInputs(challengeVariablesContainer);
+                        }
+                        document.getElementById('check-answers-btn').disabled = true;
+                        document.getElementById('show-solution-btn').disabled = true;
+                        codeEditorInstance.setValue(evt.target.result);
+                        lastLoadedCode = evt.target.result;
+                        setDiagramAndChallengeCardState("default");
+                    }
+                };
+                reader.readAsText(file, "UTF-8");
+            } else {
+                alert("Choisissez un fichier .py UNIQUEMENT");
+            }
+            fileInput.value = "";
+        });
+    }
+
+    const shareBtn = document.getElementById('share-code-btn');
+    if (shareBtn) {
+        shareBtn.addEventListener('click', async () => {
+            if (!codeEditorInstance) return;
+            const code = codeEditorInstance.getValue();
+            try {
+                await navigator.clipboard.writeText(code);
+                shareBtn.classList.add('btn-success');
+                setTimeout(() => shareBtn.classList.remove('btn-success'), 1000);
+            } catch (err) {
+                alert("Impossible de copier dans le presse-papier.");
+            }
+        });
+    }
+
+    const reloadBtn = document.getElementById("reload-code-btn");
+    if (reloadBtn) {
+        reloadBtn.addEventListener('click', () => {
+            if (lastLoadedCode && codeEditorInstance) {
+                lastDiagramAstDump = "";
+                document.getElementById('flowchart').innerHTML = '<p class="text-center text-muted mt-3">Code rechargé. Cliquez sur "Lancer..." pour voir le diagramme et le défi.</p>';
+                if (typeof resetChallengeInputs === 'function') {
+                    resetChallengeInputs(challengeVariablesContainer);
+                }
+                document.getElementById('check-answers-btn').disabled = true;
+                document.getElementById('show-solution-btn').disabled = true;
+                codeEditorInstance.setValue(lastLoadedCode);
+                setDiagramAndChallengeCardState("default");
+                console.log("Code rechargé depuis la dernière sauvegarde. Diagramme invalidé.");
+            }
         });
     }
 

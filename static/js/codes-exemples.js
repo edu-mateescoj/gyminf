@@ -114,48 +114,65 @@ t.shape("turtle")
     },
 {
         name: "Erreur dans le maximum",
-        code: `def trouver_maximum(liste_nombres):
-    maximum_actuel = 0
-    for nombre in liste_nombres:
-        if nombre > maximum_actuel:
-            maximum_actuel = nombre
-        return maximum_actuel
+        code: `# Résultat attendu avec ces valeurs: 50
+# Quel est le résultat obtenu ?
+# Trouvez l'erreur et corrigez le code !!
+#
+def trouver_max(nombres):
+    max_val = 0
+    for nombre in nombres:
+        if nombre > max_val:
+            max_val = nombre
+        return max_val
         
-print(trouver_maximum([10, 50, 20]))
-# Résultat obtenu : 10
-# Résultat attendu : 50
-`},
+print("Le maximum est : ", trouver_max([10, 50, 20]))`},
 {
         name: "Erreur dans les félicitations",
-        code: `note = 5.5
+        code: `# Résultat attendu avec la note 19: "Félicitations"
+# Quel est le résultat obtenu ?
+# Trouvez l'erreur et corrigez le code !!
+#
+note = 19.0
 
-if note >= 4.0:
+if note >= 10.0:
     print("Admis")
-elif note >= 5.0:
-    print("Félicitations du jury")
+elif note >= 18.0:
+    print("Félicitations")
 else:
-    print("Recalé")
-
-# Résultat obtenu : "Admis"
-# Résultat attendu : "Félicitations du jury"
-`
+    print("Recalé")`
 },
 {
         name: "Erreur dans la moyenne",
-        code: `nombres = [12, 15, 20]
+        code: `# Résultat attendu avec ces valeurs: 15.666...
+# Quel est le résultat obtenu ?
+# Trouvez l'erreur et corrigez le code !!
+#
+nombres = [12, 15, 20]
+
 total = 0
 compteur = 0
 
 for n in nombres:
     total = total + n
+
 compteur = compteur + 1
 
 moyenne = total / compteur
-print(moyenne)
+print("La moyenne est : ", moyenne)`
+},
+{
+        name: "Erreur dans le comptage",
+        code: `# Résultat attendu ici: 3 mots
+# Quel est le résultat obtenu ?
+# Trouvez l'erreur et corrigez le code !!
+#
+mots = ["chat", "chien", "oiseau"]
 
-# Résultat obtenu : 47.0
-# Résultat attendu : 15.66...
-`
+for mot in mots:
+    compteur = 0
+    if len(mot) > 3:
+        compteur = compteur + 1
+print(compteur,"mots(s) de plus de 3 lettres.")`
 }
 
 ];
