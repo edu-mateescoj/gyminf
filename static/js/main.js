@@ -30,6 +30,8 @@ const BUILTINS_ADVANCED = [
     { id: 'builtin-max', label: 'max()' },
     { id: 'builtin-sum', label: 'sum()' }
 ];
+// Ajout : flag de désactivation du menu builtins
+const BUILTINS_MENU_DISABLED = true;
 
 // --- Templates HTML pour les options ---
 const conditionsOptionsHTML_Base = `
@@ -719,7 +721,8 @@ function populateBuiltinOptionsColumns(wrapper) {
  * @param {HTMLElement} funcOptionsContainer - Le conteneur des options de fonctions.
  */
 function setupFunctionOptionsExtras(funcOptionsContainer) {
-    if (!funcOptionsContainer) return;
+    // --- MENU BUILTINS DÉSACTIVÉ TEMPORAIREMENT ---
+    if (BUILTINS_MENU_DISABLED) return;
     const builtinsMainContainer = funcOptionsContainer.querySelector('#func-builtins-main-container');
     if (builtinsMainContainer) {
         createBuiltinsMainCheckbox(builtinsMainContainer);
@@ -968,7 +971,7 @@ function initializeDynamicSyntaxOptions() {
                 if (internalContainer && section.advancedHandler) {
                     section.advancedHandler(internalContainer, advancedModeCheckbox.checked);
                 }
-                if (section.specialSetup) { // Appel des configurations spécifiques
+                if (section.specialSetup && !BUILTINS_MENU_DISABLED) { // Appel des configurations spécifiques
                     section.specialSetup(internalContainer);
                 }
             } else {
@@ -1630,8 +1633,14 @@ document.addEventListener('DOMContentLoaded', function() {
             const condContainer = document.querySelector('#conditions-options-container > .d-flex.flex-column.gap-1'); if (condContainer) addAdvancedConditionOptionsIfNeeded(condContainer, isAdvanced);
             const loopContainer = document.querySelector('#loops-options-container > .d-flex.flex-column.gap-1'); if (loopContainer) addAdvancedLoopOptionsIfNeeded(loopContainer, isAdvanced);
             const funcBaseOptsContainer = document.querySelector('#functions-options-container > .d-flex.flex-column.gap-1'); if (funcBaseOptsContainer) addAdvancedFunctionOptionsIfNeeded(funcBaseOptsContainer, isAdvanced);
-            const funcBuiltinsCheckbox = document.getElementById('func-builtins'); const builtinsOptionsWrapper = document.getElementById('func-builtins-options-wrapper');
-            if (funcBuiltinsCheckbox && funcBuiltinsCheckbox.checked && builtinsOptionsWrapper) populateBuiltinOptionsColumns(builtinsOptionsWrapper);
+            // --- MENU BUILTINS DÉSACTIVÉ TEMPORAIREMENT ---
+            if (!BUILTINS_MENU_DISABLED) {
+                const funcBuiltinsCheckbox = document.getElementById('func-builtins');
+                const builtinsOptionsWrapper = document.getElementById('func-builtins-options-wrapper');
+                if (funcBuiltinsCheckbox && funcBuiltinsCheckbox.checked && builtinsOptionsWrapper) {
+                    populateBuiltinOptionsColumns(builtinsOptionsWrapper);
+                }
+            }
             updateGlobalConfigSelectors(); handleVisualInterdependencies();
         });
     }
