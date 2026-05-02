@@ -62,25 +62,22 @@ class ControlFlowGraph:
 
     def _normalize_assignment_entry_type(self, assigned_ast_type: type, assigned_value_or_desc: Any) -> str:
         """
-        Convertit une entrée de self.variable_assignments vers un type simple:
-        'int' | 'float' | 'str' | 'bool' | 'list' | 'unknown'
+        Convertit une entrée de self.variable_assignments vers un type simple.
         """
         allowed = {"int", "float", "str", "bool", "list", "unknown"}
 
-        # Si déjà normalisé
         if isinstance(assigned_value_or_desc, str) and assigned_value_or_desc in allowed:
             return assigned_value_or_desc
 
         if assigned_ast_type == ast.Constant:
-            v = assigned_value_or_desc
-            # bool doit être testé avant int (bool est un sous-type de int en Python)
-            if isinstance(v, bool):
+            value = assigned_value_or_desc
+            if isinstance(value, bool):
                 return "bool"
-            if isinstance(v, int):
+            if isinstance(value, int):
                 return "int"
-            if isinstance(v, float):
+            if isinstance(value, float):
                 return "float"
-            if isinstance(v, str):
+            if isinstance(value, str):
                 return "str"
             return "unknown"
 
@@ -101,7 +98,6 @@ class ControlFlowGraph:
             if "list" in low or "liste" in low:
                 return "list"
             if "nombre" in low:
-                # nombre peut être int ou float -> ambigu
                 return "unknown"
 
         return "unknown"
@@ -111,14 +107,14 @@ class ControlFlowGraph:
         Infère le type simple d'une expression d'assignation.
         """
         if isinstance(value_node, ast.Constant):
-            v = value_node.value
-            if isinstance(v, bool):
+            value = value_node.value
+            if isinstance(value, bool):
                 return "bool"
-            if isinstance(v, int):
+            if isinstance(value, int):
                 return "int"
-            if isinstance(v, float):
+            if isinstance(value, float):
                 return "float"
-            if isinstance(v, str):
+            if isinstance(value, str):
                 return "str"
             return "unknown"
 
@@ -127,12 +123,11 @@ class ControlFlowGraph:
 
         if isinstance(value_node, ast.Name):
             if value_node.id in self.variable_assignments:
-                t_ast, t_val = self.variable_assignments[value_node.id]
-                return self._normalize_assignment_entry_type(t_ast, t_val)
+                assigned_ast_type, assigned_value_or_desc = self.variable_assignments[value_node.id]
+                return self._normalize_assignment_entry_type(assigned_ast_type, assigned_value_or_desc)
             return "unknown"
 
         if isinstance(value_node, ast.Call) and isinstance(value_node.func, ast.Name):
-            fn = value_node.func.id
             builtin_map = {
                 "int": "int",
                 "float": "float",
@@ -144,7 +139,7 @@ class ControlFlowGraph:
                 "ord": "int",
                 "chr": "str",
             }
-            return builtin_map.get(fn, "unknown")
+            return builtin_map.get(value_node.func.id, "unknown")
 
         if isinstance(value_node, ast.Compare):
             return "bool"
@@ -155,45 +150,44 @@ class ControlFlowGraph:
         if isinstance(value_node, ast.UnaryOp):
             if isinstance(value_node.op, ast.Not):
                 return "bool"
-            operand_t = self._infer_type_from_value_node(value_node.operand)
-            if isinstance(value_node.op, (ast.UAdd, ast.USub)) and operand_t in ("int", "float"):
-                return operand_t
+            operand_type = self._infer_type_from_value_node(value_node.operand)
+            if isinstance(value_node.op, (ast.UAdd, ast.USub)) and operand_type in ("int", "float"):
+                return operand_type
             return "unknown"
 
         if isinstance(value_node, ast.BinOp):
-            lt = self._infer_type_from_value_node(value_node.left)
-            rt = self._infer_type_from_value_node(value_node.right)
+            left_type = self._infer_type_from_value_node(value_node.left)
+            right_type = self._infer_type_from_value_node(value_node.right)
 
-            # Numérique
-            if lt in ("int", "float") and rt in ("int", "float"):
-                if "float" in (lt, rt):
+            if left_type in ("int", "float") and right_type in ("int", "float"):
+                if "float" in (left_type, right_type):
                     return "float"
                 return "int"
 
-            # Concaténations simples
-            if lt == "str" and rt == "str" and isinstance(value_node.op, ast.Add):
+            if left_type == "str" and right_type == "str" and isinstance(value_node.op, ast.Add):
                 return "str"
-            if lt == "list" and rt == "list" and isinstance(value_node.op, ast.Add):
+
+            if left_type == "list" and right_type == "list" and isinstance(value_node.op, ast.Add):
                 return "list"
 
             return "unknown"
 
         if isinstance(value_node, ast.IfExp):
-            bt = self._infer_type_from_value_node(value_node.body)
-            et = self._infer_type_from_value_node(value_node.orelse)
-            return bt if bt == et else "unknown"
+            body_type = self._infer_type_from_value_node(value_node.body)
+            else_type = self._infer_type_from_value_node(value_node.orelse)
+            return body_type if body_type == else_type else "unknown"
 
         return "unknown"
 
     def get_variable_types(self) -> Dict[str, str]:
         """
-        Retourne un dictionnaire simple: variable -> type ('int', 'float', 'str', 'bool', 'list', 'unknown').
+        Retourne un dictionnaire simple: variable -> type.
         """
         detected: Dict[str, str] = {}
         for var_name, (assigned_ast_type, assigned_value_or_desc) in self.variable_assignments.items():
             detected[var_name] = self._normalize_assignment_entry_type(assigned_ast_type, assigned_value_or_desc)
         return detected
-
+        
     def get_node_id(self) -> str:
         """Génère un nouvel ID de nœud unique et l'ajoute à la portée de fonction actuelle si applicable."""
         self.node_counter += 1
@@ -488,6 +482,10 @@ class ControlFlowGraph:
         """
         Visite une boucle 'for' AST en utilisant une structure détaillée unifiée.
         Si l'itérable est un range() avec des arguments littéraux, il est traité comme une liste explicite.
+
+        Cette méthode est le point d'entrée actif pour toutes les boucles 'for'.
+        Elle a remplacé l'ancien helper _visit_for_generic_iterable afin de garder
+        une seule logique CFG pour les littéraux, les variables et les range().
         """
         iterator_variable_str = ast.unparse(node.target).replace('"', '"')
         iterable_node = node.iter # L'objet AST de l'itérable
@@ -518,15 +516,13 @@ class ControlFlowGraph:
         #   pass
 
 
-        current_parent_for_loop_structure = parent_id
         entry_decision_id = None 
 
         if not skip_first_check:
             # 1. Première Décision: Y a-t-il des éléments à traiter ?
-            # Utiliser une formulation neutre pour le type d'itérable.
             entry_decision_label = (
-                f"{iterable_kind_desc.capitalize()} {iterable_display_name}"
-                f"<br>contient des {elements_type_desc_raw}s ?"
+                f"{iterable_display_name}<br>"
+                f"contient {self._format_entry_elements_phrase(elements_type_desc_raw)} ?"
             )
             entry_decision_id = self.add_node(entry_decision_label, node_type="Decision")
             self.add_edge(parent_id, entry_decision_id)
@@ -551,35 +547,29 @@ class ControlFlowGraph:
         retest_decision_label = f"Encore {article_indefini_element} {elements_type_desc_raw}<br>dans {iterable_display_name} ?"
         retest_decision_id = self.add_node(retest_decision_label, node_type="Decision")
         
+        next_element_phrase = self._join_article_and_noun(article_defini_element, elements_type_desc_raw)
         if article_indefini_element == "un":
-            next_var_label = f"{iterator_variable_str} ← {article_defini_element} {elements_type_desc_raw} suivant<br>de {iterable_display_name}"
+            next_var_label = f"{iterator_variable_str} ← {next_element_phrase} suivant<br>de {iterable_display_name}"
         elif article_indefini_element == "une":
-            next_var_label = f"{iterator_variable_str} ← {article_defini_element} {elements_type_desc_raw} suivante<br>de {iterable_display_name}"
+            next_var_label = f"{iterator_variable_str} ← {next_element_phrase} suivante<br>de {iterable_display_name}"
         else: # "des" ou autre
-            next_var_label = f"{iterator_variable_str} ← {article_defini_element} {elements_type_desc_raw}s suivants<br>de {iterable_display_name}"
-        
-        # Nœud "prendre le suivant"
+            next_var_label = f"{iterator_variable_str} ← {next_element_phrase}s suivants<br>de {iterable_display_name}"
         next_var_id = self.add_node(next_var_label, node_type="Process")
 
-        # Noeud de sortie unique de la boucle (cible de break et des branches "Non")
+        # --- Connexions et Flux ---
         loop_exit_id = self.add_node(".", node_type="Junction")
 
-        # --- Connexions et Flux ---
-        loop_overall_exit_points: List[str] = []        
         if entry_decision_id:
-            # Traitement explicite. Si pas d'élément dès le départ : sortie de boucle
-            self.add_edge(entry_decision_id, loop_exit_id, "Non")        
-        
-        # Configuration de la pile pour break/continue (-> destination)
-        # pour continue -> retest (re-check avant de "prendre le suivant")
-        # pour break    -> loop_exit_id (sortie de boucle explicite)
-        # pour retest   -> retest_decision_id (cible de re-test après le corps)
+            self.add_edge(entry_decision_id, loop_exit_id, "Non")
+
+        # continue -> retest_decision_id
+        # break -> sortie explicite de la boucle
+        # retest (après le corps) -> retest_decision_id
         self.loop_stack.append((retest_decision_id, loop_exit_id, retest_decision_id))
 
         # Visiter le corps de la boucle
         body_exit_nodes: List[str] = []
         first_node_of_body: Optional[str] = None
-
         if node.body:
             nodes_before_body = {nid for nid, _ in self.nodes}
             # Le corps de la boucle commence après l'initialisation de la variable (init_var_id)
@@ -601,7 +591,6 @@ class ControlFlowGraph:
             for exit_node in body_exit_nodes:
                 if exit_node not in self.terminal_nodes:
                     self.add_edge(exit_node, retest_decision_id)
-        
         else: 
             # Corps vide : init_var_id mène directement au retest_decision_id
             self.add_edge(init_var_id, retest_decision_id)
@@ -609,8 +598,7 @@ class ControlFlowGraph:
 
         # Connexion de la deuxième décision (retest_decision_id)
         self.add_edge(retest_decision_id, next_var_id, "Oui") # Si encore des éléments, prendre le suivant
-        # Fin normale de boucle (plus d'éléments)
-        self.add_edge(retest_decision_id, loop_exit_id, "Non") 
+        self.add_edge(retest_decision_id, loop_exit_id, "Non")
 
         # L'élément suivant (next_var_id) retourne au début du traitement du corps.
         if first_node_of_body: # Si le corps n'était pas vide et qu'on a identifié son début
@@ -622,50 +610,28 @@ class ControlFlowGraph:
         else: # Corps vide, next_var_id retourne directement au retest
             self.add_edge(next_var_id, retest_decision_id)
 
-        # --- Branches de fin de boucle ---
-        # Par défaut : fin normale => sortie unique
+        # Le bloc else n'est pris que sur terminaison naturelle de la boucle.
+        # Les sorties du else rejoignent ensuite la jonction de sortie unique.
         retest_non_target = loop_exit_id
-
-        # Si un "for ... else" existe, la fin normale (Non) mène à orelse.
         if node.orelse:
-            ## orelse est exécuté après que retest_decision_id est "Non" (et si pas de break).
-            ## On doit s'assurer que retest_decision_id n'est plus une sortie directe si orelse existe.
-            #if retest_decision_id in loop_overall_exit_points:
-            #    loop_overall_exit_points.remove(retest_decision_id)
-            
-            # Labelliser l'arête retest_decision_id -> début de orelse avec "Non"
-            nodes_before_orelse = {nid for nid,_ in self.nodes}
+            nodes_before_orelse = {nid for nid, _ in self.nodes}
             orelse_exit_nodes = self.visit_body(node.orelse, [retest_decision_id])
             nodes_after_orelse = {nid for nid, _ in self.nodes}
             new_nodes_in_orelse = sorted(
-                list(nodes_after_orelse - nodes_before_orelse), 
-                key=lambda x: int(x.replace("node",""))
-                )
-            
-            if new_nodes_in_orelse:
-                first_node_orelse  = new_nodes_in_orelse[0]
-                retest_non_target = first_node_orelse
+                list(nodes_after_orelse - nodes_before_orelse),
+                key=lambda x: int(x.replace("node", ""))
+            )
 
+            if new_nodes_in_orelse:
+                first_node_orelse = new_nodes_in_orelse[0]
+                retest_non_target = first_node_orelse
                 if (retest_decision_id, first_node_orelse, "") in self.edges:
                     self.edges.remove((retest_decision_id, first_node_orelse, ""))
-                self.add_edge(retest_decision_id, first_node_orelse, "Non") 
-            elif not orelse_exit_nodes : # orelse est vide mais existe
-                 # La branche "Non" de retest_decision_id doit mener à la suite.
-                 # On la remet comme point de sortie.
-                 loop_overall_exit_points.append(retest_decision_id)
-            else:
-                # orelse vide : on sort comme d’habitude
-                retest_non_target = loop_exit_id            
-            
-            # Toute sortie "normale" du orelse rejoint la sortie unique du for
+
             for exit_node in orelse_exit_nodes:
                 if exit_node not in self.terminal_nodes:
                     self.add_edge(exit_node, loop_exit_id)
-            
-            ## Les sorties de orelse sont des sorties globales de la structure for.
-            #loop_overall_exit_points.extend(orelse_exit_nodes)
-        
-        self.add_edge(retest_decision_id, next_var_id, "Oui")
+
         self.add_edge(retest_decision_id, retest_non_target, "Non")
 
         self.loop_stack.pop() # Fin de la gestion de cette boucle.
@@ -673,222 +639,77 @@ class ControlFlowGraph:
     
 
     def _visit_for_generic_iterable(self, node: ast.For, parent_id: str, iterator_variable_str: str) -> List[str]:
-        """Visite une boucle 'for' avec un itérable générique : PAS un range() explicite.
-        Détaille la structure itérable & itérateur pour une description pédagogique.
-        Formulations à discuter..."""
+        """
+        Compatibilité héritée: cet ancien helper n'est plus utilisé par visit_For.
 
-        iterable_type_desc, elements_type_desc, iterable_display_name = \
-            self._get_iterable_description(node.iter)
+        Historique:
+        - il portait autrefois une logique CFG séparée pour les for sur itérables
+          génériques, distincte des cas range()
+        - la logique active a ensuite été unifiée dans visit_For pour éviter deux
+          implémentations concurrentes du même flux
 
-        # --- Nœuds de la structure de boucle ---
-        # 1. Première Décision: Y a-t-il des éléments ?
-        entry_decision_label = f"{iterable_type_desc} '{iterable_display_name}'<br>a des {elements_type_desc}s à traiter ?"
-        entry_decision_id = self.add_node(entry_decision_label, node_type="Decision")
-        self.add_edge(parent_id, entry_decision_id)
-
-        # 2. Initialisation de la variable locale au premier élément (si True à la première décision de rentrée dans l'itérable)
-        init_var_label = f"{iterator_variable_str} ← premier {elements_type_desc}<br>de la {iterable_type_desc} '{iterable_display_name}'"
-        init_var_id = self.add_node(init_var_label, node_type="Process")
-        # L'arête entry_decision_id --True--> init_var_id sera ajoutée après avoir identifié init_var_id
-
-        # Deux types de nœuds pour la suite de la structure
-        # test: on itère ? 
-        retest_decision_label = f"Encore un {elements_type_desc} à traiter<br>dans la {iterable_type_desc} '{iterable_display_name}' ?"
-        retest_decision_id = self.add_node(retest_decision_label, node_type="Decision")
-        # au cas où on itère:
-        next_var_label = f"{iterator_variable_str} ← {elements_type_desc} suivant<br>de la {iterable_type_desc} '{iterable_display_name}'"
-        next_var_id = self.add_node(next_var_label, node_type="Process")
-
-        loop_exit_id = self.add_node(".", node_type="Junction")
-
-        # --- Connexions ---
-        #
-        # Si pas d'éléments dès le départ
-        self.add_edge(entry_decision_id, loop_exit_id, "Non")
-        # Fin normale de boucle
-        self.add_edge(retest_decision_id, loop_exit_id, "Non")
-        loop_overall_exit_points: List[str] = []        
-        
-        ## Connexion de la première décision (entry_decision_id)
-        self.add_edge(entry_decision_id, init_var_id, "Oui") # Si éléments existent, initialiser
-        loop_overall_exit_points.append(entry_decision_id)   # La branche "False" de entry_decision_id est une sortie
-
-        ## Mettre à jour la pile des boucles
-        ##1. continue_target: retest_decision_id (on re-teste s'il y a un suivant AVANT de prendre le suivant)
-        ##2. break_target: retest_decision_id (la sortie "False" de ce test est la sortie de boucle)
-        ##3. retest_target (après le corps): retest_decision_id
-        #self.loop_stack.append((retest_decision_id, retest_decision_id, retest_decision_id))
-        
-        # continue -> retest (re-check)
-        # break    -> loop_exit_id (sortie définitive)
-        self.loop_stack.append((retest_decision_id, loop_exit_id, retest_decision_id))
-
-        # 3. VISITER LE CORPS DE LA BOUCLE
-        # Le corps commence APRÈS l'initialisation de la variable avec le premier élément (init_var_id).
-        body_exit_nodes: List[str] = []
-        first_node_of_body: Optional[str] = None
-
-        if node.body:
-            nodes_before_body = {nid for nid, _ in self.nodes}
-            # Le corps est visité en partant de init_var_id
-            body_exit_nodes = self.visit_body(node.body, [init_var_id])
-            nodes_after_body = {nid for nid, _ in self.nodes}
-            new_nodes_in_body = sorted(
-                list(nodes_after_body - nodes_before_body),
-                key=lambda x: int(x.replace("node", ""))
-            )
-            if new_nodes_in_body:
-                first_node_of_body = new_nodes_in_body[0]
-            
-            # Bouclage : les fins normales du corps (non terminales) retournent au test
-            for exit_node in body_exit_nodes:
-                if exit_node not in self.terminal_nodes:
-                    self.add_edge(exit_node, while_decision_id) 
-        #else:
-            # Corps vide : boucle infinie sur elle-même
-            #self.add_edge(while_decision_id, while_decision_id, "Oui")
-
-        # Gestion propre de l'étiquette "Oui": Labelliser l’arête du test vers le corps en "Oui"
-        if first_node_of_body:
-            # Supprimer l'arête non nommée créée par visit_body pour mettre "Oui"
-            if (while_decision_id, first_node_of_body, "") in self.edges: 
-                self.edges.remove((while_decision_id, first_node_of_body, ""))
-            self.add_edge(while_decision_id, first_node_of_body, "Oui")
-        else:
-            # Corps vide: si condition vraie, on reboucle immédiatement sur le test
-            self.add_edge(while_decision_id, while_decision_id, "Oui")
-        
-        # --- Gestion de la sortie Branche "Non" (fin naturelle) et Orelse ---
-        
-        # Par défaut : Si condition Fausse -> on va à la sortie unique
-        target_for_false_branch = loop_exit_id
-
-        # Si while-else existe, la fin naturelle va vers orelse
-        if node.orelse:
-            # S'il y a un bloc 'else', la sortie "Non" va d'abord dans ce bloc
-            nodes_before_orelse = {nid for nid, _ in self.nodes}
-            orelse_exit_nodes = self.visit_body(node.orelse, [while_decision_id]) 
-            nodes_after_orelse = {nid for nid, _ in self.nodes}
-            
-            new_nodes_in_orelse = sorted(list(nodes_after_orelse - nodes_before_orelse), key=lambda x: int(x.replace("node", "")))
-            
-            if new_nodes_in_orelse:
-                first_node_orelse = new_nodes_in_orelse[0]
-                # On redirige la cible "Non" vers le début du else
-                target_for_false_branch = first_node_orelse
-                
-                # Nettoyage de l'arête automatique créée par visit_body
-                if (while_decision_id, first_node_orelse, "") in self.edges:
-                    self.edges.remove((while_decision_id, first_node_orelse, ""))
-            else:
-            # orelse vide -> comportement identique à pas de orelse
-                target_for_false_branch = loop_exit_id
-
-            # Les sorties normales du orelse vont à la sortie unique (jonction)
-            for exit_node in orelse_exit_nodes:
-                if exit_node not in self.terminal_nodes:
-                    self.add_edge(exit_node, loop_exit_id)
-
-        # Labelliser explicitement la branche "Non" (fin naturelle):
-        # Création de l'arête "Non" finale (soit vers Exit, soit vers Else)
-        self.add_edge(while_decision_id, target_for_false_branch, "Non")
-            
-        self.loop_stack.pop() # Dépiler le contexte de la boucle
-        
-        return [loop_exit_id]
+        Contrat actuel:
+        - on conserve la méthode pour documenter l'ancien point d'extension et
+          éviter une suppression brutale
+        - si un appel réapparaît par erreur lors d'un futur refactor, on délègue
+          immédiatement vers visit_For au lieu de réactiver une logique périmée
+        """
+        _ = iterator_variable_str
+        return self.visit_For(node, parent_id)
     
     def visit_While(self, node: ast.While, parent_id: str) -> List[str]: 
-        """
-        Visite une boucle 'while' AST.
-        Gère le flux avec support pour Break/Continue et Else.
-        """
-        # Noeud de test
+        """Visite une boucle 'while' AST."""
         condition_text = ast.unparse(node.test).replace('"', '"')
         while_decision_id = self.add_node(f"{condition_text}", node_type="Decision")
         self.add_edge(parent_id, while_decision_id)
-        
-        # Point de convergence (sortie unique) pour les 'break' et la fin normale 'Non'
+
         loop_exit_id = self.add_node(".", node_type="Junction")
 
-        # Pile pour les sauts : (continue -> test, break -> sortie, retest -> test)
-        # continue_target = while_decision_id (retest)
-        # break_target    = loop_exit_id      (sortie définitive)
-        # retest_target   = while_decision_id (après corps)
+        # continue_target et retest_target -> while_decision_id
+        # break_target -> sortie explicite de la boucle
         self.loop_stack.append((while_decision_id, loop_exit_id, while_decision_id))
 
-        # --- Corps de la boucle (Branche "Oui") ---
-        first_node_of_body: Optional[str] = None
-        body_exit_nodes: List[str] = []
-
+        # Visiter le corps (branche "True").
+        true_branch_first_node_id: Optional[str] = None
         if node.body:
-            nodes_before_body = {nid for nid, _ in self.nodes}
-            # Appel récursif pour le corps
+            nodes_before_body = {nid for nid,_ in self.nodes}
             body_exit_nodes = self.visit_body(node.body, [while_decision_id]) 
-            nodes_after_body = {nid for nid, _ in self.nodes}
-            
-            # Identifier le premier noeud pour l'étiquette "Oui"
-            new_nodes_in_body = sorted(
-                list(nodes_after_body - nodes_before_body), 
-                key=lambda x: int(x.replace("node", ""))
-                )
+            nodes_after_body = {nid for nid,_ in self.nodes}
+            new_nodes_in_body = sorted(list(nodes_after_body - nodes_before_body), key=lambda x: int(x.replace("node","")))
             if new_nodes_in_body:
-                first_node_of_body = new_nodes_in_body[0]
+                true_branch_first_node_id = new_nodes_in_body[0]
             
-            # Bouclage : les fins normales du corps (non terminales) retournent au test
+            # Les sorties normales du corps retournent au test.
             for exit_node in body_exit_nodes:
                 if exit_node not in self.terminal_nodes:
                     self.add_edge(exit_node, while_decision_id) 
-        #else:
-            # Corps vide : boucle infinie sur elle-même
-            #self.add_edge(while_decision_id, while_decision_id, "Oui")
-
-        # Gestion propre de l'étiquette "Oui": Labelliser l’arête du test vers le corps en "Oui"
-        if first_node_of_body:
-            # Supprimer l'arête non nommée créée par visit_body pour mettre "Oui"
-            if (while_decision_id, first_node_of_body, "") in self.edges: 
-                self.edges.remove((while_decision_id, first_node_of_body, ""))
-            self.add_edge(while_decision_id, first_node_of_body, "Oui")
-        else:
-            # Corps vide: si condition vraie, on reboucle immédiatement sur le test
+        
+        if true_branch_first_node_id:
+            if (while_decision_id, true_branch_first_node_id, "") in self.edges: 
+                self.edges.remove((while_decision_id, true_branch_first_node_id, ""))
+            self.add_edge(while_decision_id, true_branch_first_node_id, "Oui")
+        elif not node.body: # Corps vide, "Oui" revient directement au test.
             self.add_edge(while_decision_id, while_decision_id, "Oui")
-        
-        # --- Gestion de la sortie Branche "Non" (fin naturelle) et Orelse ---
-        
-        # Par défaut : Si condition Fausse -> on va à la sortie unique
-        target_for_false_branch = loop_exit_id
 
-        # Si while-else existe, la fin naturelle va vers orelse
+        # Gérer 'orelse' (sortie "False").
+        false_branch_target = loop_exit_id
         if node.orelse:
-            # S'il y a un bloc 'else', la sortie "Non" va d'abord dans ce bloc
-            nodes_before_orelse = {nid for nid, _ in self.nodes}
+            nodes_before_orelse = {nid for nid,_ in self.nodes}
             orelse_exit_nodes = self.visit_body(node.orelse, [while_decision_id]) 
-            nodes_after_orelse = {nid for nid, _ in self.nodes}
-            
-            new_nodes_in_orelse = sorted(list(nodes_after_orelse - nodes_before_orelse), key=lambda x: int(x.replace("node", "")))
-            
+            nodes_after_orelse = {nid for nid,_ in self.nodes}
+            new_nodes_in_orelse = sorted(list(nodes_after_orelse - nodes_before_orelse), key=lambda x: int(x.replace("node","")))
             if new_nodes_in_orelse:
-                first_node_orelse = new_nodes_in_orelse[0]
-                # On redirige la cible "Non" vers le début du else
-                target_for_false_branch = first_node_orelse
-                
-                # Nettoyage de l'arête automatique créée par visit_body
-                if (while_decision_id, first_node_orelse, "") in self.edges:
-                    self.edges.remove((while_decision_id, first_node_orelse, ""))
-            else:
-            # orelse vide -> comportement identique à pas de orelse
-                target_for_false_branch = loop_exit_id
+                false_branch_target = new_nodes_in_orelse[0]
+                if (while_decision_id, false_branch_target, "") in self.edges: 
+                    self.edges.remove((while_decision_id, false_branch_target, ""))
 
-            # Les sorties normales du orelse vont à la sortie unique (jonction)
             for exit_node in orelse_exit_nodes:
                 if exit_node not in self.terminal_nodes:
                     self.add_edge(exit_node, loop_exit_id)
 
-        # Labelliser explicitement la branche "Non" (fin naturelle):
-        # Création de l'arête "Non" finale (soit vers Exit, soit vers Else)
-        self.add_edge(while_decision_id, target_for_false_branch, "Non")
-            
-        self.loop_stack.pop() # Dépiler le contexte de la boucle
-        
+        self.add_edge(while_decision_id, false_branch_target, "Non")
+
+        self.loop_stack.pop()
         return [loop_exit_id]
 
     def visit_Return(self, node: ast.Return, parent_id: str) -> List[str]:
@@ -900,48 +721,22 @@ class ControlFlowGraph:
         return [return_node_id] 
 
     def visit_Break(self, node: ast.Break, parent_id: str) -> List[str]: 
-        """
-        Objectif CFG:
-        - Créer un noeud Jump "Break"
-        - Ajouter l'arête explicite vers break_target la cible de sortie de la boucle courante.
-        - Marquer le noeud comme terminal (fait par visit()).
-
-        Remarque:
-        - add_edge autorise des arêtes sortantes depuis un noeud terminal
-        si son type est "Jump"ou "Return" (cf. add_edge()).
-        """
+        """Visite une instruction 'break' AST."""
         break_node_id = self.add_node("Break", node_type="Jump")
         self.add_edge(parent_id, break_node_id)
-        
         if self.loop_stack:
-            # loop_stack: (continue_target, break_target, retest_target)
-            _, break_target, _ = self.loop_stack[-1]
-            # Visualiser explicitement le saut.
-            # Label optionnel: "break" pour la lisibilité
-            self.add_edge(break_node_id, break_target, "break")
-        else:
-            # Cas pathologique : break hors boucle (ne devrait pas arriver si AST valide)
-            # On ne connecte pas de cible pour éviter de polluer le graphe.
-            pass
-
-        return [break_node_id]
+            _, loop_exit_target, _ = self.loop_stack[-1]
+            self.add_edge(break_node_id, loop_exit_target, "break")
+        return [break_node_id] # visit() le marquera comme terminal.
 
     def visit_Continue(self, node: ast.Continue, parent_id: str) -> List[str]: 
-        """
-        continue :
-        - crée un noeud Jump "Continue"
-        - saute explicitement vers le re-test de la boucle (continue_target)
-        * for   -> retest_decision_id ("Encore un élément ?")
-        * while -> while_decision_id (condition)
-        """
+        """Visite une instruction 'continue' AST."""
         continue_node_id = self.add_node("Continue", node_type="Jump")
         self.add_edge(parent_id, continue_node_id)
-
         if self.loop_stack:
             loop_continue_target, _, _ = self.loop_stack[-1]
             self.add_edge(continue_node_id, loop_continue_target) # Explicitement connecter à la cible du continue.
         # else: # 'continue' en dehors d'une boucle (erreur Python).
-        
         return [continue_node_id] # visit() le marquera comme terminal.
 
     def generic_visit(self, node: ast.AST, parent_id: str) -> List[str]:
@@ -971,6 +766,104 @@ class ControlFlowGraph:
                 self.add_edge(parent_id, new_node_id)
             return [new_node_id]
 
+    def _get_constant_element_type(self, value: Any) -> str:
+        """Retourne un libellé court pour le type d'un élément littéral."""
+        if isinstance(value, bool):
+            return "booléen"
+        if isinstance(value, (int, float)):
+            return "nombre"
+        if isinstance(value, str):
+            return "caractère" if len(value) == 1 else "chaîne"
+        return "élément"
+
+    def _get_collection_element_type(self, collection_node: ast.AST) -> str:
+        """Infère un type d'élément homogène pour une collection littérale."""
+        element_nodes = getattr(collection_node, "elts", [])
+        if not element_nodes:
+            return "élément"
+
+        element_types_seen: Set[str] = set()
+        for element_node in element_nodes:
+            current_element_type = "élément"
+            if isinstance(element_node, ast.Constant):
+                current_element_type = self._get_constant_element_type(element_node.value)
+            # Les nombres signés sont représentés par UnaryOp(Constant(...)) dans l'AST.
+            # Sans ce cas, une liste homogène comme [5, -3, 4] devient à tort "mixte".
+            elif isinstance(element_node, ast.UnaryOp) and isinstance(element_node.op, (ast.UAdd, ast.USub)):
+                operand_node = element_node.operand
+                if isinstance(operand_node, ast.Constant) and isinstance(operand_node.value, (int, float)):
+                    current_element_type = "nombre"
+            elif isinstance(element_node, ast.Name):
+                current_element_type = "variable"
+            element_types_seen.add(current_element_type)
+
+        if len(element_types_seen) == 1:
+            return element_types_seen.pop()
+        if len(element_types_seen) > 1:
+            return "élément mixte"
+        return "élément"
+
+    def _get_plural_element_type(self, element_type: str) -> str:
+        """Normalise les pluriels utilisés dans les libellés Mermaid."""
+        plural_map = {
+            "caractère": "caractères",
+            "nombre": "nombres",
+            "chaîne": "chaînes",
+            "booléen": "booléens",
+            "clé": "clés",
+            "variable": "variables",
+            "élément": "éléments",
+            "élément mixte": "éléments mixtes",
+        }
+        return plural_map.get(element_type, f"{element_type}s")
+
+    def _describe_collection_assignment(self, collection_node: ast.AST) -> str:
+        """Stocke une description exploitable des éléments d'une collection nommée."""
+        container_names = {
+            ast.List: "liste",
+            ast.Tuple: "tuple",
+            ast.Set: "ensemble",
+        }
+        container_name = container_names.get(type(collection_node), "collection")
+        if not getattr(collection_node, "elts", []):
+            return f"{container_name} vide"
+
+        element_type = self._get_collection_element_type(collection_node)
+        if element_type == "élément mixte":
+            return f"{container_name} mixte"
+        return f"{container_name} de {self._get_plural_element_type(element_type)}"
+
+    def _get_element_type_from_assignment_description(self, description: Any) -> str:
+        """Relit les descriptions stockées par visit_Assign pour retrouver le type d'élément."""
+        if not isinstance(description, str):
+            return "élément"
+
+        if "caractères" in description:
+            return "caractère"
+        if "nombres" in description:
+            return "nombre"
+        if "chaînes" in description:
+            return "chaîne"
+        if "booléens" in description:
+            return "booléen"
+        if "clés" in description:
+            return "clé"
+        if "variables" in description:
+            return "variable"
+        if "mixte" in description:
+            return "élément mixte"
+        return "élément"
+
+    def _join_article_and_noun(self, article: str, noun: str) -> str:
+        """Assemble correctement un article et un nom, y compris pour l'."""
+        if article == "l'":
+            return f"{article}{noun}"
+        return f"{article} {noun}"
+
+    def _format_entry_elements_phrase(self, element_type: str) -> str:
+        """Retourne une forme courte pour les questions d'entrée de boucle."""
+        return f"des {self._get_plural_element_type(element_type)}"
+
     def visit_Assign(self, node: ast.Assign, parent_id: str) -> List[str]:
         """Visite une instruction d'assignation AST."""
         targets_str = ", ".join([ast.unparse(t).replace('"', '"') for t in node.targets])
@@ -993,9 +886,10 @@ class ControlFlowGraph:
                 if isinstance(value_node, ast.Constant):
                     self.variable_assignments[var_name] = (assigned_value_type_ast, value_node.value)
                 elif isinstance(value_node, (ast.List, ast.Tuple, ast.Set)):
-                    # Pour les collections, on pourrait analyser les éléments ici ou simplement stocker le type de collection.
-                    # Pour l'instant, stockons juste le type AST
-                    self.variable_assignments[var_name] = (assigned_value_type_ast, type(value_node).__name__)
+                    self.variable_assignments[var_name] = (
+                        assigned_value_type_ast,
+                        self._describe_collection_assignment(value_node),
+                    )
                 elif isinstance(value_node, ast.Name):
                     source_var_name = value_node.id
                     if source_var_name in self.variable_assignments:
@@ -1139,11 +1033,9 @@ class ControlFlowGraph:
         """
         Tente de donner une description du type de l'itérable et de ses éléments.
         Retourne: (
-            iterable_kind_desc: "la séquence", "la collection", "la variable", "le résultat de func()"
-                (neutre pour éviter les problèmes de genre avec le nom de l'itérable)
+            iterable_kind_desc: information résiduelle sur la nature de l'itérable
             elements_type_desc_raw: "caractère", "nombre", "chaîne", "booléen", "variable", "mixte", "élément"
-            iterable_display_name: "'abc'", "ma_liste", "range(10)" 
-                (nom ou littéral pour affichage)
+            iterable_display_name: nom brut de variable ou littéral Python pour affichage
             article_indefini_element: "un", "une"
             article_defini_element: "le", "la", "l'"
             )
@@ -1161,31 +1053,20 @@ class ControlFlowGraph:
 
         if isinstance(iterable_node, ast.Name):
             original_iterable_name_if_any = iterable_node.id
-            iterable_display_name = f"'{iterable_node.id}'" # Nom de la variable
+            iterable_display_name = iterable_node.id
             iterable_kind_desc = "la variable" # Plus spécifique
             if iterable_node.id in self.variable_assignments:
                 assigned_ast_type, assigned_value_or_desc = self.variable_assignments[iterable_node.id]
                 if assigned_ast_type == ast.Constant and isinstance(assigned_value_or_desc, str):
                     actual_node_to_inspect = ast.Constant(value=assigned_value_or_desc)
                     # iterable_kind_desc reste "la variable", mais on inspecte son contenu
-                elif assigned_ast_type == ast.List:
-                    actual_node_to_inspect = ast.List(elts=[], ctx=ast.Load()) # Simuler pour type
-                    iterable_kind_desc = "la variable (liste)"
-                    # Si assigned_value_or_desc est "liste de nombres", on peut l'utiliser pour elements_type_desc
-                    if isinstance(assigned_value_or_desc, str) and "liste de" in assigned_value_or_desc:
-                        if "nombres" in assigned_value_or_desc: elements_type_desc_raw = "nombre"
-                        elif "chaînes" in assigned_value_or_desc: elements_type_desc_raw = "chaîne"
-                elif assigned_ast_type == ast.Tuple:
-                    actual_node_to_inspect = ast.Tuple(elts=[], ctx=ast.Load())
-                    iterable_kind_desc = "la variable (tuple)"
-                # ... (ajouter Set, Dict si nécessaire pour variable_assignments) ...
+                elif assigned_ast_type in (ast.List, ast.Tuple, ast.Set):
+                    actual_node_to_inspect = None
+                    elements_type_desc_raw = self._get_element_type_from_assignment_description(assigned_value_or_desc)
                 elif assigned_ast_type == ast.Call and isinstance(assigned_value_or_desc, str): # ex: "résultat de len()"
-                    # elements_type_desc_raw reste "élément"
-                    # Déterminer les articles pour "élément"
-                    article_indefini_element = "un"; article_defini_element = "l'"
-                    iterable_kind_desc = f"la variable (contenu: {assigned_value_or_desc})"
-                    elements_type_desc_raw = "élément" # On ne sait pas plus
-                    return iterable_kind_desc, elements_type_desc_raw, iterable_display_name.strip("'"), article_indefini_element, article_defini_element
+                    actual_node_to_inspect = None
+                    if assigned_value_or_desc == "chaîne":
+                        elements_type_desc_raw = "caractère"
 
 
         # Analyse de actual_node_to_inspect (qui peut être l'original ou un reconstitué/simulé)
@@ -1193,9 +1074,8 @@ class ControlFlowGraph:
             if isinstance(actual_node_to_inspect.value, str):
                 iterable_kind_desc = "la chaîne" if not original_iterable_name_if_any else iterable_kind_desc # Garder "la variable" si c'en était une
                 elements_type_desc_raw = "caractère" # forcément
-                # Mettre des guillemets simples autour du littéral chaîne pour l'affichage
-                escaped_value = actual_node_to_inspect.value.replace('"','#quot;')
-                iterable_display_name = f"{escaped_value}"
+                if not original_iterable_name_if_any:
+                    iterable_display_name = ast.unparse(actual_node_to_inspect).replace('"', '#quot;')
         
         elif isinstance(actual_node_to_inspect, (ast.List, ast.Tuple)):
             if isinstance(actual_node_to_inspect, ast.List):
@@ -1204,28 +1084,7 @@ class ControlFlowGraph:
                 iterable_kind_desc = "le tuple" if not original_iterable_name_if_any else iterable_kind_desc
 
             if hasattr(actual_node_to_inspect, 'elts') and actual_node_to_inspect.elts:
-                element_types_seen = set()
-                for elt_node in actual_node_to_inspect.elts:
-                    current_el_type_str = "mixte" 
-                    if isinstance(elt_node, ast.Constant):
-                        if isinstance(elt_node.value, (int, float)): 
-                            current_el_type_str = "nombre"
-                        elif isinstance(elt_node.value, str): 
-                            # Différencier caractère de chaîne
-                            if len(elt_node.value) == 1:
-                                current_el_type_str = "caractère"
-                            else:
-                                current_el_type_str = "chaîne"
-                        elif isinstance(elt_node.value, bool): 
-                            current_el_type_str = "booléen"
-                    elif isinstance(elt_node, ast.Name): 
-                        current_el_type_str = "variable"
-                    element_types_seen.add(current_el_type_str)
-
-                if len(element_types_seen) == 1: 
-                    elements_type_desc_raw = element_types_seen.pop()
-                elif element_types_seen: 
-                    elements_type_desc_raw = "élément mixte"
+                elements_type_desc_raw = self._get_collection_element_type(actual_node_to_inspect)
                 # else: elements_type_desc reste "élément" (liste/tuple vide ou types non identifiables)
             else: # Liste ou tuple vide
                 elements_type_desc_raw = "élément"
@@ -1272,11 +1131,9 @@ class ControlFlowGraph:
         elif elements_type_desc_raw == "chaîne": article_indefini_element = "une"; article_defini_element = "la"
         elif elements_type_desc_raw == "booléen": article_indefini_element = "un"; article_defini_element = "le"
         elif elements_type_desc_raw == "clé": article_indefini_element = "une"; article_defini_element = "la"
-        # "variable", "élément mixte", "élément" restent avec "un" et "l'" par défaut.
+        elif elements_type_desc_raw == "variable": article_indefini_element = "une"; article_defini_element = "la"
+        # "élément mixte" et "élément" restent avec "un" et "l'" par défaut.
 
-        # Retourner iterable_display_name.strip("'") si c'était un nom de variable,
-        # mais pas si c'est un littéral chaîne qui doit garder ses guillemets.
-        # La logique actuelle pour iterable_display_name le gère déjà bien.
         return iterable_kind_desc, elements_type_desc_raw, iterable_display_name, \
                article_indefini_element, article_defini_element
 

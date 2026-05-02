@@ -744,32 +744,65 @@ function setupFunctionOptionsExtras(funcOptionsContainer) {
  * @returns {Object} Un objet contenant les minimums requis pour les lignes et les variables.
  */
 function calculateGlobalRequirements() {
-    let minTotalLines = MIN_POSSIBLE_CODE_LINES;
-    let minTotalVariables = 0;
-    let conceptualDifficultyScore = 0;
     const getChecked = (id) => document.getElementById(id)?.checked || false;
     const getVarCount = (type) => {
         const checkbox = document.getElementById(`var-${type}`);
         const select = document.getElementById(`var-${type}-count`);
         return (checkbox?.checked && select && select.style.display !== 'none') ? parseInt(select.value) : 0;
     };
-    let varCounts = { int: getVarCount('int'), float: getVarCount('float'), str: getVarCount('str'), list: getVarCount('list'), bool: getVarCount('bool') };
-    let explicitVarDeclarations = Object.values(varCounts).reduce((sum, count) => sum + count, 0);
-    minTotalVariables = Math.max(MIN_POSSIBLE_TOTAL_VARIABLES_GLOBAL, explicitVarDeclarations);
-    minTotalLines = Math.max(minTotalLines, explicitVarDeclarations);
-    if (getChecked('frame-loops')) {
-        if (getChecked('loop-for-range')) { minTotalLines += 2; minTotalVariables += 1; }
-        if (getChecked('loop-for-list')) { minTotalLines += 2; minTotalVariables += (varCounts.list === 0) ? 2 : 1; }
-        if (getChecked('loop-for-str')) { minTotalLines += 2; minTotalVariables += (varCounts.str === 0) ? 2 : 1; }
-        if (getChecked('loop-while')) { minTotalLines += 3; minTotalVariables += 1; }
+    const varCounts = {
+        int: getVarCount('int'),
+        float: getVarCount('float'),
+        str: getVarCount('str'),
+        list: getVarCount('list'),
+        bool: getVarCount('bool')
+    };
+
+    if (window.GenerationRequirements) {
+        const requirements = window.GenerationRequirements.calculateGenerationMinimums({
+            var_int_count: varCounts.int,
+            var_float_count: varCounts.float,
+            var_str_count: varCounts.str,
+            var_list_count: varCounts.list,
+            var_bool_count: varCounts.bool,
+            main_conditions: getChecked('frame-conditions'),
+            cond_if: getChecked('cond-if'),
+            cond_if_else: getChecked('cond-if-else'),
+            cond_if_elif: getChecked('cond-if-elif'),
+            cond_if_elif_else: getChecked('cond-if-elif-else'),
+            cond_if_if: getChecked('cond-if-if'),
+            cond_if_if_if: getChecked('cond-if-if-if'),
+            main_loops: getChecked('frame-loops'),
+            loop_for_range: getChecked('loop-for-range'),
+            loop_for_list: getChecked('loop-for-list'),
+            loop_for_str: getChecked('loop-for-str'),
+            loop_while: getChecked('loop-while'),
+            loop_nested_for2: getChecked('loop-nested-for2'),
+            loop_nested_for3: getChecked('loop-nested-for3'),
+            loop_while_op: getChecked('loop-while-op'),
+            loop_range_ab: getChecked('loop-range-ab'),
+            loop_range_abs: getChecked('loop-range-abs'),
+            main_functions: getChecked('frame-functions'),
+            func_def_simple: getChecked('func-def-simple'),
+            func_def_a: getChecked('func-def-a'),
+            func_def_ab: getChecked('func-def-ab'),
+            builtin_print: getChecked('builtin-print'),
+            func_return: getChecked('func-return')
+        }, {
+            varCounts,
+            minCodeLines: MIN_POSSIBLE_CODE_LINES,
+            minTotalVariables: MIN_POSSIBLE_TOTAL_VARIABLES_GLOBAL,
+            maxCodeLines: MAX_CODE_LINES,
+            maxTotalVariables: MAX_TOTAL_VARIABLES_GLOBAL
+        });
+
+        return { minLines: requirements.minLines, minVariables: requirements.minVariables };
     }
-    if (getChecked('frame-conditions') && getChecked('cond-if')) { minTotalLines += 2; minTotalVariables = Math.max(minTotalVariables, 1); }
-    // Simplification pour la lisibilité, la logique complète reste la même.
 
-    minTotalLines = Math.min(Math.max(minTotalLines, MIN_POSSIBLE_CODE_LINES), MAX_CODE_LINES);
-    minTotalVariables = Math.min(Math.max(minTotalVariables, MIN_POSSIBLE_TOTAL_VARIABLES_GLOBAL), MAX_TOTAL_VARIABLES_GLOBAL);
-
-    return { minLines: minTotalLines, minVariables: minTotalVariables };
+    return {
+        minLines: MIN_POSSIBLE_CODE_LINES,
+        minVariables: MIN_POSSIBLE_TOTAL_VARIABLES_GLOBAL
+    };
 }
     
 /**
