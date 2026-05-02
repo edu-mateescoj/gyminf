@@ -13,6 +13,8 @@
     /* Spécifique Mermaid / CodeMirror */
     --mermaid-bg: var(--bg-card);
     --mermaid-stroke: var(--text-main);
+    --cm-gutter-bg: #232530;
+    --cm-line-number: #8b92b5;
 }
 
 /* --- THÈME CLAIR (Accessible / Daltonien) --- */
@@ -29,6 +31,8 @@
 
     --mermaid-bg: #ffffff;
     --mermaid-stroke: #000000; /* Traits noirs pour le contraste */
+    --cm-gutter-bg: #f3f5f8;
+    --cm-line-number: #6b7280;
 }
 
 /* Transition douce lors du changement */
@@ -44,10 +48,22 @@ body, .card, .btn, .form-control {
     font-size: 14px;
     line-height: 1.5;
     border-radius: 0.25rem;
+    max-height: 100% !important;
+    overflow: hidden !important;
 }
 
 .CodeMirror-scroll {
     height: 100% !important;
+}
+
+/* Numéros de ligne lisibles et distincts du code dans les deux thèmes */
+.CodeMirror-gutters {
+    background-color: var(--cm-gutter-bg) !important;
+    border-right: 1px solid var(--border-color) !important;
+}
+
+.CodeMirror-linenumber {
+    color: var(--cm-line-number) !important;
 }
 
 /* On mobile devices, adjust the editor height */
@@ -232,6 +248,18 @@ body, .card, .btn, .form-control {
     /* On gère les couleurs via les classes Bootstrap HTML pour la simplicité */
     border-radius: 0 0 0.25rem 0.25rem; /* Arrondi uniquement en bas */
     border-top: 1px solid rgba(255, 255, 255, 0.2); /* Séparateur subtil avec l'éditeur */
+    flex-shrink: 0 !important;
+    min-height: 38px;
+    z-index: 10;
+}
+
+#col-editor .card-body > .flex-grow-1 {
+    overflow: hidden;
+    min-height: 0;
+}
+
+#col-diagram .card-body {
+    min-height: 0;
 }
 
 /* Resizers (look index.html) */
@@ -255,6 +283,51 @@ body, .card, .btn, .form-control {
 }
 #horizontal-resizer.active, #horizontal-resizer:hover { background: #0dcaf0; }
 
+#workspace-container {
+    display: flex;
+    flex-wrap: nowrap;
+    margin-bottom: 0.75rem;
+}
+
+#workspace-container > .col-lg-6,
+#workspace-container > #resizer {
+    flex: 0 0 auto;
+}
+
+.split-active .col-lg-6 {
+    flex: 0 0 auto;
+    width: auto;
+}
+
+.col-full {
+    width: 100% !important;
+    flex: 0 0 100% !important;
+    display: block !important;
+}
+
+.col-hidden {
+    display: none !important;
+}
+
+#workspace-container.split-active {
+    display: flex;
+}
+
+#workspace-container.split-active > .col-lg-6,
+#workspace-container.split-active > #resizer {
+    display: block;
+}
+
+@media (max-width: 991.98px) {
+    #workspace-container {
+        display: block;
+    }
+
+    #resizer {
+        display: none !important;
+    }
+}
+
 /* Logigramme: éviter clipping haut */
 #flowchart, #flowchart svg {
     width: 100%;
@@ -263,6 +336,11 @@ body, .card, .btn, .form-control {
 #flowchart svg {
     display: block;
     overflow: visible;
+}
+
+.mermaid-container {
+    min-width: 0;
+    min-height: 0;
 }
 
 /* Zoom controls visibles quand activés par JS */
