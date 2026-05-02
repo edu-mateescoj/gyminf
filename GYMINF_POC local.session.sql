@@ -1,1 +1,1 @@
-DESCRIBE challenge_metadata
+SHOW TABLES;

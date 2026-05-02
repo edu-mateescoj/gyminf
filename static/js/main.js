@@ -1984,4 +1984,6 @@ document.addEventListener('DOMContentLoaded', function() {
     updateGlobalConfigSelectors();
     handleVisualInterdependencies();
     initializeUI();
+    // Si on veut forcer l’ouverture du mode avancé au démarrage, décommenter :
+    // if (advancedModeCheckbox) { advancedModeCheckbox.checked = true; advancedModeCheckbox.dispatchEvent(new Event('change')); }
 });
