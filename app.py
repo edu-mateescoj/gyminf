@@ -543,6 +543,55 @@ def log_challenge_metadata():
         return jsonify({"status": "error", "message": str(e)}), 500
 
 
+@app.route('/log/highlight_event', methods=['POST'])
+def log_highlight_event():
+    """
+    Journalise un événement de surlignage déclenché par le clic sur un noeud du logigramme.
+
+    Les traces sont volontairement rattachées à un code déjà exécuté via code_id,
+    afin de conserver un contexte pédagogique exploitable côté serveur.
+    """
+    username = session.get('username')
+    if not username:
+        return jsonify({"status": "error", "message": "Non authentifié"}), 401
+
+    data = request.get_json() or {}
+    code_id = data.get('code_id')
+    action_type = data.get('action_type')
+    node_id = data.get('node_id')
+    node_label = data.get('node_label')
+    source_span = data.get('source_span')
+
+    if not code_id or not action_type:
+        return jsonify({"status": "error", "message": "code_id ou action_type manquant"}), 400
+
+    user_id = get_user_id(username)
+    if not user_id:
+        return jsonify({"status": "error", "message": "Utilisateur introuvable"}), 404
+
+    try:
+        cursor = mysql.connection.cursor()
+        cursor.execute("""
+            INSERT INTO highlight_event (user_id, code_id, node_id, action_type, node_label, source_span, time_created)
+            VALUES (%s, %s, %s, %s, %s, %s, %s)
+        """, (
+            user_id,
+            code_id,
+            node_id,
+            action_type,
+            node_label,
+            json.dumps(source_span) if source_span is not None else None,
+            datetime.now()
+        ))
+        mysql.connection.commit()
+        cursor.close()
+        return jsonify({"status": "success"})
+    except Exception as e:
+        print(f"Erreur log_highlight_event: {e}")
+        mysql.connection.rollback()
+        return jsonify({"status": "error", "message": str(e)}), 500
+
+
 # ==========================================================================
 # DASHBOARD ENSEIGNANT — PAGE PRINCIPALE
 # ==========================================================================

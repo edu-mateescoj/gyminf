@@ -16,6 +16,7 @@ const log_enum = Object.freeze({
     VERIFY_ANSWERS:      'verify_answers',
     REVEAL_SOLUTION:     'reveal_solution',
     LOAD_EXAMPLE:        'load_example',
+    HIGHLIGHT_EVENT:     'highlight_event',
     // NOUVEAU : métadonnées du défi (types de variables extraits de Pyodide)
     CHALLENGE_METADATA:  'challenge_metadata'
 });
@@ -51,6 +52,9 @@ async function logFactory(type, body) {
             break;
         case log_enum.LOAD_EXAMPLE:
             log_url = '/log/load_example';
+            break;
+        case log_enum.HIGHLIGHT_EVENT:
+            log_url = '/log/highlight_event';
             break;
         case log_enum.EXECUTION:
             log_url = '/log/execution';
@@ -204,4 +208,24 @@ async function logChallengeMetadata(codeId, variableTypes, requestedOptions) {
         requested_options: requestedOptions || null
     });
     return await logFactory(log_enum.CHALLENGE_METADATA, body);
+}
+
+/**
+ * Journalise un événement de surlignage issu du clic sur un noeud du logigramme.
+ *
+ * @param {number} codeId - L'ID du code exécuté auquel rattacher l'interaction.
+ * @param {string|null} nodeId - L'ID CFG du noeud Mermaid cliqué ou désélectionné.
+ * @param {string} actionType - `select` ou `clear` selon l'action observée.
+ * @param {Object|null} sourceSpan - La plage source associée au noeud, si disponible.
+ * @param {string|null} nodeLabel - Le texte visible du noeud pour faciliter l'analyse ultérieure.
+ */
+async function logHighlightEvent(codeId, nodeId, actionType, sourceSpan, nodeLabel) {
+    let body = JSON.stringify({
+        code_id: codeId,
+        node_id: nodeId || null,
+        action_type: actionType,
+        source_span: sourceSpan || null,
+        node_label: nodeLabel || null
+    });
+    return await logFactory(log_enum.HIGHLIGHT_EVENT, body);
 }

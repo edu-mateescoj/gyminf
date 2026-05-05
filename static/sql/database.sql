@@ -77,6 +77,19 @@ CREATE TABLE IF NOT EXISTS load_event (
     FOREIGN KEY (user_id) REFERENCES user(id) ON DELETE CASCADE ON UPDATE CASCADE
 );
 
+CREATE TABLE IF NOT EXISTS highlight_event (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    user_id INT NOT NULL,
+    code_id INT NOT NULL,
+    node_id VARCHAR(64),
+    action_type VARCHAR(32) NOT NULL,
+    node_label TEXT,
+    source_span JSON,
+    time_created DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (user_id) REFERENCES user(id) ON DELETE CASCADE ON UPDATE CASCADE,
+    FOREIGN KEY (code_id) REFERENCES code(id) ON DELETE CASCADE ON UPDATE CASCADE
+);
+
 -- ==========================================================================
 -- NOUVELLES TABLES POUR LE DASHBOARD ENSEIGNANT
 -- ==========================================================================

@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="fr" data-bs-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Suite de Tests - Gyminf</title>
+    <link rel="stylesheet" href="../static/assets/bootstrap/bootstrap.min.css">
+    <link rel="stylesheet" href="../static/assets/fontawesome/css/all.min.css">
+    <script src="../static/assets/pyodide/pyodide.js"></script>
+    <script src="../static/assets/mermaid/mermaid.min.js"></script>
+    <style>
+        body { padding: 20px; }
+        .test-container { max-width: 960px; margin: 0 auto; }
+        #loading-overlay { display: none !important; }
+    </style>
+</head>
+<body>
+    <div class="test-container">
+        <h1 class="mb-4"><i class="fas fa-vial me-2"></i>Tests de Parité Gyminf</h1>
+
+        <div class="card mb-4">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <span>Résultats</span>
+                <div id="test-summary">En attente...</div>
+            </div>
+            <div class="card-body" id="test-results"></div>
+        </div>
+
+        <div id="loading-overlay"></div>
+        <div id="flowchart" class="d-none"></div>
+
+        <div class="text-center">
+            <button class="btn btn-primary" onclick="location.reload()">
+                <i class="fas fa-sync me-2"></i>Relancer les tests
+            </button>
+        </div>
+    </div>
+
+    <script>
+        window.handlePythonInput = function() {
+            throw new Error('handlePythonInput ne doit pas être invoqué pendant les tests de parité.');
+        };
+    </script>
+
+    <script src="../static/js/flowchart-generator.js"></script>
+    <script src="test-runner.js"></script>
+    <script src="test-mycfg.js"></script>
+    <script src="test-flowchart-selection.js"></script>
+</body>
+</html>

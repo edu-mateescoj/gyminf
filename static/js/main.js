@@ -67,6 +67,10 @@ let currentChallengeCodeId = null; // Pour stocker l'ID du code de défi actuel
 let currentFontSize = 16; // NOUVEAU: Taille de police par défaut
 let currentChallengeVariableTypes = {}; // Types détectés pour le défi courant (ex: { x: 'int', nom: 'str' })
 
+window.getCurrentChallengeCodeId = function() {
+    return currentChallengeCodeId;
+};
+
 // --- Variables DOM globales ---
 let difficultyGlobalSelect;
 let numLinesGlobalSelect;
@@ -371,19 +375,58 @@ function cleanInlineMermaidStyles(svg) {
 }
 
 function injectMermaidStylesIntoSvg(svg) {
-    // Style CSS minimal pour l'export (noir/blanc)
+    // Injecte les règles critiques avec les couleurs calculées du thème courant.
     const styleContent = `
-         .node rect, .node polygon, .node circle, .node path { fill: #ffffff; stroke: #000000; stroke-width: 2px; }
-         .edgePath .path, .flowchart-link { stroke: #000000; stroke-width: 2px; fill: none; }
-         marker, marker path, marker circle { fill: #000000; stroke: #000000; }
-         .cluster rect { fill: none; stroke: #000000; stroke-width: 1px; opacity: 0.4; }
-         .node .label, .node .nodeLabel, .cluster text, .edgeLabel, foreignObject div {
-            font-family: 'Segoe UI', sans-serif; font-size: 16px; font-weight: 500; fill: #000000; stroke: none;
+         .node rect,
+         .node polygon,
+         .node circle,
+         .node path {
+            fill: var(--mermaid-node-bg);
+            stroke: var(--mermaid-node-border);
+            stroke-width: 2px;
+        }
+         .edgePath .path,
+         .flowchart-link {
+            stroke: var(--mermaid-line);
+            stroke-width: 2px;
+            fill: none;
+        }
+         marker,
+         marker path,
+         marker circle {
+            fill: var(--mermaid-line);
+            stroke: var(--mermaid-line);
+        }
+         .cluster rect {
+            fill: none;
+            stroke: var(--mermaid-line);
+            stroke-width: 1px;
+            opacity: 0.4;
+        }
+         .node .label,
+         .node .nodeLabel,
+         .cluster text,
+         .edgeLabel,
+         foreignObject div {
+            font-family: 'Segoe UI', sans-serif;
+            font-size: 16px;
+            font-weight: 500;
+            fill: var(--mermaid-text);
+            stroke: none;
         }
     `;
+
     const styleEl = document.createElementNS('http://www.w3.org/2000/svg', 'style');
     styleEl.setAttribute('type', 'text/css');
     styleEl.textContent = styleContent;
+
+    const rootStyles = getComputedStyle(document.documentElement);
+    styleEl.textContent = styleEl.textContent
+        .replace(/var\(--mermaid-node-bg\)/g, rootStyles.getPropertyValue('--mermaid-node-bg').trim())
+        .replace(/var\(--mermaid-node-border\)/g, rootStyles.getPropertyValue('--mermaid-node-border').trim())
+        .replace(/var\(--mermaid-line\)/g, rootStyles.getPropertyValue('--mermaid-line').trim())
+        .replace(/var\(--mermaid-text\)/g, rootStyles.getPropertyValue('--mermaid-text').trim());
+
     svg.insertBefore(styleEl, svg.firstChild);
 }
 
@@ -464,6 +507,47 @@ function setEditorEditable(editable) {
         btn.innerHTML = editable ? '<i class="far fa-edit"></i> Rendre non éditable' : '<i class="fas fa-edit"></i> Rendre éditable';
     }
 }
+
+window.selectEditorSourceRange = function(sourceSpan) {
+    if (!codeEditorInstance || !sourceSpan) return;
+
+    const doc = codeEditorInstance.getDoc();
+    const lastLine = doc.lastLine();
+    const fallbackLine = Number.isInteger(sourceSpan.editorLine)
+        ? sourceSpan.editorLine
+        : (Number.isInteger(sourceSpan.lineno) ? Math.max(0, sourceSpan.lineno - 1) : 0);
+    const fallbackEndLine = Number.isInteger(sourceSpan.editorEndLine)
+        ? sourceSpan.editorEndLine
+        : (Number.isInteger(sourceSpan.end_lineno) ? Math.max(0, sourceSpan.end_lineno - 1) : fallbackLine);
+
+    const startLine = Math.max(0, Math.min(fallbackLine, lastLine));
+    const endLine = Math.max(startLine, Math.min(fallbackEndLine, lastLine));
+    const startColumn = Number.isInteger(sourceSpan.col_offset) ? Math.max(0, sourceSpan.col_offset) : 0;
+    const lineLength = (doc.getLine(endLine) || '').length;
+    const endColumn = Number.isInteger(sourceSpan.end_col_offset)
+        ? Math.max(startColumn, sourceSpan.end_col_offset)
+        : lineLength;
+    const from = { line: startLine, ch: startColumn };
+    const to = { line: endLine, ch: Math.max(0, Math.min(endColumn, lineLength)) };
+
+    doc.setSelection(from, to, { origin: '+flowchart' });
+    codeEditorInstance.scrollIntoView({ from, to }, 80);
+
+    const wrapper = codeEditorInstance.getWrapperElement();
+    const editorIsVisible = !!(wrapper && (wrapper.offsetParent || wrapper.getClientRects().length));
+    if (editorIsVisible) {
+        codeEditorInstance.focus();
+    }
+};
+
+window.clearEditorSourceSelection = function() {
+    if (!codeEditorInstance) return;
+
+    const doc = codeEditorInstance.getDoc();
+    const cursor = doc.getCursor('from');
+    doc.setSelection(cursor, cursor, { origin: '+flowchart' });
+};
+
 // --- Mémoriser le code après génération ou chargement d'exemple ---
 function memorizeLoadedCode(code) { lastLoadedCode = code; }
 

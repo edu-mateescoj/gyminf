@@ -9,10 +9,21 @@
     --primary-color: #0d6efd;
     --success-color: #198754;
     --info-color: #0dcaf0;
+    --selection-accent: #ffb703;
+    --selection-fill: rgba(255, 183, 3, 0.18);
+    --editor-selection-bg: rgba(255, 183, 3, 0.34);
 
     /* Spécifique Mermaid / CodeMirror */
     --mermaid-bg: var(--bg-card);
     --mermaid-stroke: var(--text-main);
+    --mermaid-node-bg: #282a36;
+    --mermaid-node-border: #ffffff;
+    --mermaid-text: #ffffff;
+    --mermaid-line: #ffffff;
+    --mermaid-surface: #44475a;
+    --mermaid-control-bg: #282a36;
+    --mermaid-control-text: #f8f8f2;
+    --mermaid-control-border: #6272a4;
     --cm-gutter-bg: #232530;
     --cm-line-number: #8b92b5;
 }
@@ -28,9 +39,20 @@
     --primary-color: #0056b3; /* Bleu profond */
     --success-color: #006837; /* Vert émeraude foncé */
     --info-color: #005cbf;    /* Bleu info plus sombre que le cyan illisible */
+    --selection-accent: #0b57d0;
+    --selection-fill: rgba(11, 87, 208, 0.12);
+    --editor-selection-bg: rgba(11, 87, 208, 0.26);
 
     --mermaid-bg: #ffffff;
     --mermaid-stroke: #000000; /* Traits noirs pour le contraste */
+    --mermaid-node-bg: #ffffff;
+    --mermaid-node-border: #000000;
+    --mermaid-text: #000000;
+    --mermaid-line: #000000;
+    --mermaid-surface: #f0f4f8;
+    --mermaid-control-bg: #ffffff;
+    --mermaid-control-text: #102a43;
+    --mermaid-control-border: #bcccdc;
     --cm-gutter-bg: #f3f5f8;
     --cm-line-number: #6b7280;
 }
@@ -66,6 +88,20 @@ body, .card, .btn, .form-control {
     color: var(--cm-line-number) !important;
 }
 
+.CodeMirror-selected,
+.CodeMirror-focused .CodeMirror-selected {
+    background: var(--editor-selection-bg) !important;
+}
+
+.CodeMirror-line::selection,
+.CodeMirror-line > span::selection,
+.CodeMirror-line > span > span::selection,
+.CodeMirror-line::-moz-selection,
+.CodeMirror-line > span::-moz-selection,
+.CodeMirror-line > span > span::-moz-selection {
+    background: var(--editor-selection-bg) !important;
+}
+
 /* On mobile devices, adjust the editor height */
 @media (max-width: 768px) {
     .CodeMirror {
@@ -77,12 +113,13 @@ body, .card, .btn, .form-control {
 /* Mermaid flowchart container */
 .mermaid-container {
     min-height: 300px;
-    background-color: var(--bg-card);
-    color: var(--text-main);
+    background-color: var(--mermaid-surface);
+    color: var(--mermaid-text);
     border-radius: 0.25rem;
-    padding: 15px;
-    overflow: auto;
+    overflow: hidden;
     display: flex;
+    justify-content: center;
+    align-items: center;
 }
 
 @media (max-width: 768px) {
@@ -94,37 +131,106 @@ body, .card, .btn, .form-control {
 .mermaid-container .mermaid {
     width: 100%;
     height: 100%;
+    background-color: var(--mermaid-surface);
+    border-radius: 0.5rem;
+    padding: 0 !important;
+    margin: 0 !important;
+    overflow: hidden !important;
+    display: flex;
 }
 
-.mermaid-container svg {
+#flowchart svg {
+    background-color: transparent !important;
     width: 100%;
     height: 100%;
+    max-width: none;
     display: block;
+    overflow: visible;
 }
 
-.mermaid-container svg .node rect,
-.mermaid-container svg .node polygon,
-.mermaid-container svg .cluster rect {
-    fill: var(--bg-card) !important;
-    stroke: var(--text-main) !important;
+#flowchart svg .node .label,
+#flowchart svg .node .nodeLabel,
+#flowchart svg .cluster text,
+#flowchart svg .edgeLabel,
+#flowchart svg foreignObject div {
+    font-family: 'Segoe UI', sans-serif !important;
+    font-size: 18px !important;
+    font-weight: 500;
+    color: var(--mermaid-text) !important;
+    stroke: var(--mermaid-line) !important;
+    line-height: 1.4;
 }
 
-.mermaid-container svg .label,
-.mermaid-container svg text,
-.mermaid-container svg .edgeLabel {
-    fill: var(--text-main) !important;
+#flowchart svg .node rect,
+#flowchart svg .node polygon,
+#flowchart svg .node circle,
+#flowchart svg .node path {
+    fill: var(--mermaid-node-bg) !important;
+    stroke: var(--mermaid-node-border) !important;
+    stroke-width: 2px !important;
 }
 
-.mermaid-container svg .edgePath .path,
-.mermaid-container svg .flowchart-link,
-.mermaid-container svg .edgePath path {
-    stroke: var(--mermaid-stroke) !important;
+#flowchart svg g.node.flowchart-node-selectable {
+    cursor: pointer;
 }
 
-.mermaid-container svg marker path,
-.mermaid-container svg marker circle {
-    fill: var(--mermaid-stroke) !important;
-    stroke: var(--mermaid-stroke) !important;
+#flowchart svg g.node.flowchart-node-selected rect,
+#flowchart svg g.node.flowchart-node-selected polygon,
+#flowchart svg g.node.flowchart-node-selected circle,
+#flowchart svg g.node.flowchart-node-selected path {
+    fill: var(--selection-fill) !important;
+    stroke: var(--selection-accent) !important;
+    stroke-width: 4px !important;
+}
+
+#flowchart svg g.node.flowchart-node-selected .label,
+#flowchart svg g.node.flowchart-node-selected .nodeLabel,
+#flowchart svg g.node.flowchart-node-selected foreignObject div {
+    color: var(--selection-accent) !important;
+    fill: var(--selection-accent) !important;
+    stroke: transparent !important;
+}
+
+#flowchart svg .cluster rect {
+    fill: transparent !important;
+    stroke: var(--mermaid-line) !important;
+    stroke-width: 1px !important;
+    opacity: 0.5;
+}
+
+#flowchart svg .edgeLabel,
+#flowchart svg .edgeLabel span,
+#flowchart svg .edgeLabel div {
+    color: var(--mermaid-text) !important;
+    background-color: var(--mermaid-surface) !important;
+    font-family: 'Segoe UI', sans-serif !important;
+}
+
+#flowchart svg .edgePath .path,
+#flowchart svg .flowchart-link,
+#flowchart svg .edgePath path {
+    stroke: var(--mermaid-line) !important;
+    stroke-width: 3px !important;
+    fill: none !important;
+}
+
+#flowchart svg .marker,
+#flowchart svg marker path,
+#flowchart svg marker circle {
+    fill: var(--mermaid-line) !important;
+    stroke: var(--mermaid-line) !important;
+    stroke-width: 3px !important;
+}
+
+#zoom-controls .btn {
+    opacity: 0.8;
+    background-color: var(--mermaid-control-bg) !important;
+    color: var(--mermaid-control-text) !important;
+    border-color: var(--mermaid-control-border) !important;
+}
+
+#zoom-controls .btn:hover {
+    opacity: 1;
 }
 
 /* Variable inputs styling */
