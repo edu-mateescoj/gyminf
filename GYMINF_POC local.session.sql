@@ -1,1 +1,1 @@
-SHOW TABLES;
+SELECT * FROM generation;
